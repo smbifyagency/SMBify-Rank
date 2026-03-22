@@ -259,15 +259,15 @@ export default function WDSiteEditor() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-950">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-400" />
+      <div className="flex items-center justify-center flex-1 bg-gray-950">
+        <Loader2 className="w-8 h-8 animate-spin text-[#AADD00]" />
       </div>
     );
   }
 
   if (!siteData) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-950 text-white">
+      <div className="flex items-center justify-center flex-1 bg-gray-950 text-white">
         <div className="text-center">
           <p className="text-lg mb-4">Website not found.</p>
           <Button onClick={() => setLocation("/dashboard/websites")}>Back to Websites</Button>
@@ -278,7 +278,7 @@ export default function WDSiteEditor() {
 
   // ─────────────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col h-screen bg-gray-950 text-white overflow-hidden">
+    <div className="flex flex-col flex-1 bg-gray-950 text-white overflow-hidden">
 
       {/* ── Top Bar ──────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-800 flex-shrink-0">

@@ -32,6 +32,7 @@ export default function DashboardNewWebsite() {
     city: "",
     state: "",
     primaryKeyword: "Water Damage Restoration",
+    targetKeywords: "",
     services: [] as string[],
     serviceAreas: "",
     urlSlug: "",
@@ -168,6 +169,20 @@ export default function DashboardNewWebsite() {
                     className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
                 </div>
               </div>
+              <div>
+                <Label className="text-gray-300 text-sm mb-1.5 block">Primary Keyword *</Label>
+                <Input value={form.primaryKeyword} onChange={e => set("primaryKeyword", e.target.value)}
+                  placeholder="Water Damage Restoration"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                <p className="text-xs text-gray-500 mt-1">Main keyword all content will be optimized around</p>
+              </div>
+              <div>
+                <Label className="text-gray-300 text-sm mb-1.5 block">Additional Target Keywords</Label>
+                <Input value={form.targetKeywords} onChange={e => set("targetKeywords", e.target.value)}
+                  placeholder="flood cleanup, mold remediation, burst pipe repair"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                <p className="text-xs text-gray-500 mt-1">Comma-separated. Used for SEO meta tags and content variation</p>
+              </div>
             </div>
           </div>
         )}
@@ -211,15 +226,15 @@ export default function DashboardNewWebsite() {
           <div className="space-y-5">
             <div>
               <Label className="text-gray-300 text-sm mb-1.5 block flex items-center gap-1.5">
-                <Globe className="h-3.5 w-3.5 text-[#AADD00]" /> Website URL Slug *
+                <Globe className="h-3.5 w-3.5 text-[#AADD00]" /> Site Identifier *
               </Label>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-500 text-sm shrink-0">yourdomain.com/</span>
-                <Input value={form.urlSlug} onChange={e => set("urlSlug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
-                  onFocus={autoSlug}
-                  placeholder="rapid-dry-water-restoration"
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
-              </div>
+              <Input value={form.urlSlug} onChange={e => set("urlSlug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                onFocus={autoSlug}
+                placeholder="rapid-dry-water-restoration"
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+              <p className="text-xs text-gray-500 mt-1">
+                Used as your Netlify site name → <span className="text-gray-400">{form.urlSlug || "your-name"}.netlify.app</span>
+              </p>
               {!form.urlSlug && form.businessName && (
                 <button onClick={autoSlug} className="text-xs text-[#AADD00] mt-1 hover:underline">
                   Auto-generate from business name
@@ -280,9 +295,10 @@ export default function DashboardNewWebsite() {
                 { label: "Business", value: form.businessName },
                 { label: "Location", value: `${form.city}, ${form.state}` },
                 { label: "Phone", value: form.phone },
+                { label: "Primary Keyword", value: form.primaryKeyword },
                 { label: "Services", value: `${form.services.length} services selected` },
                 { label: "Areas", value: `${form.serviceAreas.split("\n").filter(Boolean).length} cities` },
-                { label: "URL Slug", value: form.urlSlug },
+                { label: "Site ID", value: `${form.urlSlug}.netlify.app` },
                 { label: "AI Content", value: form.openaiApiKey ? "OpenAI" : form.geminiApiKey ? "Gemini" : "Template only" },
               ].map(({ label, value }) => (
                 <div key={label} className="flex justify-between text-sm">

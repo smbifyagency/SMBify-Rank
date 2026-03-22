@@ -149,6 +149,21 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 }
 
 function Router() {
+  const [location] = useLocation();
+
+  // Full-screen routes (no Navigation/footer)
+  if (location.startsWith("/dashboard/wd-editor/")) {
+    return (
+      <div className="h-screen w-screen overflow-hidden bg-gray-950 text-white flex flex-col">
+        <Switch>
+          <Route path="/dashboard/wd-editor/:id">
+            <AuthRoute><WDSiteEditor /></AuthRoute>
+          </Route>
+        </Switch>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-950 text-white flex flex-col">
       <Navigation />
@@ -247,9 +262,6 @@ function Router() {
           </Route>
           <Route path="/dashboard/new-website">
             <AuthRoute><DashboardNewWebsite /></AuthRoute>
-          </Route>
-          <Route path="/dashboard/wd-editor/:id">
-            <AuthRoute><WDSiteEditor /></AuthRoute>
           </Route>
           <Route path="/dashboard/websites/:id">
             <WDSiteEditorRedirect />
