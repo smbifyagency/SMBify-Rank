@@ -13,9 +13,24 @@ import { useToast } from "@/hooks/use-toast";
 const STEPS = ["Business Info", "Services & Areas", "Brand & Domain", "Generate"];
 
 const DEFAULT_SERVICES = [
-  "Water Damage Restoration", "Flood Cleanup", "Basement Flooding",
-  "Burst Pipe Repair", "Mold Remediation", "Sewage Cleanup",
-  "Storm Damage Restoration", "Emergency Water Extraction"
+  "Water Damage Restoration",
+  "Emergency Water Extraction",
+  "Flood Cleanup & Flood Damage Repair",
+  "Basement Flooding Cleanup",
+  "Burst Pipe Repair & Cleanup",
+  "Mold Remediation & Mold Removal",
+  "Sewage Backup Cleanup",
+  "Storm Damage Restoration",
+  "Structural Drying & Dehumidification",
+  "Ceiling & Wall Water Damage Repair",
+  "Carpet Water Damage & Drying",
+  "Fire & Smoke Damage Restoration",
+  "Crawl Space Water Damage",
+  "Commercial Water Damage Restoration",
+  "24/7 Emergency Response",
+  "Insurance Claim Assistance",
+  "Odor Removal & Deodorization",
+  "Content Pack-Out & Storage",
 ];
 
 export default function DashboardNewWebsite() {
@@ -60,7 +75,7 @@ export default function DashboardNewWebsite() {
   const canNext = () => {
     if (step === 0) return form.businessName.trim() && form.phone.trim() && form.city.trim() && form.state.trim();
     if (step === 1) return form.services.length > 0 && form.serviceAreas.trim();
-    if (step === 2) return form.urlSlug.trim();
+    if (step === 2) return true; // urlSlug is optional, auto-generated on submit
     return true;
   };
 
@@ -69,6 +84,7 @@ export default function DashboardNewWebsite() {
     try {
       const servicesList = form.services;
       const areasList = form.serviceAreas.split("\n").map(s => s.trim()).filter(Boolean);
+      const slug = form.urlSlug || form.businessName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
       // First create a DB record
       const createRes = await fetch("/api/websites", {
@@ -77,7 +93,7 @@ export default function DashboardNewWebsite() {
         body: JSON.stringify({
           title: form.businessName,
           template: "water-damage",
-          businessData: { ...form, services: servicesList, serviceAreas: areasList }
+          businessData: { ...form, urlSlug: slug, services: servicesList, serviceAreas: areasList }
         })
       });
       const created = await createRes.json();

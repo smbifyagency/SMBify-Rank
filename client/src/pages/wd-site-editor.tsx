@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useRoute, useLocation } from "wouter";
+import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,9 +55,8 @@ interface ImageEntry {
 // ─── Main Component ────────────────────────────────────────────────────────
 
 export default function WDSiteEditor() {
-  const [, setLocation] = useLocation();
-  const [match, params] = useRoute("/dashboard/wd-editor/:id");
-  const websiteId = match ? params?.id : null;
+  const [location, setLocation] = useLocation();
+  const websiteId = location.split("/dashboard/wd-editor/")[1]?.split("/")[0] || null;
   const { toast } = useToast();
 
   const [siteData, setSiteData] = useState<WDSiteData | null>(null);
@@ -70,6 +69,11 @@ export default function WDSiteEditor() {
   const [generatedFiles, setGeneratedFiles] = useState<Record<string, string>>({});
   const [netlifyToken, setNetlifyToken] = useState("");
   const [deployedUrl, setDeployedUrl] = useState("");
+  const [tokenValid, setTokenValid] = useState<boolean | null>(null);
+  const [isVerifyingToken, setIsVerifyingToken] = useState(false);
+  const [desiredSlug, setDesiredSlug] = useState("");
+  const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
+  const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Images that need replacing
@@ -220,6 +224,50 @@ export default function WDSiteEditor() {
     }
   }
 
+  // ── Verify Netlify token ──────────────────────────────────────────────
+  async function verifyNetlifyToken() {
+    if (!netlifyToken.trim()) return;
+    setIsVerifyingToken(true);
+    setTokenValid(null);
+    try {
+      const res = await fetch("https://api.netlify.com/api/v1/user", {
+        headers: { Authorization: `Bearer ${netlifyToken}` }
+      });
+      setTokenValid(res.ok);
+      if (res.ok) {
+        const userData = await res.json();
+        toast({ title: "Token Valid", description: `Connected as ${userData.email || userData.slug || "Netlify user"}` });
+      } else {
+        toast({ title: "Invalid Token", description: "Check your Netlify personal access token.", variant: "destructive" });
+      }
+    } catch {
+      setTokenValid(false);
+      toast({ title: "Error", description: "Could not connect to Netlify.", variant: "destructive" });
+    } finally {
+      setIsVerifyingToken(false);
+    }
+  }
+
+  // ── Check domain availability ─────────────────────────────────────────
+  async function checkSlugAvailability() {
+    if (!netlifyToken.trim() || !desiredSlug.trim()) return;
+    setIsCheckingSlug(true);
+    setSlugAvailable(null);
+    try {
+      const res = await fetch(`https://api.netlify.com/api/v1/sites?filter=all&name=${desiredSlug}`, {
+        headers: { Authorization: `Bearer ${netlifyToken}` }
+      });
+      if (!res.ok) throw new Error("API error");
+      const sites = await res.json();
+      const taken = Array.isArray(sites) && sites.some((s: any) => s.name === desiredSlug);
+      setSlugAvailable(!taken);
+    } catch {
+      toast({ title: "Check failed", description: "Could not verify availability.", variant: "destructive" });
+    } finally {
+      setIsCheckingSlug(false);
+    }
+  }
+
   // ── Image upload ──────────────────────────────────────────────────────
 
   function handleImageFileSelect(idx: number, file: File) {
@@ -259,15 +307,15 @@ export default function WDSiteEditor() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center flex-1 bg-gray-950">
-        <Loader2 className="w-8 h-8 animate-spin text-[#AADD00]" />
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#030712' }}>
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#AADD00' }} />
       </div>
     );
   }
 
   if (!siteData) {
     return (
-      <div className="flex items-center justify-center flex-1 bg-gray-950 text-white">
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#030712', color: 'white' }}>
         <div className="text-center">
           <p className="text-lg mb-4">Website not found.</p>
           <Button onClick={() => setLocation("/dashboard/websites")}>Back to Websites</Button>
@@ -278,7 +326,7 @@ export default function WDSiteEditor() {
 
   // ─────────────────────────────────────────────────────────────────────
   return (
-    <div className="flex flex-col flex-1 bg-gray-950 text-white overflow-hidden">
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, background: '#030712', color: 'white', overflow: 'hidden' }}>
 
       {/* ── Top Bar ──────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between px-4 py-3 bg-gray-900 border-b border-gray-800 flex-shrink-0">
@@ -321,7 +369,7 @@ export default function WDSiteEditor() {
       </div>
 
       {/* ── Main Layout ───────────────────────────────────────────────── */}
-      <div className="flex flex-1 overflow-hidden">
+      <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 
         {/* Left Sidebar: Editor */}
         <div className="w-96 flex-shrink-0 bg-gray-900 border-r border-gray-800 overflow-y-auto">
@@ -607,74 +655,75 @@ export default function WDSiteEditor() {
                 </div>
               )}
 
-              <div className="space-y-3">
-                <div>
-                  <Label className="text-xs text-gray-400">Netlify API Token</Label>
+              {/* Step 1: Token */}
+              <div className="space-y-2">
+                <Label className="text-xs text-gray-400">Step 1 — Netlify API Token</Label>
+                <div className="flex gap-2">
                   <Input
                     type="password"
                     value={netlifyToken}
-                    onChange={e => setNetlifyToken(e.target.value)}
-                    className="bg-gray-800 border-gray-700 text-white mt-1 text-sm"
+                    onChange={e => { setNetlifyToken(e.target.value); setTokenValid(null); }}
+                    className="bg-gray-800 border-gray-700 text-white text-sm flex-1"
                     placeholder="nfp_xxxxxxxxxxxxxxxxxx"
                   />
-                  <p className="text-xs text-gray-600 mt-1">
-                    Get your token from Netlify → User Settings → Personal Access Tokens
-                  </p>
+                  <Button size="sm" variant="outline" onClick={verifyNetlifyToken} disabled={isVerifyingToken || !netlifyToken}
+                    className={`border-gray-700 text-xs whitespace-nowrap ${tokenValid === true ? 'border-green-600 text-green-400' : tokenValid === false ? 'border-red-600 text-red-400' : 'text-gray-300'}`}>
+                    {isVerifyingToken ? <Loader2 className="w-3 h-3 animate-spin" /> : tokenValid === true ? <><CheckCircle2 className="w-3 h-3 mr-1" /> Valid</> : tokenValid === false ? "✗ Invalid" : "Verify"}
+                  </Button>
                 </div>
-
-                <div>
-                  <Label className="text-xs text-gray-400">Site URL Slug</Label>
-                  <div className="flex items-center mt-1">
-                    <span className="text-xs text-gray-500 bg-gray-800 border border-r-0 border-gray-700 px-2 py-2 rounded-l-md">https://</span>
-                    <Input
-                      value={siteData.urlSlug}
-                      onChange={e => updateField("urlSlug", e.target.value)}
-                      className="bg-gray-800 border-gray-700 text-white text-sm rounded-l-none"
-                    />
-                    <span className="text-xs text-gray-500 bg-gray-800 border border-l-0 border-gray-700 px-2 py-2 rounded-r-md">.netlify.app</span>
-                  </div>
-                </div>
+                <p className="text-xs text-gray-600">Netlify → User Settings → Personal Access Tokens</p>
               </div>
 
-              <Button
-                onClick={deployToNetlify}
-                disabled={isDeploying || !netlifyToken}
-                className="w-full bg-blue-600 hover:bg-blue-700"
-              >
-                {isDeploying ? (
-                  <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Deploying...</>
-                ) : (
-                  <><Rocket className="w-4 h-4 mr-2" /> Publish Website to Netlify</>
-                )}
-              </Button>
+              {/* Step 2: Domain */}
+              {tokenValid && (
+                <div className="space-y-2">
+                  <Label className="text-xs text-gray-400">Step 2 — Choose Your Site Name</Label>
+                  <div className="flex gap-2">
+                    <div className="flex flex-1 items-center">
+                      <Input
+                        value={desiredSlug || siteData.urlSlug}
+                        onChange={e => { setDesiredSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "")); setSlugAvailable(null); }}
+                        className="bg-gray-800 border-gray-700 text-white text-sm rounded-r-none"
+                        placeholder={siteData.urlSlug || "my-site-name"}
+                      />
+                      <span className="text-xs text-gray-500 bg-gray-800 border border-l-0 border-gray-700 px-2 py-2 rounded-r-md whitespace-nowrap">.netlify.app</span>
+                    </div>
+                    <Button size="sm" variant="outline" onClick={checkSlugAvailability} disabled={isCheckingSlug}
+                      className={`border-gray-700 text-xs whitespace-nowrap ${slugAvailable === true ? 'border-green-600 text-green-400' : slugAvailable === false ? 'border-red-600 text-red-400' : 'text-gray-300'}`}>
+                      {isCheckingSlug ? <Loader2 className="w-3 h-3 animate-spin" /> : slugAvailable === true ? "✓ Available" : slugAvailable === false ? "✗ Taken" : "Check"}
+                    </Button>
+                  </div>
+                  {slugAvailable === false && <p className="text-xs text-red-400">This name is taken. Try a different one.</p>}
+                  {slugAvailable === true && <p className="text-xs text-green-400">This name is available!</p>}
+                </div>
+              )}
+
+              {/* Step 3: Deploy */}
+              {tokenValid && (
+                <Button
+                  onClick={() => {
+                    if (desiredSlug) updateField("urlSlug", desiredSlug);
+                    deployToNetlify();
+                  }}
+                  disabled={isDeploying || !netlifyToken || slugAvailable === false}
+                  className="w-full bg-blue-600 hover:bg-blue-700"
+                >
+                  {isDeploying ? (
+                    <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Deploying...</>
+                  ) : (
+                    <><Rocket className="w-4 h-4 mr-2" /> Publish to Netlify</>
+                  )}
+                </Button>
+              )}
 
               <div className="rounded-lg bg-gray-800 border border-gray-700 p-3">
                 <p className="text-xs font-medium text-gray-300 mb-2">📋 Pre-Deploy Checklist</p>
                 <ul className="space-y-1">
-                  {[
-                    "Business name and phone number correct",
-                    "All placeholder images replaced with real photos",
-                    "Alt text added to all images",
-                    "Services list is accurate",
-                    "Service areas are correct",
-                    "Contact form embed code added (if using one)",
-                  ].map((item, i) => (
+                  {["Business name and phone correct", "Services list accurate", "Service areas correct", "All placeholder images replaced"].map((item, i) => (
                     <li key={i} className="flex items-start gap-2 text-xs text-gray-400">
                       <span className="text-gray-600 mt-0.5">□</span> {item}
                     </li>
                   ))}
-                </ul>
-              </div>
-
-              <div className="pt-2">
-                <p className="text-xs text-gray-500 font-medium mb-2">What gets deployed:</p>
-                <ul className="text-xs text-gray-600 space-y-1">
-                  <li>✓ index.html (Homepage)</li>
-                  {siteData.services.map(s => <li key={s}>✓ services/{s.toLowerCase().replace(/\s+/g, '-')}.html</li>)}
-                  {siteData.serviceAreas.slice(0, 3).map(l => <li key={l}>✓ locations/{l.toLowerCase().replace(/\s+/g, '-')}.html</li>)}
-                  {siteData.serviceAreas.length > 3 && <li>✓ + {siteData.serviceAreas.length - 3} more location pages</li>}
-                  <li>✓ sitemap.xml</li>
-                  <li>✓ robots.txt</li>
                 </ul>
               </div>
             </TabsContent>

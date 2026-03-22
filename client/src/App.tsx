@@ -150,24 +150,12 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 
 function Router() {
   const [location] = useLocation();
-
-  // Full-screen routes (no Navigation/footer)
-  if (location.startsWith("/dashboard/wd-editor/")) {
-    return (
-      <div className="h-screen w-screen overflow-hidden bg-gray-950 text-white flex flex-col">
-        <Switch>
-          <Route path="/dashboard/wd-editor/:id">
-            <AuthRoute><WDSiteEditor /></AuthRoute>
-          </Route>
-        </Switch>
-      </div>
-    );
-  }
+  const isEditorRoute = location.startsWith("/dashboard/wd-editor/");
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white flex flex-col">
-      <Navigation />
-      <main className="flex-grow flex flex-col">
+    <div className={isEditorRoute ? "h-screen overflow-hidden bg-[#030712] text-white flex flex-col" : "min-h-screen bg-gray-950 text-white flex flex-col"}>
+      {!isEditorRoute && <Navigation />}
+      <main className={isEditorRoute ? "flex-1 flex flex-col overflow-hidden" : "flex-grow flex flex-col"}>
         <Switch>
           {/* ==================== PUBLIC PAGES ==================== */}
           <Route path="/">
@@ -328,9 +316,12 @@ function Router() {
 
           {/* 404 Catch-All */}
           <Route component={NotFound} />
+          <Route path="/dashboard/wd-editor/:id">
+            <AuthRoute><WDSiteEditor /></AuthRoute>
+          </Route>
         </Switch>
       </main>
-      <SharedFooter />
+      {!isEditorRoute && <SharedFooter />}
     </div>
   );
 }
