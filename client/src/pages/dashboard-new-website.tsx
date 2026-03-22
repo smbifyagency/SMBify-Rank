@@ -1,98 +1,333 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useLocation } from "wouter";
 import { useState } from "react";
-import { Plus, ArrowRight, Sparkles, Globe, Loader2 } from "lucide-react";
+import {
+  ArrowRight, ArrowLeft, Droplets, Loader2, CheckCircle2,
+  Phone, MapPin, Wrench, Globe, Palette, ChevronRight
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-const categories = [
-    "Plumber", "Electrician", "HVAC", "Roofer", "Dentist", "Chiropractor",
-    "Restaurant", "Auto Repair", "Law Firm", "Real Estate", "Cleaning Service", "Landscaping",
+const STEPS = ["Business Info", "Services & Areas", "Brand & Domain", "Generate"];
+
+const DEFAULT_SERVICES = [
+  "Water Damage Restoration", "Flood Cleanup", "Basement Flooding",
+  "Burst Pipe Repair", "Mold Remediation", "Sewage Cleanup",
+  "Storm Damage Restoration", "Emergency Water Extraction"
 ];
 
 export default function DashboardNewWebsite() {
-    const [, setLocation] = useLocation();
-    const { toast } = useToast();
-    const [name, setName] = useState("");
-    const [category, setCategory] = useState("");
-    const [isCreating, setIsCreating] = useState(false);
+  const [, setLocation] = useLocation();
+  const { toast } = useToast();
+  const [step, setStep] = useState(0);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-    const handleQuickCreate = async () => {
-        if (!name.trim()) {
-            toast({ title: "Business Name Required", description: "Please enter a business name before creating.", variant: "destructive" });
-            return;
-        }
-        setIsCreating(true);
-        try {
-            const res = await fetch("/api/websites", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    title: name.trim(),
-                    description: `${category || "Business"} website`,
-                    template: "template1",
-                    theme: "light",
-                    businessData: {
-                        businessName: name.trim(),
-                        category: category || "Business",
-                    }
-                })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || "Failed to create website");
-            toast({ title: "Website Created", description: "Redirecting to the editor..." });
-            setLocation(`/dashboard/websites/${data.id}`);
-        } catch (error: any) {
-            toast({ title: "Error", description: error.message, variant: "destructive" });
-            setIsCreating(false);
-        }
-    };
+  const [form, setForm] = useState({
+    businessName: "",
+    phone: "",
+    email: "",
+    address: "",
+    city: "",
+    state: "",
+    primaryKeyword: "Water Damage Restoration",
+    services: [] as string[],
+    serviceAreas: "",
+    urlSlug: "",
+    primaryColor: "#1e3a5f",
+    secondaryColor: "#0ea5e9",
+    accentColor: "#dc2626",
+    openaiApiKey: "",
+    geminiApiKey: "",
+  });
 
-    return (
-        <div className="py-10 px-4 sm:px-6 lg:px-8">
-            <div className="max-w-2xl mx-auto">
-                <div className="text-center mb-10">
-                    <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center mx-auto mb-4">
-                        <Plus className="h-8 w-8 text-indigo-400" />
-                    </div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Create New Website</h1>
-                    <p className="text-gray-400">Start building a new website for your client or business.</p>
-                </div>
+  const set = (k: string, v: any) => setForm(f => ({ ...f, [k]: v }));
 
-                <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 space-y-6">
-                    <div>
-                        <Label className="text-gray-300 text-sm">Business Name *</Label>
-                        <Input placeholder="e.g., Smith & Sons Plumbing" value={name} onChange={(e) => setName(e.target.value)}
-                            className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500" />
-                    </div>
-                    <div>
-                        <Label className="text-gray-300 text-sm">Category *</Label>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                            {categories.map((cat) => (
-                                <button key={cat} onClick={() => setCategory(cat)}
-                                    className={`px-3 py-1.5 rounded-lg text-sm transition-all ${category === cat
-                                        ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/50"
-                                        : "bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10"}`}>
-                                    {cat}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
+  const toggleService = (s: string) => {
+    set("services", form.services.includes(s)
+      ? form.services.filter(x => x !== s)
+      : [...form.services, s]);
+  };
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <Button variant="outline" onClick={() => setLocation("/onboarding/business")}
-                            className="border-white/20 text-gray-300 hover:bg-white/5 bg-transparent py-6">
-                            <Sparkles className="mr-2 h-4 w-4" /> Use AI Wizard
-                        </Button>
-                        <Button onClick={handleQuickCreate} disabled={isCreating}
-                            className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 py-6">
-                            {isCreating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Globe className="mr-2 h-4 w-4" />}
-                            Quick Create <ArrowRight className="ml-1 h-4 w-4" />
-                        </Button>
-                    </div>
-                </div>
-            </div>
+  const autoSlug = () => {
+    if (!form.urlSlug && form.businessName) {
+      set("urlSlug", form.businessName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""));
+    }
+  };
+
+  const canNext = () => {
+    if (step === 0) return form.businessName.trim() && form.phone.trim() && form.city.trim() && form.state.trim();
+    if (step === 1) return form.services.length > 0 && form.serviceAreas.trim();
+    if (step === 2) return form.urlSlug.trim();
+    return true;
+  };
+
+  const handleGenerate = async () => {
+    setIsGenerating(true);
+    try {
+      const servicesList = form.services;
+      const areasList = form.serviceAreas.split("\n").map(s => s.trim()).filter(Boolean);
+
+      // First create a DB record
+      const createRes = await fetch("/api/websites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: form.businessName,
+          template: "water-damage",
+          businessData: { ...form, services: servicesList, serviceAreas: areasList }
+        })
+      });
+      const created = await createRes.json();
+      if (!createRes.ok) throw new Error(created.message || "Failed to create");
+
+      toast({ title: "Website Created!", description: "Opening the editor..." });
+      setLocation(`/dashboard/wd-editor/${created.id}`);
+    } catch (error: any) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+      setIsGenerating(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen py-8 px-4">
+      <div className="max-w-2xl mx-auto">
+
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-8">
+          <button onClick={() => step > 0 ? setStep(s => s - 1) : setLocation("/dashboard")}
+            className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all">
+            <ArrowLeft className="h-4 w-4" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold text-white">Create Water Damage Website</h1>
+            <p className="text-sm text-gray-400">Step {step + 1} of {STEPS.length} — {STEPS[step]}</p>
+          </div>
         </div>
-    );
+
+        {/* Progress Bar */}
+        <div className="flex gap-1.5 mb-8">
+          {STEPS.map((s, i) => (
+            <div key={s} className={`h-1 flex-1 rounded-full transition-all ${i <= step ? "bg-[#AADD00]" : "bg-white/10"}`} />
+          ))}
+        </div>
+
+        {/* Step 0 — Business Info */}
+        {step === 0 && (
+          <div className="space-y-5">
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-[#AADD00]/10 border border-[#AADD00]/20 mb-6">
+              <Droplets className="h-5 w-5 text-[#AADD00] shrink-0" />
+              <p className="text-sm text-gray-300">
+                This creates a <span className="text-[#AADD00] font-medium">Water Damage Restoration</span> website — fully SEO-optimized with service pages, location pages, FAQ, calculator, and more.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              <div>
+                <Label className="text-gray-300 text-sm mb-1.5 block">Business Name *</Label>
+                <Input value={form.businessName} onChange={e => set("businessName", e.target.value)}
+                  placeholder="e.g., Rapid Dry Water Restoration"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-gray-300 text-sm mb-1.5 block flex items-center gap-1.5">
+                    <Phone className="h-3.5 w-3.5" /> Phone *
+                  </Label>
+                  <Input value={form.phone} onChange={e => set("phone", e.target.value)}
+                    placeholder="(555) 123-4567"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                </div>
+                <div>
+                  <Label className="text-gray-300 text-sm mb-1.5 block">Email</Label>
+                  <Input value={form.email} onChange={e => set("email", e.target.value)}
+                    placeholder="info@business.com"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                </div>
+              </div>
+              <div>
+                <Label className="text-gray-300 text-sm mb-1.5 block flex items-center gap-1.5">
+                  <MapPin className="h-3.5 w-3.5" /> Street Address
+                </Label>
+                <Input value={form.address} onChange={e => set("address", e.target.value)}
+                  placeholder="123 Main St"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-gray-300 text-sm mb-1.5 block">City *</Label>
+                  <Input value={form.city} onChange={e => set("city", e.target.value)}
+                    placeholder="Austin"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                </div>
+                <div>
+                  <Label className="text-gray-300 text-sm mb-1.5 block">State *</Label>
+                  <Input value={form.state} onChange={e => set("state", e.target.value)}
+                    placeholder="TX"
+                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Step 1 — Services & Areas */}
+        {step === 1 && (
+          <div className="space-y-6">
+            <div>
+              <Label className="text-gray-300 text-sm mb-3 flex items-center gap-1.5">
+                <Wrench className="h-3.5 w-3.5 text-[#AADD00]" /> Select Services * ({form.services.length} selected)
+              </Label>
+              <div className="flex flex-wrap gap-2">
+                {DEFAULT_SERVICES.map(s => (
+                  <button key={s} onClick={() => toggleService(s)}
+                    className={`px-3 py-1.5 rounded-lg text-sm transition-all border ${
+                      form.services.includes(s)
+                        ? "bg-[#AADD00]/15 text-[#AADD00] border-[#AADD00]/40"
+                        : "bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white"
+                    }`}>
+                    {form.services.includes(s) && <CheckCircle2 className="inline h-3.5 w-3.5 mr-1" />}
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <Label className="text-gray-300 text-sm mb-1.5 block flex items-center gap-1.5">
+                <MapPin className="h-3.5 w-3.5 text-[#AADD00]" /> Service Areas * (one per line)
+              </Label>
+              <Textarea value={form.serviceAreas} onChange={e => set("serviceAreas", e.target.value)}
+                placeholder={"Austin\nRound Rock\nCedar Park\nGeorgetown\nPflugerville"}
+                rows={5}
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50 resize-none" />
+              <p className="text-xs text-gray-500 mt-1">Each city gets its own SEO-optimized location page</p>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2 — Brand & Domain */}
+        {step === 2 && (
+          <div className="space-y-5">
+            <div>
+              <Label className="text-gray-300 text-sm mb-1.5 block flex items-center gap-1.5">
+                <Globe className="h-3.5 w-3.5 text-[#AADD00]" /> Website URL Slug *
+              </Label>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-500 text-sm shrink-0">yourdomain.com/</span>
+                <Input value={form.urlSlug} onChange={e => set("urlSlug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
+                  onFocus={autoSlug}
+                  placeholder="rapid-dry-water-restoration"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+              </div>
+              {!form.urlSlug && form.businessName && (
+                <button onClick={autoSlug} className="text-xs text-[#AADD00] mt-1 hover:underline">
+                  Auto-generate from business name
+                </button>
+              )}
+            </div>
+
+            <div>
+              <Label className="text-gray-300 text-sm mb-3 flex items-center gap-1.5">
+                <Palette className="h-3.5 w-3.5 text-[#AADD00]" /> Brand Colors
+              </Label>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { label: "Primary", key: "primaryColor" },
+                  { label: "Secondary", key: "secondaryColor" },
+                  { label: "Accent", key: "accentColor" },
+                ].map(({ label, key }) => (
+                  <div key={key} className="flex flex-col items-center gap-2">
+                    <div className="relative w-full h-12 rounded-lg border border-white/10 overflow-hidden cursor-pointer"
+                      style={{ backgroundColor: (form as any)[key] }}>
+                      <input type="color" value={(form as any)[key]}
+                        onChange={e => set(key, e.target.value)}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                    </div>
+                    <span className="text-xs text-gray-400">{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10">
+              <p className="text-xs text-gray-400 mb-3">AI Content Generation (Optional)</p>
+              <div className="space-y-3">
+                <div>
+                  <Label className="text-gray-400 text-xs mb-1 block">OpenAI API Key</Label>
+                  <Input type="password" value={form.openaiApiKey} onChange={e => set("openaiApiKey", e.target.value)}
+                    placeholder="sk-..."
+                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 text-sm h-8 focus:border-[#AADD00]/50" />
+                </div>
+                <div>
+                  <Label className="text-gray-400 text-xs mb-1 block">Gemini API Key</Label>
+                  <Input type="password" value={form.geminiApiKey} onChange={e => set("geminiApiKey", e.target.value)}
+                    placeholder="AIza..."
+                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 text-sm h-8 focus:border-[#AADD00]/50" />
+                </div>
+              </div>
+              <p className="text-xs text-gray-500 mt-2">Leave blank to use template content without AI</p>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3 — Review & Generate */}
+        {step === 3 && (
+          <div className="space-y-4">
+            <div className="p-5 rounded-xl bg-white/[0.03] border border-white/10 space-y-3">
+              <h3 className="text-white font-semibold">Review Your Website</h3>
+              {[
+                { label: "Business", value: form.businessName },
+                { label: "Location", value: `${form.city}, ${form.state}` },
+                { label: "Phone", value: form.phone },
+                { label: "Services", value: `${form.services.length} services selected` },
+                { label: "Areas", value: `${form.serviceAreas.split("\n").filter(Boolean).length} cities` },
+                { label: "URL Slug", value: form.urlSlug },
+                { label: "AI Content", value: form.openaiApiKey ? "OpenAI" : form.geminiApiKey ? "Gemini" : "Template only" },
+              ].map(({ label, value }) => (
+                <div key={label} className="flex justify-between text-sm">
+                  <span className="text-gray-400">{label}</span>
+                  <span className="text-white font-medium">{value}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="p-4 rounded-xl bg-[#AADD00]/10 border border-[#AADD00]/20">
+              <p className="text-sm text-[#AADD00] font-medium mb-1">What gets generated:</p>
+              <ul className="text-xs text-gray-300 space-y-1">
+                <li>✓ Homepage + About, Contact, FAQ, Calculator, Gallery pages</li>
+                <li>✓ {form.services.length} Service pages</li>
+                <li>✓ {form.serviceAreas.split("\n").filter(Boolean).length} Location pages</li>
+                <li>✓ Sitemap, robots.txt, _headers</li>
+              </ul>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation Buttons */}
+        <div className="flex justify-between mt-8 gap-4">
+          {step > 0 && (
+            <Button variant="outline" onClick={() => setStep(s => s - 1)}
+              className="border-white/20 text-gray-300 bg-transparent hover:bg-white/5 flex-1">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back
+            </Button>
+          )}
+          {step < STEPS.length - 1 ? (
+            <Button onClick={() => setStep(s => s + 1)} disabled={!canNext()}
+              className="flex-1 bg-[#AADD00] hover:bg-[#bef000] text-black font-semibold disabled:opacity-40 disabled:cursor-not-allowed">
+              Next <ChevronRight className="ml-1 h-4 w-4" />
+            </Button>
+          ) : (
+            <Button onClick={handleGenerate} disabled={isGenerating || !canNext()}
+              className="flex-1 bg-[#AADD00] hover:bg-[#bef000] text-black font-bold py-3">
+              {isGenerating
+                ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating Website...</>
+                : <><Droplets className="mr-2 h-4 w-4" /> Create Website <ArrowRight className="ml-1 h-4 w-4" /></>
+              }
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
