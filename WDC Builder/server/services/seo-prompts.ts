@@ -1,0 +1,497 @@
+export interface PromptBusinessContext {
+  name: string;
+  type: string;
+  primaryCity: string;
+  locations: string[];
+  services: string[];
+  nicheKeywords?: string[];
+  contentFingerprint?: string;
+  yearsInBusiness?: string | number;
+  usp?: string;
+  phone: string;
+  ownerName?: string;
+  address?: string;
+  website?: string;
+}
+
+export interface ServiceLocationLink {
+  city: string;
+  slug: string;
+}
+
+export interface ServiceLink {
+  service: string;
+  slug: string;
+}
+
+const formatList = (items: string[]): string => {
+  const cleaned = items.map((item) => item.trim()).filter(Boolean);
+  return cleaned.length > 0 ? cleaned.join(", ") : "N/A";
+};
+
+export const MASTER_SYSTEM_PROMPT = `
+You are an elite SEO content strategist and copywriter specializing in local business websites.
+You write content that ranks on Google and converts visitors into paying customers.
+
+Your content philosophy:
+- Every page targets one primary keyword with high buyer intent
+- Naturally weave semantic keywords, named entities, and local signals
+- Sound like a trusted local expert: warm, confident, practical
+- Follow E-E-A-T: Experience, Expertise, Authoritativeness, Trustworthiness
+- Make H2 and H3 sections independently useful for search intent
+- Avoid filler phrases and generic fluff
+- Content must be unique to the provided business context and niche
+- Use second person voice (you/your), active voice, short clear sentences
+- Include internal link placeholders where requested
+- Do NOT invent fake statistics, star ratings, customer counts, or review numbers
+- Do NOT use superlative claims like "#1 in the city" unless the business explicitly states it
+- Each paragraph should be 3-5 sentences of substantive, specific content
+- FAQ answers must be 80-120 words each, detailed and genuinely helpful
+
+WORD COUNT TARGETS (critical - do not produce less than these):
+- Homepage: minimum 2000 words total across all JSON fields combined
+- Service pages: minimum 2000 words total across all JSON fields combined
+- Location pages: minimum 2000 words total across all JSON fields combined
+- Intro/overview paragraphs: 120-180 words each (not less)
+- Process step bodies: 60-80 words each
+- Benefit/point bodies: 60-80 words each
+- FAQ answers: 80-120 words each
+
+Respond only in valid JSON matching the requested schema. No markdown fences.
+`;
+
+export function buildHomePagePrompt(
+  biz: PromptBusinessContext,
+  allServiceSlugs: string[],
+  allLocationSlugs: string[]
+): string {
+  return `
+Write complete SEO-optimized homepage content for this local business.
+
+BUSINESS DETAILS
+- Business Name: ${biz.name}
+- Industry / Type: ${biz.type}
+- Primary City: ${biz.primaryCity}
+- All Areas Served: ${formatList(biz.locations)}
+- Core Services: ${formatList(biz.services)}
+- Niche Keywords: ${formatList(biz.nicheKeywords || biz.services)}
+- Content Fingerprint: ${biz.contentFingerprint || "N/A"}
+- Years in Business: ${biz.yearsInBusiness || "over 10 years"}
+- Key Differentiators: ${biz.usp || "licensed, insured, same-day service, free estimates"}
+- Phone: ${biz.phone}
+- Owner Name: ${biz.ownerName || ""}
+
+INTERNAL LINK TARGETS AVAILABLE
+- Service Pages: ${formatList(allServiceSlugs)}
+- Location Pages: ${formatList(allLocationSlugs)}
+
+OUTPUT FORMAT (strict JSON)
+{
+  "metaTitle": "Primary keyword + city + brand | under 60 chars",
+  "metaDescription": "Include top keyword, city, strong CTA | 150-160 chars",
+  "hero": {
+    "h1": "Outcome-focused headline with primary keyword and city name",
+    "subheadline": "Expand the promise and include a differentiator",
+    "primaryCTA": "Button text",
+    "trustLine": "Short trust signal under CTA"
+  },
+  "intro": {
+    "h2": "Search-worthy H2 that includes the primary service category",
+    "paragraphs": [
+      "Para 1: customer pain point",
+      "Para 2: expert solution with keyword and city",
+      "Para 3: experience/certification/community trust",
+      "Para 4: soft CTA with one internal link"
+    ]
+  },
+  "servicesSection": {
+    "h2": "Our [City] [Industry] Services",
+    "intro": "One sentence overview",
+    "cards": [
+      {
+        "service": "Service name",
+        "h3": "Keyword variation",
+        "description": "2-3 sentences, benefit first",
+        "internalLink": { "anchor": "Anchor text", "slug": "/services/service-slug" }
+      }
+    ]
+  },
+  "whyUsSection": {
+    "h2": "Why [City] Residents Choose [Business Name]",
+    "points": [
+      {
+        "icon": "emoji or icon name",
+        "heading": "Trust point heading",
+        "body": "2 specific evidence-backed sentences"
+      }
+    ]
+  },
+  "locationsSection": {
+    "h2": "Proudly Serving [Primary City] and Surrounding Areas",
+    "body": "2 paragraphs with neighborhood signals and local trust",
+    "locationLinks": [
+      { "city": "City name", "anchor": "City name", "slug": "/locations/city-slug" }
+    ]
+  },
+  "faqSection": {
+    "h2": "Frequently Asked Questions - [Primary Service] in [City]",
+    "faqs": [
+      { "question": "High-intent buyer question", "answer": "3-5 sentence answer with semantic keyword" },
+      { "question": "Cost/timing question", "answer": "..." },
+      { "question": "Process/qualification question", "answer": "..." },
+      { "question": "Local-specific question", "answer": "..." }
+    ]
+  },
+  "finalCTA": {
+    "h2": "Ready to Get Started? Contact [Business Name] Today",
+    "body": "2 sentences with urgency and trust",
+    "ctaButton": "Button text",
+    "phone": "${biz.phone}"
+  },
+  "seoFootnote": {
+    "h2": "[Primary Service] in [City] - [Business Name]",
+    "body": "3-4 sentence entity-rich paragraph",
+    "targetKeywords": ["6 to 8 keywords used"]
+  }
+}
+
+QUALITY RULES
+- Primary keyword must appear in metaTitle, metaDescription, H1, first 100 intro words, and seoFootnote
+- City name must appear in hero, why-us heading, locations section, FAQ heading, and final CTA heading
+- Include at least 5 internal links across the page
+- Each FAQ answer should include at least one semantic variation
+- Use at least 4 niche keywords naturally across headings and body copy
+- Do not reuse generic boilerplate lines; make claims specific to this business profile
+`;
+}
+
+export function buildServicePagePrompt(
+  biz: PromptBusinessContext,
+  service: string,
+  serviceSlug: string,
+  locationPages: ServiceLocationLink[],
+  otherServiceSlugs: string[]
+): string {
+  const locationLinks = locationPages
+    .map((loc) => `${loc.city} -> ${loc.slug}`)
+    .join(", ");
+
+  return `
+Write a complete SEO-optimized service page for a local business.
+
+CONTEXT
+- Business: ${biz.name}
+- Industry: ${biz.type}
+- This service: ${service}
+- Primary city: ${biz.primaryCity}
+- All cities served: ${formatList(biz.locations)}
+- Niche Keywords: ${formatList(biz.nicheKeywords || biz.services)}
+- Content Fingerprint: ${biz.contentFingerprint || "N/A"}
+- Differentiators: ${biz.usp || "licensed, insured, free estimates, same-day availability"}
+- Phone: ${biz.phone}
+- Current service slug: ${serviceSlug}
+
+Location pages for this service:
+${locationLinks || "N/A"}
+
+Other service pages for cross-linking:
+${formatList(otherServiceSlugs)}
+
+OUTPUT FORMAT (strict JSON)
+{
+  "metaTitle": "${service} in ${biz.primaryCity} | ${biz.name} | under 60 chars",
+  "metaDescription": "Transactional intent meta with keyword + city + CTA",
+  "breadcrumb": "Home > Services > ${service}",
+  "hero": {
+    "h1": "${service} in ${biz.primaryCity} with clear outcome",
+    "subheadline": "Specific benefit or guarantee",
+    "trustBadges": ["Badge 1", "Badge 2", "Badge 3"]
+  },
+  "overviewSection": {
+    "h2": "What Is ${service} and Why It Matters",
+    "body": ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
+  },
+  "processSection": {
+    "h2": "Our ${service} Process in ${biz.primaryCity}",
+    "intro": "One sentence intro",
+    "steps": [
+      { "step": 1, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" },
+      { "step": 2, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" },
+      { "step": 3, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" },
+      { "step": 4, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" },
+      { "step": 5, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" },
+      { "step": 6, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" },
+      { "step": 7, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" }
+    ]
+  },
+  "benefitsSection": {
+    "h2": "Benefits of Professional ${service}",
+    "points": [
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (60-80 words each)" },
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (60-80 words each)" },
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (60-80 words each)" },
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (60-80 words each)" },
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (60-80 words each)" },
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (60-80 words each)" }
+    ]
+  },
+  "warningSignsSection": {
+    "h2": "Signs You Need ${service} Right Away",
+    "intro": "2-3 sentence intro explaining urgency",
+    "signs": [
+      { "sign": "Symptom heading", "body": "2-3 sentences: why this means action is needed now (40-60 words)" },
+      { "sign": "Symptom heading", "body": "2-3 sentences: why this means action is needed now (40-60 words)" },
+      { "sign": "Symptom heading", "body": "2-3 sentences: why this means action is needed now (40-60 words)" },
+      { "sign": "Symptom heading", "body": "2-3 sentences: why this means action is needed now (40-60 words)" },
+      { "sign": "Symptom heading", "body": "2-3 sentences: why this means action is needed now (40-60 words)" },
+      { "sign": "Symptom heading", "body": "2-3 sentences: why this means action is needed now (40-60 words)" }
+    ]
+  },
+  "locationClusterSection": {
+    "h2": "${service} Near You - Areas We Serve",
+    "intro": "1-2 sentence intro",
+    "locationCards": [
+      { "city": "City", "anchor": "${service} in [City]", "slug": "/services/${serviceSlug}", "teaser": "City-specific teaser" }
+    ]
+  },
+  "faqSection": {
+    "h2": "${service} - Frequently Asked Questions",
+    "faqs": [
+      { "question": "Cost/pricing question specific to this service", "answer": "80-120 word detailed answer with specific context" },
+      { "question": "How long does it take question", "answer": "80-120 word detailed answer" },
+      { "question": "DIY vs professional question", "answer": "80-120 word detailed answer explaining risks of DIY" },
+      { "question": "Insurance coverage question", "answer": "80-120 word detailed answer" },
+      { "question": "Licensing/certification question", "answer": "80-120 word detailed answer" },
+      { "question": "City-specific local question", "answer": "80-120 word detailed answer mentioning the city" },
+      { "question": "Prevention or follow-up question", "answer": "80-120 word detailed answer" },
+      { "question": "Process/what to expect question", "answer": "80-120 word detailed answer" }
+    ]
+  },
+  "crossLinkSection": {
+    "h2": "Related Services",
+    "links": [
+      { "service": "Related service", "anchor": "Anchor text", "slug": "/services/related-slug", "reason": "Why related" }
+    ]
+  },
+  "finalCTA": {
+    "h2": "Get Professional ${service} in ${biz.primaryCity} Today",
+    "body": "2 sentence CTA",
+    "ctaButton": "Call or book",
+    "phone": "${biz.phone}"
+  },
+  "targetKeywordsSummary": ["8-10 keywords used"]
+}
+
+REQUIREMENTS
+- Use ${service} + city in metaTitle, H1, first paragraph, 2+ H2s, and final CTA
+- Link to location pages and related services naturally
+- Keep tone practical, buyer-intent focused, and specific
+- Use niche-specific terminology from the keyword list naturally
+- Avoid repeating sentence structures used on other pages
+`;
+}
+
+export function buildLocationPagePrompt(
+  biz: PromptBusinessContext,
+  city: string,
+  servicePages: ServiceLink[],
+  serviceLocationPages: ServiceLink[]
+): string {
+  const comboLinks = serviceLocationPages
+    .map((item) => `${item.service} in ${city} -> ${item.slug}`)
+    .join(", ");
+
+  return `
+Write a complete SEO-optimized location hub page for a local business.
+
+CONTEXT
+- Business: ${biz.name}
+- Industry: ${biz.type}
+- Target city: ${city}
+- All services offered: ${formatList(biz.services)}
+- Niche Keywords: ${formatList(biz.nicheKeywords || biz.services)}
+- Content Fingerprint: ${biz.contentFingerprint || "N/A"}
+- HQ / primary city: ${biz.primaryCity}
+- Phone: ${biz.phone}
+- Differentiators: ${biz.usp || "licensed, insured, free estimates, fast response"}
+
+Service-location pages:
+${comboLinks || "N/A"}
+
+Service pillar pages:
+${servicePages.map((item) => `${item.service} -> ${item.slug}`).join(", ") || "N/A"}
+
+OUTPUT FORMAT (strict JSON)
+{
+  "metaTitle": "${biz.type} in ${city} | ${biz.name} | under 60 chars",
+  "metaDescription": "Keyword + city + CTA | 150-160 chars",
+  "breadcrumb": "Home > Locations > ${city}",
+  "hero": {
+    "h1": "Trusted ${biz.type} Services in ${city}",
+    "subheadline": "City-specific promise",
+    "trustBadges": ["Badge 1", "Badge 2", "Badge 3"]
+  },
+  "localIntroSection": {
+    "h2": "${biz.name} - Your Local ${biz.type} in ${city}",
+    "paragraphs": [
+      "Paragraph 1: city-specific intro, the local water damage challenge (120-160 words)",
+      "Paragraph 2: how the business serves this city, local knowledge, response capability (120-160 words)",
+      "Paragraph 3: insurance process, documentation, trust factors (120-160 words)",
+      "Paragraph 4: commitment to the city community, local expertise (100-140 words)"
+    ]
+  },
+  "servicesInCitySection": {
+    "h2": "Our ${biz.type} Services in ${city}",
+    "intro": "1-2 sentence intro",
+    "serviceCards": [
+      {
+        "service": "Service name",
+        "h3": "[Service] in ${city}",
+        "description": "2-3 sentence local context",
+        "internalLink": { "anchor": "[Service] in ${city}", "slug": "/services/service-slug-city-slug" }
+      }
+    ]
+  },
+  "whyLocalSection": {
+    "h2": "Why ${city} Residents Trust ${biz.name}",
+    "points": [
+      { "heading": "Local authority point", "body": "2 sentence proof" }
+    ]
+  },
+  "localAreaSection": {
+    "h2": "Neighborhoods and Areas We Cover in ${city}",
+    "body": "2 paragraphs with neighborhoods, ZIPs, landmarks",
+    "note": "Use real area entities where possible"
+  },
+  "faqSection": {
+    "h2": "${biz.type} Services in ${city} - Common Questions",
+    "faqs": [
+      { "question": "How fast can you respond to emergencies in ${city}?", "answer": "80-120 word detailed answer with specific response time info" },
+      { "question": "What types of water damage do you handle in ${city}?", "answer": "80-120 word answer covering all damage categories" },
+      { "question": "Does ${biz.name} work with insurance companies in ${city}?", "answer": "80-120 word answer about insurance claim process" },
+      { "question": "How long does restoration take in ${city}?", "answer": "80-120 word answer with realistic timelines" },
+      { "question": "Can I stay in my ${city} home during restoration?", "answer": "80-120 word honest answer about disruption" },
+      { "question": "Do you provide free estimates in ${city}?", "answer": "80-120 word answer about the assessment process" }
+    ]
+  },
+  "finalCTA": {
+    "h2": "Need ${biz.type} Services in ${city}? Call Us Today",
+    "body": "2 sentence CTA with trust and urgency",
+    "ctaButton": "CTA text",
+    "phone": "${biz.phone}"
+  },
+  "targetKeywordsSummary": ["8-10 keywords used"]
+}
+
+CRITICAL RULES
+- City must appear in metaTitle, H1, hero subheadline, every H2, intro opening, FAQ H2, and final CTA H2
+- Content must feel local and unique for ${city}
+- Link to related service pages naturally
+- Integrate niche keywords naturally without keyword stuffing
+- Keep language and examples distinct from other pages for uniqueness
+`;
+}
+
+export function buildServiceLocationPrompt(
+  biz: PromptBusinessContext,
+  service: string,
+  city: string,
+  serviceSlug: string,
+  locationSlug: string,
+  nearbyCities: string[]
+): string {
+  return `
+Write a complete SEO service-location conversion page.
+
+Business: ${biz.name}
+Service: ${service}
+City: ${city}
+Nearby Cities: ${formatList(nearbyCities)}
+Phone: ${biz.phone}
+Differentiators: ${biz.usp || "licensed, insured, same-day, free estimates"}
+Niche Keywords: ${formatList(biz.nicheKeywords || biz.services)}
+Content Fingerprint: ${biz.contentFingerprint || "N/A"}
+Years: ${biz.yearsInBusiness || "10+"}
+Parent service page: ${serviceSlug}
+Parent location page: ${locationSlug}
+
+Return strict JSON with sections: metaTitle, metaDescription, breadcrumb, hero, openingSection,
+localContextSection, serviceDetailSection, pricingSection, faqSection, nearbyCitiesSection,
+parentLinksSection, finalCTA, targetKeywordsSummary.
+
+Keep tone urgent and conversion-focused for high-buy-intent users.
+`;
+}
+
+export function buildInternalLinkingPrompt(
+  allPages: Array<{ title: string; slug: string; pageType: string; targetService?: string; targetCity?: string }>
+): string {
+  const pageList = allPages
+    .map(
+      (page) =>
+        `slug: ${page.slug} | type: ${page.pageType} | service: ${page.targetService || "-"} | city: ${page.targetCity || "-"}`
+    )
+    .join("\n");
+
+  return `
+You are an SEO internal linking architect.
+
+Pages:
+${pageList}
+
+Build a linking map with these rules:
+- Homepage links to all service and location hub pages
+- Service pages link to location variants, related services, and homepage
+- Location pages link to service-location pages and homepage
+- No orphan pages
+- Max 15 outgoing links per page
+
+Return strict JSON:
+{
+  "linkingMap": {
+    "/slug": {
+      "linksTo": [{ "slug": "/target", "anchorText": "descriptive anchor" }],
+      "linkedFromBy": ["/source-1", "/source-2"]
+    }
+  },
+  "orphanCheck": ["pages with low inbound links"],
+  "pillarPages": ["/slug"],
+  "hubPages": ["/slug"]
+}
+`;
+}
+
+export function buildSchemaPrompt(
+  biz: PromptBusinessContext,
+  pageType: string,
+  pageData: unknown
+): string {
+  return `
+Generate JSON-LD schema for this page.
+
+Business: ${biz.name}
+Business Type: ${biz.type}
+Address: ${biz.address || ""}
+Phone: ${biz.phone}
+Website: ${biz.website || ""}
+Page Type: ${pageType}
+Page Data: ${JSON.stringify(pageData)}
+
+Return strict JSON:
+{
+  "schemas": [
+    {
+      "type": "LocalBusiness | Service | FAQPage | BreadcrumbList | WebPage",
+      "jsonLd": { "@context": "https://schema.org", "@type": "..." }
+    }
+  ]
+}
+
+Rules:
+- Every page includes WebPage and BreadcrumbList
+- Homepage includes LocalBusiness
+- Service pages include Service and FAQPage if FAQs exist
+- Location pages include LocalBusiness with areaServed
+- Service-location pages include Service + LocalBusiness + FAQPage
+`;
+}

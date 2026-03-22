@@ -1,0 +1,526 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* Suppress ResizeObserver warnings */
+.resize-observer-suppress {
+  contain: layout style;
+  resize: none !important;
+}
+
+/* Global ResizeObserver error suppression for select components */
+[data-radix-select-content],
+[data-radix-select-trigger],
+[data-radix-popper-content-wrapper] {
+  contain: layout style !important;
+  resize: none !important;
+}
+
+/* Additional suppression for dropdown components */
+[role="combobox"],
+[role="listbox"],
+[data-state="open"] {
+  contain: layout !important;
+}
+
+/* Enhanced form styling */
+.form-field-error input,
+.form-field-error textarea,
+.form-field-error button[role="combobox"] {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 1px #ef4444 !important;
+  background-color: #fef2f2;
+}
+
+.form-field-error label {
+  color: #dc2626 !important;
+}
+
+/* Enhanced form inputs */
+input, textarea {
+  transition: all 0.2s ease-in-out;
+}
+
+input:focus, textarea:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  border-color: #3b82f6;
+  transform: translateY(-1px);
+}
+
+/* Website builder readability improvements */
+.builder-form-readable input,
+.builder-form-readable textarea,
+.builder-form-readable button[role="combobox"] {
+  background-color: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.builder-form-readable input::placeholder,
+.builder-form-readable textarea::placeholder,
+.builder-form-readable button[role="combobox"][data-placeholder] {
+  color: #64748b;
+  opacity: 1;
+}
+
+.builder-form-readable label {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.builder-form-readable input:focus,
+.builder-form-readable textarea:focus,
+.builder-form-readable button[role="combobox"]:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+/* Modern builder contrast tweaks */
+.builder-form-modern input,
+.builder-form-modern textarea,
+.builder-form-modern button[role="combobox"] {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+}
+
+.builder-form-modern input::placeholder,
+.builder-form-modern textarea::placeholder {
+  color: #64748b !important;
+}
+
+.builder-form-modern [data-radix-select-trigger] span {
+  color: #0f172a;
+}
+
+/* FAQ Section styling enhancements - Compact Design */
+
+/* Section headers */
+.section-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+}
+
+/* Button enhancements */
+button[type="submit"], button[type="button"] {
+  transition: all 0.2s ease-in-out;
+}
+
+button[type="submit"]:hover, button[type="button"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Animate error fields to draw attention */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+.form-field-error {
+  animation: shake 0.3s ease-in-out;
+}
+
+/* Error message highlighting */
+[data-invalid="true"] {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 1px #ef4444;
+  background-color: #fef2f2;
+}
+
+/* Custom styles for FontAwesome icons */
+.fas, .fab {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands";
+}
+
+/* Ensure proper icon rendering */
+i.fas, i.fab {
+  font-style: normal;
+  font-variant: normal;
+  text-rendering: auto;
+  line-height: 1;
+}
+
+/* Business Category dropdown styling */
+.category-dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 36px;
+  padding: 8px 12px;
+}
+
+.competition-badge {
+  flex-shrink: 0;
+  margin-left: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.competition-high {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.competition-low {
+  background-color: #dcfce7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+/* Ensure proper width for dropdown content */
+[data-radix-select-content] {
+  min-width: var(--radix-select-trigger-width);
+  max-width: 400px;
+}
+
+/* Custom scrollbar for preview */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: #f3f4f6;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
+}
+
+/* CTA Section Styling */
+.cta-section .cta-item-enhanced {
+  background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section .cta-item-enhanced:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+  border-color: #cbd5e1;
+}
+
+.cta-section .cta-item-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #10b981, #06b6d4, #3b82f6, #8b5cf6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cta-section .cta-item-enhanced:hover::before {
+  opacity: 1;
+}
+
+/* CTA specific styling */
+.cta-section h3.section-header {
+  background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Rich Text Editor (Quill) Styling */
+.ql-toolbar {
+  border: 1px solid hsl(var(--border)) !important;
+  border-bottom: none !important;
+  border-radius: 8px 8px 0 0 !important;
+  background: hsl(var(--background)) !important;
+  padding: 12px !important;
+}
+
+.ql-container {
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 0 0 8px 8px !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+  background: hsl(var(--background)) !important;
+}
+
+.ql-editor {
+  color: hsl(var(--foreground)) !important;
+  line-height: 1.6 !important;
+  padding: 16px !important;
+  min-height: 300px !important;
+}
+
+.ql-editor.ql-blank::before {
+  color: hsl(var(--muted-foreground)) !important;
+  font-style: normal !important;
+  left: 16px !important;
+}
+
+/* Toolbar button styling */
+.ql-toolbar .ql-stroke {
+  stroke: hsl(var(--foreground)) !important;
+}
+
+.ql-toolbar .ql-fill {
+  fill: hsl(var(--foreground)) !important;
+}
+
+.ql-toolbar button {
+  border-radius: 4px !important;
+  margin: 2px !important;
+  padding: 4px !important;
+  height: 32px !important;
+  width: 32px !important;
+}
+
+.ql-toolbar button:hover {
+  background: hsl(var(--muted)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.ql-toolbar button.ql-active {
+  background: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+}
+
+.ql-toolbar .ql-active .ql-stroke {
+  stroke: hsl(var(--primary-foreground)) !important;
+}
+
+.ql-toolbar .ql-active .ql-fill {
+  fill: hsl(var(--primary-foreground)) !important;
+}
+
+/* Dropdown styling */
+.ql-toolbar .ql-picker {
+  color: hsl(var(--foreground)) !important;
+}
+
+.ql-toolbar .ql-picker-options {
+  background: hsl(var(--background)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  padding: 4px !important;
+}
+
+.ql-toolbar .ql-picker-item {
+  color: hsl(var(--foreground)) !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+}
+
+.ql-toolbar .ql-picker-item:hover {
+  background: hsl(var(--muted)) !important;
+}
+
+.ql-toolbar .ql-picker-item.ql-selected {
+  background: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+}
+
+/* Table editor styling */
+.ql-editor table {
+  border-collapse: collapse !important;
+  margin: 16px 0 !important;
+  width: 100% !important;
+}
+
+.ql-editor table td,
+.ql-editor table th {
+  border: 1px solid hsl(var(--border)) !important;
+  padding: 8px 12px !important;
+  min-width: 50px !important;
+}
+
+.ql-editor table th {
+  background: hsl(var(--muted)) !important;
+  font-weight: 600 !important;
+}
+
+/* Code block styling */
+.ql-editor .ql-code-block-container {
+  background: hsl(var(--muted)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 6px !important;
+  margin: 16px 0 !important;
+  padding: 16px !important;
+  font-family: 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace !important;
+}
+
+.ql-editor .ql-code-block {
+  background: transparent !important;
+  border: none !important;
+  color: hsl(var(--foreground)) !important;
+  font-family: inherit !important;
+  font-size: 13px !important;
+  padding: 0 !important;
+}
+
+/* Link styling */
+.ql-editor a {
+  color: hsl(var(--primary)) !important;
+  text-decoration: underline !important;
+}
+
+.ql-editor a:hover {
+  text-decoration: none !important;
+}
+
+/* Image styling */
+.ql-editor img {
+  max-width: 100% !important;
+  height: auto !important;
+  border-radius: 6px !important;
+  margin: 8px 0 !important;
+}
+
+/* Blockquote styling */
+.ql-editor blockquote {
+  border-left: 4px solid hsl(var(--primary)) !important;
+  margin: 16px 0 !important;
+  padding: 8px 16px !important;
+  background: hsl(var(--muted)) !important;
+  border-radius: 0 6px 6px 0 !important;
+  font-style: italic !important;
+}
+
+/* List styling */
+.ql-editor ol,
+.ql-editor ul {
+  margin: 16px 0 !important;
+  padding-left: 24px !important;
+}
+
+.ql-editor li {
+  margin: 4px 0 !important;
+}
+
+/* Focus state */
+.ql-container.ql-snow.ql-focus,
+.ql-toolbar.ql-snow.ql-focus {
+  border-color: hsl(var(--primary)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2) !important;
+}
+
+/* Dark mode adjustments */
+.dark .ql-editor {
+  background: hsl(var(--background)) !important;
+  color: hsl(var(--foreground)) !important;
+}
+
+.dark .ql-toolbar {
+  background: hsl(var(--background)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+.dark .ql-container {
+  background: hsl(var(--background)) !important;
+  border-color: hsl(var(--border)) !important;
+}
+
+/* Tooltip improvements */
+.ql-tooltip {
+  background: hsl(var(--background)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  color: hsl(var(--foreground)) !important;
+  padding: 8px 12px !important;
+}
+
+.ql-tooltip input {
+  background: hsl(var(--background)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 4px !important;
+  color: hsl(var(--foreground)) !important;
+  padding: 4px 8px !important;
+}
+
+.ql-tooltip input:focus {
+  border-color: hsl(var(--primary)) !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2) !important;
+}

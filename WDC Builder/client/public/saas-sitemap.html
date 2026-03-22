@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SMBify SaaS HTML Sitemap</title>
+  <style>
+    :root {
+      --bg: #020617;
+      --card: #0f172a;
+      --border: #1e293b;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --link: #67e8f9;
+      --template: #38bdf8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      background: var(--bg);
+      color: var(--text);
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    h1, h2 {
+      margin: 0;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+    h2 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #a5f3fc;
+    }
+    p {
+      margin: 0;
+      color: var(--muted);
+    }
+    .meta {
+      margin-top: 8px;
+      font-size: 12px;
+    }
+    .generated-at {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #64748b;
+    }
+    .section-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+    .links {
+      display: grid;
+      gap: 8px;
+    }
+    a {
+      color: var(--link);
+      text-decoration: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      display: block;
+      transition: 0.2s ease;
+    }
+    a:hover {
+      border-color: #22d3ee;
+      background: #082f49;
+    }
+    .route {
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--muted);
+      word-break: break-all;
+    }
+    .route-template {
+      color: var(--template);
+    }
+    .route-description {
+      color: #cbd5e1;
+    }
+    .top-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .top-links a {
+      width: auto;
+      display: inline-block;
+      padding: 8px 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <section class="card">
+      <h1>SMBify SaaS HTML Sitemap</h1>
+      <p>This page is generated from <code>client/src/lib/saas-pages.ts</code>.</p>
+      <p class="meta">Total pages: 45. Click each link to confirm route availability.</p>
+      <p class="generated-at">Generated at: 2026-03-07T20:50:15.824Z</p>
+      <div class="top-links">
+        <a href="/">Home</a>
+        <a href="/builder">Builder</a>
+        <a href="/sitemap">In-App Sitemap</a>
+      </div>
+    </section>
+
+    <div class="section-grid">
+      <section class="card">
+        <h2>Public Pages (9)</h2>
+        <div class="links">
+          <a href="/"><strong>Landing Page</strong><div class="route">/</div><div class="route route-description">Main marketing homepage</div></a>
+          <a href="/pricing"><strong>Pricing</strong><div class="route">/pricing</div><div class="route route-description">Plans, FAQ, and billing CTA</div></a>
+          <a href="/features"><strong>Features</strong><div class="route">/features</div><div class="route route-description">Deep-dive product features</div></a>
+          <a href="/blog"><strong>Blog</strong><div class="route">/blog</div><div class="route route-description">SEO blog listing</div></a>
+          <a href="/blog/sample-seo-article"><strong>Blog Article</strong><div class="route">/blog/sample-seo-article</div><div class="route route-template">Template: /blog/:slug</div><div class="route route-description">Individual blog article page</div></a>
+          <a href="/demo"><strong>Demo</strong><div class="route">/demo</div><div class="route route-description">Live preview demo</div></a>
+          <a href="/about"><strong>About</strong><div class="route">/about</div><div class="route route-description">Company story and mission</div></a>
+          <a href="/contact"><strong>Contact</strong><div class="route">/contact</div><div class="route route-description">Contact and support form</div></a>
+          <a href="/affiliates"><strong>Affiliate Program</strong><div class="route">/affiliates</div><div class="route route-description">Referral partner page</div></a>
+        </div>
+      </section>
+<section class="card">
+        <h2>Auth Pages (6)</h2>
+        <div class="links">
+          <a href="/signup"><strong>Signup</strong><div class="route">/signup</div><div class="route route-description">Create an account</div></a>
+          <a href="/login"><strong>Login</strong><div class="route">/login</div><div class="route route-description">Sign in page</div></a>
+          <a href="/forgot-password"><strong>Forgot Password</strong><div class="route">/forgot-password</div><div class="route route-description">Password reset request</div></a>
+          <a href="/reset-password/demo-token"><strong>Reset Password</strong><div class="route">/reset-password/demo-token</div><div class="route route-template">Template: /reset-password/:token</div><div class="route route-description">Reset password form</div></a>
+          <a href="/verify-email/demo-token"><strong>Verify Email</strong><div class="route">/verify-email/demo-token</div><div class="route route-template">Template: /verify-email/:token</div><div class="route route-description">Email verification page</div></a>
+          <a href="/invite/demo-token"><strong>Accept Invite</strong><div class="route">/invite/demo-token</div><div class="route route-template">Template: /invite/:token</div><div class="route route-description">Team invite acceptance page</div></a>
+        </div>
+      </section>
+<section class="card">
+        <h2>Main Dashboard (4)</h2>
+        <div class="links">
+          <a href="/dashboard"><strong>Dashboard Home</strong><div class="route">/dashboard</div><div class="route route-description">Overview and quick actions</div></a>
+          <a href="/dashboard/websites"><strong>All Websites</strong><div class="route">/dashboard/websites</div><div class="route route-description">List all generated websites</div></a>
+          <a href="/dashboard/websites/demo-site"><strong>Website Editor</strong><div class="route">/dashboard/websites/demo-site</div><div class="route route-template">Template: /dashboard/websites/:id</div><div class="route route-description">Edit one website project</div></a>
+          <a href="/dashboard/websites/demo-site/pages/home"><strong>Page Content Editor</strong><div class="route">/dashboard/websites/demo-site/pages/home</div><div class="route route-template">Template: /dashboard/websites/:id/pages/:pageId</div><div class="route route-description">Edit a single website page</div></a>
+        </div>
+      </section>
+<section class="card">
+        <h2>SEO Tools (5)</h2>
+        <div class="links">
+          <a href="/dashboard/seo"><strong>SEO Overview</strong><div class="route">/dashboard/seo</div><div class="route route-description">SEO health and opportunities</div></a>
+          <a href="/dashboard/seo/keywords"><strong>Keyword Tracker</strong><div class="route">/dashboard/seo/keywords</div><div class="route route-description">Keyword coverage tracker</div></a>
+          <a href="/dashboard/seo/links"><strong>Internal Links Map</strong><div class="route">/dashboard/seo/links</div><div class="route route-description">Internal link graph and issues</div></a>
+          <a href="/dashboard/seo/schema"><strong>Schema Manager</strong><div class="route">/dashboard/seo/schema</div><div class="route route-description">Structured data manager</div></a>
+          <a href="/dashboard/seo/sitemap"><strong>Sitemap &amp; Robots</strong><div class="route">/dashboard/seo/sitemap</div><div class="route route-description">Sitemap and robots tools</div></a>
+        </div>
+      </section>
+<section class="card">
+        <h2>Publish &amp; Export (3)</h2>
+        <div class="links">
+          <a href="/dashboard/websites/demo-site/publish"><strong>Publish Settings</strong><div class="route">/dashboard/websites/demo-site/publish</div><div class="route route-template">Template: /dashboard/websites/:id/publish</div><div class="route route-description">Deploy and publish controls</div></a>
+          <a href="/dashboard/domains"><strong>Domain Manager</strong><div class="route">/dashboard/domains</div><div class="route route-description">Custom domain management</div></a>
+          <a href="/dashboard/exports"><strong>Export History</strong><div class="route">/dashboard/exports</div><div class="route route-description">Past exports and downloads</div></a>
+        </div>
+      </section>
+<section class="card">
+        <h2>Account &amp; Settings (8)</h2>
+        <div class="links">
+          <a href="/dashboard/settings/profile"><strong>Profile</strong><div class="route">/dashboard/settings/profile</div><div class="route route-description">Profile management</div></a>
+          <a href="/dashboard/settings/api-keys"><strong>API Keys Setup</strong><div class="route">/dashboard/settings/api-keys</div><div class="route route-description">API and integration keys</div></a>
+          <a href="/dashboard/settings/billing"><strong>Billing &amp; Subscription</strong><div class="route">/dashboard/settings/billing</div><div class="route route-description">Billing and plan management</div></a>
+          <a href="/dashboard/settings/usage"><strong>Usage &amp; Limits</strong><div class="route">/dashboard/settings/usage</div><div class="route route-description">Usage and limit tracking</div></a>
+          <a href="/dashboard/settings/team"><strong>Team Members</strong><div class="route">/dashboard/settings/team</div><div class="route route-description">Team invites and roles</div></a>
+          <a href="/dashboard/settings/notifications"><strong>Notifications</strong><div class="route">/dashboard/settings/notifications</div><div class="route route-description">Notification preferences</div></a>
+          <a href="/dashboard/settings/integrations"><strong>Integrations</strong><div class="route">/dashboard/settings/integrations</div><div class="route route-description">Third-party integrations</div></a>
+          <a href="/dashboard/settings/white-label"><strong>White Label Settings</strong><div class="route">/dashboard/settings/white-label</div><div class="route route-description">Branding and client portal settings</div></a>
+        </div>
+      </section>
+<section class="card">
+        <h2>Admin Panel (6)</h2>
+        <div class="links">
+          <a href="/admin"><strong>Admin Dashboard</strong><div class="route">/admin</div><div class="route route-description">Platform-wide metrics</div></a>
+          <a href="/admin/users"><strong>User Management</strong><div class="route">/admin/users</div><div class="route route-description">Manage platform users</div></a>
+          <a href="/admin/subscriptions"><strong>Subscription Management</strong><div class="route">/admin/subscriptions</div><div class="route route-description">Plan and subscription control</div></a>
+          <a href="/admin/prompts"><strong>Prompt Manager</strong><div class="route">/admin/prompts</div><div class="route route-description">Manage AI prompt templates</div></a>
+          <a href="/admin/logs"><strong>Generation Logs</strong><div class="route">/admin/logs</div><div class="route route-description">AI generation logs</div></a>
+          <a href="/admin/settings"><strong>System Settings</strong><div class="route">/admin/settings</div><div class="route route-description">Global platform settings</div></a>
+        </div>
+      </section>
+<section class="card">
+        <h2>System Pages (4)</h2>
+        <div class="links">
+          <a href="/404"><strong>404 Not Found</strong><div class="route">/404</div><div class="route route-description">Not found page</div></a>
+          <a href="/500"><strong>500 Server Error</strong><div class="route">/500</div><div class="route route-description">Server error page</div></a>
+          <a href="/maintenance"><strong>Maintenance</strong><div class="route">/maintenance</div><div class="route route-description">Maintenance mode page</div></a>
+          <a href="/upgrade"><strong>Upgrade Required</strong><div class="route">/upgrade</div><div class="route route-description">Plan upgrade prompt</div></a>
+        </div>
+      </section>
+    </div>
+  </div>
+</body>
+</html>

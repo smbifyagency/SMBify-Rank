@@ -1,0 +1,14 @@
+node_modules
+dist
+.DS_Store
+server/public
+vite.config.ts.*
+*.tar.gz
+.env
+.vercel
+attached_assets/*.png
+attached_assets/*.mkv
+attached_assets/*.mp4
+.vercel
+.env*.local
+.env.production
