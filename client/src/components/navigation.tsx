@@ -221,11 +221,13 @@ export function Navigation() {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link href="/">
-              <div className="flex items-center gap-3 cursor-pointer group">
-                <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:shadow-indigo-500/40 transition-all">
-                  <Globe className="h-4.5 w-4.5 text-white" />
+              <div className="flex items-center gap-2 cursor-pointer group">
+                <div className="h-9 w-9 rounded-lg bg-black border border-white/10 flex items-center justify-center shadow-lg group-hover:border-[#AADD00]/40 transition-all">
+                  <Globe className="h-4 w-4 text-[#AADD00]" />
                 </div>
-                <h1 className="text-lg font-bold text-white tracking-tight">SMBify</h1>
+                <h1 className="text-lg font-bold tracking-tight">
+                  <span className="text-white">SMBify</span><span className="text-[#AADD00]"> Rank</span>
+                </h1>
               </div>
             </Link>
           </div>
@@ -272,7 +274,7 @@ export function Navigation() {
                   </Button>
                 </Link>
                 <Link href="/signup">
-                  <Button size="sm" className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/25">
+                  <Button size="sm" className="bg-[#AADD00] hover:bg-[#bef000] text-black font-semibold shadow-lg shadow-[#AADD00]/25">
                     Get Started Free
                   </Button>
                 </Link>
@@ -301,7 +303,7 @@ export function Navigation() {
                 <Link key={item.path} href={item.path}>
                   <button
                     className={`w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors ${location === item.path
-                      ? "bg-indigo-500/10 text-indigo-400"
+                      ? "bg-[#AADD00]/10 text-[#AADD00]"
                       : "text-gray-300 hover:bg-white/5 hover:text-white"
                       }`}
                     onClick={() => setMobileMenuOpen(false)}
@@ -318,7 +320,7 @@ export function Navigation() {
                   {!isOnDashboard && (
                     <Link href="/dashboard">
                       <button onClick={() => setMobileMenuOpen(false)}
-                        className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-indigo-400 hover:bg-indigo-500/10">
+                        className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-[#AADD00] hover:bg-[#AADD00]/10">
                         <LayoutDashboard className="h-4 w-4 inline mr-2" /> Dashboard
                       </button>
                     </Link>
@@ -348,7 +350,7 @@ export function Navigation() {
                   </Link>
                   <Link href="/signup">
                     <button onClick={() => setMobileMenuOpen(false)}
-                      className="w-full text-center mt-2 px-4 py-3 rounded-xl text-sm font-semibold bg-gradient-to-r from-indigo-600 to-violet-600 text-white">
+                      className="w-full text-center mt-2 px-4 py-3 rounded-xl text-sm font-semibold bg-[#AADD00] hover:bg-[#bef000] text-black">
                       Get Started Free
                     </button>
                   </Link>

@@ -5,7 +5,7 @@ export function SharedFooter() {
     return (
         <footer className="relative bg-gray-950 text-white overflow-hidden">
             {/* Subtle gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-indigo-950/50 via-transparent to-violet-950/30" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[#AADD00]/5 via-transparent to-[#AADD00]/3" />
 
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Main Footer Content */}
@@ -13,17 +13,19 @@ export function SharedFooter() {
                     {/* Brand */}
                     <div className="col-span-2">
                         <div className="flex items-center gap-3 mb-4">
-                            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/25">
-                                <Globe className="h-5 w-5 text-white" />
+                            <div className="h-10 w-10 rounded-lg bg-black border border-white/10 flex items-center justify-center shadow-lg">
+                                <Globe className="h-5 w-5 text-[#AADD00]" />
                             </div>
-                            <span className="text-xl font-bold tracking-tight">SMBify</span>
+                            <span className="text-xl font-bold tracking-tight">
+                                <span className="text-white">SMBify</span><span className="text-[#AADD00]"> Rank</span>
+                            </span>
                         </div>
                         <p className="text-gray-400 leading-relaxed max-w-sm text-sm mb-6">
                             The AI-powered website builder designed for local businesses. Create professional,
                             SEO-optimized websites in minutes — no coding required.
                         </p>
                         <Link href="/signup">
-                            <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-sm font-semibold text-white shadow-lg shadow-indigo-500/25 transition-all">
+                            <button className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#AADD00] hover:bg-[#bef000] text-sm font-semibold text-black shadow-lg shadow-[#AADD00]/25 transition-all">
                                 Get Started Free <ArrowRight className="h-3.5 w-3.5" />
                             </button>
                         </Link>
@@ -95,7 +97,7 @@ export function SharedFooter() {
                 {/* Bottom Bar */}
                 <div className="py-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                     <p className="text-gray-500 text-xs">
-                        © {new Date().getFullYear()} SMBify. All rights reserved.
+                        © {new Date().getFullYear()} SMBify Rank. All rights reserved.
                     </p>
                     <p className="text-gray-600 text-xs">
                         Built with AI · Powered by React

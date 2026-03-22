@@ -9,7 +9,7 @@ export async function generateWithOpenRouter(prompt: string, apiKey: string): Pr
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": "https://replit.com",
-        "X-Title": "LocalSite Builder"
+        "X-Title": "SMBify Rank"
       },
       body: JSON.stringify({
         model: "openai/gpt-4o",
@@ -91,7 +91,7 @@ Return a JSON object with these exact fields:
         "Authorization": `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": "https://replit.com",
-        "X-Title": "LocalSite Builder"
+        "X-Title": "SMBify Rank"
       },
       body: JSON.stringify({
         model: "openai/gpt-4o",

@@ -414,7 +414,7 @@ async function generateStructuredJsonWithProvider(
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": "https://replit.com",
-        "X-Title": "SMBify Ranker",
+        "X-Title": "SMBify Rank",
       },
       body: JSON.stringify({
         model: "openai/gpt-4o-mini",
@@ -2631,7 +2631,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Add README
       const readmeContent = `# ${validatedData.businessName} Website
 
-This website was generated using LocalSite Builder.
+This website was generated using SMBify Rank.
 
 ## Files:
 - index.html - Main website file
@@ -2901,7 +2901,7 @@ ${blogPosts.length > 0 ? `Blog posts generated: ${blogPosts.length}` : ''}
         // Add business-specific README
         zip.file(`${folderName}/README.md`, `# ${businessData.businessName} Website
 
-This website was generated using LocalSite Builder.
+This website was generated using SMBify Rank.
 
 ## Files:
 - index.html - Main website file
@@ -2925,7 +2925,7 @@ Generated on: ${new Date().toISOString()}
       // Add master README with summary
       zip.file("README.md", `# Bulk Website Generation
 
-Generated ${validatedData.businesses.length} websites using LocalSite Builder.
+Generated ${validatedData.businesses.length} websites using SMBify Rank.
 
 ## Websites Generated:
 ${validatedData.businesses.map((b, i) => `${i + 1}. ${b.businessName} (${b.heroService})`).join('\n')}
@@ -5161,7 +5161,7 @@ Total Websites: ${validatedData.businesses.length}
       const readmeContent = generateBlog
         ? `# ${validatedData.businessName} Website with Blog
 
-This website was generated using LocalSite Builder with AI-powered blog generation.
+This website was generated using SMBify Rank with AI-powered blog generation.
 
 ## Files:
 - index.html - Main website file
@@ -5181,7 +5181,7 @@ You can deploy this website to any web hosting service by uploading these files.
 Generated on: ${new Date().toISOString()}`
         : `# ${validatedData.businessName} Website
 
-This website was generated using LocalSite Builder.
+This website was generated using SMBify Rank.
 
 ## Files:
 - index.html - Main website file
@@ -5468,7 +5468,7 @@ Generated on: ${new Date().toISOString()}`;
           "Authorization": `Bearer ${apiKey}`,
           "Content-Type": "application/json",
           "HTTP-Referer": "https://replit.com",
-          "X-Title": "LocalSite Builder"
+          "X-Title": "SMBify Rank"
         },
         body: JSON.stringify({
           model: "openai/gpt-4o-mini",
