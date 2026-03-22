@@ -11,33 +11,26 @@ export default function DashboardWebsites() {
     const [, setLocation] = useLocation();
     const { toast } = useToast();
     const [isCreating, setIsCreating] = useState(false);
+    const [deletingId, setDeletingId] = useState<string | null>(null);
 
-    const { data: websites = [], isLoading } = useQuery<Website[]>({
+    const { data: websites = [], isLoading, refetch } = useQuery<Website[]>({
         queryKey: ["/api/websites"]
     });
 
-    const handleCreateWebsite = async () => {
-        setIsCreating(true);
-        try {
-            const res = await fetch("/api/websites", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    title: "Untitled Project",
-                    description: "Blank template website ready for configuration.",
-                    template: "template1",
-                    theme: "light",
-                    businessData: {}
-                })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || "Failed to create site");
+    const handleCreateWebsite = () => setLocation("/dashboard/new-website");
 
-            toast({ title: "Site Initialized", description: "Redirecting to configurator..." });
-            setLocation(`/dashboard/websites/${data.id}`);
+    const handleDelete = async (id: string, name: string) => {
+        if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+        setDeletingId(id);
+        try {
+            const res = await fetch(`/api/websites/${id}`, { method: "DELETE" });
+            if (!res.ok) throw new Error("Failed to delete");
+            toast({ title: "Deleted", description: `"${name}" has been removed.` });
+            refetch();
         } catch (error: any) {
             toast({ title: "Error", description: error.message, variant: "destructive" });
-            setIsCreating(false);
+        } finally {
+            setDeletingId(null);
         }
     };
 
@@ -117,6 +110,20 @@ export default function DashboardWebsites() {
                                                 <ExternalLink className="h-3 w-3 flex-shrink-0" /> <span className="truncate">{domain.replace(/^https?:\/\//, '')}</span>
                                             </a>
                                         )}
+                                        <div className="flex items-center gap-2 mt-3">
+                                            <Link href={`/dashboard/wd-editor/${site.id}`} className="flex-1">
+                                                <button className="w-full flex items-center justify-center gap-1 text-xs py-1.5 px-3 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-all">
+                                                    <Edit className="h-3 w-3" /> Edit
+                                                </button>
+                                            </Link>
+                                            <button
+                                                onClick={() => handleDelete(String(site.id), businessData?.businessName || site.title || "Untitled")}
+                                                disabled={deletingId === String(site.id)}
+                                                className="flex items-center justify-center gap-1 text-xs py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all disabled:opacity-50"
+                                            >
+                                                {deletingId === String(site.id) ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>

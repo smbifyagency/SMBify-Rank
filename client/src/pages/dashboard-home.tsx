@@ -28,29 +28,8 @@ export default function DashboardHome() {
 
     const [isCreating, setIsCreating] = useState(false);
 
-    const handleCreateWebsite = async () => {
-        setIsCreating(true);
-        try {
-            const res = await fetch("/api/websites", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    title: "Untitled Project",
-                    description: "Blank template website ready for configuration.",
-                    template: "template1",
-                    theme: "light",
-                    businessData: {}
-                })
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.message || "Failed to create site");
-
-            toast({ title: "Site Initialized", description: "Redirecting to configurator..." });
-            setLocation(`/dashboard/websites/${data.id}`);
-        } catch (error: any) {
-            toast({ title: "Error", description: error.message, variant: "destructive" });
-            setIsCreating(false);
-        }
+    const handleCreateWebsite = () => {
+        setLocation("/dashboard/new-website");
     };
 
     const { data: limitData } = useQuery<WebsiteLimitData>({
