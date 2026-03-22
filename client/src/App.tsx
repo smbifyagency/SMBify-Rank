@@ -40,8 +40,7 @@ import AuthCallback from "@/pages/auth-callback";
 // Dashboard Pages
 import DashboardHome from "@/pages/dashboard-home";
 import DashboardWebsites from "@/pages/dashboard-websites";
-import DashboardWebsiteEditor from "@/pages/dashboard-website-editor";
-import DashboardPageEditor from "@/pages/dashboard-page-editor";
+import DashboardNewWebsite from "@/pages/dashboard-new-website";
 import WDSiteEditor from "@/pages/wd-site-editor";
 
 // Onboarding / AI Wizard Pages
@@ -55,7 +54,6 @@ import OnboardingPreview from "@/pages/onboarding-preview";
 
 
 // Publish & Export
-import PublishSettings from "@/pages/publish-settings";
 import ExportHistory from "@/pages/export-history";
 
 // Account Settings
@@ -78,6 +76,16 @@ import UpgradePage from "@/pages/upgrade";
 // Component for public routes with navigation
 function PublicRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
+}
+
+// Redirect old /dashboard/websites/:id to /dashboard/wd-editor/:id
+function WDSiteEditorRedirect() {
+  const [location, setLocation] = useLocation();
+  useEffect(() => {
+    const id = location.split("/dashboard/websites/")[1]?.split("/")[0];
+    if (id) setLocation(`/dashboard/wd-editor/${id}`);
+  }, []);
+  return null;
 }
 
 // Component that requires authentication — redirects to /login if not logged in
@@ -237,17 +245,14 @@ function Router() {
           <Route path="/dashboard">
             <AuthRoute><DashboardHome /></AuthRoute>
           </Route>
-          <Route path="/dashboard/websites/:id/pages/:pageId">
-            <AuthRoute><DashboardPageEditor /></AuthRoute>
-          </Route>
-          <Route path="/dashboard/websites/:id/publish">
-            <AuthRoute><PublishSettings /></AuthRoute>
+          <Route path="/dashboard/new-website">
+            <AuthRoute><DashboardNewWebsite /></AuthRoute>
           </Route>
           <Route path="/dashboard/wd-editor/:id">
             <AuthRoute><WDSiteEditor /></AuthRoute>
           </Route>
           <Route path="/dashboard/websites/:id">
-            <AuthRoute><DashboardWebsiteEditor /></AuthRoute>
+            <WDSiteEditorRedirect />
           </Route>
           <Route path="/dashboard/websites">
             <AuthRoute><DashboardWebsites /></AuthRoute>
