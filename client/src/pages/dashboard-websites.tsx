@@ -67,12 +67,17 @@ export default function DashboardWebsites() {
                         <div className="text-gray-400 py-10 col-span-2 lg:col-span-3 text-center w-full">Loading websites...</div>
                     ) : websites.length === 0 ? (
                         <div className="text-gray-400 py-10 col-span-2 lg:col-span-3 text-center w-full">You haven't created any websites yet. Click "New Website" to get started!</div>
-                    ) : websites.map((site) => {
+                    ) : (() => {
+                        // Find URLs that appear more than once (duplicate deployments)
+                        const urlCounts = new Map<string, number>();
+                        websites.forEach((w: any) => { if (w.netlifyUrl && w.netlifyUrl !== "pending") urlCounts.set(w.netlifyUrl, (urlCounts.get(w.netlifyUrl) || 0) + 1); });
+                        return websites.map((site: any) => {
                         const businessData = site.businessData as any;
                         const pageCount = Array.isArray(businessData?.pages) ? businessData.pages.length : 0;
-                        const createdDate = site.createdAt ? format(new Date(site.createdAt), "MMM d, yyyy") : "Recently";
+                        const createdDate = site.createdAt ? format(new Date(site.createdAt), "MMM d, yyyy · h:mm a") : "Recently";
                         const isPublished = site.netlifyUrl && site.netlifyUrl !== "pending";
                         const siteUrl = site.netlifyUrl && site.netlifyUrl !== "pending" ? site.netlifyUrl : "—";
+                        const isDuplicateUrl = siteUrl !== "—" && (urlCounts.get(site.netlifyUrl) || 0) > 1;
 
                         const domain = siteUrl;
 
@@ -110,6 +115,9 @@ export default function DashboardWebsites() {
                                                 <ExternalLink className="h-3 w-3 flex-shrink-0" /> <span className="truncate">{domain.replace(/^https?:\/\//, '')}</span>
                                             </a>
                                         )}
+                                        {isDuplicateUrl && (
+                                            <p className="mt-1 text-xs text-yellow-500/80">⚠ Same URL used by another site — only the last deploy wins.</p>
+                                        )}
                                         <div className="flex items-center gap-2 mt-3">
                                             <Link href={`/dashboard/wd-editor/${site.id}`} className="flex-1">
                                                 <button className="w-full flex items-center justify-center gap-1 text-xs py-1.5 px-3 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-all">
@@ -128,7 +136,7 @@ export default function DashboardWebsites() {
                                 </div>
                             </div>
                         );
-                    })}
+                    });})()}
 
                     {/* Add New Card */}
                     <button

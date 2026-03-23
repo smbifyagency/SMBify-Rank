@@ -3068,11 +3068,12 @@ export function generateGalleryPage(data: WDBusinessData, domain: string): strin
   images.forEach(img => {
     if (img.type === 'before' && img.pairId) beforeMap.set(img.pairId, img);
     else if (img.type === 'after' && img.pairId) afterMap.set(img.pairId, img);
-    else if (img.type === 'normal') normalImages.push(img);
+    else if (img.type === 'normal' && img.src) normalImages.push(img);
   });
   beforeMap.forEach((before, id) => {
     const after = afterMap.get(id);
-    if (after) beforeAfterPairs.push({ before, after });
+    // Only include pair if BOTH images have actual uploaded sources (not empty)
+    if (after && before.src && after.src) beforeAfterPairs.push({ before, after });
   });
 
   // Default placeholder before/after pairs if none provided
