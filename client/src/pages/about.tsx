@@ -7,13 +7,13 @@ export default function AboutPage() {
       {/* Hero Section */}
       <section className="relative pt-32 pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#AADD00]/8 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#AADD00]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
         </div>
 
         <div className="relative max-w-4xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">SMBify</span>
+            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#AADD00] to-[#7ec800]">SMBify</span>
           </h1>
           <p className="text-xl text-gray-400 leading-relaxed">
             Empowering local businesses with AI-powered websites. We democratize professional web presence,
@@ -38,8 +38,8 @@ export default function AboutPage() {
                 tailored specifically for local businesses.
               </p>
             </div>
-            <div className="relative h-64 rounded-xl rounded-2xl overflow-hidden bg-gradient-to-br from-indigo-500/20 to-violet-500/20 flex items-center justify-center border border-white/10 shadow-lg">
-              <Sparkles className="h-16 w-16 text-indigo-400/50" />
+            <div className="relative h-64 rounded-xl rounded-2xl overflow-hidden bg-gradient-to-br from-[#AADD00]/15 to-[#7ec800]/10 flex items-center justify-center border border-[#AADD00]/20 shadow-lg">
+              <Sparkles className="h-16 w-16 text-[#AADD00]/50" />
             </div>
           </div>
         </div>
@@ -92,7 +92,7 @@ export default function AboutPage() {
             }
           ].map((feature, idx) => {
             const Icon = feature.icon;
-            const iconBgClass = `bg-${feature.color}-500/10 text-${feature.color}-400`;
+            const iconBgClass = "bg-[#AADD00]/10 text-[#AADD00]";
 
             return (
               <Card key={idx} className="bg-white/[0.02] border-white/10 hover:border-white/20 transition-all hover:-translate-y-1">
@@ -122,7 +122,7 @@ export default function AboutPage() {
             { step: 4, title: "Download or Deploy", desc: "Download your website as a ZIP file or deploy it directly to Netlify with custom domain support." }
           ].map((item, idx) => (
             <div key={idx} className="flex gap-6 items-start p-6 rounded-2xl border border-white/5 bg-white/[0.01]">
-              <div className="flex-shrink-0 w-10 h-10 bg-indigo-500/20 text-indigo-400 rounded-full flex items-center justify-center font-bold border border-indigo-500/30">
+              <div className="flex-shrink-0 w-10 h-10 bg-[#AADD00]/15 text-[#AADD00] rounded-full flex items-center justify-center font-bold border border-[#AADD00]/25">
                 {item.step}
               </div>
               <div>

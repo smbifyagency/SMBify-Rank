@@ -29,15 +29,15 @@ export default function PublishSettings() {
                 {/* Deploy Options */}
                 <div className="space-y-4">
                     <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
-                        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Rocket className="h-5 w-5 text-indigo-400" /> Netlify Deploy</h2>
+                        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Rocket className="h-5 w-5 text-[#AADD00]" /> Netlify Deploy</h2>
                         <p className="text-sm text-gray-400 mb-4">One-click deploy to Netlify with automatic SSL and CDN.</p>
-                        <Button className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500">
+                        <Button className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold">
                             <Rocket className="mr-2 h-4 w-4" /> Deploy to Netlify
                         </Button>
                     </div>
 
                     <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
-                        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Globe className="h-5 w-5 text-violet-400" /> Custom Domain</h2>
+                        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Globe className="h-5 w-5 text-[#AADD00]" /> Custom Domain</h2>
                         <p className="text-sm text-gray-400 mb-4">Connect a custom domain to your website.</p>
                         <div className="flex gap-2">
                             <Input placeholder="yourdomain.com" className="bg-white/5 border-white/10 text-white placeholder:text-gray-500" />

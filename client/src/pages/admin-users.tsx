@@ -14,13 +14,13 @@ export default function AdminUsers() {
         <div className="py-10 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                    <Users className="h-8 w-8 text-indigo-400" /> User Management
+                    <Users className="h-8 w-8 text-[#AADD00]" /> User Management
                 </h1>
                 <p className="text-gray-400 mb-8">Manage platform users and their accounts.</p>
 
                 <div className="relative mb-6">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
-                    <input type="text" placeholder="Search users..." className="w-full bg-white/5 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-indigo-500" />
+                    <input type="text" placeholder="Search users..." className="w-full bg-white/5 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#AADD00]" />
                 </div>
 
                 <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden">
@@ -37,7 +37,7 @@ export default function AdminUsers() {
                             {users.map((u) => (
                                 <tr key={u.email} className="border-t border-white/5 hover:bg-white/[0.02]">
                                     <td className="p-4"><p className="text-sm text-white font-medium">{u.name}</p><p className="text-xs text-gray-500">{u.email}</p></td>
-                                    <td className="p-4 text-center"><span className={`px-2 py-0.5 rounded-full text-xs ${u.plan === "Agency" ? "bg-violet-500/10 text-violet-400" : u.plan === "Pro" ? "bg-indigo-500/10 text-indigo-400" : "bg-gray-500/10 text-gray-400"}`}>{u.plan}</span></td>
+                                    <td className="p-4 text-center"><span className={`px-2 py-0.5 rounded-full text-xs ${u.plan === "Agency" ? "bg-[#AADD00]/8 text-[#AADD00]" : u.plan === "Pro" ? "bg-[#AADD00]/10 text-[#AADD00]" : "bg-gray-500/10 text-gray-400"}`}>{u.plan}</span></td>
                                     <td className="p-4 text-center text-sm text-gray-400">{u.sites}</td>
                                     <td className="p-4 text-center text-sm text-gray-400">{u.joined}</td>
                                     <td className="p-4 text-center"><span className={`px-2 py-0.5 rounded-full text-xs ${u.status === "Active" ? "bg-emerald-500/10 text-emerald-400" : "bg-red-500/10 text-red-400"}`}>{u.status}</span></td>

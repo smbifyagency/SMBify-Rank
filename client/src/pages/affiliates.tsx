@@ -14,7 +14,7 @@ export default function AffiliatesPage() {
             <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
                 <div className="absolute inset-0">
                     <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#AADD00]/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
                 </div>
                 <div className="relative max-w-4xl mx-auto text-center">
                     <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-2 mb-8">
@@ -87,14 +87,14 @@ export default function AffiliatesPage() {
                                 icon: Users,
                                 title: "Referrals Subscribe",
                                 description: "When someone clicks your link and signs up for a paid plan, they're tracked to your account with a 90-day cookie window.",
-                                gradient: "from-indigo-500 to-indigo-600",
+                                gradient: "from-[#AADD00] to-[#7ec800]",
                             },
                             {
                                 step: "03",
                                 icon: Banknote,
                                 title: "Get Paid Monthly",
                                 description: "Earn 30% of every subscription payment, recurring as long as they stay subscribed. Payouts via PayPal or Stripe.",
-                                gradient: "from-violet-500 to-violet-600",
+                                gradient: "from-[#AADD00] to-[#7ec800]",
                             },
                         ].map((item) => {
                             const Icon = item.icon;

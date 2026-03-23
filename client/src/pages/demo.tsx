@@ -59,13 +59,13 @@ export default function DemoPage() {
             {/* Hero */}
             <section className="relative pt-32 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
                 <div className="absolute inset-0">
-                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#AADD00]/10 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#AADD00]/8 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
                 </div>
                 <div className="relative max-w-4xl mx-auto text-center">
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
                         See SMBify{" "}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#AADD00] to-[#7ec800]">
                             In Action
                         </span>
                     </h1>
@@ -86,7 +86,7 @@ export default function DemoPage() {
                                 key={site.id}
                                 onClick={() => setActiveSite(site)}
                                 className={`px-5 py-2.5 rounded-full text-sm font-medium transition-all ${activeSite.id === site.id
-                                        ? "bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-500/25"
+                                        ? "bg-gradient-to-r from-[#AADD00] to-[#7ec800] text-white shadow-lg shadow-[#AADD00]/25"
                                         : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10"
                                     }`}
                             >
@@ -213,7 +213,7 @@ export default function DemoPage() {
                         <Button
                             size="lg"
                             onClick={() => setLocation("/dashboard/websites")}
-                            className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-base px-8 py-6 rounded-xl shadow-lg shadow-indigo-500/25"
+                            className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold text-base px-8 py-6 rounded-xl shadow-lg shadow-[#AADD00]/25"
                         >
                             <Sparkles className="mr-2 h-5 w-5" />
                             Start Building Free

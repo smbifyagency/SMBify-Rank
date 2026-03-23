@@ -3,10 +3,10 @@ export default function TermsPage() {
     <>
       {/* Hero Section */}
       <section className="relative pt-32 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#AADD00]/10 rounded-full blur-3xl" />
         <div className="relative max-w-4xl mx-auto text-center border-b border-white/10 pb-8">
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
-            Terms & <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">Conditions</span>
+            Terms & <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#AADD00] to-[#7ec800]">Conditions</span>
           </h1>
           <p className="text-gray-400 uppercase tracking-wider text-sm font-semibold">
             Last updated: November 12, 2025
@@ -32,7 +32,7 @@ export default function TermsPage() {
                 SMBify AI Static Website Builder is a public platform that allows users to create websites by providing their own API keys.
                 The Service includes:
               </p>
-              <ul className="list-disc pl-6 space-y-2 text-indigo-300Marker marker:text-indigo-500">
+              <ul className="list-disc pl-6 space-y-2 text-[#bef000]Marker marker:text-indigo-500">
                 <li><span className="text-gray-400">Website generation using AI-powered content creation</span></li>
                 <li><span className="text-gray-400">Template selection and customization</span></li>
                 <li><span className="text-gray-400">Blog content generation and management</span></li>
@@ -55,7 +55,7 @@ export default function TermsPage() {
               <p className="text-gray-400 leading-relaxed mb-4">
                 As a user of the Service, you agree to:
               </p>
-              <ul className="list-disc pl-6 space-y-2 text-indigo-300Marker marker:text-indigo-500">
+              <ul className="list-disc pl-6 space-y-2 text-[#bef000]Marker marker:text-indigo-500">
                 <li><span className="text-gray-400">Provide accurate business information when creating websites</span></li>
                 <li><span className="text-gray-400">Not use the Service for illegal or unauthorized purposes</span></li>
                 <li><span className="text-gray-400">Not attempt to interfere with or compromise the Service's security</span></li>
@@ -66,7 +66,7 @@ export default function TermsPage() {
 
             <div>
               <h2 className="text-2xl font-semibold mb-4 text-white">5. AI-Generated Content</h2>
-              <p className="text-gray-400 leading-relaxed bg-indigo-500/10 border border-indigo-500/20 p-6 rounded-xl">
+              <p className="text-gray-400 leading-relaxed bg-[#AADD00]/10 border border-[#AADD00]/20 p-6 rounded-xl">
                 The Service uses AI to generate website content. While we strive for accuracy and quality, AI-generated content may contain
                 errors or inaccuracies. You are responsible for reviewing and editing all generated content before publication. We do not
                 guarantee the accuracy, completeness, or suitability of AI-generated content for any particular purpose.
@@ -110,7 +110,7 @@ export default function TermsPage() {
               <h2 className="text-xl font-semibold mb-4 text-white">10. Contact Information</h2>
               <p className="text-gray-400">
                 For questions about these Terms and Conditions, please contact us at{" "}
-                <a href="mailto:info@smbifylocal.com" className="text-indigo-400 hover:text-indigo-300 transition-colors font-medium">
+                <a href="mailto:info@smbifylocal.com" className="text-[#AADD00] hover:text-[#bef000] transition-colors font-medium">
                   info@smbifylocal.com
                 </a>
               </p>

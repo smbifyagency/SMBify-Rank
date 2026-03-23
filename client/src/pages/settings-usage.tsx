@@ -12,7 +12,7 @@ export default function SettingsUsage() {
         <div className="py-10 px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl mx-auto">
                 <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                    <BarChart3 className="h-8 w-8 text-violet-400" /> Usage & Limits
+                    <BarChart3 className="h-8 w-8 text-[#AADD00]" /> Usage & Limits
                 </h1>
                 <p className="text-gray-400 mb-6">Track your resource usage and plan limits.</p>
 

@@ -89,8 +89,8 @@ export default function SignupPage() {
                 <div className="text-center mb-8">
                     <Link href="/">
                         <div className="inline-flex items-center gap-3 cursor-pointer group mb-6">
-                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/25">
-                                <Globe className="h-6 w-6 text-white" />
+                            <div className="h-12 w-12 rounded-xl bg-[#AADD00] flex items-center justify-center shadow-lg shadow-[#AADD00]/25">
+                                <Globe className="h-6 w-6 text-black" />
                             </div>
                             <h1 className="text-2xl font-bold text-white">SMBify</h1>
                         </div>
@@ -136,7 +136,7 @@ export default function SignupPage() {
                                     type="text"
                                     placeholder="John"
                                     {...form.register("firstName")}
-                                    className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-indigo-500"
+                                    className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
                                 />
                                 {form.formState.errors.firstName && (
                                     <p className="text-red-400 text-xs mt-1">{form.formState.errors.firstName.message}</p>
@@ -149,7 +149,7 @@ export default function SignupPage() {
                                     type="text"
                                     placeholder="Doe"
                                     {...form.register("lastName")}
-                                    className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-indigo-500"
+                                    className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
                                 />
                                 {form.formState.errors.lastName && (
                                     <p className="text-red-400 text-xs mt-1">{form.formState.errors.lastName.message}</p>
@@ -164,7 +164,7 @@ export default function SignupPage() {
                                 type="email"
                                 placeholder="you@company.com"
                                 {...form.register("email")}
-                                className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-indigo-500"
+                                className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
                             />
                             {form.formState.errors.email && (
                                 <p className="text-red-400 text-xs mt-1">{form.formState.errors.email.message}</p>
@@ -179,7 +179,7 @@ export default function SignupPage() {
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Create a strong password"
                                     {...form.register("password")}
-                                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-indigo-500 pr-10"
+                                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00] pr-10"
                                 />
                                 <button
                                     type="button"
@@ -196,7 +196,7 @@ export default function SignupPage() {
                             <div className="mt-2 space-y-1">
                                 {["At least 6 characters"].map((rule) => (
                                     <div key={rule} className="flex items-center gap-2 text-xs text-gray-400">
-                                        <CheckCircle className="h-3 w-3 text-indigo-400" />{rule}
+                                        <CheckCircle className="h-3 w-3 text-[#AADD00]" />{rule}
                                     </div>
                                 ))}
                             </div>
@@ -209,7 +209,7 @@ export default function SignupPage() {
                                 type="password"
                                 placeholder="Confirm your password"
                                 {...form.register("confirmPassword")}
-                                className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-indigo-500"
+                                className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
                             />
                             {form.formState.errors.confirmPassword && (
                                 <p className="text-red-400 text-xs mt-1">{form.formState.errors.confirmPassword.message}</p>
@@ -219,7 +219,7 @@ export default function SignupPage() {
                         <Button
                             type="submit"
                             disabled={registerMutation.isPending}
-                            className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 py-6 text-base font-semibold rounded-xl shadow-lg shadow-indigo-500/25"
+                            className="w-full bg-[#AADD00] hover:bg-[#bef000] text-black font-bold py-6 text-base rounded-xl shadow-lg shadow-[#AADD00]/25"
                         >
                             {registerMutation.isPending ? "Creating account..." : (
                                 <>Create Account <ArrowRight className="ml-2 h-4 w-4" /></>
@@ -229,7 +229,7 @@ export default function SignupPage() {
 
                     <div className="mt-6 text-center text-sm text-gray-400">
                         Already have an account?{" "}
-                        <Link href="/login" className="text-indigo-400 hover:text-indigo-300 font-medium">
+                        <Link href="/login" className="text-[#AADD00] hover:text-[#bef000] font-medium">
                             Sign in
                         </Link>
                     </div>

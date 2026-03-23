@@ -470,8 +470,8 @@ export default function Dashboard() {
           <Card className="bg-white/[0.02] border-white/10 backdrop-blur-sm">
             <CardContent className="p-6">
               <div className="flex items-center">
-                <div className="p-2 bg-indigo-500/20 border border-indigo-500/30 rounded-lg">
-                  <Globe className="w-6 h-6 text-indigo-400" />
+                <div className="p-2 bg-[#AADD00]/15 border border-[#AADD00]/25 rounded-lg">
+                  <Globe className="w-6 h-6 text-[#AADD00]" />
                 </div>
                 <div className="ml-4">
                   <p className="text-sm font-medium text-gray-400">Total Websites</p>

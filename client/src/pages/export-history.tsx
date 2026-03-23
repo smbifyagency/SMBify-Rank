@@ -21,7 +21,7 @@ export default function ExportHistory() {
                     {exports.map((exp, i) => (
                         <div key={i} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                                <FileText className="h-5 w-5 text-indigo-400" />
+                                <FileText className="h-5 w-5 text-[#AADD00]" />
                                 <div>
                                     <p className="text-white font-medium">{exp.name}</p>
                                     <div className="flex gap-3 text-xs text-gray-500 mt-1">

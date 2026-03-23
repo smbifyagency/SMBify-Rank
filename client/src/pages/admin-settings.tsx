@@ -47,7 +47,7 @@ export default function AdminSettings() {
 
                 <div className="space-y-6">
                     <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 space-y-4">
-                        <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Globe className="h-5 w-5 text-indigo-400" /> General</h2>
+                        <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Globe className="h-5 w-5 text-[#AADD00]" /> General</h2>
                         <div><Label className="text-gray-300 text-sm">Platform Name</Label>
                             <Input
                                 value={formData.platformName || ""}
@@ -68,7 +68,7 @@ export default function AdminSettings() {
                     </div>
 
                     <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 space-y-4">
-                        <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Mail className="h-5 w-5 text-violet-400" /> Email</h2>
+                        <h2 className="text-lg font-semibold text-white flex items-center gap-2"><Mail className="h-5 w-5 text-[#AADD00]" /> Email</h2>
                         <div><Label className="text-gray-300 text-sm">Support Email</Label>
                             <Input
                                 value={formData.supportEmail || ""}
@@ -88,7 +88,7 @@ export default function AdminSettings() {
                             onClick={() => setFormData({ ...formData, requireEmailVerification: !formData.requireEmailVerification })}
                         >
                             <span className="text-sm text-gray-300 select-none">Require email verification</span>
-                            <div className={`w-11 h-6 rounded-full relative ${formData.requireEmailVerification ? 'bg-indigo-500' : 'bg-white/10'}`}>
+                            <div className={`w-11 h-6 rounded-full relative ${formData.requireEmailVerification ? 'bg-[#AADD00]' : 'bg-white/10'}`}>
                                 <div className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-all ${formData.requireEmailVerification ? 'left-[22px]' : 'left-0.5'}`} />
                             </div>
                         </div>
@@ -97,7 +97,7 @@ export default function AdminSettings() {
                             onClick={() => setFormData({ ...formData, allowSignups: !formData.allowSignups })}
                         >
                             <span className="text-sm text-gray-300 select-none">Allow signups</span>
-                            <div className={`w-11 h-6 rounded-full relative ${formData.allowSignups ? 'bg-indigo-500' : 'bg-white/10'}`}>
+                            <div className={`w-11 h-6 rounded-full relative ${formData.allowSignups ? 'bg-[#AADD00]' : 'bg-white/10'}`}>
                                 <div className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-all ${formData.allowSignups ? 'left-[22px]' : 'left-0.5'}`} />
                             </div>
                         </div>
@@ -106,7 +106,7 @@ export default function AdminSettings() {
                             onClick={() => setFormData({ ...formData, maintenanceMode: !formData.maintenanceMode })}
                         >
                             <span className="text-sm text-gray-300 select-none">Maintenance mode</span>
-                            <div className={`w-11 h-6 rounded-full relative ${formData.maintenanceMode ? 'bg-indigo-500' : 'bg-white/10'}`}>
+                            <div className={`w-11 h-6 rounded-full relative ${formData.maintenanceMode ? 'bg-[#AADD00]' : 'bg-white/10'}`}>
                                 <div className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-all ${formData.maintenanceMode ? 'left-[22px]' : 'left-0.5'}`} />
                             </div>
                         </div>
@@ -115,7 +115,7 @@ export default function AdminSettings() {
                     <Button
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="bg-gradient-to-r from-indigo-600 to-violet-600">
+                        className="bg-gradient-to-r from-[#AADD00] to-[#7ec800]">
                         <Save className="mr-2 h-4 w-4" />
                         {isSaving ? "Saving..." : "Save Settings"}
                     </Button>

@@ -32,7 +32,7 @@ export default function DomainManager() {
         <div className="py-10 px-4 sm:px-6 lg:px-8">
             <div className="max-w-4xl mx-auto">
                 <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                    <Globe className="h-8 w-8 text-violet-400" /> Domain Manager
+                    <Globe className="h-8 w-8 text-[#AADD00]" /> Domain Manager
                 </h1>
                 <p className="text-gray-400 mb-6">View and manage domains for your deployed websites.</p>
 
@@ -43,7 +43,7 @@ export default function DomainManager() {
 
                 {isLoading ? (
                     <div className="flex items-center justify-center py-16">
-                        <Loader2 className="h-8 w-8 animate-spin text-indigo-400" />
+                        <Loader2 className="h-8 w-8 animate-spin text-[#AADD00]" />
                     </div>
                 ) : deployedSites.length === 0 ? (
                     <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-12 text-center">
@@ -52,7 +52,7 @@ export default function DomainManager() {
                         <p className="text-gray-400 text-sm mb-4">Deploy a website from your dashboard to see its domain here.</p>
                         <Button
                             onClick={() => window.location.href = "/dashboard/websites"}
-                            className="bg-gradient-to-r from-indigo-600 to-violet-600 border-0"
+                            className="bg-gradient-to-r from-[#AADD00] to-[#7ec800] border-0"
                         >
                             Go to Websites
                         </Button>
@@ -65,7 +65,7 @@ export default function DomainManager() {
                             return (
                                 <div key={site.id} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 flex items-center justify-between">
                                     <div className="flex items-center gap-4">
-                                        <Globe className="h-5 w-5 text-indigo-400" />
+                                        <Globe className="h-5 w-5 text-[#AADD00]" />
                                         <div>
                                             <p className="text-white font-medium">{site.businessName || "Untitled Website"}</p>
                                             <p className="text-xs text-gray-500 font-mono">{cleanDomain}</p>

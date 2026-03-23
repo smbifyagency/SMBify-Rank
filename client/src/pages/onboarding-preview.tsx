@@ -14,8 +14,8 @@ export default function OnboardingPreview() {
                 <div className="flex items-center justify-between mb-8">
                     {["Business", "Services", "Locations", "Brand", "API", "Generate", "Preview"].map((step, i) => (
                         <div key={step} className="flex items-center">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-r from-indigo-500 to-violet-500 text-white`}>{i + 1}</div>
-                            {i < 6 && <div className="w-4 sm:w-8 h-px bg-indigo-500/30 mx-1" />}
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold bg-gradient-to-r bg-[#AADD00] text-white`}>{i + 1}</div>
+                            {i < 6 && <div className="w-4 sm:w-8 h-px bg-[#AADD00]/20 mx-1" />}
                         </div>
                     ))}
                 </div>
@@ -32,17 +32,17 @@ export default function OnboardingPreview() {
                 {/* Action Cards */}
                 <div className="grid sm:grid-cols-3 gap-4 mb-8">
                     <button onClick={() => setLocation("/dashboard/websites")} className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-center hover:-translate-y-1 transition-all group">
-                        <Edit className="h-8 w-8 text-indigo-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+                        <Edit className="h-8 w-8 text-[#AADD00] mx-auto mb-3 group-hover:scale-110 transition-transform" />
                         <h3 className="font-semibold text-white mb-1">Edit Content</h3>
                         <p className="text-sm text-gray-400">Customize text, images, and layout</p>
                     </button>
-                    <button onClick={() => setLocation("/dashboard/websites")} className="rounded-2xl border border-indigo-500/30 bg-indigo-500/5 p-6 text-center hover:-translate-y-1 transition-all group">
-                        <Rocket className="h-8 w-8 text-indigo-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+                    <button onClick={() => setLocation("/dashboard/websites")} className="rounded-2xl border border-[#AADD00]/25 bg-indigo-500/5 p-6 text-center hover:-translate-y-1 transition-all group">
+                        <Rocket className="h-8 w-8 text-[#AADD00] mx-auto mb-3 group-hover:scale-110 transition-transform" />
                         <h3 className="font-semibold text-white mb-1">Deploy Now</h3>
                         <p className="text-sm text-gray-400">Go live on Netlify in seconds</p>
                     </button>
                     <button className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-center hover:-translate-y-1 transition-all group">
-                        <Download className="h-8 w-8 text-violet-400 mx-auto mb-3 group-hover:scale-110 transition-transform" />
+                        <Download className="h-8 w-8 text-[#AADD00] mx-auto mb-3 group-hover:scale-110 transition-transform" />
                         <h3 className="font-semibold text-white mb-1">Download ZIP</h3>
                         <p className="text-sm text-gray-400">Get the full source code</p>
                     </button>
@@ -66,7 +66,7 @@ export default function OnboardingPreview() {
 
                     <div className="bg-white text-gray-900">
                         {/* Mock Nav */}
-                        <div className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white px-6 py-4 flex items-center justify-between">
+                        <div className="bg-gradient-to-r from-[#AADD00] to-[#7ec800] text-white px-6 py-4 flex items-center justify-between">
                             <span className="font-bold text-lg">Your Business Name</span>
                             <div className="hidden sm:flex gap-6 text-sm opacity-80">
                                 <span>Home</span><span>Services</span><span>About</span><span>Blog</span><span>Contact</span>
@@ -77,7 +77,7 @@ export default function OnboardingPreview() {
                         </div>
 
                         {/* Hero */}
-                        <div className="bg-gradient-to-br from-indigo-600 to-violet-700 text-white text-center px-8 py-16">
+                        <div className="bg-gradient-to-br from-[#AADD00] to-[#7ec800] text-white text-center px-8 py-16">
                             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
                                 Professional Services You Can Trust
                             </h2>
@@ -117,7 +117,7 @@ export default function OnboardingPreview() {
                     <Button
                         size="lg"
                         onClick={() => setLocation("/dashboard/websites")}
-                        className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-base px-10 py-6 rounded-xl shadow-lg shadow-indigo-500/25"
+                        className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold text-base px-10 py-6 rounded-xl shadow-lg shadow-[#AADD00]/25"
                     >
                         Go to My Websites <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>

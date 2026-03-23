@@ -10,7 +10,6 @@ const featureGroups = [
     {
         title: "AI Content Engine",
         subtitle: "Generate professional content in seconds",
-        color: "indigo",
         features: [
             {
                 icon: Bot,
@@ -32,7 +31,6 @@ const featureGroups = [
     {
         title: "Local SEO Suite",
         subtitle: "Rank higher in local search results",
-        color: "emerald",
         features: [
             {
                 icon: Search,
@@ -54,7 +52,6 @@ const featureGroups = [
     {
         title: "Design & Templates",
         subtitle: "Professional designs for every industry",
-        color: "violet",
         features: [
             {
                 icon: Layers,
@@ -76,7 +73,6 @@ const featureGroups = [
     {
         title: "Deploy & Scale",
         subtitle: "Go live in seconds, scale effortlessly",
-        color: "amber",
         features: [
             {
                 icon: Rocket,
@@ -98,7 +94,6 @@ const featureGroups = [
     {
         title: "Agency Features",
         subtitle: "Built for scaling agencies",
-        color: "rose",
         features: [
             {
                 icon: Users,
@@ -119,39 +114,6 @@ const featureGroups = [
     },
 ];
 
-const colorMap: Record<string, { bg: string; text: string; border: string; iconBg: string }> = {
-    indigo: {
-        bg: "from-indigo-500/10 to-indigo-500/5",
-        text: "text-indigo-400",
-        border: "border-indigo-500/20",
-        iconBg: "bg-indigo-500/10",
-    },
-    emerald: {
-        bg: "from-emerald-500/10 to-emerald-500/5",
-        text: "text-emerald-400",
-        border: "border-emerald-500/20",
-        iconBg: "bg-emerald-500/10",
-    },
-    violet: {
-        bg: "from-violet-500/10 to-violet-500/5",
-        text: "text-violet-400",
-        border: "border-violet-500/20",
-        iconBg: "bg-violet-500/10",
-    },
-    amber: {
-        bg: "from-amber-500/10 to-amber-500/5",
-        text: "text-amber-400",
-        border: "border-amber-500/20",
-        iconBg: "bg-amber-500/10",
-    },
-    rose: {
-        bg: "from-rose-500/10 to-rose-500/5",
-        text: "text-rose-400",
-        border: "border-rose-500/20",
-        iconBg: "bg-rose-500/10",
-    },
-};
-
 export default function FeaturesPage() {
     const [, setLocation] = useLocation();
 
@@ -160,17 +122,17 @@ export default function FeaturesPage() {
             {/* Hero */}
             <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
                 <div className="absolute inset-0">
-                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#AADD00]/8 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#AADD00]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
                 </div>
                 <div className="relative max-w-4xl mx-auto text-center">
-                    <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-2 mb-8 backdrop-blur-sm">
-                        <Zap className="h-4 w-4 text-indigo-400" />
+                    <div className="inline-flex items-center gap-2 bg-[#AADD00]/10 border border-[#AADD00]/20 rounded-full px-4 py-2 mb-8 backdrop-blur-sm">
+                        <Zap className="h-4 w-4 text-[#AADD00]" />
                         <span className="text-sm text-gray-300">Everything you need to build & rank</span>
                     </div>
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
                         Powerful Features for{" "}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#AADD00] to-[#7ec800]">
                             Local SEO
                         </span>
                     </h1>
@@ -182,7 +144,7 @@ export default function FeaturesPage() {
                         <Button
                             size="lg"
                             onClick={() => setLocation("/dashboard/websites")}
-                            className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-base px-8 py-6 rounded-xl shadow-lg shadow-indigo-500/25"
+                            className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold text-base px-8 py-6 rounded-xl shadow-lg shadow-[#AADD00]/25"
                         >
                             Try It Free <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
@@ -199,38 +161,35 @@ export default function FeaturesPage() {
             </section>
 
             {/* Feature Groups */}
-            {featureGroups.map((group, groupIdx) => {
-                const colors = colorMap[group.color];
-                return (
-                    <section key={group.title} className={`py-20 px-4 sm:px-6 lg:px-8 ${groupIdx % 2 === 0 ? "" : "bg-white/[0.01]"}`}>
-                        <div className="max-w-6xl mx-auto">
-                            <div className="text-center mb-14">
-                                <p className={`${colors.text} font-semibold text-sm uppercase tracking-wider mb-3`}>
-                                    {group.subtitle}
-                                </p>
-                                <h2 className="text-3xl sm:text-4xl font-bold">{group.title}</h2>
-                            </div>
-                            <div className="grid md:grid-cols-3 gap-6">
-                                {group.features.map((feature) => {
-                                    const Icon = feature.icon;
-                                    return (
-                                        <div
-                                            key={feature.title}
-                                            className={`rounded-2xl border bg-gradient-to-b p-6 transition-all hover:-translate-y-1 hover:shadow-lg ${colors.bg} ${colors.border}`}
-                                        >
-                                            <div className={`h-12 w-12 rounded-xl flex items-center justify-center mb-4 ${colors.iconBg} ${colors.text}`}>
-                                                <Icon className="h-6 w-6" />
-                                            </div>
-                                            <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
-                                            <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
-                                        </div>
-                                    );
-                                })}
-                            </div>
+            {featureGroups.map((group, groupIdx) => (
+                <section key={group.title} className={`py-20 px-4 sm:px-6 lg:px-8 ${groupIdx % 2 !== 0 ? "bg-[#AADD00]/[0.02]" : ""}`}>
+                    <div className="max-w-6xl mx-auto">
+                        <div className="text-center mb-14">
+                            <p className="text-[#AADD00] font-semibold text-sm uppercase tracking-wider mb-3">
+                                {group.subtitle}
+                            </p>
+                            <h2 className="text-3xl sm:text-4xl font-bold">{group.title}</h2>
                         </div>
-                    </section>
-                );
-            })}
+                        <div className="grid md:grid-cols-3 gap-6">
+                            {group.features.map((feature) => {
+                                const Icon = feature.icon;
+                                return (
+                                    <div
+                                        key={feature.title}
+                                        className="rounded-2xl border border-[#AADD00]/15 bg-gradient-to-b from-[#AADD00]/10 to-[#AADD00]/3 p-6 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-[#AADD00]/10 hover:border-[#AADD00]/30"
+                                    >
+                                        <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-4 bg-[#AADD00]/10 text-[#AADD00]">
+                                            <Icon className="h-6 w-6" />
+                                        </div>
+                                        <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
+                                        <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </section>
+            ))}
 
             {/* Comparison */}
             <section className="py-24 px-4 sm:px-6 lg:px-8">
@@ -239,10 +198,10 @@ export default function FeaturesPage() {
                         <h2 className="text-3xl font-bold mb-4">Why SMBify vs. Traditional Web Dev?</h2>
                         <p className="text-gray-400">See how we compare to hiring a developer or using WordPress.</p>
                     </div>
-                    <div className="rounded-2xl border border-white/10 overflow-hidden">
-                        <div className="grid grid-cols-3 bg-white/5">
+                    <div className="rounded-2xl border border-[#AADD00]/15 overflow-hidden">
+                        <div className="grid grid-cols-3 bg-[#AADD00]/5">
                             <div className="p-4 font-semibold text-gray-400 text-sm"></div>
-                            <div className="p-4 text-center font-semibold text-indigo-400 text-sm">SMBify</div>
+                            <div className="p-4 text-center font-semibold text-[#AADD00] text-sm">SMBify</div>
                             <div className="p-4 text-center font-semibold text-gray-400 text-sm">Traditional</div>
                         </div>
                         {[
@@ -256,7 +215,7 @@ export default function FeaturesPage() {
                         ].map(([label, smbify, traditional], i) => (
                             <div key={label} className={`grid grid-cols-3 ${i % 2 === 0 ? "bg-white/[0.02]" : ""}`}>
                                 <div className="p-4 text-sm text-gray-300 font-medium">{label}</div>
-                                <div className="p-4 text-center text-sm text-emerald-400 flex items-center justify-center gap-1">
+                                <div className="p-4 text-center text-sm text-[#AADD00] flex items-center justify-center gap-1">
                                     <CheckCircle className="h-3.5 w-3.5" /> {smbify}
                                 </div>
                                 <div className="p-4 text-center text-sm text-gray-500">{traditional}</div>
@@ -276,7 +235,7 @@ export default function FeaturesPage() {
                     <Button
                         size="lg"
                         onClick={() => setLocation("/dashboard/websites")}
-                        className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-base px-10 py-6 rounded-xl shadow-lg shadow-indigo-500/25"
+                        className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold text-base px-10 py-6 rounded-xl shadow-lg shadow-[#AADD00]/25"
                     >
                         <Sparkles className="mr-2 h-5 w-5" />
                         Start Building — It's Free

@@ -24,7 +24,7 @@ export default function ResetPasswordPage() {
                 <div className="text-center mb-8">
                     <Link href="/">
                         <div className="inline-flex items-center gap-3 cursor-pointer group mb-6">
-                            <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+                            <div className="h-12 w-12 rounded-xl bg-[#AADD00] flex items-center justify-center shadow-lg shadow-[#AADD00]/25">
                                 <Globe className="h-6 w-6 text-white" />
                             </div>
                             <h1 className="text-2xl font-bold text-white">SMBify</h1>
@@ -47,8 +47,8 @@ export default function ResetPasswordPage() {
                     {!submitted ? (
                         <>
                             <div className="text-center mb-6">
-                                <div className="w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center mx-auto">
-                                    <Lock className="h-8 w-8 text-indigo-400" />
+                                <div className="w-16 h-16 rounded-full bg-[#AADD00]/10 flex items-center justify-center mx-auto">
+                                    <Lock className="h-8 w-8 text-[#AADD00]" />
                                 </div>
                             </div>
                             <form onSubmit={handleSubmit} className="space-y-5">
@@ -61,7 +61,7 @@ export default function ResetPasswordPage() {
                                             placeholder="Enter new password"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
-                                            className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-indigo-500 pr-10"
+                                            className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00] pr-10"
                                         />
                                         <button
                                             type="button"
@@ -80,12 +80,12 @@ export default function ResetPasswordPage() {
                                         placeholder="Confirm new password"
                                         value={confirm}
                                         onChange={(e) => setConfirm(e.target.value)}
-                                        className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-indigo-500"
+                                        className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
                                     />
                                 </div>
                                 <Button
                                     type="submit"
-                                    className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 py-6 text-base font-semibold rounded-xl"
+                                    className="w-full bg-[#AADD00] hover:bg-[#bef000] text-black font-bold py-6 text-base font-semibold rounded-xl"
                                 >
                                     Reset Password
                                 </Button>

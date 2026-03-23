@@ -72,9 +72,9 @@ export default function AuthCallback() {
     return (
         <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-4">
             <div className="text-center">
-                <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 mb-6 relative">
-                    <Globe className="h-8 w-8 text-indigo-400 absolute opacity-50" />
-                    <Loader2 className="h-8 w-8 text-indigo-400 animate-spin absolute" />
+                <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-[#AADD00]/10 border border-[#AADD00]/20 mb-6 relative">
+                    <Globe className="h-8 w-8 text-[#AADD00] absolute opacity-50" />
+                    <Loader2 className="h-8 w-8 text-[#AADD00] animate-spin absolute" />
                 </div>
                 <h2 className="text-2xl font-bold text-white mb-2">Authenticating...</h2>
                 <p className="text-gray-400 max-w-sm mx-auto">

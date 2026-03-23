@@ -243,7 +243,7 @@ export default function DashboardWebsiteEditor() {
                         <Button
                             onClick={handleSaveData}
                             disabled={isSaving || isLoading}
-                            className="bg-indigo-600 hover:bg-indigo-500"
+                            className="bg-[#AADD00] hover:bg-[#bef000] text-black"
                         >
                             {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
                             Save Data
@@ -259,7 +259,7 @@ export default function DashboardWebsiteEditor() {
                                 <TabsTrigger value="identity" className="data-[state=active]:bg-white/10 rounded-lg">Identity & Brand</TabsTrigger>
                                 <TabsTrigger value="content" className="data-[state=active]:bg-white/10 rounded-lg">Core Content</TabsTrigger>
                                 <TabsTrigger value="media" className="data-[state=active]:bg-white/10 rounded-lg">Media & Video</TabsTrigger>
-                                <TabsTrigger value="generator" className="data-[state=active]:bg-white/10 rounded-lg text-indigo-400">
+                                <TabsTrigger value="generator" className="data-[state=active]:bg-white/10 rounded-lg text-[#AADD00]">
                                     <LayoutTemplate className="h-4 w-4 mr-2" /> Service & Location Pages
                                 </TabsTrigger>
                                 <TabsTrigger value="preview" className="data-[state=active]:bg-emerald-500/20 data-[state=active]:text-emerald-400 rounded-lg">
@@ -285,7 +285,7 @@ export default function DashboardWebsiteEditor() {
                                             <select
                                                 value={formData.category}
                                                 onChange={(e) => handleChange("category", e.target.value)}
-                                                className="mt-2 w-full h-10 px-3 rounded-md bg-[#1a1a2e] border border-white/10 text-white focus:outline-none focus:border-indigo-500"
+                                                className="mt-2 w-full h-10 px-3 rounded-md bg-[#1a1a2e] border border-white/10 text-white focus:outline-none focus:border-[#AADD00]"
                                             >
                                                 <option value="Water Damage Restoration">Water Damage Restoration</option>
                                                 <option value="Plumbing">Plumbing (Coming Soon)</option>
@@ -459,20 +459,20 @@ export default function DashboardWebsiteEditor() {
 
                             {/* TAB 4: MASS GENERATOR */}
                             <TabsContent value="generator" className="space-y-6">
-                                <div className="rounded-2xl border border-indigo-500/30 bg-indigo-500/5 p-6 shadow-[0_0_15px_rgba(99,102,241,0.1)]">
+                                <div className="rounded-2xl border border-[#AADD00]/25 bg-indigo-500/5 p-6 shadow-[0_0_15px_rgba(99,102,241,0.1)]">
                                     <div className="flex items-start justify-between mb-6">
                                         <div>
                                             <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-                                                <LayoutTemplate className="h-5 w-5 text-indigo-400" /> Mass Page Generator
+                                                <LayoutTemplate className="h-5 w-5 text-[#AADD00]" /> Mass Page Generator
                                             </h3>
-                                            <p className="text-sm text-indigo-200 mt-1 max-w-xl">
+                                            <p className="text-sm text-gray-300 mt-1 max-w-xl">
                                                 Add the explicit services and cities you want pages for. When you click generate, the AI writes unique technical content for *each one* of these individual pages automatically.
                                             </p>
                                         </div>
                                         <Button
                                             onClick={handleGeneratePages}
                                             disabled={isGenerating}
-                                            className="bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg transition-all"
+                                            className="bg-[#AADD00] hover:bg-[#bef000] text-black text-white shadow-lg transition-all"
                                         >
                                             {isGenerating ? (
                                                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Pages...</>
@@ -498,7 +498,7 @@ export default function DashboardWebsiteEditor() {
                                     <div className="grid md:grid-cols-2 gap-8">
                                         {/* Services Form List */}
                                         <div className="space-y-4">
-                                            <Label className="text-indigo-100 flex items-center gap-2 font-medium text-lg">
+                                            <Label className="text-white flex items-center gap-2 font-medium text-lg">
                                                 <Wrench className="h-4 w-4" /> Service Pages to Create
                                             </Label>
                                             <div className="space-y-3">
@@ -512,7 +512,7 @@ export default function DashboardWebsiteEditor() {
                                                                 handleChange("services", newServices as any);
                                                             }}
                                                             placeholder="e.g. Mold Remediation"
-                                                            className="bg-black/40 border-indigo-500/30 text-white flex-1"
+                                                            className="bg-black/40 border-[#AADD00]/25 text-white flex-1"
                                                         />
                                                         <Button
                                                             variant="outline" size="icon"
@@ -529,7 +529,7 @@ export default function DashboardWebsiteEditor() {
                                                 <Button
                                                     variant="outline"
                                                     onClick={() => handleChange("services", [...formData.services, ""] as any)}
-                                                    className="w-full border-dashed border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/10"
+                                                    className="w-full border-dashed border-[#AADD00]/25 text-[#bef000] hover:bg-[#AADD00]/10"
                                                 >
                                                     <PlusCircle className="mr-2 h-4 w-4" /> Add Service Page
                                                 </Button>
@@ -538,7 +538,7 @@ export default function DashboardWebsiteEditor() {
 
                                         {/* Locations Form List */}
                                         <div className="space-y-4">
-                                            <Label className="text-indigo-100 flex items-center gap-2 font-medium text-lg">
+                                            <Label className="text-white flex items-center gap-2 font-medium text-lg">
                                                 <MapPin className="h-4 w-4" /> City/Location Pages to Create
                                             </Label>
                                             <div className="space-y-3">
@@ -552,7 +552,7 @@ export default function DashboardWebsiteEditor() {
                                                                 handleChange("locations", newLocs as any);
                                                             }}
                                                             placeholder="e.g. Austin, TX"
-                                                            className="bg-black/40 border-indigo-500/30 text-white flex-1"
+                                                            className="bg-black/40 border-[#AADD00]/25 text-white flex-1"
                                                         />
                                                         <Button
                                                             variant="outline" size="icon"
@@ -569,7 +569,7 @@ export default function DashboardWebsiteEditor() {
                                                 <Button
                                                     variant="outline"
                                                     onClick={() => handleChange("locations", [...formData.locations, ""] as any)}
-                                                    className="w-full border-dashed border-indigo-500/30 text-indigo-300 hover:bg-indigo-500/10"
+                                                    className="w-full border-dashed border-[#AADD00]/25 text-[#bef000] hover:bg-[#AADD00]/10"
                                                 >
                                                     <PlusCircle className="mr-2 h-4 w-4" /> Add Location Page
                                                 </Button>

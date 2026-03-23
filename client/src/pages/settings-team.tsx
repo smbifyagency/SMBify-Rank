@@ -29,7 +29,7 @@ export default function SettingsTeam() {
                         <select className="bg-white/5 border border-white/10 rounded-lg px-3 text-sm text-gray-300">
                             <option>Editor</option><option>Viewer</option>
                         </select>
-                        <Button className="bg-gradient-to-r from-indigo-600 to-violet-600">
+                        <Button className="bg-gradient-to-r from-[#AADD00] to-[#7ec800]">
                             <Mail className="mr-1 h-4 w-4" /> Invite
                         </Button>
                     </div>
@@ -39,14 +39,14 @@ export default function SettingsTeam() {
                     {members.map((m) => (
                         <div key={m.email} className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 flex items-center justify-between">
                             <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white text-sm font-bold">{m.avatar}</div>
+                                <div className="w-10 h-10 rounded-full bg-gradient-to-br bg-[#AADD00] flex items-center justify-center text-white text-sm font-bold">{m.avatar}</div>
                                 <div>
                                     <p className="text-white font-medium">{m.name}</p>
                                     <p className="text-xs text-gray-500">{m.email}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className={`px-2 py-0.5 rounded-full text-xs ${m.role === "Owner" ? "bg-amber-500/10 text-amber-400" : "bg-indigo-500/10 text-indigo-400"}`}>
+                                <span className={`px-2 py-0.5 rounded-full text-xs ${m.role === "Owner" ? "bg-amber-500/10 text-amber-400" : "bg-[#AADD00]/10 text-[#AADD00]"}`}>
                                     <Shield className="h-3 w-3 inline mr-1" />{m.role}
                                 </span>
                                 <span className={`text-xs ${m.status === "Active" ? "text-emerald-400" : "text-amber-400"}`}>{m.status}</span>

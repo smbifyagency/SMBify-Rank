@@ -120,7 +120,7 @@ export default function UserManagement() {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <Users className="h-8 w-8 text-indigo-400 mr-3" />
+              <Users className="h-8 w-8 text-[#AADD00] mr-3" />
               <div>
                 <h1 className="text-3xl font-bold text-white">User Management</h1>
                 <p className="text-gray-400">Manage user accounts and permissions</p>
@@ -167,8 +167,8 @@ export default function UserManagement() {
                               className="h-10 w-10 rounded-full"
                             />
                           ) : (
-                            <div className="h-10 w-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center">
-                              <span className="text-sm font-medium text-indigo-300">
+                            <div className="h-10 w-10 rounded-full bg-[#AADD00]/15 border border-[#AADD00]/25 flex items-center justify-center">
+                              <span className="text-sm font-medium text-[#bef000]">
                                 {(user.firstName?.[0] || user.email?.[0] || "U").toUpperCase()}
                               </span>
                             </div>
@@ -185,7 +185,7 @@ export default function UserManagement() {
                               variant="default"
                               className={`flex items-center ${user.role === 'admin' ? 'bg-red-600' :
                                 user.role === 'paid' ? 'bg-emerald-600' :
-                                  'bg-indigo-600'
+                                  'bg-[#AADD00]'
                                 }`}
                             >
                               <ShieldCheck className="h-3 w-3 mr-1" />
@@ -203,7 +203,7 @@ export default function UserManagement() {
                               Last login: {new Date(user.lastLoginAt).toLocaleDateString()}
                             </p>
                           )}
-                          <p className="text-xs text-indigo-400 font-medium">
+                          <p className="text-xs text-[#AADD00] font-medium">
                             Websites: {user.websitesCreated || 0} / {user.websiteLimit || 10}
                           </p>
                           {user.expiryDate && (

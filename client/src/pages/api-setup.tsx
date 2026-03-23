@@ -277,7 +277,7 @@ export default function ApiSetup() {
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <Key className="h-5 w-5 text-indigo-400" />
+                    <Key className="h-5 w-5 text-[#AADD00]" />
                     <div>
                       <CardTitle className="text-lg text-white">{title}</CardTitle>
                       <CardDescription className="mt-1 text-gray-400">{description}</CardDescription>
@@ -328,7 +328,7 @@ export default function ApiSetup() {
                         [service]: e.target.value,
                       }))
                     }
-                    className={`border-white/10 text-white placeholder:text-gray-500 focus:border-indigo-500 ${hasCurrentKey && !apiKeys[service]
+                    className={`border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00] ${hasCurrentKey && !apiKeys[service]
                         ? "bg-emerald-500/5 border-emerald-500/20 placeholder:text-emerald-700"
                         : "bg-white/5"
                       }`}
@@ -346,7 +346,7 @@ export default function ApiSetup() {
                     onClick={() => handleSaveKey(service)}
                     disabled={updateApiKeyMutation.isPending}
                     size="sm"
-                    className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white border-0"
+                    className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold text-white border-0"
                     data-testid={`button-save-${service}`}
                   >
                     {updateApiKeyMutation.isPending ? (

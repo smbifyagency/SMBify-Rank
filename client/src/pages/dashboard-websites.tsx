@@ -45,7 +45,7 @@ export default function DashboardWebsites() {
                     <Button
                         onClick={handleCreateWebsite}
                         disabled={isCreating}
-                        className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500"
+                        className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold"
                     >
                         {isCreating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />}
                         New Website
@@ -57,7 +57,7 @@ export default function DashboardWebsites() {
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
                     <input
                         type="text" placeholder="Search websites..."
-                        className="w-full bg-white/5 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-indigo-500"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-[#AADD00]"
                     />
                 </div>
 
@@ -84,8 +84,8 @@ export default function DashboardWebsites() {
                         return (
                             <div key={site.id} className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden hover:-translate-y-1 transition-all group flex flex-col">
                                 {/* Preview */}
-                                <div className="h-36 bg-gradient-to-br from-indigo-500/20 to-violet-500/20 flex items-center justify-center relative flex-shrink-0">
-                                    <Globe className="h-12 w-12 text-indigo-400/30" />
+                                <div className="h-36 bg-gradient-to-br from-[#AADD00]/12 to-[#AADD00]/5 flex items-center justify-center relative flex-shrink-0">
+                                    <Globe className="h-12 w-12 text-[#AADD00]/30" />
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center opacity-0 group-hover:opacity-100">
                                         <Link href={`/dashboard/websites/${site.id}`}>
                                             <Button size="sm" className="bg-white text-gray-900 hover:bg-gray-100">
@@ -111,7 +111,7 @@ export default function DashboardWebsites() {
                                         </div>
                                         {domain !== "—" && (
                                             <a href={domain.startsWith('http') ? domain : `https://${domain}`} target="_blank" rel="noreferrer"
-                                                className="mt-3 flex items-center gap-1 text-xs text-indigo-400 hover:text-indigo-300 truncate">
+                                                className="mt-3 flex items-center gap-1 text-xs text-[#AADD00] hover:text-[#bef000] truncate">
                                                 <ExternalLink className="h-3 w-3 flex-shrink-0" /> <span className="truncate">{domain.replace(/^https?:\/\//, '')}</span>
                                             </a>
                                         )}
@@ -142,10 +142,10 @@ export default function DashboardWebsites() {
                     <button
                         onClick={handleCreateWebsite}
                         disabled={isCreating}
-                        className="rounded-2xl border-2 border-dashed border-white/10 bg-transparent min-h-[280px] flex flex-col items-center justify-center gap-3 hover:border-indigo-500/50 hover:bg-indigo-500/5 transition-all w-full relative"
+                        className="rounded-2xl border-2 border-dashed border-white/10 bg-transparent min-h-[280px] flex flex-col items-center justify-center gap-3 hover:border-[#AADD00]/40 hover:bg-indigo-500/5 transition-all w-full relative"
                     >
                         {isCreating ? (
-                            <Loader2 className="h-10 w-10 text-indigo-400 animate-spin" />
+                            <Loader2 className="h-10 w-10 text-[#AADD00] animate-spin" />
                         ) : (
                             <Plus className="h-10 w-10 text-gray-500" />
                         )}

@@ -62,7 +62,7 @@ export default function AdminSubscriptions() {
                                     <tr key={s.id} className="border-t border-white/5 hover:bg-white/[0.02]">
                                         <td className="p-4 text-sm text-white">{s.email}</td>
                                         <td className="p-4 text-center">
-                                            <span className="px-2 py-0.5 rounded-full text-xs bg-indigo-500/10 text-indigo-400">
+                                            <span className="px-2 py-0.5 rounded-full text-xs bg-[#AADD00]/10 text-[#AADD00]">
                                                 Unlimited ({s.role === 'admin' ? 'Admin' : 'Paid'})
                                             </span>
                                         </td>

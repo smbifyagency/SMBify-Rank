@@ -117,7 +117,7 @@ export default function BlogPost() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 to-transparent" />
               {post.isAiGenerated && (
-                <Badge className="absolute top-4 right-4 bg-indigo-600 hover:bg-indigo-500 text-white border-0">
+                <Badge className="absolute top-4 right-4 bg-[#AADD00] hover:bg-[#bef000] text-black text-white border-0">
                   AI Generated
                 </Badge>
               )}
@@ -154,7 +154,7 @@ export default function BlogPost() {
               )}
             </div>
 
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-[#AADD00] to-[#7ec800] bg-clip-text text-transparent">
               {post.title}
             </h1>
 
@@ -191,7 +191,7 @@ export default function BlogPost() {
           <Separator className="mb-8 border-white/10" />
 
           {/* Article Content */}
-          <div className="prose prose-lg prose-invert max-w-none mb-12 text-gray-300 prose-headings:text-white prose-a:text-indigo-400 prose-strong:text-white">
+          <div className="prose prose-lg prose-invert max-w-none mb-12 text-gray-300 prose-headings:text-white prose-a:text-[#AADD00] prose-strong:text-white">
             <p className="mb-4">
               <span
                 dangerouslySetInnerHTML={{
@@ -207,7 +207,7 @@ export default function BlogPost() {
           <Card className="mb-12 bg-white/[0.02] border-white/10 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-full flex items-center justify-center text-white font-bold text-xl">
+                <div className="w-16 h-16 bg-gradient-to-r from-[#AADD00] to-[#7ec800] rounded-full flex items-center justify-center text-white font-bold text-xl">
                   {post.authorName.charAt(0).toUpperCase()}
                 </div>
                 <div>
@@ -233,7 +233,7 @@ export default function BlogPost() {
                           className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         {relatedPost.isAiGenerated && (
-                          <Badge className="absolute top-2 right-2 bg-indigo-600 text-white border-0 text-xs">
+                          <Badge className="absolute top-2 right-2 bg-[#AADD00] text-black border-0 text-xs">
                             AI
                           </Badge>
                         )}
@@ -253,7 +253,7 @@ export default function BlogPost() {
                           </div>
                         )}
                       </div>
-                      <CardTitle className="text-lg group-hover:text-indigo-400 text-white transition-colors line-clamp-2">
+                      <CardTitle className="text-lg group-hover:text-[#AADD00] text-white transition-colors line-clamp-2">
                         {relatedPost.title}
                       </CardTitle>
                       <CardDescription className="line-clamp-2 text-sm text-gray-400">
@@ -286,10 +286,10 @@ export default function BlogPost() {
 
           {/* Newsletter Signup */}
           <div className="mt-16">
-            <Card className="bg-gradient-to-r from-indigo-600/20 to-violet-600/20 border-indigo-500/30 text-white">
+            <Card className="bg-gradient-to-r from-indigo-600/20 to-violet-600/20 border-[#AADD00]/25 text-white">
               <CardHeader className="text-center">
                 <CardTitle className="text-2xl text-white">Subscribe to Our Newsletter</CardTitle>
-                <CardDescription className="text-indigo-200">
+                <CardDescription className="text-gray-300">
                   Get the latest articles and insights delivered straight to your inbox.
                 </CardDescription>
               </CardHeader>
@@ -298,9 +298,9 @@ export default function BlogPost() {
                   <input
                     type="email"
                     placeholder="Enter your email"
-                    className="flex-1 px-3 py-2 rounded-md bg-white/5 border border-white/10 text-white placeholder:text-gray-400 focus:outline-none focus:border-indigo-500"
+                    className="flex-1 px-3 py-2 rounded-md bg-white/5 border border-white/10 text-white placeholder:text-gray-400 focus:outline-none focus:border-[#AADD00]"
                   />
-                  <Button className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white border-0">
+                  <Button className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold text-white border-0">
                     Subscribe
                   </Button>
                 </div>

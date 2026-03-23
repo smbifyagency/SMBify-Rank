@@ -39,7 +39,7 @@ export default function OnboardingBusiness() {
                 <div className="flex items-center justify-between mb-8">
                     {["Business", "Services", "Locations", "Brand", "API", "Generate", "Preview"].map((step, i) => (
                         <div key={step} className="flex items-center">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? "bg-gradient-to-r from-indigo-500 to-violet-500 text-white" : "bg-white/5 text-gray-500 border border-white/10"
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? "bg-gradient-to-r bg-[#AADD00] text-white" : "bg-white/5 text-gray-500 border border-white/10"
                                 }`}>
                                 {i + 1}
                             </div>
@@ -50,8 +50,8 @@ export default function OnboardingBusiness() {
 
                 {/* Header */}
                 <div className="text-center mb-10">
-                    <div className="w-16 h-16 rounded-2xl bg-indigo-500/10 flex items-center justify-center mx-auto mb-4">
-                        <Building2 className="h-8 w-8 text-indigo-400" />
+                    <div className="w-16 h-16 rounded-2xl bg-[#AADD00]/10 flex items-center justify-center mx-auto mb-4">
+                        <Building2 className="h-8 w-8 text-[#AADD00]" />
                     </div>
                     <h1 className="text-3xl font-bold text-white mb-2">Business Details</h1>
                     <p className="text-gray-400">Tell us about your business so our AI can generate the perfect content.</p>
@@ -81,7 +81,7 @@ export default function OnboardingBusiness() {
                                     key={cat}
                                     onClick={() => setFormData({ ...formData, category: cat })}
                                     className={`px-3 py-1.5 rounded-lg text-sm transition-all ${formData.category === cat
-                                            ? "bg-indigo-500/20 text-indigo-300 border border-indigo-500/50"
+                                            ? "bg-[#AADD00]/15 text-[#bef000] border border-[#AADD00]/40"
                                             : "bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10"
                                         }`}
                                 >
@@ -145,7 +145,7 @@ export default function OnboardingBusiness() {
                         </Button>
                         <Button
                             onClick={handleNext}
-                            className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 px-8"
+                            className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold px-8"
                         >
                             Next: Services <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>

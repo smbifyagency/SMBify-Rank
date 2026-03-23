@@ -86,8 +86,8 @@ export default function AuthPage() {
         <div className="text-center mb-8">
           <Link href="/">
             <div className="inline-flex items-center gap-3 cursor-pointer group mb-6">
-              <div className="h-12 w-12 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-500/25">
-                <Globe className="h-6 w-6 text-white" />
+              <div className="h-12 w-12 rounded-xl bg-[#AADD00] flex items-center justify-center shadow-lg shadow-[#AADD00]/25">
+                <Globe className="h-6 w-6 text-black" />
               </div>
               <h1 className="text-2xl font-bold text-white">SMBify</h1>
             </div>
@@ -132,7 +132,7 @@ export default function AuthPage() {
                 type="email"
                 placeholder="you@company.com"
                 {...form.register("email")}
-                className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-indigo-500"
+                className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
                 data-testid="input-email"
               />
               {form.formState.errors.email && (
@@ -142,7 +142,7 @@ export default function AuthPage() {
             <div>
               <div className="flex items-center justify-between">
                 <Label htmlFor="password" className="text-gray-300 text-sm">Password</Label>
-                <Link href="/forgot-password" className="text-xs text-indigo-400 hover:text-indigo-300">
+                <Link href="/forgot-password" className="text-xs text-[#AADD00] hover:text-[#bef000]">
                   Forgot password?
                 </Link>
               </div>
@@ -152,7 +152,7 @@ export default function AuthPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   {...form.register("password")}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-indigo-500 pr-10"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00] pr-10"
                   data-testid="input-password"
                 />
                 <button
@@ -170,7 +170,7 @@ export default function AuthPage() {
             <Button
               type="submit"
               disabled={loginMutation.isPending}
-              className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 py-6 text-base font-semibold rounded-xl shadow-lg shadow-indigo-500/25"
+              className="w-full bg-[#AADD00] hover:bg-[#bef000] text-black font-bold py-6 text-base rounded-xl shadow-lg shadow-[#AADD00]/25"
               data-testid="button-login"
             >
               {loginMutation.isPending ? "Signing in..." : (
@@ -181,7 +181,7 @@ export default function AuthPage() {
 
           <div className="mt-6 text-center text-sm text-gray-400">
             Don't have an account?{" "}
-            <Link href="/signup" className="text-indigo-400 hover:text-indigo-300 font-medium">
+            <Link href="/signup" className="text-[#AADD00] hover:text-[#bef000] font-medium">
               Sign up
             </Link>
           </div>

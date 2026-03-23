@@ -59,7 +59,7 @@ export default function AdminDashboard() {
                                 return (
                                     <Link key={item.label} href={item.href}>
                                         <div className="flex items-center justify-between p-3 rounded-xl border border-white/5 hover:border-white/15 hover:bg-white/[0.02] transition-all cursor-pointer">
-                                            <span className="flex items-center gap-3 text-sm text-gray-300"><Icon className="h-4 w-4 text-indigo-400" />{item.label}</span>
+                                            <span className="flex items-center gap-3 text-sm text-gray-300"><Icon className="h-4 w-4 text-[#AADD00]" />{item.label}</span>
                                             <ArrowRight className="h-3.5 w-3.5 text-gray-500" />
                                         </div>
                                     </Link>
