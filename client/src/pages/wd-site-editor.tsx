@@ -176,10 +176,16 @@ export default function WDSiteEditor() {
       });
       if (data.netlifyUrl) setDeployedUrl(data.netlifyUrl);
 
-      // Load saved Netlify token if available
+      // Load saved Netlify token if available — mark as connected immediately
+      // (token was already verified when saved, no need to re-verify on every load)
       fetch("/api/settings/netlify", { credentials: "include" })
         .then(r => r.ok ? r.json() : null)
-        .then(s => { if (s?.apiKey && !s.apiKey.includes("•")) setNetlifyToken(s.apiKey); })
+        .then(s => {
+          if (s?.apiKey && !s.apiKey.includes("•")) {
+            setNetlifyToken(s.apiKey);
+            setTokenValid(true);
+          }
+        })
         .catch(() => {});
 
       // Check if any AI API key is configured (for status indicator)
