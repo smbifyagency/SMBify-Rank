@@ -24,6 +24,7 @@ export interface WDTheme {
   secondaryColor: string;  // links, accents, hover
   accentColor: string;     // emergency CTA (default red)
   fontFamily: WDFontFamily;
+  heroImageUrl?: string;   // optional custom hero background
 }
 
 export interface WDBusinessData {
@@ -55,6 +56,8 @@ export interface WDBusinessData {
   // About page data
   aboutContent?: string;
   teamDescription?: string;
+  // Custom images: placeholder key → data URL or hosted URL
+  customImages?: Record<string, string>;
   // Gallery images (uploaded by user, hosted on Netlify after publish)
   galleryImages?: WDGalleryImage[];
   // Blog posts
@@ -268,6 +271,7 @@ function resolveTheme(data: WDBusinessData): WDTheme {
     secondaryColor: data.secondaryColor || '#0ea5e9',
     accentColor: data.accentColor || '#dc2626',
     fontFamily: data.fontFamily || 'inter',
+    heroImageUrl: data.customImages?.['hero-bg'],
   };
 }
 
@@ -717,7 +721,7 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section) { b
   content: '';
   position: absolute;
   inset: 0;
-  background: url('${WD_PLACEHOLDER_IMAGES.hero}') center/cover no-repeat;
+  background: url('${theme.heroImageUrl || WD_PLACEHOLDER_IMAGES.hero}') center/cover no-repeat;
   opacity: 0.15;
 }
 
@@ -3584,6 +3588,28 @@ export function generateWaterDamageWebsite(
   for (const location of data.serviceAreas) {
     const filename = `locations/${slugify(location)}.html`;
     files[filename] = generateLocationPage(data, location, domain);
+  }
+
+  // Inject custom images uploaded by user (replaces Unsplash placeholders)
+  if (data.customImages && Object.keys(data.customImages).length > 0) {
+    for (const [filename, html] of Object.entries(files)) {
+      if (!filename.endsWith('.html') || typeof html !== 'string') continue;
+      let updated = html;
+      for (const [key, customSrc] of Object.entries(data.customImages)) {
+        if (!customSrc) continue;
+        // Replace src on <img> tags that have data-placeholder="key"
+        updated = updated.replace(
+          new RegExp(`(<img[^>]*data-placeholder="${key}"[^>]*)src="[^"]*"`, 'gs'),
+          `$1src="${customSrc}"`
+        );
+        // Also handle src BEFORE data-placeholder
+        updated = updated.replace(
+          new RegExp(`(<img[^>]*)src="[^"]*"([^>]*data-placeholder="${key}")`, 'gs'),
+          `$1src="${customSrc}"$2`
+        );
+      }
+      files[filename] = updated;
+    }
   }
 
   // SEO files

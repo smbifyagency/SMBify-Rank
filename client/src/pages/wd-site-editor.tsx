@@ -40,20 +40,23 @@ interface WDSiteData {
   // AI Keys (stored per-website so they survive deployments)
   openaiApiKey?: string;
   geminiApiKey?: string;
+  // Custom images: placeholder key → data URL or hosted URL
+  customImages?: Record<string, string>;
   // Deployment
   netlifyUrl?: string;
   netlifyApiKey?: string;
   deploymentStatus?: string;
 }
 
-interface ImageEntry {
-  placeholder: string;   // data-placeholder attribute value
-  currentSrc: string;
-  newFile?: File;
-  newSrc?: string;
-  altText: string;
-  label: string;
-}
+// All placeholder image slots in the WD template
+const WD_IMAGE_SLOTS = [
+  { key: "hero-bg",        label: "Hero Background",          page: "Homepage",         defaultSrc: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80", hint: "Wide banner photo — water damage scene, flooded room, or your team at work" },
+  { key: "main-image",     label: "Team / Work Photo",        page: "Homepage",         defaultSrc: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80", hint: "Your team, truck, or a restoration job in progress" },
+  { key: "about-image",    label: "About Us Photo",           page: "About",            defaultSrc: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80", hint: "Team photo, owner headshot, or your office/vehicles" },
+  { key: "service-image",  label: "Service Page Photo",       page: "Service Pages",    defaultSrc: "https://images.unsplash.com/photo-1547036967-23d11aacaee0?w=800&q=80", hint: "Water damage work, equipment, or drying process" },
+  { key: "location-image", label: "Location Page Photo",      page: "Location Pages",   defaultSrc: "https://images.unsplash.com/photo-1601760562234-9814eea6663a?w=800&q=80", hint: "Your truck or team in the local area" },
+  { key: "gallery-1",      label: "Gallery — Before Photo",   page: "Gallery",          defaultSrc: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80", hint: "Before photo from an actual restoration job" },
+];
 
 // ─── Main Component ────────────────────────────────────────────────────────
 
@@ -79,11 +82,6 @@ export default function WDSiteEditor() {
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const [apiStatus, setApiStatus] = useState<"checking" | "ready" | "none">("checking");
   const iframeRef = useRef<HTMLIFrameElement>(null);
-
-  // Images that need replacing
-  const [images, setImages] = useState<ImageEntry[]>([
-    { placeholder: "main-image", currentSrc: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80", altText: "", label: "Main Team/Work Photo" },
-  ]);
 
   // ── Load website data ─────────────────────────────────────────────────
 
@@ -223,26 +221,29 @@ export default function WDSiteEditor() {
   async function deployToNetlify() {
     if (!siteData) return;
     if (!netlifyToken) {
-      toast({ title: "Netlify Token Required", description: "Enter your Netlify API token to deploy.", variant: "destructive" });
+      toast({ title: "Netlify Token Required", description: "Verify your Netlify token in the Deploy tab first.", variant: "destructive" });
       return;
     }
     setIsDeploying(true);
     try {
-      const res = await fetch(`/api/websites/${websiteId}/redeploy`, {
+      const slug = (desiredSlug || siteData.urlSlug || "").trim();
+      const res = await fetch(`/api/websites/${websiteId}/deploy-wd`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
           netlifyApiKey: netlifyToken,
-          siteName: siteData.urlSlug,
-          businessData: siteData,
+          siteName: slug,
         }),
       });
-      if (!res.ok) throw new Error("Deploy failed");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Server error ${res.status}`);
+      }
       const data = await res.json();
-      const url = data.url || data.deployUrl || `https://${siteData.urlSlug}.netlify.app`;
+      const url = data.url || `https://${slug}.netlify.app`;
       setDeployedUrl(url);
-      toast({ title: "🚀 Deployed!", description: `Live at ${url}` });
+      toast({ title: "🚀 Deploying!", description: `Your site will be live at ${url} in ~30 seconds.` });
     } catch (err) {
       toast({ title: "Deploy Error", description: String(err), variant: "destructive" });
     } finally {
@@ -303,16 +304,25 @@ export default function WDSiteEditor() {
 
   // ── Image upload ──────────────────────────────────────────────────────
 
-  function handleImageFileSelect(idx: number, file: File) {
+  function handleCustomImageUpload(key: string, file: File) {
     const reader = new FileReader();
     reader.onload = e => {
-      setImages(prev => {
-        const updated = [...prev];
-        updated[idx] = { ...updated[idx], newFile: file, newSrc: e.target?.result as string };
-        return updated;
-      });
+      const dataUrl = e.target?.result as string;
+      setSiteData(prev => prev ? {
+        ...prev,
+        customImages: { ...(prev.customImages || {}), [key]: dataUrl }
+      } : prev);
     };
     reader.readAsDataURL(file);
+  }
+
+  function removeCustomImage(key: string) {
+    setSiteData(prev => {
+      if (!prev?.customImages) return prev;
+      const updated = { ...prev.customImages };
+      delete updated[key];
+      return { ...prev, customImages: updated };
+    });
   }
 
   // ── Update site data fields ───────────────────────────────────────────
@@ -654,69 +664,51 @@ export default function WDSiteEditor() {
             {/* ── Images Tab ──────────────────────────────────────────── */}
             <TabsContent value="images" className="p-4 space-y-4 mt-0">
               <div>
-                <h3 className="font-semibold text-sm text-gray-300 mb-1">Replace Placeholder Images</h3>
-                <p className="text-xs text-gray-500">Upload real photos from your jobs or team. Add descriptive alt text for SEO.</p>
+                <h3 className="font-semibold text-sm text-gray-300 mb-1">Page Images</h3>
+                <p className="text-xs text-gray-500">Upload real photos for each section. Click Save after uploading, then Regenerate to apply.</p>
               </div>
 
-              {images.map((img, idx) => (
-                <div key={idx} className="rounded-lg border border-gray-700 overflow-hidden">
-                  {/* Current image preview */}
-                  <div className="relative bg-gray-800">
-                    <img
-                      src={img.newSrc || img.currentSrc}
-                      alt={img.altText || "Placeholder"}
-                      className="w-full h-40 object-cover"
-                    />
-                    {!img.newSrc && (
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <span className="text-xs text-white font-medium px-2 py-1 bg-yellow-600 rounded">
-                          📷 Placeholder — Replace Me
-                        </span>
+              {WD_IMAGE_SLOTS.map(slot => {
+                const customSrc = siteData?.customImages?.[slot.key];
+                const displaySrc = customSrc || slot.defaultSrc;
+                const isCustom = !!customSrc;
+                return (
+                  <div key={slot.key} className="rounded-lg border border-gray-700 overflow-hidden">
+                    <div className="relative bg-gray-800">
+                      <img src={displaySrc} alt={slot.label} className="w-full h-32 object-cover" />
+                      <div className="absolute top-2 left-2">
+                        <span className="text-xs px-2 py-0.5 rounded bg-black/60 text-gray-300">{slot.page}</span>
                       </div>
-                    )}
-                    {img.newSrc && (
-                      <div className="absolute top-2 right-2">
-                        <Badge className="bg-green-600 text-xs">✓ Updated</Badge>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="p-3 space-y-2">
-                    <p className="text-xs font-medium text-gray-300">{img.label}</p>
-
-                    <label className="block">
-                      <span className="sr-only">Upload image</span>
-                      <div className="flex items-center gap-2">
-                        <label className="cursor-pointer flex-1">
-                          <div className="flex items-center justify-center gap-2 border border-dashed border-gray-600 rounded-md py-2 px-3 text-xs text-gray-400 hover:border-blue-500 hover:text-blue-400 transition-colors">
-                            <ImageIcon className="w-4 h-4" />
-                            {img.newFile ? img.newFile.name : "Choose photo..."}
-                          </div>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            className="hidden"
-                            onChange={e => { if (e.target.files?.[0]) handleImageFileSelect(idx, e.target.files[0]); }}
-                          />
-                        </label>
-                      </div>
-                    </label>
-
-                    <div>
-                      <Label className="text-xs text-gray-500">Alt Text (required for SEO)</Label>
-                      <Input
-                        value={img.altText}
-                        onChange={e => setImages(prev => { const u = [...prev]; u[idx] = { ...u[idx], altText: e.target.value }; return u; })}
-                        className="bg-gray-800 border-gray-700 text-white mt-1 text-xs"
-                        placeholder="e.g., Water damage restoration team in Austin"
-                      />
+                      {isCustom ? (
+                        <div className="absolute top-2 right-2 flex gap-1">
+                          <Badge className="bg-green-700 text-xs">✓ Custom</Badge>
+                          <button onClick={() => removeCustomImage(slot.key)}
+                            className="text-xs px-1.5 py-0.5 rounded bg-red-900/80 text-red-300 hover:bg-red-800">✕</button>
+                        </div>
+                      ) : (
+                        <div className="absolute inset-0 flex items-end justify-start p-2">
+                          <span className="text-xs bg-yellow-700/80 text-yellow-200 px-2 py-0.5 rounded">📷 Placeholder</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-3 space-y-1.5">
+                      <p className="text-xs font-medium text-white">{slot.label}</p>
+                      <p className="text-xs text-gray-500">{slot.hint}</p>
+                      <label className="cursor-pointer block">
+                        <div className="flex items-center justify-center gap-2 border border-dashed border-gray-600 rounded-md py-2 px-3 text-xs text-gray-400 hover:border-blue-500 hover:text-blue-400 transition-colors">
+                          <ImageIcon className="w-3 h-3" />
+                          {isCustom ? "Replace photo..." : "Upload photo..."}
+                        </div>
+                        <input type="file" accept="image/*" className="hidden"
+                          onChange={e => { if (e.target.files?.[0]) handleCustomImageUpload(slot.key, e.target.files[0]); }} />
+                      </label>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
 
               <p className="text-xs text-gray-600 italic">
-                Additional placeholder images are embedded in service and location pages. After deploying, you can update those by re-uploading specific pages.
+                After uploading, click <strong>Save</strong> then <strong>Regenerate</strong> to see updated images in the preview.
               </p>
             </TabsContent>
 

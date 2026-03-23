@@ -5686,6 +5686,12 @@ Generated on: ${new Date().toISOString()}`;
         return res.status(404).json({ message: "Website not found" });
       }
 
+      // Anti-abuse: once a water-damage website has been deployed to Netlify,
+      // it cannot be deleted from the app (prevents free-tier abuse).
+      if (existingWebsite.netlifyUrl && existingWebsite.template === 'water-damage') {
+        return res.status(403).json({ message: "This website has been published to Netlify and cannot be deleted. Contact support if you need help." });
+      }
+
       const success = await storage.deleteWebsite(id);
       if (success) {
         res.json({ message: "Website deleted successfully" });
@@ -6277,6 +6283,89 @@ Generated on: ${new Date().toISOString()}`;
     } catch (error) {
       console.error("WD Website Generator Error:", error);
       res.status(500).json({ error: error instanceof Error ? error.message : "Failed to generate website" });
+    }
+  });
+
+  // ── WD Website Deploy (water-damage template specific) ───────────────────────
+  // Bypasses the old generic generator; uses generateWaterDamageWebsite directly.
+  // Does NOT poll for deploy completion — returns URL immediately after ZIP upload
+  // to stay within Vercel's 60s function timeout.
+  app.post("/api/websites/:id/deploy-wd", isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user.id;
+      let { netlifyApiKey, siteName } = req.body;
+
+      const website = await storage.getWebsite(id);
+      if (!website || website.userId !== userId) {
+        return res.status(404).json({ error: "Website not found" });
+      }
+
+      // Resolve netlify token: body → DB settings
+      if (!netlifyApiKey || netlifyApiKey.includes('•')) {
+        const setting = await storage.getApiSetting(userId, 'netlify');
+        if (setting?.apiKey) {
+          try { netlifyApiKey = decrypt(setting.apiKey); } catch { netlifyApiKey = setting.apiKey; }
+        }
+      }
+      if (!netlifyApiKey) {
+        return res.status(400).json({ error: "Netlify API token required. Verify it in the Deploy tab." });
+      }
+
+      const bd = (website.businessData || {}) as any;
+      const rawDomain = siteName || bd.urlSlug || (bd.businessName || website.title || 'my-site');
+      const domain = rawDomain.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').substring(0, 63);
+
+      if (!domain) {
+        return res.status(400).json({ error: "Site name is required." });
+      }
+
+      // Generate all HTML files using water-damage template
+      const files = generateWaterDamageWebsite(bd, domain);
+
+      // Build ZIP
+      const zip = new JSZip();
+      for (const [filename, content] of Object.entries(files)) {
+        zip.file(filename, content as string);
+      }
+      const zipBuffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
+
+      // Resolve or create Netlify site (use JS SDK to find/create, raw fetch to upload)
+      const { NetlifyAPI } = await import('netlify');
+      const netlify = new NetlifyAPI(netlifyApiKey);
+      let site: any;
+      try {
+        const sites = await netlify.listSites({ filter: 'all' });
+        site = (sites as any[]).find((s: any) => s.name === domain);
+      } catch { /* will create */ }
+
+      if (!site) {
+        site = await netlify.createSite({ body: { name: domain } });
+      }
+
+      // Upload ZIP — no polling so we stay under the 60s limit
+      const uploadRes = await fetch(`https://api.netlify.com/api/v1/sites/${site.id}/deploys`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${netlifyApiKey}`, 'Content-Type': 'application/zip' },
+        body: new Uint8Array(zipBuffer) as any,
+      });
+      if (!uploadRes.ok) {
+        const msg = await uploadRes.text().catch(() => uploadRes.statusText);
+        throw new Error(`Netlify upload failed (${uploadRes.status}): ${msg}`);
+      }
+
+      const siteUrl = `https://${domain}.netlify.app`;
+
+      // Update DB with deployment info
+      await storage.updateWebsite(id, {
+        netlifyUrl: siteUrl,
+        netlifyDeploymentStatus: 'deployed',
+      });
+
+      res.json({ url: siteUrl, siteName: domain });
+    } catch (err: any) {
+      console.error("WD deploy error:", err);
+      res.status(500).json({ error: err.message || "Deployment failed" });
     }
   });
 
