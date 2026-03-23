@@ -296,6 +296,42 @@ function buildServiceSlug(service: string, city: string): string {
   return `services/${slugify(service)}-${slugify(city)}.html`;
 }
 
+// ─── Icon name → emoji (AI returns names like "shield", "clock") ────────────
+function iconToEmoji(icon: string): string {
+  if (!icon) return '✅';
+  // Already an emoji or contains non-ASCII
+  if (/[^\x00-\x7F]/.test(icon)) return icon;
+  const map: Record<string, string> = {
+    'shield': '🛡️', 'shield-check': '🛡️',
+    'clock': '⏰', 'time': '⏰', 'timer': '⏰',
+    'check-circle': '✅', 'check': '✅', 'checkmark': '✅',
+    'star': '⭐', 'award': '🏆', 'trophy': '🏆',
+    'phone': '📞', 'call': '📞',
+    'home': '🏠', 'house': '🏠',
+    'heart': '❤️', 'love': '❤️',
+    'users': '👥', 'team': '👥', 'people': '👥',
+    'tool': '🔧', 'wrench': '🔧', 'settings': '🔧',
+    'zap': '⚡', 'lightning': '⚡', 'fast': '⚡',
+    'alert': '🚨', 'warning': '⚠️', 'emergency': '🚨',
+    'map-pin': '📍', 'map': '📍', 'location': '📍',
+    'dollar': '💲', 'money': '💲', 'price': '💲',
+    'file': '📋', 'clipboard': '📋', 'document': '📋',
+    'water': '💧', 'droplet': '💧', 'drop': '💧',
+    'mold': '🦠', 'bacteria': '🦠',
+    'calendar': '📅', 'date': '📅',
+    'camera': '📷', 'photo': '📷',
+    'search': '🔍', 'magnify': '🔍',
+    'lock': '🔒', 'secure': '🔒',
+    'truck': '🚛', 'van': '🚛', 'vehicle': '🚛',
+    'certified': '🎓', 'certificate': '🎓', 'license': '🎓',
+    'insurance': '📄', 'paper': '📄',
+    'thumbs-up': '👍', 'like': '👍',
+    'smile': '😊', 'happy': '😊',
+  };
+  const key = icon.toLowerCase().trim().replace(/[\s_]+/g, '-');
+  return map[key] || map[key.split('-')[0]] || '✅';
+}
+
 function buildLocationSlug(city: string): string {
   return `locations/${slugify(city)}.html`;
 }
@@ -539,7 +575,7 @@ ul { list-style: none; }
 }
 
 section { padding: 4rem 0; }
-section:nth-child(even) { background: #f8fafc; }
+section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section) { background: #f8fafc; }
 
 /* ── Header ───────────────────────────────────── */
 .site-header {
@@ -1420,7 +1456,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
 
   const whyPointsHTML = whyPoints.map(pt => `
       <div class="why-us-item">
-        <span class="why-us-icon" aria-hidden="true">${pt.icon}</span>
+        <span class="why-us-icon" aria-hidden="true">${iconToEmoji(pt.icon)}</span>
         <div>
           <h3>${pt.heading}</h3>
           <p>${pt.body}</p>

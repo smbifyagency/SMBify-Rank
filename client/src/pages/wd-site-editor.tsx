@@ -722,12 +722,13 @@ export default function WDSiteEditor() {
 
             {/* ── Deploy Tab ──────────────────────────────────────────── */}
             <TabsContent value="deploy" className="p-4 space-y-4 mt-0">
-              <h3 className="font-semibold text-sm text-gray-300">Deploy to Netlify</h3>
+              <h3 className="font-semibold text-sm text-gray-300">Publish to Netlify</h3>
+              <p className="text-xs text-gray-500">Complete your website first (Business + Content tabs), then publish here.</p>
 
               {deployedUrl && (
                 <div className="rounded-lg bg-green-900/30 border border-green-800 p-3">
                   <div className="flex items-center gap-2 text-green-400 text-sm font-medium mb-1">
-                    <CheckCircle2 className="w-4 h-4" /> Currently Live
+                    <CheckCircle2 className="w-4 h-4" /> Live Site
                   </div>
                   <a href={deployedUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-green-300 underline break-all">
                     {deployedUrl}
@@ -735,9 +736,9 @@ export default function WDSiteEditor() {
                 </div>
               )}
 
-              {/* Step 1: Token */}
+              {/* Netlify API Token */}
               <div className="space-y-2">
-                <Label className="text-xs text-gray-400">Step 1 — Netlify API Token</Label>
+                <Label className="text-xs text-gray-400">Netlify API Token</Label>
                 <div className="flex gap-2">
                   <Input
                     type="password"
@@ -748,60 +749,64 @@ export default function WDSiteEditor() {
                   />
                   <Button size="sm" variant="outline" onClick={verifyNetlifyToken} disabled={isVerifyingToken || !netlifyToken}
                     className={`border-gray-700 text-xs whitespace-nowrap ${tokenValid === true ? 'border-green-600 text-green-400' : tokenValid === false ? 'border-red-600 text-red-400' : 'text-gray-300'}`}>
-                    {isVerifyingToken ? <Loader2 className="w-3 h-3 animate-spin" /> : tokenValid === true ? <><CheckCircle2 className="w-3 h-3 mr-1" /> Valid</> : tokenValid === false ? "✗ Invalid" : "Verify"}
+                    {isVerifyingToken ? <Loader2 className="w-3 h-3 animate-spin" /> : tokenValid === true ? <><CheckCircle2 className="w-3 h-3 mr-1" /> Connected</> : tokenValid === false ? "✗ Invalid" : "Connect"}
                   </Button>
                 </div>
-                <p className="text-xs text-gray-600">Netlify → User Settings → Personal Access Tokens</p>
+                <p className="text-xs text-gray-600">Get yours: Netlify → Avatar → User Settings → Personal access tokens</p>
               </div>
 
-              {/* Step 2: Domain */}
+              {/* Site Name + Domain Check (shown after token verified) */}
               {tokenValid && (
                 <div className="space-y-2">
-                  <Label className="text-xs text-gray-400">Step 2 — Choose Your Site Name</Label>
-                  <div className="flex gap-2">
-                    <div className="flex flex-1 items-center">
-                      <Input
-                        value={desiredSlug || siteData.urlSlug}
-                        onChange={e => { setDesiredSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "")); setSlugAvailable(null); }}
-                        className="bg-gray-800 border-gray-700 text-white text-sm rounded-r-none"
-                        placeholder={siteData.urlSlug || "my-site-name"}
-                      />
-                      <span className="text-xs text-gray-500 bg-gray-800 border border-l-0 border-gray-700 px-2 py-2 rounded-r-md whitespace-nowrap">.netlify.app</span>
-                    </div>
-                    <Button size="sm" variant="outline" onClick={checkSlugAvailability} disabled={isCheckingSlug}
-                      className={`border-gray-700 text-xs whitespace-nowrap ${slugAvailable === true ? 'border-green-600 text-green-400' : slugAvailable === false ? 'border-red-600 text-red-400' : 'text-gray-300'}`}>
-                      {isCheckingSlug ? <Loader2 className="w-3 h-3 animate-spin" /> : slugAvailable === true ? "✓ Available" : slugAvailable === false ? "✗ Taken" : "Check"}
+                  <Label className="text-xs text-gray-400">Site Name (your domain on Netlify)</Label>
+                  <div className="flex items-center gap-0">
+                    <Input
+                      value={desiredSlug || siteData.urlSlug}
+                      onChange={e => { setDesiredSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "")); setSlugAvailable(null); }}
+                      className="bg-gray-800 border-gray-700 text-white text-sm rounded-r-none border-r-0 flex-1"
+                      placeholder={siteData.urlSlug || "rapid-dry-restoration"}
+                    />
+                    <span className="text-xs text-gray-400 bg-gray-800 border border-gray-700 px-2 py-2 h-9 flex items-center">.netlify.app</span>
+                    <Button size="sm" variant="outline" onClick={checkSlugAvailability} disabled={isCheckingSlug || !netlifyToken}
+                      className={`rounded-l-none border-l-0 text-xs h-9 whitespace-nowrap ${slugAvailable === true ? 'border-green-600 text-green-400' : slugAvailable === false ? 'border-red-600 text-red-400' : 'border-gray-700 text-gray-300'}`}>
+                      {isCheckingSlug ? <Loader2 className="w-3 h-3 animate-spin" /> : slugAvailable === true ? "✓ Free" : slugAvailable === false ? "✗ Taken" : "Check"}
                     </Button>
                   </div>
-                  {slugAvailable === false && <p className="text-xs text-red-400">This name is taken. Try a different one.</p>}
-                  {slugAvailable === true && <p className="text-xs text-green-400">This name is available!</p>}
+                  {slugAvailable === false && <p className="text-xs text-red-400">That name is taken — try a variation like adding your city.</p>}
+                  {slugAvailable === true && <p className="text-xs text-green-400">✓ Available! Click Publish below.</p>}
                 </div>
               )}
 
-              {/* Step 3: Deploy */}
-              {tokenValid && (
-                <Button
-                  onClick={() => {
-                    if (desiredSlug) updateField("urlSlug", desiredSlug);
-                    deployToNetlify();
-                  }}
-                  disabled={isDeploying || !netlifyToken || slugAvailable === false}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                >
-                  {isDeploying ? (
-                    <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Deploying...</>
-                  ) : (
-                    <><Rocket className="w-4 h-4 mr-2" /> Publish to Netlify</>
-                  )}
-                </Button>
-              )}
+              {/* Publish Button */}
+              <Button
+                onClick={() => {
+                  if (desiredSlug) updateField("urlSlug", desiredSlug);
+                  deployToNetlify();
+                }}
+                disabled={isDeploying || !netlifyToken || !tokenValid || slugAvailable === false}
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+              >
+                {isDeploying ? (
+                  <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Deploying...</>
+                ) : (
+                  <><Rocket className="w-4 h-4 mr-2" /> Publish to Netlify</>
+                )}
+              </Button>
+              {!netlifyToken && <p className="text-xs text-center text-gray-600">Enter and verify your Netlify token to publish</p>}
+              {netlifyToken && tokenValid && slugAvailable === null && <p className="text-xs text-center text-yellow-500">Check domain availability before publishing</p>}
 
-              <div className="rounded-lg bg-gray-800 border border-gray-700 p-3">
-                <p className="text-xs font-medium text-gray-300 mb-2">📋 Pre-Deploy Checklist</p>
+              <div className="rounded-lg bg-gray-800/50 border border-gray-700/50 p-3">
+                <p className="text-xs font-medium text-gray-400 mb-2">✅ Pre-Publish Checklist</p>
                 <ul className="space-y-1">
-                  {["Business name and phone correct", "Services list accurate", "Service areas correct", "All placeholder images replaced"].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2 text-xs text-gray-400">
-                      <span className="text-gray-600 mt-0.5">□</span> {item}
+                  {[
+                    "Business name and phone are correct",
+                    "Services list is accurate",
+                    "Service areas listed correctly",
+                    "AI content generated (click Regenerate)",
+                    "Placeholder images replaced with real photos",
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-2 text-xs text-gray-500">
+                      <span className="mt-0.5">□</span> {item}
                     </li>
                   ))}
                 </ul>
@@ -823,15 +828,31 @@ export default function WDSiteEditor() {
               onChange={e => setPreviewPage(e.target.value)}
               className="bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded px-2 py-1"
             >
-              <option value="index.html">Homepage</option>
-              {(Array.isArray(siteData.services) ? siteData.services : []).map(s => {
-                const slug = `services/${s.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${(siteData.city || "").toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
-                return <option key={s} value={slug}>{s} (Service)</option>;
-              })}
-              {(Array.isArray(siteData.serviceAreas) ? siteData.serviceAreas : []).map(l => {
-                const slug = `locations/${l.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
-                return <option key={l} value={slug}>{l} (Location)</option>;
-              })}
+              <optgroup label="Core Pages">
+                <option value="index.html">Homepage</option>
+                <option value="about.html">About Us</option>
+                <option value="contact.html">Contact</option>
+                <option value="faq.html">FAQ</option>
+                <option value="gallery.html">Gallery</option>
+                <option value="blog.html">Blog</option>
+                <option value="calculator.html">Calculators</option>
+              </optgroup>
+              {(Array.isArray(siteData.services) && siteData.services.length > 0) && (
+                <optgroup label="Service Pages">
+                  {siteData.services.map(s => {
+                    const slug = `services/${s.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${(siteData.city || "").toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
+                    return <option key={s} value={slug}>{s}</option>;
+                  })}
+                </optgroup>
+              )}
+              {(Array.isArray(siteData.serviceAreas) && siteData.serviceAreas.length > 0) && (
+                <optgroup label="Location Pages">
+                  {siteData.serviceAreas.map(l => {
+                    const slug = `locations/${l.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
+                    return <option key={l} value={slug}>{l}</option>;
+                  })}
+                </optgroup>
+              )}
             </select>
 
             {deployedUrl && (
