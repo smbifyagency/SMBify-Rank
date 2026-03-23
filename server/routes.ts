@@ -6355,10 +6355,33 @@ Generated on: ${new Date().toISOString()}`;
       // Generate all HTML files using water-damage template
       const files = generateWaterDamageWebsite(bd, domain);
 
-      // Build ZIP
+      // Extract any embedded data-URL images to real files (keeps HTML lean for Netlify)
+      const extractedImages = new Map<string, string>(); // dataUrl → /images/custom-N.ext
+      let imgIndex = 0;
+      const processedFiles: Record<string, string> = {};
+      for (const [filename, rawContent] of Object.entries(files)) {
+        const processed = (rawContent as string).replace(
+          /data:image\/(jpeg|png|gif|webp|svg\+xml);base64,[A-Za-z0-9+/=]+/g,
+          (match) => {
+            if (extractedImages.has(match)) return extractedImages.get(match)!;
+            const typeStr = match.match(/^data:image\/([^;]+);/)?.[1] ?? 'jpeg';
+            const ext = typeStr === 'svg+xml' ? 'svg' : typeStr === 'jpeg' ? 'jpg' : typeStr;
+            const imgPath = `/images/custom-${imgIndex++}.${ext}`;
+            extractedImages.set(match, imgPath);
+            return imgPath;
+          }
+        );
+        processedFiles[filename] = processed;
+      }
+
+      // Build ZIP with processed HTML + extracted image files
       const zip = new JSZip();
-      for (const [filename, content] of Object.entries(files)) {
-        zip.file(filename, content as string);
+      for (const [filename, content] of Object.entries(processedFiles)) {
+        zip.file(filename, content);
+      }
+      for (const [dataUrl, imgPath] of extractedImages.entries()) {
+        const base64 = dataUrl.split(',')[1];
+        zip.file(imgPath.slice(1), Buffer.from(base64, 'base64')); // slice removes leading /
       }
       const zipBuffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
 

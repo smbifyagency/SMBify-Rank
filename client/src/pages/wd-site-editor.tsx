@@ -17,6 +17,7 @@ import {
   Loader2, ExternalLink, CheckCircle2, ChevronDown, ChevronUp,
   Globe, Phone, MapPin, FileText, Layers
 } from "lucide-react";
+import { generateWaterDamageWebsite } from "../lib/water-damage-generator";
 
 interface WDSiteData {
   id?: string;
@@ -67,6 +68,72 @@ const WD_IMAGE_SLOTS = [
   { key: "gallery-1",      label: "Gallery — Before Photo",   page: "Gallery",          defaultSrc: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80", hint: "Before photo from an actual restoration job" },
 ];
 
+// Script injected into every preview page so images become click-to-upload
+const PREVIEW_CLICK_SCRIPT = `
+<style>
+.wd-img-wrap{position:relative;display:inline-block;}
+.wd-img-wrap img{display:block;width:100%;}
+.wd-img-overlay{position:absolute;inset:0;background:rgba(0,0,0,.48);color:#fff;font-size:13px;font-weight:700;font-family:sans-serif;display:flex;align-items:center;justify-content:center;gap:6px;opacity:0;transition:opacity .18s;cursor:pointer;border-radius:4px;}
+.wd-img-wrap:hover .wd-img-overlay{opacity:1;}
+.wd-hero-btn{position:absolute;top:12px;left:12px;z-index:200;background:rgba(255,255,255,.92);color:#1e3a5f;border:none;padding:7px 14px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;font-family:sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.25);}
+.wd-hero-btn:hover{background:#fff;}
+</style>
+<script>
+(function(){
+  document.querySelectorAll('img[data-placeholder]').forEach(function(img){
+    var key=img.getAttribute('data-placeholder');
+    var parent=img.parentElement;
+    var wrap=document.createElement('div');
+    wrap.className='wd-img-wrap';
+    parent.insertBefore(wrap,img);
+    wrap.appendChild(img);
+    var ov=document.createElement('div');
+    ov.className='wd-img-overlay';
+    ov.innerHTML='<span>📷</span><span>Click to replace</span>';
+    ov.onclick=function(){window.parent.postMessage({type:'wd-img-click',key:key},'*');};
+    wrap.appendChild(ov);
+  });
+  var hero=document.querySelector('.hero');
+  if(hero){
+    var btn=document.createElement('button');
+    btn.className='wd-hero-btn';
+    btn.textContent='📷 Change Background';
+    btn.onclick=function(){window.parent.postMessage({type:'wd-img-click',key:'hero-bg'},'*');};
+    hero.style.position='relative';
+    hero.appendChild(btn);
+  }
+})();
+</script>`;
+
+// Convert WDSiteData → the shape generateWaterDamageWebsite expects
+function siteDataToWDData(data: WDSiteData): Parameters<typeof generateWaterDamageWebsite>[0] {
+  return {
+    businessName: data.businessName,
+    phone: data.phone,
+    email: data.email,
+    address: data.address,
+    city: data.city,
+    state: data.state,
+    primaryKeyword: data.primaryKeyword,
+    services: data.services,
+    serviceAreas: data.serviceAreas,
+    urlSlug: data.urlSlug || data.businessName.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+    primaryColor: data.primaryColor,
+    secondaryColor: data.secondaryColor,
+    customImages: data.customImages,
+    facebookUrl: data.facebookUrl,
+    instagramUrl: data.instagramUrl,
+    googleUrl: data.googleUrl,
+    yelpUrl: data.yelpUrl,
+    twitterUrl: data.twitterUrl,
+    floatingCTA: data.floatingCTA,
+    whatsappNumber: data.whatsappNumber,
+    homepageContent: data.homepageContent,
+    serviceContent: data.serviceContent,
+    locationContent: data.locationContent,
+  } as any;
+}
+
 // ─── Main Component ────────────────────────────────────────────────────────
 
 export default function WDSiteEditor() {
@@ -94,6 +161,9 @@ export default function WDSiteEditor() {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstLoadRef = useRef(true);
+  const hiddenFileInputRef = useRef<HTMLInputElement>(null);
+  const pendingUploadKeyRef = useRef<string | null>(null);
+  const siteDataRef = useRef<WDSiteData | null>(null);
 
   // ── Auto-save when siteData changes ──────────────────────────────────
 
@@ -125,6 +195,21 @@ export default function WDSiteEditor() {
       }
     }, 3000);
   }, [siteData]);
+
+  // Keep a ref of siteData so callbacks (postMessage handler) get the latest value
+  useEffect(() => { siteDataRef.current = siteData; }, [siteData]);
+
+  // ── Click-to-upload: listen for postMessage from preview iframe ───────
+
+  useEffect(() => {
+    const handleMessage = (e: MessageEvent) => {
+      if (e.data?.type !== 'wd-img-click' || !e.data.key) return;
+      pendingUploadKeyRef.current = e.data.key;
+      hiddenFileInputRef.current?.click();
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
 
   // ── Load website data ─────────────────────────────────────────────────
 
@@ -365,14 +450,27 @@ export default function WDSiteEditor() {
 
   // ── Image upload ──────────────────────────────────────────────────────
 
+  // Rebuild the preview files client-side (pure template, no AI, instant)
+  function rebuildPreview(data: WDSiteData) {
+    if (Object.keys(generatedFiles).length === 0) return; // no preview yet
+    try {
+      const domain = data.urlSlug || data.businessName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const newFiles = generateWaterDamageWebsite(siteDataToWDData(data), domain);
+      setGeneratedFiles(newFiles);
+    } catch (e) {
+      console.error('Preview rebuild failed:', e);
+    }
+  }
+
   function handleCustomImageUpload(key: string, file: File) {
     const reader = new FileReader();
     reader.onload = e => {
       const dataUrl = e.target?.result as string;
-      setSiteData(prev => prev ? {
-        ...prev,
-        customImages: { ...(prev.customImages || {}), [key]: dataUrl }
-      } : prev);
+      const current = siteDataRef.current || siteData;
+      const updatedImages = { ...(current?.customImages || {}), [key]: dataUrl };
+      setSiteData(prev => prev ? { ...prev, customImages: updatedImages } : prev);
+      if (current) rebuildPreview({ ...current, customImages: updatedImages });
+      toast({ title: "Image updated", description: "Preview refreshed. Will be saved automatically." });
     };
     reader.readAsDataURL(file);
   }
@@ -382,7 +480,9 @@ export default function WDSiteEditor() {
       if (!prev?.customImages) return prev;
       const updated = { ...prev.customImages };
       delete updated[key];
-      return { ...prev, customImages: updated };
+      const next = { ...prev, customImages: updated };
+      rebuildPreview(next);
+      return next;
     });
   }
 
@@ -405,8 +505,9 @@ export default function WDSiteEditor() {
 
   // ── Preview URL for iframe ────────────────────────────────────────────
 
+  const previewHtml = generatedFiles[previewPage] || generatedFiles['index.html'] || '';
   const previewSrc = Object.keys(generatedFiles).length > 0
-    ? `data:text/html;charset=utf-8,${encodeURIComponent(generatedFiles[previewPage] || generatedFiles['index.html'] || '')}`
+    ? `data:text/html;charset=utf-8,${encodeURIComponent(previewHtml.replace('</body>', PREVIEW_CLICK_SCRIPT + '</body>'))}`
     : null;
 
   if (isLoading) {
@@ -830,8 +931,8 @@ export default function WDSiteEditor() {
                 );
               })}
 
-              <p className="text-xs text-gray-600 italic">
-                After uploading, click <strong>Save</strong> then <strong>Regenerate</strong> to see updated images in the preview.
+              <p className="text-xs text-gray-500 italic">
+                Tip: You can also click any image directly in the preview on the right to replace it instantly.
               </p>
             </TabsContent>
 
@@ -976,6 +1077,21 @@ export default function WDSiteEditor() {
               </span>
             )}
           </div>
+
+          {/* Hidden file input for click-to-upload */}
+          <input
+            type="file"
+            ref={hiddenFileInputRef}
+            accept="image/*"
+            className="hidden"
+            onChange={e => {
+              const file = e.target.files?.[0];
+              const key = pendingUploadKeyRef.current;
+              if (file && key) handleCustomImageUpload(key, file);
+              e.target.value = '';
+              pendingUploadKeyRef.current = null;
+            }}
+          />
 
           {/* Preview iframe or placeholder */}
           <div className="flex-1 overflow-hidden bg-white">
