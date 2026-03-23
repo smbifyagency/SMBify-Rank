@@ -28,6 +28,8 @@ import { generateSEOContentWithGemini, generateFAQContentWithGemini, generateTes
 import { encrypt, decrypt } from './crypto.js';
 import { netlifyService } from "./services/netlify.js";
 import { deployToNetlify, validateNetlifyToken } from "./services/netlify-deployment.js";
+import { generateWaterDamageWebsite } from "../client/src/lib/water-damage-generator.js";
+import { buildHomePagePrompt, buildServicePagePrompt, buildLocationPagePrompt } from "./services/seo-prompts.js";
 import {
   MASTER_SYSTEM_PROMPT,
   buildHomePagePrompt,
@@ -6087,13 +6089,20 @@ Generated on: ${new Date().toISOString()}`;
       const {
         businessName, phone, email, address, city, state, country,
         primaryKeyword, secondaryKeyword, services, serviceAreas,
-        urlSlug, primaryColor, secondaryColor, contactFormEmbed,
+        urlSlug: rawUrlSlug, primaryColor, secondaryColor, contactFormEmbed,
         yearsInBusiness, aiModel,
         // API keys — any one of these works
         openrouterApiKey, openaiApiKey, geminiApiKey,
         // Provider preference: 'openai' | 'gemini' | 'openrouter' (default: auto-detect)
         aiProvider,
+        // When true, return JSON {files, websiteId} instead of ZIP
+        returnFiles,
+        // For updating an existing website record
+        websiteId: existingWebsiteId,
       } = req.body;
+
+      // Auto-generate urlSlug from businessName if blank
+      const urlSlug = rawUrlSlug || (businessName ? businessName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') : '');
 
       if (!businessName || !phone || !city || !state || !services || !serviceAreas || !urlSlug) {
         return res.status(400).json({ error: "Missing required fields: businessName, phone, city, state, services, serviceAreas, urlSlug" });
@@ -6135,10 +6144,6 @@ Generated on: ${new Date().toISOString()}`;
         else if (process.env.GEMINI_API_KEY) { apiKey = process.env.GEMINI_API_KEY; resolvedProvider = 'gemini'; }
         else if (process.env.OPENROUTER_API_KEY) { apiKey = process.env.OPENROUTER_API_KEY; resolvedProvider = 'openrouter'; }
       }
-
-      // Import generator dynamically to avoid circular deps
-      const { generateWaterDamageWebsite } = await import('../client/src/lib/water-damage-generator.js');
-      const { buildHomePagePrompt, buildServicePagePrompt, buildLocationPagePrompt } = await import('./services/seo-prompts.js');
 
       const bizContext = {
         name: businessName,
@@ -6208,6 +6213,9 @@ Generated on: ${new Date().toISOString()}`;
         secondaryColor: secondaryColor || '#0ea5e9',
         contactFormEmbed,
         yearsInBusiness,
+        // Persist API keys in businessData so they survive reloads
+        openaiApiKey: openaiApiKey || undefined,
+        geminiApiKey: geminiApiKey || undefined,
         homepageContent,
         serviceContent: Object.keys(serviceContent).length > 0 ? serviceContent : undefined,
         locationContent: Object.keys(locationContent).length > 0 ? locationContent : undefined,
@@ -6216,32 +6224,48 @@ Generated on: ${new Date().toISOString()}`;
       // Generate all HTML files
       const files = generateWaterDamageWebsite(wdData, domain);
 
-      // Package into ZIP
+      // Save/update website record if authenticated user
+      let savedWebsiteId: string | undefined = existingWebsiteId;
+      if (userId && userId !== 'guest') {
+        try {
+          if (existingWebsiteId) {
+            // Update existing website with new AI content
+            await storage.updateWebsite(existingWebsiteId, {
+              businessData: wdData as any,
+            });
+          } else {
+            const website = await storage.createWebsite({
+              userId,
+              title: businessName,
+              businessData: wdData as any,
+              template: 'water-damage',
+            });
+            savedWebsiteId = website?.id;
+          }
+        } catch (e) { console.error('Failed to save website:', e); }
+      }
+
+      // Return JSON files when requested by editor (for in-browser preview)
+      if (returnFiles) {
+        return res.json({
+          files,
+          websiteId: savedWebsiteId,
+          pagesGenerated: Object.keys(files).length,
+          aiContentGenerated: !!apiKey,
+        });
+      }
+
+      // Default: return ZIP for download
       const zip = new JSZip();
       for (const [filename, content] of Object.entries(files)) {
         zip.file(filename, content as string);
       }
-
       const zipBuffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
-
-      // Save website record if authenticated user
-      let websiteId: string | undefined;
-      if (userId && userId !== 'guest') {
-        try {
-          const website = await storage.createWebsite({
-            userId,
-            title: businessName,
-            businessData: wdData as any,
-            template: 'water-damage',
-          });
-          websiteId = website?.id;
-        } catch (e) { console.error('Failed to save website:', e); }
-      }
 
       res.set({
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="${domain}-website.zip"`,
-        'X-Website-Id': websiteId || '',
+        'X-Website-Id': savedWebsiteId || '',
         'X-Pages-Generated': String(Object.keys(files).length),
       });
       res.send(zipBuffer);
