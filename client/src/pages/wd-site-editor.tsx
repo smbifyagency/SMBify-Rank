@@ -137,6 +137,13 @@ function siteDataToWDData(data: WDSiteData): Parameters<typeof generateWaterDama
   } as any;
 }
 
+/** Strip deployment-only fields before storing businessData — these live in
+ *  their own DB columns (deployed_url, status) and must not pollute businessData. */
+function stripDeploymentFields(data: WDSiteData) {
+  const { netlifyUrl: _a, deploymentStatus: _b, netlifyApiKey: _c, ...rest } = data as any;
+  return rest;
+}
+
 // ─── Main Component ────────────────────────────────────────────────────────
 
 export default function WDSiteEditor() {
@@ -188,7 +195,7 @@ export default function WDSiteEditor() {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
-          body: JSON.stringify({ businessData: siteData }),
+          body: JSON.stringify({ businessData: stripDeploymentFields(siteData) }),
         });
         if (res.ok) {
           setAutoSaveStatus("saved");
@@ -311,7 +318,7 @@ export default function WDSiteEditor() {
         headers: { "Content-Type": "application/json" },
         credentials: "include",
         body: JSON.stringify({
-          ...siteData,
+          ...stripDeploymentFields(siteData),
           websiteId: websiteId,
           returnFiles: true,  // ask server to return JSON files, not ZIP
         }),
@@ -357,7 +364,7 @@ export default function WDSiteEditor() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ businessData: siteData }),
+        body: JSON.stringify({ businessData: stripDeploymentFields(siteData) }),
       });
       if (!res.ok) throw new Error("Save failed");
       if (siteData.openaiApiKey || siteData.geminiApiKey) setApiStatus("ready");

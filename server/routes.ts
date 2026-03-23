@@ -6108,7 +6108,7 @@ Generated on: ${new Date().toISOString()}`;
         // Extra fields passed from editor (preserve as-is)
         customImages, facebookUrl, instagramUrl, googleUrl, yelpUrl, twitterUrl,
         floatingCTA, whatsappNumber, logoUrl, logoAlt, licenseNumber, insuranceInfo,
-        aboutContent, teamDescription,
+        aboutContent, teamDescription, galleryImages,
       } = req.body;
 
       // Auto-generate urlSlug from businessName if blank
@@ -6248,6 +6248,7 @@ Generated on: ${new Date().toISOString()}`;
         insuranceInfo: insuranceInfo || undefined,
         aboutContent: aboutContent || undefined,
         teamDescription: teamDescription || undefined,
+        galleryImages: Array.isArray(galleryImages) && galleryImages.length > 0 ? galleryImages : undefined,
       };
 
       // Generate all HTML files
