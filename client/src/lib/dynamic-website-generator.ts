@@ -2606,10 +2606,20 @@ export function generateAllWebsiteFiles(businessData: BusinessData, templateId: 
   const template = templates.find(t => t.id === templateId) || templates[0];
   const files: GeneratedWebsiteFiles = {};
 
+  // Formatted phone number for text replacement inside html generators
+  const formattedData = { ...businessData };
+  if (formattedData.phone) {
+    const code = formattedData.countryCode || '+1';
+    const digits = formattedData.phone.replace(/\D/g, '');
+    if ((code === '+1' || !formattedData.countryCode) && digits.length === 10) {
+      formattedData.phone = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+    }
+  }
+
   // Generate main files
-  files['index.html'] = generateMainHTML(businessData, template, domain, siteSettings);
+  files['index.html'] = generateMainHTML(formattedData, template, domain, siteSettings);
   files['styles.css'] = generateCSS(template);
-  files['script.js'] = generateJS(businessData);
+  files['script.js'] = generateJS(formattedData);
 
   // SEO files removed - not needed for unique deployment URLs
 
@@ -2636,7 +2646,7 @@ export function generateAllWebsiteFiles(businessData: BusinessData, templateId: 
     const filename = generateLocationUrl(location, businessData.category);
     // Use AI-generated content if available
     const aiContent = aiGeneratedContent?.locationContent?.[index];
-    files[filename] = generateLocationHTML(businessData, template, location, domain, aiContent, siteSettings);
+    files[filename] = generateLocationHTML(formattedData, template, location, domain, aiContent, siteSettings);
   });
 
   // Generate service pages with improved URL structure and AI content
@@ -2650,11 +2660,11 @@ export function generateAllWebsiteFiles(businessData: BusinessData, templateId: 
     const filename = generateServiceUrl(service, businessData.heroLocation);
     // Use AI-generated content if available
     const aiContent = aiGeneratedContent?.serviceContent?.[index];
-    files[filename] = generateServiceHTML(businessData, template, service, domain, aiContent, siteSettings);
+    files[filename] = generateServiceHTML(formattedData, template, service, domain, aiContent, siteSettings);
   });
 
   // Generate blog pages with actual posts if available
-  files['blog.html'] = generateBlogArchivePage(businessData, template, domain, siteSettings);
+  files['blog.html'] = generateBlogArchivePage(formattedData, template, domain, siteSettings);
 
   // Generate individual blog post pages if blog posts exist
   if (businessData.blogPosts && businessData.blogPosts.length > 0) {
@@ -2669,6 +2679,18 @@ export function generateAllWebsiteFiles(businessData: BusinessData, templateId: 
   // Generate essential SEO files for proper search engine indexing (after all page arrays are created)
   files['robots.txt'] = generateRobotsTxt(domain);
   files['sitemap.xml'] = generateSitemapXml(businessData, domain, additionalLocations, additionalServices);
+
+  // Replace tel: links with country code in all html files
+  if (businessData.phone) {
+    const code = businessData.countryCode || '+1';
+    const hrefPhone = businessData.phone.startsWith('+') ? businessData.phone : `${code}${businessData.phone}`.replace(/[^+\d]/g, '');
+    Object.keys(files).forEach(filename => {
+      if (filename.endsWith('.html') && typeof files[filename] === 'string') {
+        files[filename] = (files[filename] as string).replace(new RegExp(`href="tel:${formattedData.phone.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}"`, 'g'), `href="tel:${hrefPhone}"`);
+        files[filename] = (files[filename] as string).replace(new RegExp(`href="tel:${businessData.phone.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}"`, 'g'), `href="tel:${hrefPhone}"`);
+      }
+    });
+  }
 
   return files;
 }
@@ -3620,11 +3642,18 @@ function generateNavigation(businessData: BusinessData, currentPage?: string): s
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle">Services <i class="fas fa-chevron-down"></i></a>
                         <ul class="dropdown-menu">`;
-    additionalServices.forEach(service => {
+    const displayServices = additionalServices.slice(0, 5);
+    displayServices.forEach(service => {
       const filename = generateServiceUrl(service, businessData.heroLocation);
       nav += `
                             <li><a href="${filename}">${service}</a></li>`;
     });
+    
+    if (additionalServices.length > 5) {
+      nav += `
+                            <li style="border-top: 1px solid #eee; margin-top: 5px; padding-top: 5px;"><a href="index.html#services" style="font-weight: 600; color: #3b82f6;">View All Services</a></li>`;
+    }
+    
     nav += `
                         </ul>
                     </li>`;
@@ -3632,11 +3661,16 @@ function generateNavigation(businessData: BusinessData, currentPage?: string): s
     // Add mobile-specific services section
     nav += `
                     <li class="mobile-section-header mobile-only">Services</li>`;
-    additionalServices.forEach(service => {
+    displayServices.forEach(service => {
       const filename = generateServiceUrl(service, businessData.heroLocation);
       nav += `
                     <li class="mobile-section-items mobile-only"><a href="${filename}">${service}</a></li>`;
     });
+    
+    if (additionalServices.length > 5) {
+      nav += `
+                    <li class="mobile-section-items mobile-only" style="border-top: 1px solid #eee; margin-top: 5px; padding-top: 5px;"><a href="index.html#services" style="font-weight: 600; color: #3b82f6;">View All Services</a></li>`;
+    }
   }
 
   nav += `
@@ -6432,6 +6466,7 @@ body {
 .map-container iframe {
     width: 100%;
     height: 100%;
+    max-width: 100%;
     border: none;
     filter: saturate(1.1) contrast(1.05);
 }

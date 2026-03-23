@@ -357,11 +357,31 @@ export interface GeneratedWebsite {
 export function generateWebsiteFiles(businessData: BusinessData, templateId: string): GeneratedWebsite {
   const template = templates.find(t => t.id === templateId) || templates[0];
   
-  const html = generateHTML(businessData, template);
-  const css = generateCSS(template);
-  const js = generateJS(businessData);
+  // Format phone number
+  const formattedData = { ...businessData };
+  if (formattedData.phone) {
+    const code = formattedData.countryCode || '+1';
+    const digits = formattedData.phone.replace(/\D/g, '');
+    if ((code === '+1' || !formattedData.countryCode) && digits.length === 10) {
+      formattedData.phone = `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`;
+    }
+  }
 
-  return { html, css, js };
+  const html = generateHTML(formattedData, template);
+  let finalHtml = html;
+  
+  // Replace tel: links with country code
+  if (businessData.phone) {
+    const code = businessData.countryCode || '+1';
+    const hrefPhone = businessData.phone.startsWith('+') ? businessData.phone : `${code}${businessData.phone}`.replace(/[^+\d]/g, '');
+    finalHtml = finalHtml.replace(new RegExp(`href="tel:${formattedData.phone.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}"`, 'g'), `href="tel:${hrefPhone}"`);
+    finalHtml = finalHtml.replace(new RegExp(`href="tel:${businessData.phone.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')}"`, 'g'), `href="tel:${hrefPhone}"`);
+  }
+  
+  const css = generateCSS(template);
+  const js = generateJS(formattedData);
+
+  return { html: finalHtml, css, js };
 }
 
 function generateHTML(data: BusinessData, template: Template): string {
@@ -2362,6 +2382,7 @@ a:focus-visible {
 .map-container iframe {
     width: 100%;
     height: 100%;
+    max-width: 100%;
     border: none;
     filter: saturate(1.1) contrast(1.05);
 }

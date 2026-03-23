@@ -619,6 +619,7 @@ export const businessDataSchema = z.object({
   businessName: z.string().min(1, "Business name is required"),
   category: z.enum(businessCategoryNames),
   logo: z.string().optional(),
+  countryCode: z.string().optional().default("+1"),
   phone: z.string().min(1, "Phone number is required"),
   email: z.string().optional(),
   address: z.string().min(1, "Address is required"),

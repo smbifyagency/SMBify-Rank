@@ -19,6 +19,7 @@ export default function OnboardingBusiness() {
     const [formData, setFormData] = useState({
         businessName: (businessData as any).businessName || "",
         category: (businessData as any).category || "",
+        countryCode: (businessData as any).countryCode || "+1",
         phone: (businessData as any).phone || "",
         address: (businessData as any).address || "",
         city: (businessData as any).city || "",
@@ -96,12 +97,25 @@ export default function OnboardingBusiness() {
                             <Label className="text-gray-300 text-sm flex items-center gap-2">
                                 <Phone className="h-4 w-4" /> Phone
                             </Label>
-                            <Input
-                                placeholder="(555) 123-4567"
-                                value={formData.phone}
-                                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                                className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500"
-                            />
+                            <div className="flex gap-2 mt-1.5">
+                                <select 
+                                    className="bg-[#1a1f26] border border-white/10 text-white rounded-md px-3 py-2 w-[100px] outline-none focus:ring-2 focus:ring-[#AADD00]/50"
+                                    value={formData.countryCode}
+                                    onChange={(e) => setFormData({ ...formData, countryCode: e.target.value })}
+                                >
+                                    <option value="+1">🇺🇸 +1</option>
+                                    <option value="+44">🇬🇧 +44</option>
+                                    <option value="+61">🇦🇺 +61</option>
+                                    <option value="+91">🇮🇳 +91</option>
+                                    <option value="+92">🇵🇰 +92</option>
+                                </select>
+                                <Input
+                                    placeholder="(555) 123-4567"
+                                    value={formData.phone}
+                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 flex-1 h-auto py-2"
+                                />
+                            </div>
                         </div>
                         <div>
                             <Label className="text-gray-300 text-sm flex items-center gap-2">

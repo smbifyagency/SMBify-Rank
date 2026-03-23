@@ -1075,6 +1075,16 @@ function formatBlogContent(content: string): string {
 }
 
 // Navigation generation function for blog pages
+// Helper to format phone and URLs
+function getPhoneDetails(phone: string, countryCode = '+1') {
+  // If phone already starts with +, use it as is for href, otherwise prepend countryCode
+  const hrefPhone = phone.startsWith('+') ? phone : `${countryCode}${phone}`.replace(/[^+\d]/g, '');
+  return {
+    display: phone,
+    href: hrefPhone
+  };
+}
+
 function generateNavigation(businessData: any, currentPage?: string, isInBlogFolder = false): string {
   const additionalLocations = businessData.additionalLocations
     ?.split(',')
@@ -1089,6 +1099,13 @@ function generateNavigation(businessData: any, currentPage?: string, isInBlogFol
   // Adjust paths based on whether we're in a blog subfolder
   const pathPrefix = isInBlogFolder ? '../' : '';
   const blogPath = isInBlogFolder ? 'index.html' : 'blog.html';
+  
+  const phoneDetails = getPhoneDetails(businessData.phone, businessData.countryCode);
+  
+  const brandHtml = businessData.logo 
+    ? `<img src="${businessData.logo}" alt="${businessData.businessName} Logo" style="height: 48px; width: auto; max-width: 200px; object-fit: contain;">
+       <span class="sr-only" style="display: none;">${businessData.businessName}</span>`
+    : businessData.businessName;
 
   // For blog pages, create a simplified navigation with only essential links
   if (currentPage === 'blog') {
@@ -1096,12 +1113,12 @@ function generateNavigation(businessData: any, currentPage?: string, isInBlogFol
     <header class="header">
         <nav class="nav">
             <div class="nav-brand">
-                <a href="${pathPrefix}index.html" style="text-decoration: none; color: inherit;">
-                    ${businessData.businessName}
+                <a href="${pathPrefix}index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem;">
+                    ${brandHtml}
                 </a>
             </div>
             <!-- Mobile menu button -->
-            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle Menu">
                 <i class="fas fa-bars"></i>
             </button> 
             <div class="nav-links" id="navLinks">
@@ -1111,9 +1128,9 @@ function generateNavigation(businessData: any, currentPage?: string, isInBlogFol
                 </ul>
                 <!-- CTA Button in Navigation -->
                 <div class="nav-cta">
-                    <a href="tel:${businessData.phone}" class="cta-button cta-call">
+                    <a href="tel:${phoneDetails.href}" class="cta-button cta-call">
                         <i class="fas fa-phone"></i>
-                        ${businessData.phone}
+                        ${phoneDetails.display}
                     </a>
                 </div>
             </div>
@@ -1125,12 +1142,12 @@ function generateNavigation(businessData: any, currentPage?: string, isInBlogFol
     <header class="header">
         <nav class="nav">
             <div class="nav-brand">
-                <a href="${pathPrefix}index.html" style="text-decoration: none; color: inherit;">
-                    ${businessData.businessName}
+                <a href="${pathPrefix}index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 0.5rem;">
+                    ${brandHtml}
                 </a>
             </div>
             <!-- Mobile menu button -->
-            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle Menu">
                 <i class="fas fa-bars"></i>
             </button>
             <div class="nav-links" id="navLinks">
@@ -1163,11 +1180,21 @@ function generateNavigation(businessData: any, currentPage?: string, isInBlogFol
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle">Services <i class="fas fa-chevron-down"></i></a>
                         <ul class="dropdown-menu">`;
-    additionalServices.forEach((service: string) => {
+    
+    // Display up to 5 services in the dropdown
+    const displayServices = additionalServices.slice(0, 5);
+    displayServices.forEach((service: string) => {
       const filename = `service-${service.toLowerCase().replace(/\s+/g, '-')}.html`;
       nav += `
                             <li><a href="${filename}">${service}</a></li>`;
     });
+    
+    // If there are more than 5 services, add a View All link
+    if (additionalServices.length > 5) {
+      nav += `
+                            <li style="border-top: 1px solid #eee; margin-top: 5px; padding-top: 5px;"><a href="${pathPrefix}index.html#services" style="font-weight: 600; color: var(--primary-color, #667eea);">View All Services</a></li>`;
+    }
+    
     nav += `
                         </ul>
                     </li>`;
@@ -1177,9 +1204,9 @@ function generateNavigation(businessData: any, currentPage?: string, isInBlogFol
                 </ul>
                 <!-- CTA Button in Navigation -->
                 <div class="nav-cta">
-                    <a href="tel:${businessData.phone}" class="cta-button cta-call">
+                    <a href="tel:${phoneDetails.href}" class="cta-button cta-call">
                         <i class="fas fa-phone"></i>
-                        ${businessData.phone}
+                        ${phoneDetails.display}
                     </a>
                 </div>
             </div>

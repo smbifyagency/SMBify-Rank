@@ -14,19 +14,28 @@ const STEPS = ["Business Info", "Services & Areas", "Brand & Domain", "Generate"
 
 const DEFAULT_SERVICES = [
   "Water Damage Restoration",
+  "Residential Water Damage Restoration",
+  "Commercial Water Damage Restoration",
   "Emergency Water Extraction",
   "Flood Cleanup & Flood Damage Repair",
+  "Commercial Flood Extraction",
   "Basement Flooding Cleanup",
   "Burst Pipe Repair & Cleanup",
+  "Appliance Leak Water Damage",
+  "Roof Leak Water Damage Repair",
+  "Ceiling & Wall Water Damage Repair",
+  "Hardwood Floor Water Damage Repair",
+  "Drywall Water Damage Repair",
+  "Carpet Water Damage & Drying",
   "Mold Remediation & Mold Removal",
   "Sewage Backup Cleanup",
+  "Biohazard & Trauma Cleanup",
   "Storm Damage Restoration",
   "Structural Drying & Dehumidification",
-  "Ceiling & Wall Water Damage Repair",
-  "Carpet Water Damage & Drying",
   "Fire & Smoke Damage Restoration",
   "Crawl Space Water Damage",
-  "Commercial Water Damage Restoration",
+  "Document Drying & Recovery",
+  "HVAC Water Damage & Cleaning",
   "24/7 Emergency Response",
   "Insurance Claim Assistance",
   "Odor Removal & Deodorization",
@@ -72,6 +81,7 @@ export default function DashboardNewWebsite() {
       targetKeywords: "flood cleanup austin, mold remediation austin, burst pipe repair austin, emergency water removal",
       services: [
         "Water Damage Restoration",
+        "Residential Water Damage Restoration",
         "Emergency Water Extraction",
         "Flood Cleanup & Flood Damage Repair",
         "Mold Remediation & Mold Removal",
@@ -80,7 +90,7 @@ export default function DashboardNewWebsite() {
         "24/7 Emergency Response",
         "Insurance Claim Assistance",
       ],
-      serviceAreas: "Austin\nRound Rock\nCedar Park\nGeorgetown\nPflugerville\nKyle\nBuda",
+      serviceAreas: "Austin, TX\nRound Rock, TX\nCedar Park, TX\nGeorgetown, TX\nPflugerville, TX\nKyle, TX\nBuda, TX",
       urlSlug: "rapid-dry-restoration",
       primaryColor: "#1e3a5f",
       secondaryColor: "#0ea5e9",
@@ -115,6 +125,14 @@ export default function DashboardNewWebsite() {
     try {
       const servicesList = form.services;
       const areasList = form.serviceAreas.split("\n").map(s => s.trim()).filter(Boolean);
+
+      const invalidAreas = areasList.filter(a => !a.includes(','));
+      if (invalidAreas.length > 0) {
+        toast({ title: "State Required", description: `Please include the state abbreviation for all cities (e.g., "Austin, TX"). Invalid entries: ${invalidAreas.join(', ')}`, variant: "destructive" });
+        setIsGenerating(false);
+        return;
+      }
+
       const slug = form.urlSlug || form.businessName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
       // First create a DB record
@@ -278,10 +296,10 @@ export default function DashboardNewWebsite() {
                 <MapPin className="h-3.5 w-3.5 text-[#AADD00]" /> Service Areas * (one per line)
               </Label>
               <Textarea value={form.serviceAreas} onChange={e => set("serviceAreas", e.target.value)}
-                placeholder={"Austin\nRound Rock\nCedar Park\nGeorgetown\nPflugerville"}
+                placeholder={"Austin, TX\nRound Rock, TX\nCedar Park, TX\nGeorgetown, TX\nPflugerville, TX"}
                 rows={5}
                 className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50 resize-none" />
-              <p className="text-xs text-gray-500 mt-1">Each city gets its own SEO-optimized location page</p>
+              <p className="text-xs text-gray-500 mt-1">Each city gets its own SEO-optimized location page. <strong className="text-[#AADD00]">Format: City, State (e.g., Austin, TX)</strong></p>
             </div>
           </div>
         )}
