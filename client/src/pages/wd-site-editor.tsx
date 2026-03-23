@@ -597,7 +597,7 @@ export default function WDSiteEditor() {
           )}
           <Button size="sm" onClick={deployToNetlify} disabled={isDeploying} className="bg-blue-600 hover:bg-blue-700">
             {isDeploying ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Rocket className="w-4 h-4 mr-1" />}
-            {isDeploying ? "Deploying..." : "Publish to Netlify"}
+            {isDeploying ? "Deploying..." : deployedUrl ? "Update to Netlify" : "Publish to Netlify"}
           </Button>
         </div>
       </div>
@@ -949,8 +949,8 @@ export default function WDSiteEditor() {
 
             {/* ── Deploy Tab ──────────────────────────────────────────── */}
             <TabsContent value="deploy" className="p-4 space-y-4 mt-0">
-              <h3 className="font-semibold text-sm text-gray-300">Publish to Netlify</h3>
-              <p className="text-xs text-gray-500">Complete your website first (Business + Content tabs), then publish here.</p>
+              <h3 className="font-semibold text-sm text-gray-300">{deployedUrl ? "Update on Netlify" : "Publish to Netlify"}</h3>
+              <p className="text-xs text-gray-500">{deployedUrl ? "Push your latest changes to the live site." : "Complete your website first (Business + Content tabs), then publish here."}</p>
 
               {deployedUrl && (
                 <div className="rounded-lg bg-green-900/30 border border-green-800 p-3">
@@ -1016,7 +1016,7 @@ export default function WDSiteEditor() {
                 {isDeploying ? (
                   <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Deploying...</>
                 ) : (
-                  <><Rocket className="w-4 h-4 mr-2" /> Publish to Netlify</>
+                  <><Rocket className="w-4 h-4 mr-2" /> {deployedUrl ? "Update to Netlify" : "Publish to Netlify"}</>
                 )}
               </Button>
               {!netlifyToken && <p className="text-xs text-center text-gray-600">Enter and verify your Netlify token to publish</p>}
