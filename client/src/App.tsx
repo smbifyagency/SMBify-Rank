@@ -1,5 +1,28 @@
 import { Switch, Route, useLocation } from "wouter";
-import { useEffect } from "react";
+import { useEffect, Component } from "react";
+import type { ReactNode, ErrorInfo } from "react";
+
+// ─── Error Boundary ────────────────────────────────────────────────────────
+class ErrorBoundary extends Component<{ children: ReactNode }, { error: Error | null }> {
+  state = { error: null };
+  static getDerivedStateFromError(error: Error) { return { error }; }
+  componentDidCatch(error: Error, info: ErrorInfo) { console.error("App Error:", error, info); }
+  render() {
+    if (this.state.error) {
+      return (
+        <div style={{ padding: 40, background: "#030712", color: "white", minHeight: "100vh", fontFamily: "monospace" }}>
+          <h2 style={{ color: "#ff6b6b", marginBottom: 16 }}>App Error — please report this</h2>
+          <pre style={{ background: "#1a1a1a", padding: 16, borderRadius: 8, overflow: "auto", fontSize: 12, color: "#ffcc00" }}>
+            {(this.state.error as Error).message}
+            {"\n\n"}
+            {(this.state.error as Error).stack}
+          </pre>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -329,14 +352,16 @@ function Router() {
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BusinessDataProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Router />
-        </TooltipProvider>
-      </BusinessDataProvider>
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <BusinessDataProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </BusinessDataProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 
