@@ -60,6 +60,37 @@ export default function DashboardNewWebsite() {
 
   const set = (k: string, v: any) => setForm(f => ({ ...f, [k]: v }));
 
+  const fillSampleData = () => {
+    setForm({
+      businessName: "Rapid Dry Restoration",
+      phone: "(512) 555-8900",
+      email: "info@rapiddryrestoration.com",
+      address: "1234 Flood Relief Dr",
+      city: "Austin",
+      state: "TX",
+      primaryKeyword: "Water Damage Restoration Austin TX",
+      targetKeywords: "flood cleanup austin, mold remediation austin, burst pipe repair austin, emergency water removal",
+      services: [
+        "Water Damage Restoration",
+        "Emergency Water Extraction",
+        "Flood Cleanup & Flood Damage Repair",
+        "Mold Remediation & Mold Removal",
+        "Structural Drying & Dehumidification",
+        "Sewage Backup Cleanup",
+        "24/7 Emergency Response",
+        "Insurance Claim Assistance",
+      ],
+      serviceAreas: "Austin\nRound Rock\nCedar Park\nGeorgetown\nPflugerville\nKyle\nBuda",
+      urlSlug: "rapid-dry-restoration",
+      primaryColor: "#1e3a5f",
+      secondaryColor: "#0ea5e9",
+      accentColor: "#dc2626",
+      openaiApiKey: "",
+      geminiApiKey: "",
+    });
+    setStep(0);
+  };
+
   const toggleService = (s: string) => {
     set("services", form.services.includes(s)
       ? form.services.filter(x => x !== s)
@@ -99,6 +130,20 @@ export default function DashboardNewWebsite() {
       const created = await createRes.json();
       if (!createRes.ok) throw new Error(created.message || "Failed to create");
 
+      // Save API keys globally so they persist across sessions
+      if (form.openaiApiKey) {
+        fetch("/api/settings/openai", {
+          method: "PUT", headers: { "Content-Type": "application/json" }, credentials: "include",
+          body: JSON.stringify({ apiKey: form.openaiApiKey, isActive: true })
+        }).catch(() => {});
+      }
+      if (form.geminiApiKey) {
+        fetch("/api/settings/gemini", {
+          method: "PUT", headers: { "Content-Type": "application/json" }, credentials: "include",
+          body: JSON.stringify({ apiKey: form.geminiApiKey, isActive: true })
+        }).catch(() => {});
+      }
+
       toast({ title: "Website Created!", description: "Opening the editor..." });
       setLocation(`/dashboard/wd-editor/${created.id}`);
     } catch (error: any) {
@@ -112,15 +157,19 @@ export default function DashboardNewWebsite() {
       <div className="max-w-2xl mx-auto">
 
         {/* Header */}
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-3 mb-6">
           <button onClick={() => step > 0 ? setStep(s => s - 1) : setLocation("/dashboard")}
             className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all">
             <ArrowLeft className="h-4 w-4" />
           </button>
-          <div>
+          <div className="flex-1">
             <h1 className="text-2xl font-bold text-white">Create Water Damage Website</h1>
             <p className="text-sm text-gray-400">Step {step + 1} of {STEPS.length} — {STEPS[step]}</p>
           </div>
+          <button onClick={fillSampleData}
+            className="text-xs px-3 py-1.5 rounded-lg border border-[#AADD00]/30 text-[#AADD00] bg-[#AADD00]/5 hover:bg-[#AADD00]/15 transition-all whitespace-nowrap">
+            ⚡ Fill Sample Data
+          </button>
         </div>
 
         {/* Progress Bar */}

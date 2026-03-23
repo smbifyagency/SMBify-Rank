@@ -37,6 +37,9 @@ interface WDSiteData {
   homepageContent?: any;
   serviceContent?: Record<string, any>;
   locationContent?: Record<string, any>;
+  // AI Keys (stored per-website so they survive deployments)
+  openaiApiKey?: string;
+  geminiApiKey?: string;
   // Deployment
   netlifyUrl?: string;
   netlifyApiKey?: string;
@@ -113,6 +116,8 @@ export default function WDSiteEditor() {
         primaryColor: bd.primaryColor || "#1e3a5f",
         secondaryColor: bd.secondaryColor || "#0ea5e9",
         contactFormEmbed: bd.contactFormEmbed || "",
+        openaiApiKey: bd.openaiApiKey || "",
+        geminiApiKey: bd.geminiApiKey || "",
         homepageContent: bd.homepageContent,
         serviceContent: bd.serviceContent,
         locationContent: bd.locationContent,
@@ -120,6 +125,12 @@ export default function WDSiteEditor() {
         deploymentStatus: data.netlifyDeploymentStatus,
       });
       if (data.netlifyUrl) setDeployedUrl(data.netlifyUrl);
+
+      // Load saved Netlify token if available
+      fetch("/api/settings/netlify", { credentials: "include" })
+        .then(r => r.ok ? r.json() : null)
+        .then(s => { if (s?.apiKey && !s.apiKey.includes("•")) setNetlifyToken(s.apiKey); })
+        .catch(() => {});
 
       // Try to load pre-generated files
       if (data.generatedFiles) {
@@ -236,6 +247,13 @@ export default function WDSiteEditor() {
       setTokenValid(res.ok);
       if (res.ok) {
         const userData = await res.json();
+        // Persist token globally so it survives page reloads
+        fetch("/api/settings/netlify", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ apiKey: netlifyToken, isActive: true })
+        }).catch(() => {});
         toast({ title: "Token Valid", description: `Connected as ${userData.email || userData.slug || "Netlify user"}` });
       } else {
         toast({ title: "Invalid Token", description: "Check your Netlify personal access token.", variant: "destructive" });
@@ -461,6 +479,32 @@ export default function WDSiteEditor() {
                     placeholder="Paste JotForm, Typeform, or other embed code..."
                   />
                 </div>
+              </div>
+
+              {/* AI API Keys — saved per-website, survive deployments */}
+              <div className="rounded-lg border border-dashed border-gray-700 p-3 space-y-2">
+                <p className="text-xs font-medium text-gray-400">AI Content Generation Keys</p>
+                <div>
+                  <Label className="text-xs text-gray-500">OpenAI API Key</Label>
+                  <Input
+                    type="password"
+                    value={siteData.openaiApiKey || ""}
+                    onChange={e => updateField("openaiApiKey", e.target.value)}
+                    className="bg-gray-800 border-gray-700 text-white mt-1 text-sm"
+                    placeholder="sk-..."
+                  />
+                </div>
+                <div>
+                  <Label className="text-xs text-gray-500">Gemini API Key</Label>
+                  <Input
+                    type="password"
+                    value={siteData.geminiApiKey || ""}
+                    onChange={e => updateField("geminiApiKey", e.target.value)}
+                    className="bg-gray-800 border-gray-700 text-white mt-1 text-sm"
+                    placeholder="AIza..."
+                  />
+                </div>
+                <p className="text-xs text-gray-600">Keys saved here are used for all future generations of this website.</p>
               </div>
 
               <div className="pt-2 grid grid-cols-2 gap-2">
