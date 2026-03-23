@@ -6170,34 +6170,38 @@ Generated on: ${new Date().toISOString()}`;
         slug: `/locations/${l.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`
       }));
 
-      // Generate AI content for all pages (if API key available)
+      // Generate AI content for pages (if API key available)
+      // When returnFiles=true (editor preview), only generate homepage AI content
+      // to avoid Vercel's 60s timeout with large service/location lists.
+      // Full AI generation runs when downloading (returnFiles=false).
       let homepageContent: any = undefined;
       const serviceContent: Record<string, any> = {};
       const locationContent: Record<string, any> = {};
 
       if (apiKey) {
         try {
-          // Homepage content
+          // Homepage content (always generated)
           const homePrompt = buildHomePagePrompt(bizContext, serviceSlugMap.map(s => s.slug), locationSlugMap.map(l => l.slug));
-          homepageContent = await generateStructuredJsonWithProvider(resolvedProvider, apiKey, homePrompt, { maxTokens: 8000, temperature: 0.7 });
+          homepageContent = await generateStructuredJsonWithProvider(resolvedProvider, apiKey, homePrompt, { maxTokens: 4000, temperature: 0.7 });
         } catch (e) { console.error('Homepage AI error:', e); }
 
-        // Service pages
-        for (const service of parsedServices) {
-          try {
-            const otherServices = parsedServices.filter(s => s !== service).map(s => `/services/${s.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${city.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`);
-            const serviceSlug = `/services/${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${city.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
-            const servicePrompt = buildServicePagePrompt(bizContext, service, serviceSlug, locationSlugMap, otherServices);
-            serviceContent[service] = await generateStructuredJsonWithProvider(resolvedProvider, apiKey, servicePrompt, { maxTokens: 8000, temperature: 0.7 });
-          } catch (e) { console.error(`Service AI error for ${service}:`, e); }
-        }
+        // Service & location pages — only when NOT in preview mode (avoids timeout)
+        if (!returnFiles) {
+          for (const service of parsedServices) {
+            try {
+              const otherServices = parsedServices.filter(s => s !== service).map(s => `/services/${s.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${city.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`);
+              const serviceSlug = `/services/${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${city.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
+              const servicePrompt = buildServicePagePrompt(bizContext, service, serviceSlug, locationSlugMap, otherServices);
+              serviceContent[service] = await generateStructuredJsonWithProvider(resolvedProvider, apiKey, servicePrompt, { maxTokens: 4000, temperature: 0.7 });
+            } catch (e) { console.error(`Service AI error for ${service}:`, e); }
+          }
 
-        // Location pages
-        for (const location of parsedLocations) {
-          try {
-            const locationPrompt = buildLocationPagePrompt(bizContext, location, serviceSlugMap, []);
-            locationContent[location] = await generateStructuredJsonWithProvider(resolvedProvider, apiKey, locationPrompt, { maxTokens: 8000, temperature: 0.7 });
-          } catch (e) { console.error(`Location AI error for ${location}:`, e); }
+          for (const location of parsedLocations) {
+            try {
+              const locationPrompt = buildLocationPagePrompt(bizContext, location, serviceSlugMap, []);
+              locationContent[location] = await generateStructuredJsonWithProvider(resolvedProvider, apiKey, locationPrompt, { maxTokens: 4000, temperature: 0.7 });
+            } catch (e) { console.error(`Location AI error for ${location}:`, e); }
+          }
         }
       }
 
