@@ -3140,9 +3140,13 @@ document.querySelectorAll('.ba-slider').forEach(slider => {
   function setPos(x) {
     const rect = slider.getBoundingClientRect();
     let pct = Math.min(Math.max((x - rect.left) / rect.width * 100, 0), 100);
-    before.style.width = pct + '%';
+    before.style.clipPath = 'inset(0 ' + (100 - pct) + '% 0 0)';
     handle.style.left = pct + '%';
   }
+
+  // Initialise at 50%
+  before.style.clipPath = 'inset(0 50% 0 0)';
+  handle.style.left = '50%';
 
   handle.addEventListener('mousedown', e => { isDragging = true; e.preventDefault(); });
   handle.addEventListener('touchstart', e => { isDragging = true; }, { passive: true });
@@ -3150,6 +3154,7 @@ document.querySelectorAll('.ba-slider').forEach(slider => {
   document.addEventListener('touchmove', e => { if (isDragging) setPos(e.touches[0].clientX); }, { passive: true });
   document.addEventListener('mouseup', () => { isDragging = false; });
   document.addEventListener('touchend', () => { isDragging = false; });
+  slider.addEventListener('mousedown', e => { if (e.target !== handle && !handle.contains(e.target)) { isDragging = true; setPos(e.clientX); } });
   slider.addEventListener('click', e => setPos(e.clientX));
 });
 
@@ -3175,7 +3180,7 @@ document.addEventListener('DOMContentLoaded', () => {
 .ba-slider { position: relative; overflow: hidden; border-radius: 10px; cursor: ew-resize; user-select: none; aspect-ratio: 4/3; }
 .ba-after, .ba-before { position: absolute; inset: 0; }
 .ba-after img, .ba-before img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.ba-before { width: 50%; overflow: hidden; border-right: 2px solid #fff; }
+.ba-before { clip-path: inset(0 50% 0 0); }
 .ba-handle { position: absolute; top: 0; bottom: 0; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: all; cursor: ew-resize; }
 .ba-handle-line { flex: 1; width: 2px; background: #fff; }
 .ba-handle-circle { background: #fff; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: .65rem; color: #334155; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,.3); flex-shrink: 0; }

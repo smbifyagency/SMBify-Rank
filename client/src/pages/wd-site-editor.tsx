@@ -52,6 +52,8 @@ interface WDSiteData {
   // Floating CTA
   floatingCTA?: 'call' | 'whatsapp' | 'none';
   whatsappNumber?: string;
+  // Gallery images: before/after pairs + normal gallery photos
+  galleryImages?: Array<{src: string; alt: string; type: 'before' | 'after' | 'normal'; pairId?: string; caption?: string}>;
   // Deployment
   netlifyUrl?: string;
   netlifyApiKey?: string;
@@ -131,6 +133,7 @@ function siteDataToWDData(data: WDSiteData): Parameters<typeof generateWaterDama
     homepageContent: data.homepageContent,
     serviceContent: data.serviceContent,
     locationContent: data.locationContent,
+    galleryImages: data.galleryImages,
   } as any;
 }
 
@@ -257,6 +260,7 @@ export default function WDSiteEditor() {
         twitterUrl: bd.twitterUrl || "",
         floatingCTA: bd.floatingCTA || "call",
         whatsappNumber: bd.whatsappNumber || "",
+        galleryImages: Array.isArray(bd.galleryImages) ? bd.galleryImages : [],
         netlifyUrl: data.netlifyUrl,
         deploymentStatus: data.netlifyDeploymentStatus,
       });
@@ -487,6 +491,116 @@ export default function WDSiteEditor() {
       rebuildPreview(next);
       return next;
     });
+  }
+
+  // ── Gallery management ────────────────────────────────────────────────
+
+  function getGalleryPairs(data: WDSiteData) {
+    const images = data.galleryImages || [];
+    const pairIds = Array.from(new Set(images.filter(i => i.pairId).map(i => i.pairId!)));
+    return pairIds.map(id => ({
+      id,
+      before: images.find(i => i.pairId === id && i.type === 'before'),
+      after:  images.find(i => i.pairId === id && i.type === 'after'),
+    }));
+  }
+
+  function getGalleryNormal(data: WDSiteData) {
+    return (data.galleryImages || []).filter(i => i.type === 'normal');
+  }
+
+  function addBeforeAfterPair() {
+    const current = siteDataRef.current || siteData;
+    if (!current) return;
+    const pairs = getGalleryPairs(current);
+    if (pairs.length >= 20) { toast({ title: "Max 20 pairs reached" }); return; }
+    const pairId = `pair-${Date.now()}`;
+    const next = {
+      ...current,
+      galleryImages: [
+        ...(current.galleryImages || []),
+        { src: '', alt: 'Before photo', type: 'before' as const, pairId, caption: '' },
+        { src: '', alt: 'After photo',  type: 'after'  as const, pairId, caption: '' },
+      ],
+    };
+    setSiteData(next);
+  }
+
+  function removeBeforeAfterPair(pairId: string) {
+    setSiteData(prev => {
+      if (!prev) return prev;
+      const next = { ...prev, galleryImages: (prev.galleryImages || []).filter(i => i.pairId !== pairId) };
+      rebuildPreview(next);
+      return next;
+    });
+  }
+
+  function uploadPairImage(pairId: string, type: 'before' | 'after', file: File) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const src = e.target?.result as string;
+      const current = siteDataRef.current || siteData;
+      if (!current) return;
+      const next = {
+        ...current,
+        galleryImages: (current.galleryImages || []).map(img =>
+          img.pairId === pairId && img.type === type ? { ...img, src } : img
+        ),
+      };
+      setSiteData(next);
+      rebuildPreview(next);
+      toast({ title: `${type === 'before' ? 'Before' : 'After'} image updated` });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function addGalleryPhoto() {
+    const current = siteDataRef.current || siteData;
+    if (!current) return;
+    const normal = getGalleryNormal(current);
+    if (normal.length >= 50) { toast({ title: "Max 50 gallery photos reached" }); return; }
+    const next = {
+      ...current,
+      galleryImages: [
+        ...(current.galleryImages || []),
+        { src: '', alt: 'Gallery photo', type: 'normal' as const },
+      ],
+    };
+    setSiteData(next);
+  }
+
+  function removeGalleryPhoto(index: number) {
+    setSiteData(prev => {
+      if (!prev) return prev;
+      const normals = (prev.galleryImages || []).filter(i => i.type === 'normal');
+      const toRemove = normals[index];
+      if (!toRemove) return prev;
+      const next = { ...prev, galleryImages: (prev.galleryImages || []).filter(i => i !== toRemove) };
+      rebuildPreview(next);
+      return next;
+    });
+  }
+
+  function uploadGalleryPhoto(index: number, file: File) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const src = e.target?.result as string;
+      const current = siteDataRef.current || siteData;
+      if (!current) return;
+      const normals = (current.galleryImages || []).filter(i => i.type === 'normal');
+      const target = normals[index];
+      if (!target) return;
+      const next = {
+        ...current,
+        galleryImages: (current.galleryImages || []).map(img =>
+          img === target ? { ...img, src } : img
+        ),
+      };
+      setSiteData(next);
+      rebuildPreview(next);
+      toast({ title: "Gallery photo updated" });
+    };
+    reader.readAsDataURL(file);
   }
 
   // ── Update site data fields ───────────────────────────────────────────
@@ -945,6 +1059,115 @@ export default function WDSiteEditor() {
               <p className="text-xs text-gray-500 italic">
                 Tip: You can also click any image directly in the preview on the right to replace it instantly.
               </p>
+
+              {/* ── Before/After Gallery Pairs ─────────────────────────── */}
+              <div className="border-t border-gray-700 pt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 className="font-semibold text-sm text-gray-300">Before/After Comparisons</h3>
+                    <p className="text-xs text-gray-500">Drag the slider in the preview to compare. Up to 20 pairs.</p>
+                  </div>
+                  <button
+                    onClick={addBeforeAfterPair}
+                    disabled={(getGalleryPairs(siteData).length) >= 20}
+                    className="text-xs px-2 py-1 rounded bg-blue-800 text-blue-200 hover:bg-blue-700 disabled:opacity-40"
+                  >+ Add Pair</button>
+                </div>
+
+                {getGalleryPairs(siteData).length === 0 && (
+                  <p className="text-xs text-gray-600 italic text-center py-3 border border-dashed border-gray-700 rounded-lg">
+                    No custom pairs yet — placeholder images will be used. Add a pair to replace them.
+                  </p>
+                )}
+
+                {getGalleryPairs(siteData).map((pair, idx) => (
+                  <div key={pair.id} className="rounded-lg border border-gray-700 p-3 mb-3 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-gray-400">Pair {idx + 1}</span>
+                      <button onClick={() => removeBeforeAfterPair(pair.id)} className="text-xs text-red-400 hover:text-red-300">✕ Remove</button>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {/* Before */}
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">BEFORE</p>
+                        <div className="relative bg-gray-800 rounded aspect-video overflow-hidden">
+                          {pair.before?.src
+                            ? <img src={pair.before.src} alt="Before" className="w-full h-full object-cover" />
+                            : <div className="flex items-center justify-center h-full text-gray-600 text-xs">No image</div>
+                          }
+                        </div>
+                        <label className="cursor-pointer block mt-1">
+                          <div className="flex items-center justify-center gap-1 border border-dashed border-gray-600 rounded py-1.5 text-xs text-gray-400 hover:border-blue-500 hover:text-blue-400 transition-colors">
+                            <ImageIcon className="w-3 h-3" />{pair.before?.src ? "Replace" : "Upload"}
+                          </div>
+                          <input type="file" accept="image/*" className="hidden"
+                            onChange={e => { if (e.target.files?.[0]) uploadPairImage(pair.id, 'before', e.target.files[0]); e.target.value = ''; }} />
+                        </label>
+                      </div>
+                      {/* After */}
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">AFTER</p>
+                        <div className="relative bg-gray-800 rounded aspect-video overflow-hidden">
+                          {pair.after?.src
+                            ? <img src={pair.after.src} alt="After" className="w-full h-full object-cover" />
+                            : <div className="flex items-center justify-center h-full text-gray-600 text-xs">No image</div>
+                          }
+                        </div>
+                        <label className="cursor-pointer block mt-1">
+                          <div className="flex items-center justify-center gap-1 border border-dashed border-gray-600 rounded py-1.5 text-xs text-gray-400 hover:border-blue-500 hover:text-blue-400 transition-colors">
+                            <ImageIcon className="w-3 h-3" />{pair.after?.src ? "Replace" : "Upload"}
+                          </div>
+                          <input type="file" accept="image/*" className="hidden"
+                            onChange={e => { if (e.target.files?.[0]) uploadPairImage(pair.id, 'after', e.target.files[0]); e.target.value = ''; }} />
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* ── Gallery Photos ────────────────────────────────────────── */}
+              <div className="border-t border-gray-700 pt-4">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 className="font-semibold text-sm text-gray-300">Gallery Photos</h3>
+                    <p className="text-xs text-gray-500">General project photos shown in gallery grid. Up to 50 images.</p>
+                  </div>
+                  <button
+                    onClick={addGalleryPhoto}
+                    disabled={getGalleryNormal(siteData).length >= 50}
+                    className="text-xs px-2 py-1 rounded bg-blue-800 text-blue-200 hover:bg-blue-700 disabled:opacity-40"
+                  >+ Add Photo</button>
+                </div>
+
+                {getGalleryNormal(siteData).length === 0 && (
+                  <p className="text-xs text-gray-600 italic text-center py-3 border border-dashed border-gray-700 rounded-lg">
+                    No custom photos yet — placeholder images will be used.
+                  </p>
+                )}
+
+                <div className="grid grid-cols-2 gap-2">
+                  {getGalleryNormal(siteData).map((photo, idx) => (
+                    <div key={idx} className="rounded border border-gray-700 overflow-hidden">
+                      <div className="relative bg-gray-800 aspect-video">
+                        {photo.src
+                          ? <img src={photo.src} alt={`Gallery ${idx+1}`} className="w-full h-full object-cover" />
+                          : <div className="flex items-center justify-center h-full text-gray-600 text-xs">No image</div>
+                        }
+                        <button onClick={() => removeGalleryPhoto(idx)}
+                          className="absolute top-1 right-1 text-xs px-1.5 py-0.5 rounded bg-red-900/80 text-red-300 hover:bg-red-800">✕</button>
+                      </div>
+                      <label className="cursor-pointer block">
+                        <div className="flex items-center justify-center gap-1 py-1.5 text-xs text-gray-400 hover:text-blue-400 transition-colors">
+                          <ImageIcon className="w-3 h-3" />{photo.src ? "Replace" : "Upload"}
+                        </div>
+                        <input type="file" accept="image/*" className="hidden"
+                          onChange={e => { if (e.target.files?.[0]) uploadGalleryPhoto(idx, e.target.files[0]); e.target.value = ''; }} />
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </TabsContent>
 
             {/* ── Deploy Tab ──────────────────────────────────────────── */}
