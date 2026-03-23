@@ -77,6 +77,7 @@ export default function WDSiteEditor() {
   const [desiredSlug, setDesiredSlug] = useState("");
   const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
+  const [apiStatus, setApiStatus] = useState<"checking" | "ready" | "none">("checking");
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Images that need replacing
@@ -132,6 +133,15 @@ export default function WDSiteEditor() {
         .then(s => { if (s?.apiKey && !s.apiKey.includes("•")) setNetlifyToken(s.apiKey); })
         .catch(() => {});
 
+      // Check if any AI API key is configured (for status indicator)
+      Promise.all([
+        fetch("/api/settings/openai", { credentials: "include" }).then(r => r.ok ? r.json() : null).catch(() => null),
+        fetch("/api/settings/gemini", { credentials: "include" }).then(r => r.ok ? r.json() : null).catch(() => null),
+      ]).then(([openai, gemini]) => {
+        const hasKey = (openai?.apiKey) || (gemini?.apiKey) || bd.openaiApiKey || bd.geminiApiKey;
+        setApiStatus(hasKey ? "ready" : "none");
+      });
+
       // Try to load pre-generated files
       if (data.generatedFiles) {
         setGeneratedFiles(data.generatedFiles);
@@ -159,12 +169,16 @@ export default function WDSiteEditor() {
           returnFiles: true,  // ask server to return JSON files, not ZIP
         }),
       });
-      if (!res.ok) throw new Error("Generation failed");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Server error ${res.status}`);
+      }
       // Check if response is JSON (files) or ZIP
       const ct = res.headers.get("content-type") || "";
       if (ct.includes("json")) {
         const data = await res.json();
         setGeneratedFiles(data.files || {});
+        setApiStatus("ready");
         toast({ title: "Regenerated", description: "Website content updated." });
       } else {
         // ZIP fallback - prompt download
@@ -195,6 +209,7 @@ export default function WDSiteEditor() {
         body: JSON.stringify({ businessData: siteData }),
       });
       if (!res.ok) throw new Error("Save failed");
+      if (siteData.openaiApiKey || siteData.geminiApiKey) setApiStatus("ready");
       toast({ title: "Saved", description: "Changes saved successfully." });
     } catch (err) {
       toast({ title: "Error", description: String(err), variant: "destructive" });
@@ -364,6 +379,18 @@ export default function WDSiteEditor() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* API Status Badge */}
+          {apiStatus === "none" && (
+            <button onClick={() => setActiveTab("business")}
+              className="text-xs px-2 py-1 rounded-md bg-yellow-900/40 border border-yellow-700/50 text-yellow-400 hover:bg-yellow-900/60 transition-colors whitespace-nowrap">
+              ⚠ No AI Key — click to add
+            </button>
+          )}
+          {apiStatus === "ready" && (
+            <span className="text-xs px-2 py-1 rounded-md bg-green-900/30 border border-green-700/40 text-green-400 whitespace-nowrap">
+              ✓ AI Ready
+            </span>
+          )}
           <Button variant="outline" size="sm" onClick={regenerateFiles} disabled={isRegenerating} className="border-gray-700 text-gray-300 hover:text-white">
             {isRegenerating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <RefreshCw className="w-4 h-4 mr-1" />}
             Regenerate
@@ -458,7 +485,7 @@ export default function WDSiteEditor() {
 
                 <div>
                   <Label className="text-xs text-gray-400 flex items-center gap-1 mb-1">
-                    <MapPin className="w-3 h-3" /> Service Areas (one per line)
+                    <MapPin className="w-3 h-3" /> Service Areas — each line = 1 page
                   </Label>
                   <Textarea
                     value={(Array.isArray(siteData.serviceAreas) ? siteData.serviceAreas : []).join("\n")}
@@ -467,6 +494,12 @@ export default function WDSiteEditor() {
                     rows={5}
                     placeholder="Austin&#10;Round Rock&#10;Cedar Park"
                   />
+                  <div className="flex items-center justify-between mt-1">
+                    <p className="text-xs text-gray-500">Each city = separate SEO location page</p>
+                    <span className="text-xs text-[#AADD00] font-mono">
+                      {(Array.isArray(siteData.serviceAreas) ? siteData.serviceAreas : []).length} pages
+                    </span>
+                  </div>
                 </div>
 
                 <div>
@@ -504,7 +537,10 @@ export default function WDSiteEditor() {
                     placeholder="AIza..."
                   />
                 </div>
-                <p className="text-xs text-gray-600">Keys saved here are used for all future generations of this website.</p>
+                <p className="text-xs text-gray-600">Keys saved here are used for all future generations. Click <strong>Save</strong> after entering.</p>
+                {(siteData.openaiApiKey || siteData.geminiApiKey) && (
+                  <p className="text-xs text-green-400">✓ Key entered — click Save to apply</p>
+                )}
               </div>
 
               <div className="pt-2 grid grid-cols-2 gap-2">
