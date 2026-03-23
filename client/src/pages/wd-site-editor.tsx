@@ -42,6 +42,15 @@ interface WDSiteData {
   geminiApiKey?: string;
   // Custom images: placeholder key → data URL or hosted URL
   customImages?: Record<string, string>;
+  // Social media
+  facebookUrl?: string;
+  instagramUrl?: string;
+  googleUrl?: string;
+  yelpUrl?: string;
+  twitterUrl?: string;
+  // Floating CTA
+  floatingCTA?: 'call' | 'whatsapp' | 'none';
+  whatsappNumber?: string;
   // Deployment
   netlifyUrl?: string;
   netlifyApiKey?: string;
@@ -568,6 +577,62 @@ export default function WDSiteEditor() {
                     <Input value={siteData.secondaryColor} onChange={e => updateField("secondaryColor", e.target.value)} className="bg-gray-800 border-gray-700 text-white text-sm h-8" />
                   </div>
                 </div>
+              </div>
+
+              {/* Social Media */}
+              <div className="rounded-lg border border-dashed border-gray-700 p-3 space-y-2">
+                <p className="text-xs font-medium text-gray-400">Social Media Links (optional)</p>
+                {[
+                  { field: "facebookUrl", label: "Facebook", placeholder: "https://facebook.com/yourbusiness" },
+                  { field: "instagramUrl", label: "Instagram", placeholder: "https://instagram.com/yourbusiness" },
+                  { field: "googleUrl", label: "Google Business", placeholder: "https://g.page/yourbusiness" },
+                  { field: "yelpUrl", label: "Yelp", placeholder: "https://yelp.com/biz/yourbusiness" },
+                  { field: "twitterUrl", label: "X / Twitter", placeholder: "https://x.com/yourbusiness" },
+                ].map(({ field, label, placeholder }) => (
+                  <div key={field}>
+                    <Label className="text-xs text-gray-500">{label}</Label>
+                    <Input
+                      value={(siteData as any)[field] || ""}
+                      onChange={e => updateField(field, e.target.value)}
+                      className="bg-gray-800 border-gray-700 text-white mt-1 text-sm"
+                      placeholder={placeholder}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Floating CTA */}
+              <div className="rounded-lg border border-dashed border-gray-700 p-3 space-y-2">
+                <p className="text-xs font-medium text-gray-400">Floating Call Button</p>
+                <p className="text-xs text-gray-600">A sticky button shown on all pages to drive calls/leads.</p>
+                <div className="flex gap-2">
+                  {[
+                    { value: "call", label: "📞 Call Button" },
+                    { value: "whatsapp", label: "💬 WhatsApp" },
+                    { value: "none", label: "None" },
+                  ].map(opt => (
+                    <button key={opt.value}
+                      onClick={() => updateField("floatingCTA", opt.value)}
+                      className={`flex-1 py-1.5 text-xs rounded-md border transition-colors ${
+                        (siteData.floatingCTA || "call") === opt.value
+                          ? "bg-blue-900/40 border-blue-600 text-blue-300"
+                          : "bg-gray-800 border-gray-700 text-gray-400 hover:border-gray-600"
+                      }`}>
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {(siteData.floatingCTA || "call") === "whatsapp" && (
+                  <div>
+                    <Label className="text-xs text-gray-500">WhatsApp Number (with country code)</Label>
+                    <Input
+                      value={siteData.whatsappNumber || ""}
+                      onChange={e => updateField("whatsappNumber", e.target.value)}
+                      className="bg-gray-800 border-gray-700 text-white mt-1 text-sm"
+                      placeholder="+15125558900"
+                    />
+                  </div>
+                )}
               </div>
             </TabsContent>
 

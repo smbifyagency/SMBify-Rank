@@ -58,6 +58,15 @@ export interface WDBusinessData {
   teamDescription?: string;
   // Custom images: placeholder key → data URL or hosted URL
   customImages?: Record<string, string>;
+  // Social media
+  facebookUrl?: string;
+  instagramUrl?: string;
+  googleUrl?: string;
+  yelpUrl?: string;
+  twitterUrl?: string;
+  // Floating CTA: 'call' (default) | 'whatsapp' | 'none'
+  floatingCTA?: 'call' | 'whatsapp' | 'none';
+  whatsappNumber?: string;
   // Gallery images (uploaded by user, hosted on Netlify after publish)
   galleryImages?: WDGalleryImage[];
   // Blog posts
@@ -428,14 +437,15 @@ function generateFooter(data: WDBusinessData, currentPath: string = ''): string 
         <p>${data.city}, ${data.state}</p>
         <p><a href="tel:${data.phone.replace(/\D/g, '')}">${data.phone}</a></p>
         ${data.email ? `<p><a href="mailto:${data.email}">${data.email}</a></p>` : ''}
+        ${generateSocialLinks(data)}
         <div style="margin-top:1rem;">
           <a href="${prefix}about.html" style="color:#94a3b8;font-size:.85rem;margin-right:.75rem;">About</a>
           <a href="${prefix}faq.html" style="color:#94a3b8;font-size:.85rem;margin-right:.75rem;">FAQ</a>
           <a href="${prefix}gallery.html" style="color:#94a3b8;font-size:.85rem;margin-right:.75rem;">Gallery</a>
           <a href="${prefix}calculator.html" style="color:#94a3b8;font-size:.85rem;margin-right:.75rem;">Calculators</a>
           <a href="${prefix}contact.html" style="color:#94a3b8;font-size:.85rem;margin-right:.75rem;">Contact</a>
-          <a href="${prefix}privacy.html" style="color:#94a3b8;font-size:.85rem;margin-right:.75rem;">Privacy</a>
-          <a href="${prefix}terms.html" style="color:#94a3b8;font-size:.85rem;">Terms</a>
+          <a href="${prefix}privacy.html" style="color:#94a3b8;font-size:.85rem;margin-right:.75rem;">Privacy Policy</a>
+          <a href="${prefix}terms.html" style="color:#94a3b8;font-size:.85rem;">Terms of Service</a>
         </div>
       </div>
 
@@ -1275,7 +1285,63 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section) { b
   h2 { font-size: 1.3rem; }
   .hero-actions { flex-direction: column; }
   .cta-actions { flex-direction: column; align-items: center; }
-}`;
+}
+
+/* ── Social Links ──────────────────────────────── */
+.social-links { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.75rem; }
+.social-link {
+  display: inline-flex; align-items: center; gap: 0.35rem;
+  padding: 0.35rem 0.75rem; border-radius: 20px;
+  background: rgba(255,255,255,0.08); color: #94a3b8;
+  font-size: 0.8rem; text-decoration: none; transition: background .2s, color .2s;
+}
+.social-link:hover { background: rgba(255,255,255,0.15); color: #fff; text-decoration: none; }
+
+/* ── Floating CTA Button ───────────────────────── */
+.floating-cta {
+  position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 9999;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.85rem 1.4rem; border-radius: 50px;
+  font-weight: 700; font-size: 1rem; color: #fff;
+  text-decoration: none; white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.35);
+  animation: ctaPulse 2.5s ease-in-out infinite;
+}
+.floating-cta--call { background: ${accentColor}; }
+.floating-cta--whatsapp { background: #25D366; }
+@keyframes ctaPulse {
+  0%,100% { transform: scale(1); box-shadow: 0 4px 20px rgba(0,0,0,0.35); }
+  50%      { transform: scale(1.04); box-shadow: 0 6px 28px rgba(0,0,0,0.45); }
+}
+@media (max-width: 480px) { .floating-cta { bottom: 1rem; right: 1rem; font-size: 0.9rem; padding: 0.75rem 1.1rem; } }`;
+}
+
+// ─── Social Links HTML ──────────────────────────────────────────────────────
+function generateSocialLinks(data: WDBusinessData): string {
+  const links: Array<{ url: string; label: string; icon: string }> = [];
+  if (data.facebookUrl)  links.push({ url: data.facebookUrl,  label: 'Facebook',  icon: 'f' });
+  if (data.instagramUrl) links.push({ url: data.instagramUrl, label: 'Instagram', icon: '📸' });
+  if (data.googleUrl)    links.push({ url: data.googleUrl,    label: 'Google',    icon: 'G' });
+  if (data.yelpUrl)      links.push({ url: data.yelpUrl,      label: 'Yelp',      icon: '★' });
+  if (data.twitterUrl)   links.push({ url: data.twitterUrl,   label: 'X',         icon: '✕' });
+  if (links.length === 0) return '';
+  return `<div class="social-links">${links.map(l =>
+    `<a href="${l.url}" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="${l.label}">${l.icon} ${l.label}</a>`
+  ).join('')}</div>`;
+}
+
+// ─── Floating CTA HTML ──────────────────────────────────────────────────────
+function generateFloatingCTA(data: WDBusinessData): string {
+  const cta = data.floatingCTA ?? 'call';
+  if (cta === 'none') return '';
+  if (cta === 'whatsapp') {
+    const num = (data.whatsappNumber || data.phone).replace(/\D/g, '');
+    const msg = encodeURIComponent(`Hi, I need water damage help!`);
+    return `<a href="https://wa.me/${num}?text=${msg}" class="floating-cta floating-cta--whatsapp" aria-label="WhatsApp us">💬 WhatsApp Us</a>`;
+  }
+  // default: call
+  const tel = data.phone.replace(/\D/g, '');
+  return `<a href="tel:+${tel}" class="floating-cta floating-cta--call" aria-label="Call us now">📞 Call Now</a>`;
 }
 
 // ─── SHARED: JS ────────────────────────────────────────────────────────────
@@ -3588,6 +3654,16 @@ export function generateWaterDamageWebsite(
   for (const location of data.serviceAreas) {
     const filename = `locations/${slugify(location)}.html`;
     files[filename] = generateLocationPage(data, location, domain);
+  }
+
+  // Inject floating CTA button into all HTML pages
+  const floatingCTAHtml = generateFloatingCTA(data);
+  if (floatingCTAHtml) {
+    for (const filename of Object.keys(files)) {
+      if (filename.endsWith('.html') && typeof files[filename] === 'string') {
+        files[filename] = (files[filename] as string).replace('</body>', `  ${floatingCTAHtml}\n</body>`);
+      }
+    }
   }
 
   // Inject custom images uploaded by user (replaces Unsplash placeholders)

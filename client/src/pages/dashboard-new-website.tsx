@@ -286,25 +286,12 @@ export default function DashboardNewWebsite() {
           </div>
         )}
 
-        {/* Step 2 — Brand & Domain */}
+        {/* Step 2 — Brand Colors */}
         {step === 2 && (
           <div className="space-y-5">
-            <div>
-              <Label className="text-gray-300 text-sm mb-1.5 block flex items-center gap-1.5">
-                <Globe className="h-3.5 w-3.5 text-[#AADD00]" /> Site Identifier *
-              </Label>
-              <Input value={form.urlSlug} onChange={e => set("urlSlug", e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
-                onFocus={autoSlug}
-                placeholder="rapid-dry-water-restoration"
-                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
-              <p className="text-xs text-gray-500 mt-1">
-                Used as your Netlify site name → <span className="text-gray-400">{form.urlSlug || "your-name"}.netlify.app</span>
-              </p>
-              {!form.urlSlug && form.businessName && (
-                <button onClick={autoSlug} className="text-xs text-[#AADD00] mt-1 hover:underline">
-                  Auto-generate from business name
-                </button>
-              )}
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-[#AADD00]/10 border border-[#AADD00]/20">
+              <Palette className="h-5 w-5 text-[#AADD00] shrink-0" />
+              <p className="text-sm text-gray-300">Pick your brand colors. You can always change these later in the editor.</p>
             </div>
 
             <div>
@@ -313,40 +300,28 @@ export default function DashboardNewWebsite() {
               </Label>
               <div className="grid grid-cols-3 gap-3">
                 {[
-                  { label: "Primary", key: "primaryColor" },
-                  { label: "Secondary", key: "secondaryColor" },
-                  { label: "Accent", key: "accentColor" },
-                ].map(({ label, key }) => (
+                  { label: "Primary", key: "primaryColor", hint: "Header, buttons, headings" },
+                  { label: "Secondary", key: "secondaryColor", hint: "Links & accents" },
+                  { label: "Accent", key: "accentColor", hint: "Emergency CTA" },
+                ].map(({ label, key, hint }) => (
                   <div key={key} className="flex flex-col items-center gap-2">
-                    <div className="relative w-full h-12 rounded-lg border border-white/10 overflow-hidden cursor-pointer"
+                    <div className="relative w-full h-14 rounded-lg border border-white/10 overflow-hidden cursor-pointer"
                       style={{ backgroundColor: (form as any)[key] }}>
                       <input type="color" value={(form as any)[key]}
                         onChange={e => set(key, e.target.value)}
                         className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
                     </div>
-                    <span className="text-xs text-gray-400">{label}</span>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-300 font-medium">{label}</p>
+                      <p className="text-xs text-gray-600">{hint}</p>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10">
-              <p className="text-xs text-gray-400 mb-3">AI Content Generation (Optional)</p>
-              <div className="space-y-3">
-                <div>
-                  <Label className="text-gray-400 text-xs mb-1 block">OpenAI API Key</Label>
-                  <Input type="password" value={form.openaiApiKey} onChange={e => set("openaiApiKey", e.target.value)}
-                    placeholder="sk-..."
-                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 text-sm h-8 focus:border-[#AADD00]/50" />
-                </div>
-                <div>
-                  <Label className="text-gray-400 text-xs mb-1 block">Gemini API Key</Label>
-                  <Input type="password" value={form.geminiApiKey} onChange={e => set("geminiApiKey", e.target.value)}
-                    placeholder="AIza..."
-                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-600 text-sm h-8 focus:border-[#AADD00]/50" />
-                </div>
-              </div>
-              <p className="text-xs text-gray-500 mt-2">Leave blank to use template content without AI</p>
+            <div className="p-4 rounded-xl bg-white/[0.03] border border-white/10 text-center">
+              <p className="text-sm text-gray-400">✓ AI keys, domain name, social links — all configurable in the editor after creation</p>
             </div>
           </div>
         )}
@@ -362,9 +337,7 @@ export default function DashboardNewWebsite() {
                 { label: "Phone", value: form.phone },
                 { label: "Primary Keyword", value: form.primaryKeyword },
                 { label: "Services", value: `${form.services.length} services selected` },
-                { label: "Areas", value: `${form.serviceAreas.split("\n").filter(Boolean).length} cities` },
-                { label: "Site ID", value: `${form.urlSlug}.netlify.app` },
-                { label: "AI Content", value: form.openaiApiKey ? "OpenAI" : form.geminiApiKey ? "Gemini" : "Template only" },
+                { label: "Areas", value: `${form.serviceAreas.split("\n").filter(Boolean).length} cities (= location pages)` },
               ].map(({ label, value }) => (
                 <div key={label} className="flex justify-between text-sm">
                   <span className="text-gray-400">{label}</span>
