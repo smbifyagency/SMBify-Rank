@@ -267,7 +267,9 @@ export default function WDSiteEditor() {
       fetch("/api/settings/netlify", { credentials: "include" })
         .then(r => r.ok ? r.json() : null)
         .then(s => {
-          if (s?.apiKey && !s.apiKey.includes("•")) {
+          // API returns masked "•••••••••••" when token exists — that's fine,
+          // server resolves the real token during deploy. Just mark as connected.
+          if (s?.apiKey) {
             setNetlifyToken(s.apiKey);
             setTokenValid(true);
           }
