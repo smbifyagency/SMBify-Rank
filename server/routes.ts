@@ -6313,6 +6313,16 @@ Generated on: ${new Date().toISOString()}`;
       }
 
       const bd = (website.businessData || {}) as any;
+
+      // Normalize array fields — DB may store them as comma-separated strings
+      const toArray = (v: any): string[] => {
+        if (Array.isArray(v)) return v.filter(Boolean);
+        if (typeof v === 'string' && v.trim()) return v.split(',').map((s: string) => s.trim()).filter(Boolean);
+        return [];
+      };
+      bd.services     = toArray(bd.services);
+      bd.serviceAreas = toArray(bd.serviceAreas);
+
       const rawDomain = siteName || bd.urlSlug || (bd.businessName || website.title || 'my-site');
       const domain = rawDomain.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').substring(0, 63);
 
