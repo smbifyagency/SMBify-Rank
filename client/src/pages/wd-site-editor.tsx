@@ -110,8 +110,8 @@ export default function WDSiteEditor() {
         city: bd.city || "",
         state: bd.state || "",
         primaryKeyword: bd.primaryKeyword || "Water Damage Restoration",
-        services: bd.services || [],
-        serviceAreas: bd.serviceAreas || [],
+        services: Array.isArray(bd.services) ? bd.services : bd.services ? String(bd.services).split(",").map((s: string) => s.trim()).filter(Boolean) : [],
+        serviceAreas: Array.isArray(bd.serviceAreas) ? bd.serviceAreas : bd.serviceAreas ? String(bd.serviceAreas).split(/[\n,]/).map((s: string) => s.trim()).filter(Boolean) : [],
         urlSlug: bd.urlSlug || "",
         primaryColor: bd.primaryColor || "#1e3a5f",
         secondaryColor: bd.secondaryColor || "#0ea5e9",
@@ -448,7 +448,7 @@ export default function WDSiteEditor() {
                     <Layers className="w-3 h-3" /> Services (one per line)
                   </Label>
                   <Textarea
-                    value={siteData.services.join("\n")}
+                    value={(Array.isArray(siteData.services) ? siteData.services : []).join("\n")}
                     onChange={e => updateField("services", e.target.value.split("\n").filter(Boolean))}
                     className="bg-gray-800 border-gray-700 text-white text-sm font-mono"
                     rows={5}
@@ -461,7 +461,7 @@ export default function WDSiteEditor() {
                     <MapPin className="w-3 h-3" /> Service Areas (one per line)
                   </Label>
                   <Textarea
-                    value={siteData.serviceAreas.join("\n")}
+                    value={(Array.isArray(siteData.serviceAreas) ? siteData.serviceAreas : []).join("\n")}
                     onChange={e => updateField("serviceAreas", e.target.value.split("\n").filter(Boolean))}
                     className="bg-gray-800 border-gray-700 text-white text-sm font-mono"
                     rows={5}
@@ -788,11 +788,11 @@ export default function WDSiteEditor() {
               className="bg-gray-800 border border-gray-700 text-gray-300 text-xs rounded px-2 py-1"
             >
               <option value="index.html">Homepage</option>
-              {siteData.services.map(s => {
-                const slug = `services/${s.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${siteData.city.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
+              {(Array.isArray(siteData.services) ? siteData.services : []).map(s => {
+                const slug = `services/${s.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${(siteData.city || "").toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
                 return <option key={s} value={slug}>{s} (Service)</option>;
               })}
-              {siteData.serviceAreas.map(l => {
+              {(Array.isArray(siteData.serviceAreas) ? siteData.serviceAreas : []).map(l => {
                 const slug = `locations/${l.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
                 return <option key={l} value={slug}>{l} (Location)</option>;
               })}
