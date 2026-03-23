@@ -314,11 +314,12 @@ function Router() {
             <NotFound />
           </Route>
 
-          {/* 404 Catch-All */}
-          <Route component={NotFound} />
           <Route path="/dashboard/wd-editor/:id">
             <AuthRoute><WDSiteEditor /></AuthRoute>
           </Route>
+
+          {/* 404 Catch-All */}
+          <Route component={NotFound} />
         </Switch>
       </main>
       {!isEditorRoute && <SharedFooter />}
