@@ -158,6 +158,7 @@ export default function WDSiteEditor() {
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const [apiStatus, setApiStatus] = useState<"checking" | "ready" | "none">("checking");
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+  const [previewBlobUrl, setPreviewBlobUrl] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstLoadRef = useRef(true);
@@ -503,12 +504,20 @@ export default function WDSiteEditor() {
     });
   }
 
-  // ── Preview URL for iframe ────────────────────────────────────────────
+  // ── Preview blob URL for iframe (blob avoids data: URL size limits with large images) ──
 
-  const previewHtml = generatedFiles[previewPage] || generatedFiles['index.html'] || '';
-  const previewSrc = Object.keys(generatedFiles).length > 0
-    ? `data:text/html;charset=utf-8,${encodeURIComponent(previewHtml.replace('</body>', PREVIEW_CLICK_SCRIPT + '</body>'))}`
-    : null;
+  useEffect(() => {
+    if (Object.keys(generatedFiles).length === 0) {
+      setPreviewBlobUrl(null);
+      return;
+    }
+    const html = generatedFiles[previewPage] || generatedFiles['index.html'] || '';
+    const withScript = html.replace('</body>', PREVIEW_CLICK_SCRIPT + '</body>');
+    const blob = new Blob([withScript], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    setPreviewBlobUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [generatedFiles, previewPage]);
 
   if (isLoading) {
     return (
@@ -1095,10 +1104,10 @@ export default function WDSiteEditor() {
 
           {/* Preview iframe or placeholder */}
           <div className="flex-1 overflow-hidden bg-white">
-            {previewSrc ? (
+            {previewBlobUrl ? (
               <iframe
                 ref={iframeRef}
-                src={previewSrc}
+                src={previewBlobUrl}
                 className="w-full h-full border-0"
                 title="Website Preview"
                 sandbox="allow-same-origin allow-scripts"
