@@ -50,6 +50,7 @@ export default function DashboardNewWebsite() {
 
   const [form, setForm] = useState({
     businessName: "",
+    countryCode: "+1",
     phone: "",
     email: "",
     address: "",
@@ -72,6 +73,7 @@ export default function DashboardNewWebsite() {
   const fillSampleData = () => {
     setForm({
       businessName: "Rapid Dry Restoration",
+      countryCode: "+1",
       phone: "(512) 555-8900",
       email: "info@rapiddryrestoration.com",
       address: "1234 Flood Relief Dr",
@@ -219,9 +221,23 @@ export default function DashboardNewWebsite() {
                   <Label className="text-gray-300 text-sm mb-1.5 block flex items-center gap-1.5">
                     <Phone className="h-3.5 w-3.5" /> Phone *
                   </Label>
-                  <Input value={form.phone} onChange={e => set("phone", e.target.value)}
-                    placeholder="(555) 123-4567"
-                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                  <div className="flex gap-2">
+                    <select
+                      value={form.countryCode || "+1"}
+                      onChange={e => set("countryCode", e.target.value)}
+                      className="w-[100px] h-[40px] px-2 py-2 rounded-md bg-white/5 border border-white/10 text-white text-sm focus:border-[#AADD00]/50 outline-none"
+                    >
+                      <option value="+1" className="bg-gray-900 text-white">🇺🇸/🇨🇦 +1</option>
+                      <option value="+44" className="bg-gray-900 text-white">🇬🇧 +44</option>
+                      <option value="+61" className="bg-gray-900 text-white">🇦🇺 +61</option>
+                      <option value="+64" className="bg-gray-900 text-white">🇳🇿 +64</option>
+                      <option value="+27" className="bg-gray-900 text-white">🇿🇦 +27</option>
+                      <option value="+91" className="bg-gray-900 text-white">🇮🇳 +91</option>
+                    </select>
+                    <Input value={form.phone} onChange={e => set("phone", e.target.value)}
+                      placeholder="(555) 123-4567"
+                      className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                  </div>
                 </div>
                 <div>
                   <Label className="text-gray-300 text-sm mb-1.5 block">Email</Label>

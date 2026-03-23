@@ -7,8 +7,15 @@ import { useBusinessData } from "@/contexts/business-data-context";
 
 const suggestedServices: Record<string, string[]> = {
     default: [
-        "Emergency Service", "Free Estimates", "Same-Day Service", "Licensed & Insured",
-        "Residential", "Commercial", "Maintenance", "Installation", "Repair", "Inspection",
+      "Water Damage Restoration", "Residential Water Damage Restoration", "Commercial Water Damage Restoration",
+      "Emergency Water Extraction", "Flood Cleanup & Flood Damage Repair", "Commercial Flood Extraction",
+      "Basement Flooding Cleanup", "Burst Pipe Repair & Cleanup", "Appliance Leak Water Damage",
+      "Roof Leak Water Damage Repair", "Ceiling & Wall Water Damage Repair", "Hardwood Floor Water Damage Repair",
+      "Drywall Water Damage Repair", "Carpet Water Damage & Drying", "Mold Remediation & Mold Removal",
+      "Sewage Backup Cleanup", "Biohazard & Trauma Cleanup", "Storm Damage Restoration",
+      "Structural Drying & Dehumidification", "Fire & Smoke Damage Restoration", "Crawl Space Water Damage",
+      "Document Drying & Recovery", "HVAC Water Damage & Cleaning", "24/7 Emergency Response",
+      "Insurance Claim Assistance", "Odor Removal & Deodorization", "Content Pack-Out & Storage"
     ],
 };
 
