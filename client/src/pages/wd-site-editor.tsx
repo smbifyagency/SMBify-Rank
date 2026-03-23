@@ -90,7 +90,41 @@ export default function WDSiteEditor() {
   const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const [apiStatus, setApiStatus] = useState<"checking" | "ready" | "none">("checking");
+  const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isFirstLoadRef = useRef(true);
+
+  // ── Auto-save when siteData changes ──────────────────────────────────
+
+  useEffect(() => {
+    // Skip auto-save on initial load
+    if (isFirstLoadRef.current) {
+      if (siteData !== null) isFirstLoadRef.current = false;
+      return;
+    }
+    if (!siteData || !websiteId) return;
+
+    // Debounce: save 3 seconds after last change
+    if (autoSaveTimerRef.current) clearTimeout(autoSaveTimerRef.current);
+    setAutoSaveStatus("saving");
+    autoSaveTimerRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/websites/${websiteId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ businessData: siteData }),
+        });
+        if (res.ok) {
+          setAutoSaveStatus("saved");
+          setTimeout(() => setAutoSaveStatus("idle"), 2000);
+        }
+      } catch {
+        setAutoSaveStatus("idle");
+      }
+    }, 3000);
+  }, [siteData]);
 
   // ── Load website data ─────────────────────────────────────────────────
 
@@ -129,6 +163,14 @@ export default function WDSiteEditor() {
         homepageContent: bd.homepageContent,
         serviceContent: bd.serviceContent,
         locationContent: bd.locationContent,
+        customImages: bd.customImages || {},
+        facebookUrl: bd.facebookUrl || "",
+        instagramUrl: bd.instagramUrl || "",
+        googleUrl: bd.googleUrl || "",
+        yelpUrl: bd.yelpUrl || "",
+        twitterUrl: bd.twitterUrl || "",
+        floatingCTA: bd.floatingCTA || "call",
+        whatsappNumber: bd.whatsappNumber || "",
         netlifyUrl: data.netlifyUrl,
         deploymentStatus: data.netlifyDeploymentStatus,
       });
@@ -149,9 +191,9 @@ export default function WDSiteEditor() {
         setApiStatus(hasKey ? "ready" : "none");
       });
 
-      // Try to load pre-generated files
-      if (data.generatedFiles) {
-        setGeneratedFiles(data.generatedFiles);
+      // Try to load pre-generated files (stored as customFiles in DB)
+      if (data.customFiles && typeof data.customFiles === "object") {
+        setGeneratedFiles(data.customFiles);
       }
     } catch (err) {
       toast({ title: "Error", description: "Could not load website data.", variant: "destructive" });
@@ -184,9 +226,31 @@ export default function WDSiteEditor() {
       const ct = res.headers.get("content-type") || "";
       if (ct.includes("json")) {
         const data = await res.json();
-        setGeneratedFiles(data.files || {});
+        const files = data.files || {};
+        setGeneratedFiles(files);
         setApiStatus("ready");
-        toast({ title: "Regenerated", description: "Website content updated." });
+
+        // Persist generated files to DB so they survive page reload
+        if (websiteId) {
+          fetch(`/api/websites/${websiteId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ customFiles: files }),
+          }).catch(() => {});
+        }
+
+        // Merge any AI-generated content back into siteData
+        if (data.homepageContent || data.serviceContent || data.locationContent) {
+          setSiteData(prev => prev ? {
+            ...prev,
+            homepageContent: data.homepageContent || prev.homepageContent,
+            serviceContent: data.serviceContent || prev.serviceContent,
+            locationContent: data.locationContent || prev.locationContent,
+          } : prev);
+        }
+
+        toast({ title: "Regenerated", description: "Website content updated and saved." });
       } else {
         // ZIP fallback - prompt download
         const blob = await res.blob();
@@ -414,6 +478,12 @@ export default function WDSiteEditor() {
             {isRegenerating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <RefreshCw className="w-4 h-4 mr-1" />}
             Regenerate
           </Button>
+          {autoSaveStatus === "saving" && (
+            <span className="text-xs text-gray-500 whitespace-nowrap">Saving...</span>
+          )}
+          {autoSaveStatus === "saved" && (
+            <span className="text-xs text-green-500 whitespace-nowrap">✓ Saved</span>
+          )}
           <Button variant="outline" size="sm" onClick={saveChanges} disabled={isSaving} className="border-gray-700 text-gray-300 hover:text-white">
             {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
             Save

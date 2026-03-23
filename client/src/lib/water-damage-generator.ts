@@ -589,7 +589,7 @@ ul { list-style: none; }
 }
 
 section { padding: 4rem 0; }
-section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section) { background: #f8fafc; }
+section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not(.hero) { background: #f8fafc; }
 
 /* ── Header ───────────────────────────────────── */
 .site-header {
@@ -732,11 +732,18 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section) { b
   position: absolute;
   inset: 0;
   background: url('${theme.heroImageUrl || WD_PLACEHOLDER_IMAGES.hero}') center/cover no-repeat;
-  opacity: 0.15;
+  opacity: 0.35;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(15,34,68,0.75) 0%, rgba(15,34,68,0.55) 100%);
 }
 
 .hero-inner {
   position: relative;
+  z-index: 1;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 1.5rem;
