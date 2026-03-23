@@ -6105,6 +6105,10 @@ Generated on: ${new Date().toISOString()}`;
         returnFiles,
         // For updating an existing website record
         websiteId: existingWebsiteId,
+        // Extra fields passed from editor (preserve as-is)
+        customImages, facebookUrl, instagramUrl, googleUrl, yelpUrl, twitterUrl,
+        floatingCTA, whatsappNumber, logoUrl, logoAlt, licenseNumber, insuranceInfo,
+        aboutContent, teamDescription,
       } = req.body;
 
       // Auto-generate urlSlug from businessName if blank
@@ -6229,25 +6233,43 @@ Generated on: ${new Date().toISOString()}`;
         homepageContent,
         serviceContent: Object.keys(serviceContent).length > 0 ? serviceContent : undefined,
         locationContent: Object.keys(locationContent).length > 0 ? locationContent : undefined,
+        // Preserve all extra fields the editor passes through
+        customImages: customImages || undefined,
+        facebookUrl: facebookUrl || undefined,
+        instagramUrl: instagramUrl || undefined,
+        googleUrl: googleUrl || undefined,
+        yelpUrl: yelpUrl || undefined,
+        twitterUrl: twitterUrl || undefined,
+        floatingCTA: floatingCTA || undefined,
+        whatsappNumber: whatsappNumber || undefined,
+        logoUrl: logoUrl || undefined,
+        logoAlt: logoAlt || undefined,
+        licenseNumber: licenseNumber || undefined,
+        insuranceInfo: insuranceInfo || undefined,
+        aboutContent: aboutContent || undefined,
+        teamDescription: teamDescription || undefined,
       };
 
       // Generate all HTML files
       const files = generateWaterDamageWebsite(wdData, domain);
 
-      // Save/update website record if authenticated user
+      // Save/update website record if authenticated user.
+      // When returnFiles=true (editor preview), also persist the generated files
+      // directly to customFiles so they survive page refresh without re-generating.
       let savedWebsiteId: string | undefined = existingWebsiteId;
       if (userId && userId !== 'guest') {
         try {
+          const filesToPersist = returnFiles ? (files as any) : null;
           if (existingWebsiteId) {
-            // Update existing website with new AI content
-            await storage.updateWebsite(existingWebsiteId, {
-              businessData: wdData as any,
-            });
+            const updatePayload: any = { businessData: wdData as any };
+            if (filesToPersist) updatePayload.customFiles = filesToPersist;
+            await storage.updateWebsite(existingWebsiteId, updatePayload);
           } else {
             const website = await storage.createWebsite({
               userId,
               title: businessName,
               businessData: wdData as any,
+              customFiles: filesToPersist,
               template: 'water-damage',
             });
             savedWebsiteId = website?.id;

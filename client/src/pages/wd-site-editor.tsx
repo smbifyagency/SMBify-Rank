@@ -229,28 +229,10 @@ export default function WDSiteEditor() {
         const files = data.files || {};
         setGeneratedFiles(files);
         setApiStatus("ready");
+        // Files + businessData are already persisted by the server in the same request.
+        // No extra PUT needed here.
 
-        // Persist generated files to DB so they survive page reload
-        if (websiteId) {
-          fetch(`/api/websites/${websiteId}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({ customFiles: files }),
-          }).catch(() => {});
-        }
-
-        // Merge any AI-generated content back into siteData
-        if (data.homepageContent || data.serviceContent || data.locationContent) {
-          setSiteData(prev => prev ? {
-            ...prev,
-            homepageContent: data.homepageContent || prev.homepageContent,
-            serviceContent: data.serviceContent || prev.serviceContent,
-            locationContent: data.locationContent || prev.locationContent,
-          } : prev);
-        }
-
-        toast({ title: "Regenerated", description: "Website content updated and saved." });
+        toast({ title: "Regenerated", description: "Website saved and ready to preview." });
       } else {
         // ZIP fallback - prompt download
         const blob = await res.blob();
