@@ -399,7 +399,7 @@ function generateNav(data: WDBusinessData, currentPath: string = ''): string {
       </nav>
 
       <div class="header-cta">
-        <a href="tel:${data.phone.replace(/\D/g, '')}" class="btn-emergency" aria-label="Call us now">
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-emergency" aria-label="Call us now">
           📞 ${data.phone}
         </a>
       </div>
@@ -416,9 +416,11 @@ function generateNav(data: WDBusinessData, currentPath: string = ''): string {
 function generateFooter(data: WDBusinessData, currentPath: string = ''): string {
   const prefix = currentPath.includes('/') ? '../' : '';
   const serviceLinks = data.services
+    .slice(0, 5)
     .map(s => `<li><a href="${prefix}services/${slugify(s)}-${slugify(data.city)}.html">${s}</a></li>`)
     .join('');
   const locationLinks = data.serviceAreas
+    .slice(0, 5)
     .map(l => `<li><a href="${prefix}locations/${slugify(l)}.html">${l}</a></li>`)
     .join('');
   const year = new Date().getFullYear();
@@ -435,7 +437,7 @@ function generateFooter(data: WDBusinessData, currentPath: string = ''): string 
       <div class="footer-brand">
         ${brandBlock}
         <p>${data.city}, ${data.state}</p>
-        <p><a href="tel:${data.phone.replace(/\D/g, '')}">${data.phone}</a></p>
+        <p><a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}">${data.phone}</a></p>
         ${data.email ? `<p><a href="mailto:${data.email}">${data.email}</a></p>` : ''}
         ${generateSocialLinks(data)}
         <div style="margin-top:1rem;">
@@ -461,7 +463,7 @@ function generateFooter(data: WDBusinessData, currentPath: string = ''): string 
 
       <div class="footer-contact">
         <h3>24/7 Emergency Line</h3>
-        <a href="tel:${data.phone.replace(/\D/g, '')}" class="footer-phone">${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="footer-phone">${data.phone}</a>
         <p>Available around the clock for water damage emergencies.</p>
         ${data.licenseNumber ? `<p style="font-size:.8rem;color:#64748b;margin-top:.5rem;">License: ${data.licenseNumber}</p>` : ''}
         ${data.insuranceInfo ? `<p style="font-size:.8rem;color:#64748b;">${data.insuranceInfo}</p>` : ''}
@@ -1326,11 +1328,11 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 // ─── Social Links HTML ──────────────────────────────────────────────────────
 function generateSocialLinks(data: WDBusinessData): string {
   const links: Array<{ url: string; label: string; icon: string }> = [];
-  if (data.facebookUrl)  links.push({ url: data.facebookUrl,  label: 'Facebook',  icon: 'f' });
-  if (data.instagramUrl) links.push({ url: data.instagramUrl, label: 'Instagram', icon: '📸' });
-  if (data.googleUrl)    links.push({ url: data.googleUrl,    label: 'Google',    icon: 'G' });
-  if (data.yelpUrl)      links.push({ url: data.yelpUrl,      label: 'Yelp',      icon: '★' });
-  if (data.twitterUrl)   links.push({ url: data.twitterUrl,   label: 'X',         icon: '✕' });
+  if (data.facebookUrl)  links.push({ url: data.facebookUrl,  label: 'Facebook',  icon: '<i class="fab fa-facebook-f"></i>' });
+  if (data.instagramUrl) links.push({ url: data.instagramUrl, label: 'Instagram', icon: '<i class="fab fa-instagram"></i>' });
+  if (data.googleUrl)    links.push({ url: data.googleUrl,    label: 'Google',    icon: '<i class="fab fa-google"></i>' });
+  if (data.yelpUrl)      links.push({ url: data.yelpUrl,      label: 'Yelp',      icon: '<i class="fab fa-yelp"></i>' });
+  if (data.twitterUrl)   links.push({ url: data.twitterUrl,   label: 'X',         icon: '<i class="fab fa-x-twitter"></i>' });
   if (links.length === 0) return '';
   return `<div class="social-links">${links.map(l =>
     `<a href="${l.url}" class="social-link" target="_blank" rel="noopener noreferrer" aria-label="${l.label}">${l.icon} ${l.label}</a>`
@@ -1348,7 +1350,7 @@ function generateFloatingCTA(data: WDBusinessData): string {
   }
   // default: call
   const tel = data.phone.replace(/\D/g, '');
-  return `<a href="tel:+${tel}" class="floating-cta floating-cta--call" aria-label="Call us now">📞 Call Now</a>`;
+  return `<a href="tel:${data.countryCode || '+1'}${tel}" class="floating-cta floating-cta--call" aria-label="Call us now">📞 Call Now</a>`;
 }
 
 // ─── SHARED: JS ────────────────────────────────────────────────────────────
@@ -1571,7 +1573,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
                 <span class="contact-icon">📞</span>
                 <div>
                   <strong>Phone (24/7)</strong><br>
-                  <a href="tel:${data.phone.replace(/\D/g, '')}">${data.phone}</a>
+                  <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}">${data.phone}</a>
                 </div>
               </div>
               <div class="contact-item">
@@ -1602,14 +1604,14 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
         <h1>${h1}</h1>
         <p class="hero-sub">${heroSub}</p>
         <div class="hero-actions">
-          <a href="tel:${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+          <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
           <a href="#contact" class="btn-secondary">Get Free Estimate</a>
         </div>
         <p class="hero-trust">Licensed • Insured • IICRC Certified</p>
       </div>
       <div class="hero-cta-card" aria-label="Emergency contact">
         <h3>🚨 Water Emergency?</h3>
-        <a href="tel:${data.phone.replace(/\D/g, '')}" class="hero-cta-phone">${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="hero-cta-phone">${data.phone}</a>
         <p class="hero-cta-divider">or</p>
         <a href="#contact" class="hero-cta-form-btn">Request a Callback</a>
       </div>
@@ -1708,7 +1710,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
       <h2 id="cta-heading">${ctaH2}</h2>
       <p>${ctaBody}</p>
       <div class="cta-actions">
-        <a href="tel:${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 ${ctaBtn}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 ${ctaBtn}</a>
         <a href="#contact" class="btn-secondary">Send Us a Message</a>
       </div>
     </div>
@@ -1885,7 +1887,7 @@ export function generateServicePage(
       <p>${heroSub}</p>
       <div class="trust-badges">${trustBadgesHTML}</div>
       <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
-        <a href="tel:${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
         <a href="../index.html#contact" class="btn-secondary">Get Free Estimate</a>
       </div>
     </div>
@@ -1983,7 +1985,7 @@ export function generateServicePage(
       <h2 id="cta-heading">${ctaH2}</h2>
       <p>${ctaBody}</p>
       <div class="cta-actions">
-        <a href="tel:${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call Now</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call Now</a>
         <a href="../index.html#contact" class="btn-secondary">Send a Message</a>
       </div>
     </div>
@@ -2117,7 +2119,7 @@ export function generateLocationPage(
       <p>${heroSub}</p>
       <div class="trust-badges">${trustBadgesHTML}</div>
       <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
-        <a href="tel:${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
         <a href="../index.html#contact" class="btn-secondary">Get Free Estimate</a>
       </div>
     </div>
@@ -2192,7 +2194,7 @@ export function generateLocationPage(
       <h2 id="cta-heading">${ctaH2}</h2>
       <p>${ctaBody}</p>
       <div class="cta-actions">
-        <a href="tel:${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call Now</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call Now</a>
         <a href="../index.html#contact" class="btn-secondary">Send a Message</a>
       </div>
     </div>
@@ -2349,7 +2351,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
       <h2 id="cta-heading">Ready to Work With a Team You Can Trust?</h2>
       <p>Call ${data.businessName} for immediate help or to schedule a free assessment.</p>
       <div class="cta-actions">
-        <a href="tel:${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
         <a href="contact.html" class="btn-secondary">Contact Us</a>
       </div>
     </div>
@@ -2400,7 +2402,7 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
   <div style="background:#dc2626;color:#fff;padding:1.25rem 0;text-align:center;">
     <div class="container">
       <strong>🚨 Water Damage Emergency?</strong> Don't wait — call us now:
-      <a href="tel:${data.phone.replace(/\D/g, '')}" style="color:#fff;font-size:1.2rem;font-weight:800;margin-left:.75rem;">${data.phone}</a>
+      <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" style="color:#fff;font-size:1.2rem;font-weight:800;margin-left:.75rem;">${data.phone}</a>
     </div>
   </div>
 
@@ -2415,7 +2417,7 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
             <span class="contact-icon">📞</span>
             <div>
               <strong>Phone (24/7 Emergency)</strong><br>
-              <a href="tel:${data.phone.replace(/\D/g, '')}" style="font-size:1.2rem;font-weight:700;">${data.phone}</a>
+              <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" style="font-size:1.2rem;font-weight:700;">${data.phone}</a>
             </div>
           </div>
 
@@ -2504,7 +2506,7 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
       <h2 id="cta-heading">Water Damage Cannot Wait</h2>
       <p>Every hour increases the risk of mold and structural damage. Call now for immediate response.</p>
       <div class="cta-actions">
-        <a href="tel:${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
       </div>
     </div>
   </section>
@@ -2632,7 +2634,7 @@ export function generateFAQPage(data: WDBusinessData, domain: string): string {
       <h2 id="cta-heading">Still Have Questions? Call Us Directly</h2>
       <p>Our team is available 24/7 to answer any questions and dispatch help when you need it.</p>
       <div class="cta-actions">
-        <a href="tel:${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
         <a href="contact.html" class="btn-secondary">Send a Message</a>
       </div>
     </div>
@@ -2974,7 +2976,7 @@ function calcRestore() {
     <div class="container" style="text-align:center;">
       <h2>Get an Accurate Assessment — Free</h2>
       <p style="color:#475569;max-width:600px;margin:0 auto 1.5rem;">These calculators provide estimates, not exact figures. For an accurate assessment and written estimate, call ${data.businessName}. There is no charge for on-site evaluations in ${data.city}.</p>
-      <a href="tel:${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+      <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
     </div>
   </section>
 
@@ -3243,7 +3245,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <h2 id="cta-heading">Need Water Damage Restoration in ${data.city}?</h2>
       <p>Our certified team is ready to respond 24/7. Call now or request a free assessment.</p>
       <div class="cta-actions">
-        <a href="tel:${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
         <a href="contact.html" class="btn-secondary">Get Free Estimate</a>
       </div>
     </div>
@@ -3373,7 +3375,7 @@ export function generateBlogArchivePage(data: WDBusinessData, domain: string): s
       <h2 id="cta-heading">Water Damage Emergency in ${data.city}?</h2>
       <p>Don't rely on articles when you need real help. Call us for immediate response, 24/7.</p>
       <div class="cta-actions">
-        <a href="tel:${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
         <a href="contact.html" class="btn-secondary">Get Free Estimate</a>
       </div>
     </div>

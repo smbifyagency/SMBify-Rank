@@ -64,7 +64,7 @@ export default function OnboardingGenerating() {
                 const locationString = locationsArr
                     .map((l: any) => (typeof l === "string" ? l : `${l.city || ""}${l.state ? ", " + l.state : ""}`).trim())
                     .filter(Boolean)
-                    .join(", ");
+                    .join("\n");
 
                 // Build services string
                 const servicesArr = Array.isArray(bd.services) ? bd.services : [];

@@ -126,7 +126,7 @@ export default function DashboardNewWebsite() {
     setIsGenerating(true);
     try {
       const servicesList = form.services;
-      const areasList = form.serviceAreas.split("\n").map(s => s.trim()).filter(Boolean);
+      const areasList = form.serviceAreas.split(/[\n;]+/).map(s => s.trim()).filter(Boolean);
 
       const invalidAreas = areasList.filter(a => !a.includes(','));
       if (invalidAreas.length > 0) {

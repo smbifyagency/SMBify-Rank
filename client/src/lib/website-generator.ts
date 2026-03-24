@@ -440,7 +440,7 @@ function generateHTML(data: BusinessData, template: Template): string {
     <header class="header">
         <nav class="nav">
             <div class="nav-brand">
-                ${data.logo ? `<img src="${data.logo}" alt="${data.heroService} in ${data.heroLocation}" class="nav-logo" />` : ''}
+                ${(data.logo || data.logoUrl) ? `<img src="${data.logo || data.logoUrl}" alt="${data.heroService} in ${data.heroLocation}" class="nav-logo" />` : ''}
             </div>
             <div class="nav-links">
                 <ul class="nav-menu">
@@ -451,7 +451,7 @@ function generateHTML(data: BusinessData, template: Template): string {
                 </ul>
             </div>
             <div class="nav-contact">
-                <a href="tel:${data.phone}" class="phone-btn">
+                <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="phone-btn">
                     <i class="fas fa-phone"></i> ${data.phone}
                 </a>
             </div>
@@ -488,7 +488,7 @@ function generateHTML(data: BusinessData, template: Template): string {
                 </div>
             </div>
             <div class="hero-cta">
-                <a href="tel:${data.phone}" class="cta-button primary pulse">
+                <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button primary pulse">
                     <i class="fas fa-phone"></i> Call Now
                 </a>
                 ${data.ctaWhatsappNumber ? `
@@ -549,7 +549,7 @@ function generateHTML(data: BusinessData, template: Template): string {
                 </div>
             </div>
             <div class="section-cta">
-                <a href="tel:${data.phone}" class="cta-button cta-call">
+                <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button cta-call">
                     <i class="fas fa-phone"></i>
                     Call ${data.businessName}
                 </a>
@@ -581,7 +581,7 @@ function generateHTML(data: BusinessData, template: Template): string {
             </div>
             <div class="section-cta">
                 <p>Ready to get started?</p>
-                <a href="tel:${data.phone}" class="cta-button cta-call">
+                <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button cta-call">
                     <i class="fas fa-phone"></i>
                     Call Now
                 </a>
@@ -635,7 +635,7 @@ function generateHTML(data: BusinessData, template: Template): string {
             </div>
             <div class="section-cta">
                 <p>Need professional help?</p>
-                <a href="tel:${data.phone}" class="cta-button cta-call large">
+                <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button cta-call large">
                     <i class="fas fa-phone"></i>
                     Call ${data.phone}
                 </a>
@@ -653,7 +653,7 @@ function generateHTML(data: BusinessData, template: Template): string {
             <div class="testimonials-cta">
                 <p>Join our satisfied customers today!</p>
                 <div class="cta-group">
-                    <a href="tel:${data.phone}" class="cta-button cta-call large">
+                    <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button cta-call large">
                         <i class="fas fa-phone"></i>
                         Call Now: ${data.phone}
                     </a>
@@ -693,7 +693,7 @@ function generateHTML(data: BusinessData, template: Template): string {
             </div>
             <div class="faq-cta">
                 <p>Have more questions?</p>
-                <a href="tel:${data.phone}" class="cta-button cta-call">
+                <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button cta-call">
                     <i class="fas fa-phone"></i>
                     Call Now: ${data.phone}
                 </a>
@@ -709,7 +709,7 @@ function generateHTML(data: BusinessData, template: Template): string {
             <div class="contact-main-cta">
                 <p>Ready to start your project? Get in touch today!</p>
                 <div class="cta-group">
-                    <a href="tel:${data.phone}" class="cta-button cta-call large">
+                    <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button cta-call large">
                         <i class="fas fa-phone"></i>
                         Call Now: ${data.phone}
                     </a>
@@ -731,7 +731,7 @@ function generateHTML(data: BusinessData, template: Template): string {
                 <div class="contact-card">
                     <i class="fas fa-phone"></i>
                     <h3>Call Us</h3>
-                    <p><a href="tel:${data.phone}">${data.phone}</a></p>
+                    <p><a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}">${data.phone}</a></p>
                 </div>
                 <div class="contact-card">
                     <i class="fas fa-envelope"></i>
@@ -787,7 +787,7 @@ function generateHTML(data: BusinessData, template: Template): string {
                     <h3>${data.businessName}</h3>
                     <p>${data.keyFacts}</p>
                     <div class="footer-contact">
-                        <p><strong>Phone:</strong> <a href="tel:${data.phone}">${data.phone}</a></p>
+                        <p><strong>Phone:</strong> <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}">${data.phone}</a></p>
                         ${data.email ? `<p><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></p>` : ''}
                         <p><strong>Address:</strong> ${data.address}</p>
                         <p><strong>Hours:</strong> ${data.businessHours}</p>

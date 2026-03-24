@@ -1179,7 +1179,7 @@ function generateCTAButtons(data: BusinessData): string {
   // Call button (using regular phone number if enabled)
   if (data.ctaCallButton && data.phone) {
     buttons.push(`
-      <a href="tel:${data.phone}" class="cta-button cta-call">
+      <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button cta-call">
         <i class="fas fa-phone"></i> ${data.phone}
       </a>
     `);
@@ -3806,7 +3806,7 @@ function generateMainHTML(data: BusinessData, template: Template, domain?: strin
                     <div style="background: rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.2);">
                         <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 600;">Get Free Estimate</h3>
                         <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 1rem; font-size: 0.9rem;">Professional service with transparent pricing</p>
-                        <a href="tel:${data.phone}" style="display: block; background: white; color: ${template.colors.primary}; padding: 1rem; border-radius: 8px; text-decoration: none; font-weight: 600; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.1);"
+                        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="display: block; background: white; color: ${template.colors.primary}; padding: 1rem; border-radius: 8px; text-decoration: none; font-weight: 600; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.1);"
                             <i class="fas fa-phone"></i> ${data.phone}
                         </a>
                     </div>
@@ -3873,7 +3873,7 @@ function generateMainHTML(data: BusinessData, template: Template, domain?: strin
                 </div>
             </div>
             <div style="text-align: center; margin-top: 3rem;">
-                <a href="tel:${data.phone}" style="display: inline-flex; align-items: center; gap: 0.75rem; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); color: white; padding: 1rem 2rem; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
+                <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="display: inline-flex; align-items: center; gap: 0.75rem; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); color: white; padding: 1rem 2rem; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(0,0,0,0.15);">
                     <i class="fas fa-phone"></i>
 ${data.phone}
                 </a>
@@ -3995,7 +3995,7 @@ ${data.phone}
             </div>
             <div class="section-cta">
                 <p>Ready to get started?</p>
-                <a href="tel:${data.phone}" class="cta-button cta-call">
+                <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button cta-call">
                     <i class="fas fa-phone"></i>
                     ${data.phone}
                 </a>
@@ -4023,7 +4023,7 @@ ${data.phone}
                 <p>Average rating from ${formattedCustomerCount} satisfied customers</p>
             </div>
             <div class="testimonials-cta">
-                <a href="tel:${data.phone}" class="cta-button cta-call large">
+                <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button cta-call large">
                     <i class="fas fa-phone"></i>
                     ${data.phone}
                 </a>
@@ -4046,7 +4046,7 @@ ${data.phone}
                     Join hundreds of satisfied customers who trust ${data.businessName} for reliable, professional service
                 </p>
                 <div class="cta-buttons" style="margin-bottom: 2rem;">
-                    <a href="tel:${data.phone}" class="cta-button" style="display: inline-flex; align-items: center; gap: 0.75rem; background: white; color: ${template.colors.primary}; padding: 1.25rem 2.5rem; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 1.2rem; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(0,0,0,0.2); white-space: nowrap;">
+                    <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button" style="display: inline-flex; align-items: center; gap: 0.75rem; background: white; color: ${template.colors.primary}; padding: 1.25rem 2.5rem; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 1.2rem; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(0,0,0,0.2); white-space: nowrap;">
                         <i class="fas fa-phone"></i>
                         ${data.phone}
                     </a>
@@ -4155,7 +4155,7 @@ ${data.phone}
                     </div>
                     <h3 style="color: #1a202c; font-size: 1.3rem; font-weight: 600; margin-bottom: 1rem;">Call Us</h3>
                     <p style="color: #6b7280; margin-bottom: 1.5rem; line-height: 1.6;">Speak directly with our professional team for immediate assistance</p>
-                    <a href="tel:${data.phone}" style="display: inline-block; background: ${template.colors.primary}; color: white; padding: 1rem 1.5rem; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; word-break: break-all; font-size: 0.9rem;">
+                    <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="display: inline-block; background: ${template.colors.primary}; color: white; padding: 1rem 1.5rem; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; word-break: break-all; font-size: 0.9rem;">
                         ${data.phone}
                     </a>
                 </div>
@@ -4250,7 +4250,7 @@ ${data.phone}
                     </div>
                     <p style="color: #cbd5e1; margin-bottom: 2rem; line-height: 1.7; font-size: 1.1rem; text-align: left;">${data.footerDescription || `Professional ${data.category.toLowerCase()} services in ${data.heroLocation}. Trusted, verified, and committed to excellence.`}</p>
                     <div class="footer-contact" style="color: #cbd5e1; line-height: 2; text-align: left;">
-                        <p style="margin-bottom: 1rem; display: flex; align-items: center;"><i class="fas fa-phone" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px;"></i><span><strong>Phone:</strong> <a href="tel:${data.phone}" style="color: white; text-decoration: none;">${data.phone}</a></span></p>
+                        <p style="margin-bottom: 1rem; display: flex; align-items: center;"><i class="fas fa-phone" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px;"></i><span><strong>Phone:</strong> <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="color: white; text-decoration: none;">${data.phone}</a></span></p>
                         ${data.email ? `<p style="margin-bottom: 1rem; display: flex; align-items: center;"><i class="fas fa-envelope" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px;"></i><span><strong>Email:</strong> <a href="mailto:${data.email}" style="color: white; text-decoration: none;">${data.email}</a></span></p>` : ''}
                         <p style="margin-bottom: 1rem; display: flex; align-items: flex-start;"><i class="fas fa-map-marker-alt" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px; margin-top: 2px;"></i><span><strong>Address:</strong> ${data.address}</span></p>
                         <p style="margin-bottom: 0; display: flex; align-items: center;"><i class="fas fa-clock" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px;"></i><span><strong>Hours:</strong> ${data.businessHours}</span></p>
@@ -4288,7 +4288,7 @@ ${data.phone}
                         ${data.keyFacts.split(',').slice(0, 5).map(fact => `<li style="margin-bottom: 0.75rem; color: #cbd5e1; display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.95rem; text-align: left;"><i class="fas fa-check-circle" style="color: ${template.colors.accent}; margin-top: 0.25rem; flex-shrink: 0;"></i><span>${fact.trim()}</span></li>`).join('')}
                     </ul>
                     <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-                        <a href="tel:${data.phone}" style="display: inline-flex; align-items: center; gap: 0.75rem; background: ${template.colors.primary}; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 0.95rem;">
+                        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="display: inline-flex; align-items: center; gap: 0.75rem; background: ${template.colors.primary}; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 0.95rem;">
                             <i class="fas fa-phone"></i>
                             Call Now
                         </a>
@@ -4317,7 +4317,7 @@ ${data.phone}
     </footer>
 
     <!-- Floating Phone Button -->
-    <a href="tel:${data.phone}" class="floating-phone-btn" title="Call ${data.phone}" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); color: white; padding: 16px; border-radius: 50%; text-decoration: none; box-shadow: 0 8px 25px rgba(0,0,0,0.3); transition: all 0.3s ease; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
+    <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="floating-phone-btn" title="Call ${data.phone}" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); color: white; padding: 16px; border-radius: 50%; text-decoration: none; box-shadow: 0 8px 25px rgba(0,0,0,0.3); transition: all 0.3s ease; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center;">
       <i class="fas fa-phone" style="font-size: 20px;"></i>
     </a>
 
@@ -4621,7 +4621,7 @@ function generateLocationHTML(data: BusinessData, template: Template, locationNa
             <div class="section-cta" style="text-align: center; padding: 3rem 2rem; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);">
                 <h3 style="font-size: 1.75rem; font-weight: 700; color: #1a202c; margin-bottom: 1rem;">Ready for Service in ${locationName}?</h3>
                 <p style="font-size: 1.125rem; color: #6b7280; margin-bottom: 2rem;">Contact our local ${data.category.toLowerCase()} professionals today for immediate assistance.</p>
-                <a href="tel:${data.phone}" class="cta-button cta-call" style="display: inline-flex; align-items: center; gap: 0.75rem; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); color: white; padding: 1rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+                <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button cta-call" style="display: inline-flex; align-items: center; gap: 0.75rem; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); color: white; padding: 1rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
                     <i class="fas fa-phone"></i>
                     Call ${data.phone}
                 </a>
@@ -4660,7 +4660,7 @@ function generateLocationHTML(data: BusinessData, template: Template, locationNa
             </div>
             <div class="section-cta">
                 <p>Ready to get started in ${locationName}?</p>
-                <a href="tel:${data.phone}" class="cta-button cta-call">
+                <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button cta-call">
                     <i class="fas fa-phone"></i>
                     Call Now
                 </a>
@@ -4722,7 +4722,7 @@ function generateLocationHTML(data: BusinessData, template: Template, locationNa
                         <h3 style="color: #1a202c; font-size: 1.3rem; font-weight: 600; margin-bottom: 1rem;">Call Us</h3>
                         <p style="color: #6b7280; margin-bottom: 1.5rem; line-height: 1.6;">Speak directly with our professional team for immediate assistance</p>
                     </div>
-                    <a href="tel:${data.phone}" style="display: inline-block; background: ${template.colors.primary}; color: white; padding: 1rem 1.5rem; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; word-break: break-all; font-size: 0.9rem;">
+                    <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="display: inline-block; background: ${template.colors.primary}; color: white; padding: 1rem 1.5rem; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; word-break: break-all; font-size: 0.9rem;">
                         ${data.phone}
                     </a>
                 </div>
@@ -4769,7 +4769,7 @@ function generateLocationHTML(data: BusinessData, template: Template, locationNa
                     </div>
                     <p style="color: #cbd5e1; margin-bottom: 2rem; line-height: 1.7; font-size: 1.1rem; text-align: left;">${data.footerDescription || `Professional ${data.category.toLowerCase()} services in ${locationName}. Trusted, verified, and committed to excellence.`}</p>
                     <div class="footer-contact" style="color: #cbd5e1; line-height: 2; text-align: left;">
-                        <p style="margin-bottom: 1rem; display: flex; align-items: center;"><i class="fas fa-phone" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px;"></i><span><strong>Phone:</strong> <a href="tel:${data.phone}" style="color: white; text-decoration: none;">${data.phone}</a></span></p>
+                        <p style="margin-bottom: 1rem; display: flex; align-items: center;"><i class="fas fa-phone" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px;"></i><span><strong>Phone:</strong> <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="color: white; text-decoration: none;">${data.phone}</a></span></p>
                         ${data.email ? `<p style="margin-bottom: 1rem; display: flex; align-items: center;"><i class="fas fa-envelope" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px;"></i><span><strong>Email:</strong> <a href="mailto:${data.email}" style="color: white; text-decoration: none;">${data.email}</a></span></p>` : ''}
                         <p style="margin-bottom: 1rem; display: flex; align-items: flex-start;"><i class="fas fa-map-marker-alt" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px; margin-top: 2px;"></i><span><strong>Address:</strong> ${data.address}</span></p>
                         <p style="margin-bottom: 0; display: flex; align-items: center;"><i class="fas fa-clock" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px;"></i><span><strong>Hours:</strong> ${data.businessHours}</span></p>
@@ -4810,7 +4810,7 @@ function generateLocationHTML(data: BusinessData, template: Template, locationNa
                         ${data.keyFacts.split(',').slice(0, 5).map(fact => `<li style="margin-bottom: 0.75rem; color: #cbd5e1; display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.95rem; text-align: left;"><i class="fas fa-check-circle" style="color: ${template.colors.accent}; margin-top: 0.25rem; flex-shrink: 0;"></i><span>${fact.trim()}</span></li>`).join('')}
                     </ul>
                     <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-                        <a href="tel:${data.phone}" style="display: inline-flex; align-items: center; gap: 0.75rem; background: ${template.colors.primary}; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 0.95rem;">
+                        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="display: inline-flex; align-items: center; gap: 0.75rem; background: ${template.colors.primary}; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 0.95rem;">
                             <i class="fas fa-phone"></i>
                             Call Now
                         </a>
@@ -5043,7 +5043,7 @@ function generateServiceHTML(data: BusinessData, template: Template, serviceName
             <div class="section-cta" style="text-align: center; padding: 3rem 2rem; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);">
                 <h3 style="font-size: 1.75rem; font-weight: 700; color: #1a202c; margin-bottom: 1rem;">Need Expert ${serviceName} Services?</h3>
                 <p style="font-size: 1.125rem; color: #6b7280; margin-bottom: 2rem;">Contact our ${serviceName.toLowerCase()} specialists today for professional service you can trust.</p>
-                <a href="tel:${data.phone}" class="cta-button cta-call" style="display: inline-flex; align-items: center; gap: 0.75rem; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); color: white; padding: 1rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+                <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" class="cta-button cta-call" style="display: inline-flex; align-items: center; gap: 0.75rem; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); color: white; padding: 1rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
                     <i class="fas fa-phone"></i>
                     Call ${data.phone}
                 </a>
@@ -5082,7 +5082,7 @@ function generateServiceHTML(data: BusinessData, template: Template, serviceName
             </div>
             <div style="text-align: center; padding: 2rem; background: linear-gradient(135deg, #f8faff 0%, #e3f2fd 100%); border-radius: 15px;">
                 <p style="font-size: 1.25rem; color: #4a5568; margin-bottom: 1.5rem;">Ready to get started with ${serviceName}?</p>
-                <a href="tel:${data.phone}" style="display: inline-flex; align-items: center; gap: 0.75rem; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); color: white; padding: 1rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+                <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="display: inline-flex; align-items: center; gap: 0.75rem; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); color: white; padding: 1rem 2rem; border-radius: 12px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
                     <i class="fas fa-phone"></i>
                     Call Now
                 </a>
@@ -5160,7 +5160,7 @@ function generateServiceHTML(data: BusinessData, template: Template, serviceName
                     </div>
                     <h3 style="color: #1a202c; font-size: 1.3rem; font-weight: 600; margin-bottom: 1rem;">Call Us</h3>
                     <p style="color: #6b7280; margin-bottom: 1.5rem; line-height: 1.6;">Speak directly with our professional team for immediate assistance</p>
-                    <a href="tel:${data.phone}" style="display: inline-block; background: ${template.colors.primary}; color: white; padding: 1rem 1.5rem; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; word-break: break-all; font-size: 0.9rem;">
+                    <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="display: inline-block; background: ${template.colors.primary}; color: white; padding: 1rem 1.5rem; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; word-break: break-all; font-size: 0.9rem;">
                         ${data.phone}
                     </a>
                 </div>
@@ -5203,7 +5203,7 @@ function generateServiceHTML(data: BusinessData, template: Template, serviceName
                     </div>
                     <p style="color: #cbd5e1; margin-bottom: 2rem; line-height: 1.7; font-size: 1.1rem; text-align: left;">${data.footerDescription || `Professional ${data.category.toLowerCase()} services in ${data.heroLocation}. Trusted, verified, and committed to excellence.`}</p>
                     <div class="footer-contact" style="color: #cbd5e1; line-height: 2; text-align: left;">
-                        <p style="margin-bottom: 1rem; display: flex; align-items: center;"><i class="fas fa-phone" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px;"></i><span><strong>Phone:</strong> <a href="tel:${data.phone}" style="color: white; text-decoration: none;">${data.phone}</a></span></p>
+                        <p style="margin-bottom: 1rem; display: flex; align-items: center;"><i class="fas fa-phone" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px;"></i><span><strong>Phone:</strong> <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="color: white; text-decoration: none;">${data.phone}</a></span></p>
                         ${data.email ? `<p style="margin-bottom: 1rem; display: flex; align-items: center;"><i class="fas fa-envelope" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px;"></i><span><strong>Email:</strong> <a href="mailto:${data.email}" style="color: white; text-decoration: none;">${data.email}</a></span></p>` : ''}
                         <p style="margin-bottom: 1rem; display: flex; align-items: flex-start;"><i class="fas fa-map-marker-alt" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px; margin-top: 2px;"></i><span><strong>Address:</strong> ${data.address}</span></p>
                         <p style="margin-bottom: 0; display: flex; align-items: center;"><i class="fas fa-clock" style="color: ${template.colors.accent}; margin-right: 0.75rem; width: 16px;"></i><span><strong>Hours:</strong> ${data.businessHours}</span></p>
@@ -5242,7 +5242,7 @@ function generateServiceHTML(data: BusinessData, template: Template, serviceName
                         ${data.keyFacts.split(',').slice(0, 5).map(fact => `<li style="margin-bottom: 0.75rem; color: #cbd5e1; display: flex; align-items: flex-start; gap: 0.5rem; font-size: 0.95rem; text-align: left;"><i class="fas fa-check-circle" style="color: ${template.colors.accent}; margin-top: 0.25rem; flex-shrink: 0;"></i><span>${fact.trim()}</span></li>`).join('')}
                     </ul>
                     <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.1);">
-                        <a href="tel:${data.phone}" style="display: inline-flex; align-items: center; gap: 0.75rem; background: ${template.colors.primary}; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 0.95rem;">
+                        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="display: inline-flex; align-items: center; gap: 0.75rem; background: ${template.colors.primary}; color: white; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; font-size: 0.95rem;">
                             <i class="fas fa-phone"></i>
                             Call Now
                         </a>
@@ -8557,7 +8557,7 @@ function generateCtaButtons(data: BusinessData, template: Template): string {
   let buttonCount = 1; // Always show phone button
 
   // Always add phone button
-  buttons.push(`<a href="tel:${data.phone}" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; background: white; color: ${template.colors.primary}; padding: 1.25rem 1.5rem; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: all 0.3s ease; border: none; box-shadow: 0 8px 25px rgba(0,0,0,0.2); white-space: nowrap; text-align: center;" 
+  buttons.push(`<a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; background: white; color: ${template.colors.primary}; padding: 1.25rem 1.5rem; border-radius: 12px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: all 0.3s ease; border: none; box-shadow: 0 8px 25px rgba(0,0,0,0.2); white-space: nowrap; text-align: center;" 
            onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 35px rgba(0,0,0,0.25)'"
            onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.2)'">
         <i class="fas fa-phone"></i>

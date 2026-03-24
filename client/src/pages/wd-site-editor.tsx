@@ -22,6 +22,7 @@ import { generateWaterDamageWebsite } from "../lib/water-damage-generator";
 interface WDSiteData {
   id?: string;
   businessName: string;
+  countryCode?: string;
   phone: string;
   email?: string;
   address: string;
@@ -111,6 +112,7 @@ const PREVIEW_CLICK_SCRIPT = `
 function siteDataToWDData(data: WDSiteData): Parameters<typeof generateWaterDamageWebsite>[0] {
   return {
     businessName: data.businessName,
+    countryCode: data.countryCode,
     phone: data.phone,
     email: data.email,
     address: data.address,
@@ -248,8 +250,8 @@ export default function WDSiteEditor() {
         city: bd.city || "",
         state: bd.state || "",
         primaryKeyword: bd.primaryKeyword || "Water Damage Restoration",
-        services: Array.isArray(bd.services) ? bd.services : bd.services ? String(bd.services).split(",").map((s: string) => s.trim()).filter(Boolean) : [],
-        serviceAreas: Array.isArray(bd.serviceAreas) ? bd.serviceAreas : bd.serviceAreas ? String(bd.serviceAreas).split(/[\n,]/).map((s: string) => s.trim()).filter(Boolean) : [],
+        services: Array.isArray(bd.services) ? bd.services : bd.services ? String(bd.services).split(/[\n;]/).map((s: string) => s.trim()).filter(Boolean) : [],
+        serviceAreas: Array.isArray(bd.serviceAreas) ? bd.serviceAreas : bd.serviceAreas ? String(bd.serviceAreas).split(/[\n;]/).map((s: string) => s.trim()).filter(Boolean) : [],
         urlSlug: bd.urlSlug || "",
         primaryColor: bd.primaryColor || "#1e3a5f",
         secondaryColor: bd.secondaryColor || "#0ea5e9",
@@ -755,7 +757,21 @@ export default function WDSiteEditor() {
                 </div>
                 <div>
                   <Label className="text-xs text-gray-400">Phone (24/7 Emergency)</Label>
-                  <Input value={siteData.phone} onChange={e => updateField("phone", e.target.value)} className="bg-gray-800 border-gray-700 text-white mt-1 text-sm" placeholder="(555) 000-0000" />
+                  <div className="flex gap-2 mt-1">
+                    <select
+                      value={siteData.countryCode || "+1"}
+                      onChange={e => updateField("countryCode", e.target.value)}
+                      className="w-[100px] h-[36px] px-2 py-1 rounded-md bg-gray-800 border border-gray-700 text-white text-sm focus:border-[#AADD00]/50 outline-none"
+                    >
+                      <option value="+1" className="bg-gray-900">🇺🇸/🇨🇦 +1</option>
+                      <option value="+44" className="bg-gray-900">🇬🇧 +44</option>
+                      <option value="+61" className="bg-gray-900">🇦🇺 +61</option>
+                      <option value="+64" className="bg-gray-900">🇳🇿 +64</option>
+                      <option value="+27" className="bg-gray-900">🇿🇦 +27</option>
+                      <option value="+91" className="bg-gray-900">🇮🇳 +91</option>
+                    </select>
+                    <Input value={siteData.phone} onChange={e => updateField("phone", e.target.value)} className="flex-1 bg-gray-800 border-gray-700 text-white h-[36px] text-sm" placeholder="(555) 000-0000" />
+                  </div>
                 </div>
                 <div>
                   <Label className="text-xs text-gray-400">Email</Label>

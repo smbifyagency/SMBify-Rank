@@ -161,7 +161,7 @@ const splitValues = (value: unknown): string[] => {
   if (typeof value === "string") {
     return uniqueValues(
       value
-        .split(/[,|\n]/)
+        .split(/[;|\n]/)
         .map((item) => item.trim())
         .filter(Boolean)
     );
@@ -170,7 +170,7 @@ const splitValues = (value: unknown): string[] => {
   return [];
 };
 
-const toCsv = (items: string[]): string => uniqueValues(items).join(", ");
+const toCsv = (items: string[]): string => uniqueValues(items).join("\n");
 
 const createContentFingerprint = (businessData: any): string => {
   const seed = [
