@@ -6383,6 +6383,16 @@ Generated on: ${new Date().toISOString()}`;
       // Generate all HTML files using water-damage template
       const files = generateWaterDamageWebsite(bd, domain);
 
+      // Apply any visual editor overrides saved in customFiles
+      const storedCustomFiles = website.customFiles as Record<string, string> | null;
+      if (storedCustomFiles && typeof storedCustomFiles === 'object') {
+        for (const [filename, content] of Object.entries(storedCustomFiles)) {
+          if (typeof content === 'string' && filename.endsWith('.html')) {
+            (files as any)[filename] = content;
+          }
+        }
+      }
+
       // Extract any embedded data-URL images to real files (keeps HTML lean for Netlify)
       const extractedImages = new Map<string, string>(); // dataUrl → /images/custom-N.ext
       let imgIndex = 0;

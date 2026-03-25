@@ -35,11 +35,15 @@ export interface WDBusinessData {
   city: string;
   state: string;
   country?: string;
+  countryCode?: string;
   primaryKeyword: string;
   secondaryKeyword?: string;
   services: string[];
   serviceAreas: string[];
   urlSlug: string;
+  // SEO & Analytics
+  googleVerificationCode?: string;
+  googleAnalyticsId?: string;
   // Theme
   primaryColor?: string;
   secondaryColor?: string;
@@ -393,6 +397,7 @@ function generateNav(data: WDBusinessData, currentPath: string = ''): string {
           <li><a href="${prefix}about.html">About</a></li>
           <li><a href="${prefix}gallery.html">Gallery</a></li>
           <li><a href="${prefix}faq.html">FAQ</a></li>
+          <li><a href="${prefix}calculator.html">Calculators</a></li>
           <li><a href="${prefix}blog.html">Blog</a></li>
           <li><a href="${prefix}contact.html">Contact</a></li>
         </ul>
@@ -528,6 +533,21 @@ function generateFAQSchema(faqs: Array<{ question: string; answer: string }>): s
         "text": faq.answer
       }
     }))
+  };
+  return JSON.stringify(schema, null, 2);
+}
+
+function generateWebSiteSchema(data: WDBusinessData, domain: string): string {
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": data.businessName,
+    "url": `https://${domain}.netlify.app/`,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": `https://${domain}.netlify.app/?s={search_term_string}`,
+      "query-input": "required name=search_term_string"
+    }
   };
   return JSON.stringify(schema, null, 2);
 }
@@ -1401,6 +1421,9 @@ function htmlShell(params: {
   schemaBlocks: string[];
   bodyContent: string;
   extraJs?: string;
+  ogImage?: string;
+  googleVerification?: string;
+  googleAnalyticsId?: string;
 }): string {
   const schemas = params.schemaBlocks
     .map(s => `<script type="application/ld+json">\n${s}\n</script>`)
@@ -1424,16 +1447,25 @@ function htmlShell(params: {
 
   <!-- SEO -->
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  ${params.googleVerification ? `<meta name="google-site-verification" content="${params.googleVerification}">` : ''}
   <meta property="og:title" content="${params.metaTitle}">
   <meta property="og:description" content="${params.metaDescription}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="${params.canonicalUrl}">
+  ${params.ogImage ? `<meta property="og:image" content="${params.ogImage}">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">` : ''}
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="${params.metaTitle}">
   <meta name="twitter:description" content="${params.metaDescription}">
+  ${params.ogImage ? `<meta name="twitter:image" content="${params.ogImage}">` : ''}
 
   <!-- Schema.org -->
   ${schemas}
+
+  ${params.googleAnalyticsId ? `<!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${params.googleAnalyticsId}"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${params.googleAnalyticsId}');</script>` : ''}
 
   <style>
     ${generateCSS(params.theme)}
@@ -1729,9 +1761,13 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
     theme: resolveTheme(data),
     schemaBlocks: [
       generateLocalBusinessSchema(data, `${domain}.netlify.app`),
+      generateWebSiteSchema(data, domain),
       generateFAQSchema(faqs),
     ],
     bodyContent: body,
+    ogImage: data.logoUrl || undefined,
+    googleVerification: data.googleVerificationCode || undefined,
+    googleAnalyticsId: data.googleAnalyticsId || undefined,
   });
 }
 
@@ -1998,6 +2034,7 @@ export function generateServicePage(
     metaDescription: content?.metaDescription || `Professional ${service.toLowerCase()} in ${data.city}, ${data.state}. ${data.businessName} — certified technicians, 24/7 availability. Call ${data.phone} for a free assessment.`,
     canonicalUrl,
     theme: resolveTheme(data),
+    googleAnalyticsId: data.googleAnalyticsId || undefined,
     schemaBlocks: [
       generateFAQSchema(faqs),
       generateBreadcrumbSchema([
@@ -2207,6 +2244,7 @@ export function generateLocationPage(
     metaDescription: content?.metaDescription || `Professional water damage restoration in ${city}, ${data.state}. ${data.businessName} — 24/7 emergency response, certified technicians. Call ${data.phone}.`,
     canonicalUrl,
     theme: resolveTheme(data),
+    googleAnalyticsId: data.googleAnalyticsId || undefined,
     schemaBlocks: [
       generateFAQSchema(faqs),
       generateBreadcrumbSchema([
@@ -2364,6 +2402,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
     metaDescription: `Learn about ${data.businessName} — IICRC-certified water damage restoration in ${data.city}, ${data.state}. ${yearsText} serving homeowners and businesses.`,
     canonicalUrl,
     theme,
+    googleAnalyticsId: data.googleAnalyticsId || undefined,
     schemaBlocks: [generateLocalBusinessSchema(data, `${domain}.netlify.app`)],
     bodyContent: body,
   });
@@ -2518,6 +2557,7 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
     metaDescription: `Contact ${data.businessName} for water damage restoration in ${data.city}, ${data.state}. Available 24/7 for emergencies. Call ${data.phone} or use our contact form.`,
     canonicalUrl,
     theme,
+    googleAnalyticsId: data.googleAnalyticsId || undefined,
     schemaBlocks: [generateLocalBusinessSchema(data, `${domain}.netlify.app`)],
     bodyContent: body,
   });
@@ -2647,6 +2687,7 @@ export function generateFAQPage(data: WDBusinessData, domain: string): string {
     metaDescription: content?.metaDescription || `Common questions about water damage restoration answered by ${data.businessName} in ${data.city}, ${data.state}. Emergency response, insurance, mold prevention and more.`,
     canonicalUrl,
     theme,
+    googleAnalyticsId: data.googleAnalyticsId || undefined,
     schemaBlocks: [generateFAQSchema(allFaqs)],
     bodyContent: body,
   });
@@ -2989,28 +3030,89 @@ function calcRestore() {
   gap: 0.5rem;
   margin-bottom: 2rem;
 }
+/* Calculator tabs */
+.calc-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 0.75rem;
+}
 .calc-tab {
-  background: #f1f5f9;
-  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
   border-radius: 8px;
-  padding: 0.6rem 1rem;
-  font-size: 0.875rem;
+  padding: 0.55rem 1rem;
+  font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
-  transition: background .15s, border-color .15s;
+  transition: all .15s;
+  white-space: nowrap;
 }
-.calc-tab.active, .calc-tab:hover { background: ${theme.primaryColor}; color: #fff; border-color: ${theme.primaryColor}; }
-.calc-panel { display: none; }
+.calc-tab.active { background: ${theme.primaryColor}; color: #fff; border-color: ${theme.primaryColor}; }
+.calc-tab:hover:not(.active) { background: ${theme.primaryColor}20; border-color: ${theme.primaryColor}; color: ${theme.primaryColor}; }
+.calc-panel { display: none; animation: fadeIn .2s ease; }
 .calc-panel.active { display: block; }
-.calc-form { max-width: 560px; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+/* Calculator card */
+.calc-panel h2 { font-size: 1.4rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem; }
+.calc-panel .section-intro { color: #64748b; margin-bottom: 1.5rem; }
+.calc-form {
+  background: #fff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.75rem;
+  max-width: 600px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
 .calc-field { margin-bottom: 1.25rem; }
 .calc-field label { display: block; font-weight: 600; margin-bottom: 0.4rem; font-size: 0.9rem; color: #334155; }
-.calc-field input, .calc-field select { width: 100%; padding: 0.65rem 0.9rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; font-family: inherit; }
-.calc-check label { display: flex; align-items: center; gap: 0.5rem; font-weight: 500; cursor: pointer; }
-.calc-check input[type=checkbox] { width: auto; }
-.calc-btn { background: ${theme.primaryColor}; color: #fff; border: none; padding: 0.75rem 1.75rem; border-radius: 8px; font-size: 1rem; font-weight: 700; cursor: pointer; margin-top: 0.5rem; transition: background .15s; }
-.calc-btn:hover { background: ${theme.secondaryColor}; }
-.calc-result { margin-top: 1.25rem; padding: 1.25rem; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; min-height: 3rem; }
+.calc-field input, .calc-field select {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: #f8fafc;
+  transition: border-color .15s;
+  box-sizing: border-box;
+}
+.calc-field input:focus, .calc-field select:focus { outline: none; border-color: ${theme.primaryColor}; background: #fff; }
+.calc-check label { display: flex; align-items: center; gap: 0.6rem; font-weight: 500; cursor: pointer; color: #475569; }
+.calc-check input[type=checkbox] { width: 1.1rem; height: 1.1rem; accent-color: ${theme.primaryColor}; }
+.calc-btn {
+  background: ${theme.primaryColor};
+  color: #fff;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: background .15s, transform .1s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.calc-btn:hover { background: ${theme.secondaryColor}; transform: translateY(-1px); }
+.calc-result {
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+  border: 1.5px solid #bae6fd;
+  border-radius: 10px;
+  min-height: 3rem;
+  font-size: 1rem;
+  color: #0c4a6e;
+}
+@media (max-width: 640px) {
+  .calc-tabs { gap: 0.35rem; }
+  .calc-tab { font-size: 0.78rem; padding: 0.45rem 0.7rem; }
+  .calc-form { padding: 1.25rem; }
+}
 `;
 
   const fullTheme = resolveTheme(data);
@@ -3036,10 +3138,14 @@ function calcRestore() {
   <link rel="canonical" href="${canonicalUrl}">
   ${fontLink}
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  ${data.googleVerificationCode ? `<meta name="google-site-verification" content="${data.googleVerificationCode}">` : ''}
   <meta property="og:title" content="Water Damage Calculators | ${data.businessName}">
   <meta property="og:type" content="website">
   <!-- Schema.org -->
   ${schemas}
+  ${data.googleAnalyticsId ? `<!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=${data.googleAnalyticsId}"></script>
+  <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${data.googleAnalyticsId}');</script>` : ''}
   <style>
     ${generateCSS(fullTheme)}
     ${calcCSS}
@@ -3496,6 +3602,7 @@ export function generatePrivacyPage(data: WDBusinessData, domain: string): strin
     metaDescription: `Privacy Policy for ${data.businessName} — water damage restoration services in ${data.city}, ${data.state}.`,
     canonicalUrl,
     theme,
+    googleAnalyticsId: data.googleAnalyticsId || undefined,
     schemaBlocks: [],
     bodyContent: body,
   });
@@ -3573,6 +3680,7 @@ export function generateTermsPage(data: WDBusinessData, domain: string): string 
     metaDescription: `Terms of Service for ${data.businessName} — water damage restoration services in ${data.city}, ${data.state}.`,
     canonicalUrl,
     theme,
+    googleAnalyticsId: data.googleAnalyticsId || undefined,
     schemaBlocks: [],
     bodyContent: body,
   });
@@ -3717,6 +3825,11 @@ export function generateWaterDamageWebsite(
   Cache-Control: public, max-age=3600
 
 /sitemap.xml
+  Content-Type: application/xml; charset=utf-8
+  Cache-Control: public, max-age=86400
+
+/robots.txt
+  Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=86400`;
 
   return files;

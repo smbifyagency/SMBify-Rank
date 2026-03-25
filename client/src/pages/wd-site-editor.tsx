@@ -15,9 +15,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft, Save, Rocket, Image as ImageIcon, RefreshCw,
   Loader2, ExternalLink, CheckCircle2, ChevronDown, ChevronUp,
-  Globe, Phone, MapPin, FileText, Layers
+  Globe, Phone, MapPin, FileText, Layers, Edit3
 } from "lucide-react";
 import { generateWaterDamageWebsite } from "../lib/water-damage-generator";
+import { VisualEditor } from "@/components/visual-editor";
 
 interface WDSiteData {
   id?: string;
@@ -171,6 +172,8 @@ export default function WDSiteEditor() {
   const [apiStatus, setApiStatus] = useState<"checking" | "ready" | "none">("checking");
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [previewBlobUrl, setPreviewBlobUrl] = useState<string | null>(null);
+  const [showVisualEditor, setShowVisualEditor] = useState(false);
+  const [visualEditorOverrides, setVisualEditorOverrides] = useState<Record<string, string>>({});
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstLoadRef = useRef(true);
@@ -301,6 +304,12 @@ export default function WDSiteEditor() {
       // Try to load pre-generated files (stored as customFiles in DB)
       if (data.customFiles && typeof data.customFiles === "object") {
         setGeneratedFiles(data.customFiles);
+        // Load visual editor HTML overrides
+        const htmlOverrides: Record<string, string> = {};
+        for (const [k, v] of Object.entries(data.customFiles as Record<string, string>)) {
+          if (k.endsWith('.html') && typeof v === 'string') htmlOverrides[k] = v;
+        }
+        if (Object.keys(htmlOverrides).length > 0) setVisualEditorOverrides(htmlOverrides);
       }
     } catch (err) {
       toast({ title: "Error", description: "Could not load website data.", variant: "destructive" });
@@ -636,13 +645,47 @@ export default function WDSiteEditor() {
       setPreviewBlobUrl(null);
       return;
     }
-    const html = generatedFiles[previewPage] || generatedFiles['index.html'] || '';
+    const html = visualEditorOverrides[previewPage] || generatedFiles[previewPage] || generatedFiles['index.html'] || '';
     const withScript = html.replace('</body>', PREVIEW_CLICK_SCRIPT + '</body>');
     const blob = new Blob([withScript], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     setPreviewBlobUrl(url);
     return () => URL.revokeObjectURL(url);
-  }, [generatedFiles, previewPage]);
+  }, [generatedFiles, previewPage, visualEditorOverrides]);
+
+  // ── Visual Editor helpers ─────────────────────────────────────────────
+
+  function mergeBodyIntoDocument(baseHtml: string, bodyHtml: string): string {
+    if (!bodyHtml?.trim()) return baseHtml;
+    const bodyTagMatch = baseHtml.match(/<body[^>]*>/i);
+    if (!bodyTagMatch) return bodyHtml;
+    const bodyOpenTag = bodyTagMatch[0];
+    return baseHtml.replace(/<body[^>]*>[\s\S]*<\/body>/i, `${bodyOpenTag}\n${bodyHtml}\n</body>`);
+  }
+
+  function getCurrentPageHtml(): string {
+    return visualEditorOverrides[previewPage] || generatedFiles[previewPage] || generatedFiles['index.html'] || '';
+  }
+
+  async function handleVisualEditorSave(bodyHtml: string, _css: string) {
+    const baseHtml = generatedFiles[previewPage] || generatedFiles['index.html'] || '';
+    const mergedHtml = mergeBodyIntoDocument(baseHtml, bodyHtml);
+    const newOverrides = { ...visualEditorOverrides, [previewPage]: mergedHtml };
+    setVisualEditorOverrides(newOverrides);
+    setShowVisualEditor(false);
+
+    if (websiteId) {
+      try {
+        await fetch(`/api/websites/${websiteId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ customFiles: newOverrides }),
+        });
+      } catch { /* silent */ }
+    }
+    toast({ title: "Visual edits saved", description: "Changes applied to preview." });
+  }
 
   if (isLoading) {
     return (
@@ -1268,6 +1311,30 @@ export default function WDSiteEditor() {
               {!netlifyToken && <p className="text-xs text-center text-gray-600">Enter and verify your Netlify token to publish</p>}
               {netlifyToken && tokenValid && slugAvailable === null && <p className="text-xs text-center text-yellow-500">Check domain availability before publishing</p>}
 
+              {/* Google Analytics */}
+              <div className="space-y-2">
+                <Label className="text-xs text-gray-400">Google Analytics 4 ID <span className="text-gray-600">(optional)</span></Label>
+                <Input
+                  value={(siteData as any).googleAnalyticsId || ""}
+                  onChange={e => updateField("googleAnalyticsId", e.target.value)}
+                  className="bg-gray-800 border-gray-700 text-white text-sm"
+                  placeholder="G-XXXXXXXXXX"
+                />
+                <p className="text-xs text-gray-600">Google Analytics → Admin → Data Streams → your stream → Measurement ID (starts with G-)</p>
+              </div>
+
+              {/* Google Search Console Verification */}
+              <div className="space-y-2">
+                <Label className="text-xs text-gray-400">Google Search Console Verification <span className="text-gray-600">(optional but recommended)</span></Label>
+                <Input
+                  value={(siteData as any).googleVerificationCode || ""}
+                  onChange={e => updateField("googleVerificationCode", e.target.value)}
+                  className="bg-gray-800 border-gray-700 text-white text-sm"
+                  placeholder="e.g. abc123xyz..."
+                />
+                <p className="text-xs text-gray-600">Google Search Console → Add Property → HTML tag → copy only the content= value. Phir redeploy karo aur GSC me sitemap submit karo: yoursite.netlify.app/sitemap.xml</p>
+              </div>
+
               <div className="rounded-lg bg-gray-800/50 border border-gray-700/50 p-3">
                 <p className="text-xs font-medium text-gray-400 mb-2">✅ Pre-Publish Checklist</p>
                 <ul className="space-y-1">
@@ -1328,8 +1395,18 @@ export default function WDSiteEditor() {
               )}
             </select>
 
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowVisualEditor(true)}
+              disabled={Object.keys(generatedFiles).length === 0}
+              className="ml-auto border-[#AADD00]/40 text-[#AADD00] hover:bg-[#AADD00]/10 text-xs h-7 px-2"
+            >
+              <Edit3 className="w-3 h-3 mr-1" /> Visual Editor
+            </Button>
+
             {deployedUrl && (
-              <span className="ml-auto text-xs text-green-400 flex items-center gap-1">
+              <span className="text-xs text-green-400 flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3" /> Live: {deployedUrl}
               </span>
             )}
@@ -1376,6 +1453,15 @@ export default function WDSiteEditor() {
           </div>
         </div>
       </div>
+
+      {/* Visual Editor Modal */}
+      <VisualEditor
+        initialHtml={getCurrentPageHtml()}
+        globalCss={''}
+        isOpen={showVisualEditor}
+        onClose={() => setShowVisualEditor(false)}
+        onSave={handleVisualEditorSave}
+      />
     </div>
   );
 }
