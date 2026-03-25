@@ -178,6 +178,41 @@ export function VisualEditor({
             baseGlobalCssRef.current = globalCss || "";
             inlineCssRef.current = inlineCss || "";
 
+            // Override the RTE link action so it prompts for a URL and creates
+            // a proper <a href> tag instead of raw markdown text.
+            editor.RichTextEditor.remove('link');
+            editor.RichTextEditor.add('link', {
+                icon: '🔗',
+                attributes: { title: 'Insert / Edit Link' },
+                result: (rte: any) => {
+                    const selection = rte.selection();
+                    const selectedText = selection ? selection.toString() : '';
+
+                    // Check if cursor is already inside an <a> tag
+                    let currentHref = '';
+                    try {
+                        const anchorNode = rte.doc.getSelection()?.anchorNode;
+                        const anchor = anchorNode?.parentElement?.closest?.('a');
+                        if (anchor) currentHref = anchor.getAttribute('href') || '';
+                    } catch (_) { /* ignore */ }
+
+                    const url = window.prompt(
+                        selectedText
+                            ? `Enter URL for "${selectedText.slice(0, 60)}${selectedText.length > 60 ? '…' : ''}"`
+                            : 'Enter URL:',
+                        currentHref || 'https://'
+                    );
+
+                    if (url === null) return; // user cancelled
+                    if (url.trim() === '') {
+                        // Remove link if URL is cleared
+                        rte.exec('unlink');
+                        return;
+                    }
+                    rte.exec('createLink', url.trim());
+                },
+            });
+
             editor.setComponents(components);
             editor.setStyle(inlineCss || "");
             injectCanvasBaseStyles(editor, baseGlobalCssRef.current);

@@ -116,7 +116,7 @@ export default function DashboardWebsites() {
                                             </a>
                                         )}
                                         {isDuplicateUrl && (
-                                            <p className="mt-1 text-xs text-yellow-500/80">⚠ Same URL used by another site — only the last deploy wins.</p>
+                                            <p className="mt-1 text-xs text-red-400/90">⚠ Duplicate URL — both sites share the same Netlify domain. The last deploy overwrites the other. Change one site's URL in Deploy tab.</p>
                                         )}
                                         <div className="flex items-center gap-2 mt-3">
                                             <Link href={`/dashboard/wd-editor/${site.id}`} className="flex-1">

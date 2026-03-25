@@ -126,6 +126,9 @@ function siteDataToWDData(data: WDSiteData): Parameters<typeof generateWaterDama
     primaryColor: data.primaryColor,
     secondaryColor: data.secondaryColor,
     customImages: data.customImages,
+    logoUrl: (data as any).logoUrl,
+    faviconUrl: (data as any).faviconUrl,
+    customHeadCode: (data as any).customHeadCode,
     facebookUrl: data.facebookUrl,
     instagramUrl: data.instagramUrl,
     googleUrl: data.googleUrl,
@@ -395,9 +398,31 @@ export default function WDSiteEditor() {
       toast({ title: "Netlify Token Required", description: "Verify your Netlify token in the Deploy tab first.", variant: "destructive" });
       return;
     }
+
+    const slug = (desiredSlug || siteData.urlSlug || "").trim();
+
+    // Guard: check if another website in this account already uses the same slug
+    try {
+      const dbRes = await fetch("/api/websites", { credentials: "include" });
+      if (dbRes.ok) {
+        const allSites = await dbRes.json();
+        const conflict = allSites.find((s: any) => {
+          if (String(s.id) === String(websiteId)) return false;
+          const siteUrl: string = s.netlifyUrl || s.businessData?.urlSlug || "";
+          return siteUrl.toLowerCase().includes(slug.toLowerCase());
+        });
+        if (conflict) {
+          const conflictName = (conflict.businessData as any)?.businessName || conflict.title || "Another site";
+          const proceed = window.confirm(
+            `⚠️ WARNING: "${conflictName}" is already deployed to a URL that contains "${slug}".\n\nDeploying will OVERWRITE that site's content on Netlify.\n\nAre you sure you want to continue?`
+          );
+          if (!proceed) return;
+        }
+      }
+    } catch { /* non-blocking — let deploy proceed if the check fails */ }
+
     setIsDeploying(true);
     try {
-      const slug = (desiredSlug || siteData.urlSlug || "").trim();
       const res = await fetch(`/api/websites/${websiteId}/deploy-wd`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -459,13 +484,37 @@ export default function WDSiteEditor() {
     setIsCheckingSlug(true);
     setSlugAvailable(null);
     try {
+      // 1. Check if another website in THIS account already uses this slug
+      const dbRes = await fetch("/api/websites", { credentials: "include" });
+      if (dbRes.ok) {
+        const allSites = await dbRes.json();
+        const conflict = allSites.find((s: any) => {
+          if (String(s.id) === String(websiteId)) return false; // skip current site
+          const siteUrl: string = s.netlifyUrl || s.businessData?.urlSlug || "";
+          const slug = desiredSlug.toLowerCase();
+          return siteUrl.toLowerCase().includes(slug);
+        });
+        if (conflict) {
+          const conflictName = (conflict.businessData as any)?.businessName || conflict.title || "Another site";
+          toast({
+            title: "URL Conflict",
+            description: `"${conflictName}" already uses this URL. Deploying here will overwrite that site. Choose a different name.`,
+            variant: "destructive",
+          });
+          setSlugAvailable(false);
+          return;
+        }
+      }
+
+      // 2. Check Netlify API — is this slug free on Netlify?
       const res = await fetch(`https://api.netlify.com/api/v1/sites?filter=all&name=${desiredSlug}`, {
         headers: { Authorization: `Bearer ${netlifyToken}` }
       });
       if (!res.ok) throw new Error("API error");
       const sites = await res.json();
-      const taken = Array.isArray(sites) && sites.some((s: any) => s.name === desiredSlug);
-      setSlugAvailable(!taken);
+      // If taken but it IS our own previously deployed site (same id in DB), allow it
+      const netTaken = Array.isArray(sites) && sites.some((s: any) => s.name === desiredSlug);
+      setSlugAvailable(!netTaken);
     } catch {
       toast({ title: "Check failed", description: "Could not verify availability.", variant: "destructive" });
     } finally {
@@ -1078,6 +1127,96 @@ export default function WDSiteEditor() {
 
             {/* ── Images Tab ──────────────────────────────────────────── */}
             <TabsContent value="images" className="p-4 space-y-4 mt-0">
+
+              {/* ── Logo & Favicon ─────────────────────────────────────── */}
+              <div className="rounded-lg border border-gray-700 p-3 space-y-3">
+                <h3 className="font-semibold text-sm text-gray-300">Logo &amp; Favicon</h3>
+
+                {/* Logo */}
+                <div className="space-y-2">
+                  <Label className="text-xs text-gray-400">Site Logo</Label>
+                  <div className="flex items-center gap-3">
+                    {(siteData as any).logoUrl ? (
+                      <div className="relative w-20 h-12 bg-gray-800 rounded flex items-center justify-center overflow-hidden border border-gray-700">
+                        <img src={(siteData as any).logoUrl} alt="Logo" className="max-w-full max-h-full object-contain" />
+                        <button
+                          onClick={() => {
+                            setSiteData(prev => prev ? { ...prev, logoUrl: undefined } as any : prev);
+                          }}
+                          className="absolute top-0.5 right-0.5 bg-red-800 text-white rounded text-[10px] w-4 h-4 flex items-center justify-center leading-none"
+                          title="Remove logo"
+                        >✕</button>
+                      </div>
+                    ) : (
+                      <div className="w-20 h-12 bg-gray-800 rounded flex items-center justify-center border border-dashed border-gray-600 text-gray-500 text-xs">
+                        No logo
+                      </div>
+                    )}
+                    <label className="cursor-pointer flex-1">
+                      <div className="flex items-center justify-center gap-2 border border-dashed border-gray-600 rounded-md py-2 px-3 text-xs text-gray-400 hover:border-blue-500 hover:text-blue-400 transition-colors">
+                        <ImageIcon className="w-3 h-3" />
+                        {(siteData as any).logoUrl ? "Replace logo..." : "Upload logo (PNG/SVG)..."}
+                      </div>
+                      <input type="file" accept="image/*" className="hidden" onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = ev => {
+                          const url = ev.target?.result as string;
+                          setSiteData(prev => prev ? { ...prev, logoUrl: url } as any : prev);
+                          toast({ title: "Logo updated", description: "Save to apply." });
+                        };
+                        reader.readAsDataURL(file);
+                        e.target.value = "";
+                      }} />
+                    </label>
+                  </div>
+                  <p className="text-xs text-gray-600">Appears in the site header and footer. PNG or SVG recommended. Will be embedded in the generated site.</p>
+                </div>
+
+                {/* Favicon */}
+                <div className="space-y-2 border-t border-gray-700 pt-3">
+                  <Label className="text-xs text-gray-400">Favicon (Browser Tab Icon)</Label>
+                  <div className="flex items-center gap-3">
+                    {(siteData as any).faviconUrl ? (
+                      <div className="relative w-10 h-10 bg-gray-800 rounded flex items-center justify-center overflow-hidden border border-gray-700">
+                        <img src={(siteData as any).faviconUrl} alt="Favicon" className="max-w-full max-h-full object-contain" />
+                        <button
+                          onClick={() => {
+                            setSiteData(prev => prev ? { ...prev, faviconUrl: undefined } as any : prev);
+                          }}
+                          className="absolute -top-0.5 -right-0.5 bg-red-800 text-white rounded text-[10px] w-4 h-4 flex items-center justify-center leading-none"
+                          title="Remove favicon"
+                        >✕</button>
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 bg-gray-800 rounded flex items-center justify-center border border-dashed border-gray-600 text-gray-500 text-[10px] text-center leading-tight">
+                        No icon
+                      </div>
+                    )}
+                    <label className="cursor-pointer flex-1">
+                      <div className="flex items-center justify-center gap-2 border border-dashed border-gray-600 rounded-md py-2 px-3 text-xs text-gray-400 hover:border-blue-500 hover:text-blue-400 transition-colors">
+                        <ImageIcon className="w-3 h-3" />
+                        {(siteData as any).faviconUrl ? "Replace favicon..." : "Upload favicon (ICO/PNG/SVG)..."}
+                      </div>
+                      <input type="file" accept="image/*,.ico" className="hidden" onChange={e => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        const reader = new FileReader();
+                        reader.onload = ev => {
+                          const url = ev.target?.result as string;
+                          setSiteData(prev => prev ? { ...prev, faviconUrl: url } as any : prev);
+                          toast({ title: "Favicon updated", description: "Save to apply." });
+                        };
+                        reader.readAsDataURL(file);
+                        e.target.value = "";
+                      }} />
+                    </label>
+                  </div>
+                  <p className="text-xs text-gray-600">Shows in the browser tab. 32×32 or 64×64 PNG/ICO/SVG recommended.</p>
+                </div>
+              </div>
+
               <div>
                 <h3 className="font-semibold text-sm text-gray-300 mb-1">Page Images</h3>
                 <p className="text-xs text-gray-500">Upload real photos for each section. Click Save after uploading, then Regenerate to apply.</p>
@@ -1333,6 +1472,21 @@ export default function WDSiteEditor() {
                   placeholder="e.g. abc123xyz..."
                 />
                 <p className="text-xs text-gray-600">Google Search Console → Add Property → HTML tag → copy only the content= value. Phir redeploy karo aur GSC me sitemap submit karo: yoursite.netlify.app/sitemap.xml</p>
+              </div>
+
+              {/* Custom Head Code */}
+              <div className="space-y-2">
+                <Label className="text-xs text-gray-400">
+                  Custom Head Code <span className="text-gray-600">(optional)</span>
+                </Label>
+                <Textarea
+                  value={(siteData as any).customHeadCode || ""}
+                  onChange={e => updateField("customHeadCode", e.target.value)}
+                  className="bg-gray-800 border-gray-700 text-white text-xs font-mono min-h-[90px] resize-y"
+                  placeholder={`<!-- Paste any <meta>, <script>, or <link> tags here -->\n<!-- Examples: Bing Webmaster, Pinterest, Facebook Pixel, custom fonts -->\n<meta name="msvalidate.01" content="...">\n<meta name="p:domain_verify" content="...">`}
+                  spellCheck={false}
+                />
+                <p className="text-xs text-gray-600">Yahan koi bhi tag paste kar sakte hain jo website ki har page ki &lt;head&gt; mein inject ho jaaye — Bing, Pinterest, Facebook Pixel, ya koi bhi third-party verification ya script.</p>
               </div>
 
               <div className="rounded-lg bg-gray-800/50 border border-gray-700/50 p-3">

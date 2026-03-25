@@ -44,6 +44,7 @@ export interface WDBusinessData {
   // SEO & Analytics
   googleVerificationCode?: string;
   googleAnalyticsId?: string;
+  customHeadCode?: string;
   // Theme
   primaryColor?: string;
   secondaryColor?: string;
@@ -52,6 +53,7 @@ export interface WDBusinessData {
   // Media
   logoUrl?: string;
   logoAlt?: string;
+  faviconUrl?: string;
   // Business details
   contactFormEmbed?: string;
   yearsInBusiness?: string;
@@ -1424,6 +1426,8 @@ function htmlShell(params: {
   ogImage?: string;
   googleVerification?: string;
   googleAnalyticsId?: string;
+  faviconUrl?: string;
+  customHeadCode?: string;
 }): string {
   const schemas = params.schemaBlocks
     .map(s => `<script type="application/ld+json">\n${s}\n</script>`)
@@ -1443,7 +1447,9 @@ function htmlShell(params: {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>${params.metaTitle}</title>
   <meta name="description" content="${params.metaDescription}">
-  <link rel="canonical" href="${params.canonicalUrl}">${fontLink}
+  <link rel="canonical" href="${params.canonicalUrl}">
+  ${params.faviconUrl ? `<link rel="icon" type="image/png" href="${params.faviconUrl}">
+  <link rel="shortcut icon" href="${params.faviconUrl}">` : ''}${fontLink}
 
   <!-- SEO -->
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -1466,6 +1472,8 @@ function htmlShell(params: {
   ${params.googleAnalyticsId ? `<!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=${params.googleAnalyticsId}"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${params.googleAnalyticsId}');</script>` : ''}
+
+  ${params.customHeadCode ? `<!-- Custom Head Code -->\n  ${params.customHeadCode.trim()}` : ''}
 
   <style>
     ${generateCSS(params.theme)}
@@ -1768,6 +1776,8 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
     ogImage: data.logoUrl || undefined,
     googleVerification: data.googleVerificationCode || undefined,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
+    faviconUrl: data.faviconUrl || undefined,
+    customHeadCode: data.customHeadCode || undefined,
   });
 }
 
@@ -2035,6 +2045,8 @@ export function generateServicePage(
     canonicalUrl,
     theme: resolveTheme(data),
     googleAnalyticsId: data.googleAnalyticsId || undefined,
+    faviconUrl: data.faviconUrl || undefined,
+    customHeadCode: data.customHeadCode || undefined,
     schemaBlocks: [
       generateFAQSchema(faqs),
       generateBreadcrumbSchema([
@@ -2245,6 +2257,8 @@ export function generateLocationPage(
     canonicalUrl,
     theme: resolveTheme(data),
     googleAnalyticsId: data.googleAnalyticsId || undefined,
+    faviconUrl: data.faviconUrl || undefined,
+    customHeadCode: data.customHeadCode || undefined,
     schemaBlocks: [
       generateFAQSchema(faqs),
       generateBreadcrumbSchema([
@@ -2403,6 +2417,8 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
     canonicalUrl,
     theme,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
+    faviconUrl: data.faviconUrl || undefined,
+    customHeadCode: data.customHeadCode || undefined,
     schemaBlocks: [generateLocalBusinessSchema(data, `${domain}.netlify.app`)],
     bodyContent: body,
   });
@@ -2558,6 +2574,8 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
     canonicalUrl,
     theme,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
+    faviconUrl: data.faviconUrl || undefined,
+    customHeadCode: data.customHeadCode || undefined,
     schemaBlocks: [generateLocalBusinessSchema(data, `${domain}.netlify.app`)],
     bodyContent: body,
   });
@@ -2688,6 +2706,8 @@ export function generateFAQPage(data: WDBusinessData, domain: string): string {
     canonicalUrl,
     theme,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
+    faviconUrl: data.faviconUrl || undefined,
+    customHeadCode: data.customHeadCode || undefined,
     schemaBlocks: [generateFAQSchema(allFaqs)],
     bodyContent: body,
   });
@@ -3136,6 +3156,8 @@ function calcRestore() {
   <title>Water Damage Calculators | ${data.businessName} — ${data.city}</title>
   <meta name="description" content="Free water damage calculators for ${data.city} homeowners — cost estimator, drying time, mold risk, insurance payout, dehumidifier sizing, and restoration vs replacement.">
   <link rel="canonical" href="${canonicalUrl}">
+  ${data.faviconUrl ? `<link rel="icon" type="image/png" href="${data.faviconUrl}">
+  <link rel="shortcut icon" href="${data.faviconUrl}">` : ''}
   ${fontLink}
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   ${data.googleVerificationCode ? `<meta name="google-site-verification" content="${data.googleVerificationCode}">` : ''}
@@ -3146,6 +3168,8 @@ function calcRestore() {
   ${data.googleAnalyticsId ? `<!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=${data.googleAnalyticsId}"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${data.googleAnalyticsId}');</script>` : ''}
+  ${data.customHeadCode ? `<!-- Custom Head Code -->\n  ${data.customHeadCode.trim()}` : ''}
+
   <style>
     ${generateCSS(fullTheme)}
     ${calcCSS}
@@ -3603,6 +3627,8 @@ export function generatePrivacyPage(data: WDBusinessData, domain: string): strin
     canonicalUrl,
     theme,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
+    faviconUrl: data.faviconUrl || undefined,
+    customHeadCode: data.customHeadCode || undefined,
     schemaBlocks: [],
     bodyContent: body,
   });
@@ -3681,6 +3707,8 @@ export function generateTermsPage(data: WDBusinessData, domain: string): string 
     canonicalUrl,
     theme,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
+    faviconUrl: data.faviconUrl || undefined,
+    customHeadCode: data.customHeadCode || undefined,
     schemaBlocks: [],
     bodyContent: body,
   });
