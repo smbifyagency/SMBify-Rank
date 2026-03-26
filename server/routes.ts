@@ -29,7 +29,6 @@ import { encrypt, decrypt } from './crypto.js';
 import { netlifyService } from "./services/netlify.js";
 import { deployToNetlify, validateNetlifyToken } from "./services/netlify-deployment.js";
 import { generateWaterDamageWebsite } from "../client/src/lib/water-damage-generator.js";
-import { generateLocalServiceWebsite, getCategoryConfig } from "../client/src/lib/local-service-engine.js";
 import {
   MASTER_SYSTEM_PROMPT,
   buildHomePagePrompt,
@@ -6401,6 +6400,7 @@ Generated on: ${new Date().toISOString()}`;
 
       // Generate all HTML files using the appropriate category template
       const categoryId = (bd as any).categoryId || website.template || 'water-damage';
+      const { generateLocalServiceWebsite } = await import('../client/src/lib/local-service-engine.js');
       const files = generateLocalServiceWebsite(categoryId, bd, domain);
 
       // Apply any visual editor overrides saved in customFiles
