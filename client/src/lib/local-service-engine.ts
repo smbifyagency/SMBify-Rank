@@ -85,6 +85,7 @@ export function generateLocalServiceWebsite(
   if (c.faqH2)                  d._faqH2                  = c.faqH2;
   if (c.faqs)                   d._faqs                   = c.faqs;
   if (c.seoBody)                d._seoBody                = interpolate(c.seoBody, enriched);
+  if (c.servicePageBenefits)    d._servicePageBenefits    = c.servicePageBenefits;
 
   return generateWaterDamageWebsite(enriched, domain) as Record<string, string>;
 }

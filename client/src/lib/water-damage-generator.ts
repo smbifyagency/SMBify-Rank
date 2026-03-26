@@ -126,6 +126,8 @@ export interface WDBusinessData {
   _faqH2?: string;
   _faqs?: Array<{ question: string; answer: string }>;
   _seoBody?: string;
+  _servicePageBenefitsH2?: string;
+  _servicePageBenefits?: Array<{ heading: string; body: string }>;
 }
 
 export interface WDGalleryImage {
@@ -1572,7 +1574,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   ];
   const whyPoints = content?.whyUsSection?.points || defaultWhyPoints;
 
-  const processH2 = content?.processSection?.h2 || data._processH2 || `Our ${data.primaryKeyword} Process`;
+  const processH2 = content?.processSection?.h2 || data._processH2 || `Our ${data.primaryKeyword} Process in ${data.city}`;
   const processSteps = content?.processSection?.steps || data._processSteps || [
     { step: 1, heading: 'Emergency Contact', body: `Call us anytime. Our ${data.city} dispatcher will assess your situation and dispatch a team immediately.` },
     { step: 2, heading: 'Inspection & Assessment', body: 'Technicians identify the water source, categorize the damage, and document affected areas with photos and moisture readings.' },
@@ -1837,11 +1839,11 @@ export function generateServicePage(
   const heroSub = content?.hero?.subheadline || `Professional ${service.toLowerCase()} services for homeowners and businesses in ${data.city}. Fast response, certified technicians.`;
   const trustBadges = content?.hero?.trustBadges || data._trustBadges || ['Licensed & Insured', '24/7 Available', 'Free Estimates', 'Upfront Pricing'];
 
-  const overviewH2 = content?.overviewSection?.h2 || `What Is ${service} and Why It Matters`;
+  const overviewH2 = content?.overviewSection?.h2 || `Professional ${service} in ${data.city} — What to Expect`;
   const overviewParas = content?.overviewSection?.body || [
-    `${service} is an important service for protecting your ${data.city} property. Whether it's an emergency situation or a planned project, getting professional help quickly can prevent further damage and higher costs down the road.`,
-    `Professional ${service.toLowerCase()} requires specialized equipment, training, and experience. Our certified technicians assess the full scope of the problem and address it completely — not just the visible symptoms.`,
-    `${data.businessName} brings the right expertise and equipment to every ${service.toLowerCase()} project in ${data.city}. We follow industry best practices and keep you informed throughout the entire process.`,
+    `${service} in ${data.city} requires licensed professionals with the right tools, training, and local experience. Whether it's an emergency or a planned project, ${data.businessName} responds fast and handles the job completely — protecting your property and your investment.`,
+    `Our ${data.city} technicians diagnose the full scope of the problem before any work begins, giving you a clear picture and an honest written estimate. We address root causes, not just visible symptoms, so the problem doesn't come back.`,
+    `${data.businessName} has built its reputation throughout ${data.city} on transparent pricing, quality workmanship, and results that last. When you need ${service.toLowerCase()} done right, one call is all it takes.`,
   ];
 
   const processH2 = content?.processSection?.h2 || `Our ${service} Process in ${data.city}`;
@@ -1854,18 +1856,18 @@ export function generateServicePage(
     { step: 5, heading: 'Final Walkthrough', body: 'We inspect the completed work with you, answer any questions, and ensure you are fully satisfied before we leave.' },
   ];
 
-  const benefitsH2 = content?.benefitsSection?.h2 || `Benefits of Professional ${service}`;
-  const benefitPoints = content?.benefitsSection?.points || [
-    { heading: 'Proper Diagnosis', body: `Professionals identify the root cause of the problem — not just the visible symptoms — preventing the issue from recurring.` },
-    { heading: 'Reduces Total Cost', body: 'Addressing the problem correctly the first time prevents escalating damage and avoids the higher costs of repeat repairs or extensive remediation later.' },
-    { heading: 'Preserves Property Value', body: 'Professional, documented work protects your property value and provides records that matter during home inspections and insurance claims.' },
-    { heading: 'Insurance Compliance', body: 'Professional documentation of the work done supports insurance claims and satisfies adjuster requirements.' },
-    { heading: 'Faster Resolution', body: 'Our team has the right tools and experience to complete the job faster and more thoroughly than DIY approaches.' },
-    { heading: 'Peace of Mind', body: `Our work is backed by a satisfaction guarantee. If something isn't right, we make it right.` },
+  const benefitsH2 = content?.benefitsSection?.h2 || data._servicePageBenefitsH2 || `Why Hire ${data.businessName} for ${service} in ${data.city}`;
+  const benefitPoints = content?.benefitsSection?.points || data._servicePageBenefits || [
+    { heading: `Licensed ${data.primaryKeyword} Professionals`, body: `Every technician is properly licensed and insured for ${service.toLowerCase()} work in ${data.state} — protecting you and your property on every job.` },
+    { heading: 'Correct First Time', body: `We diagnose the root cause and fix it properly, so you're not calling us back for the same problem. Quality workmanship means long-lasting results.` },
+    { heading: 'Upfront Written Estimates', body: `No surprise bills. You receive a clear, itemized written estimate before any work begins — and we never start without your approval.` },
+    { heading: 'Protects Property Value', body: `Professionally completed and documented ${service.toLowerCase()} protects your ${data.city} property value and provides records that matter for insurance and resale.` },
+    { heading: 'Faster Than DIY', body: `Our team arrives with the right tools and experience to complete ${service.toLowerCase()} faster and more thoroughly than DIY — with no risk of making the problem worse.` },
+    { heading: '100% Satisfaction Guarantee', body: `We stand behind every job. If something isn't right after we leave, call us and we'll make it right — no excuses.` },
   ];
 
-  const warningsH2 = content?.warningSignsSection?.h2 || `Signs You Need ${service} Right Away`;
-  const warningsIntro = content?.warningSignsSection?.intro || `Do not wait if you notice any of the following signs in your ${data.city} property.`;
+  const warningsH2 = content?.warningSignsSection?.h2 || `Signs You Need ${service} in ${data.city} Right Away`;
+  const warningsIntro = content?.warningSignsSection?.intro || `Do not wait if you notice any of the following signs in your ${data.city} property. Early action saves time, money, and prevents bigger problems.`;
   const warningSigns = content?.warningSignsSection?.signs || [
     { sign: 'Visible damage or deterioration', body: 'Any obvious damage should be addressed promptly to prevent it from worsening and becoming more expensive to fix.' },
     { sign: 'Unusual odors or sounds', body: 'Strange odors or sounds often indicate a problem that is not immediately visible but needs professional attention.' },
@@ -1886,7 +1888,7 @@ export function generateServicePage(
         teaser: `Serving ${loc} homeowners and businesses with professional ${service.toLowerCase()}.`,
       }));
 
-  const faqH2 = content?.faqSection?.h2 || `${service} — Frequently Asked Questions`;
+  const faqH2 = content?.faqSection?.h2 || `${service} in ${data.city} — Frequently Asked Questions`;
   const faqs = content?.faqSection?.faqs || [
     { question: `How much does ${service.toLowerCase()} cost in ${data.city}?`, answer: `The cost of ${service.toLowerCase()} depends on the scope of the work needed. We provide free on-site assessments and written estimates before any work begins — no surprises. Call us for an accurate quote for your specific situation.` },
     { question: `How long does ${service.toLowerCase()} take?`, answer: `Timelines vary depending on the size and complexity of the job. We will give you a realistic timeline during our initial assessment and keep you updated throughout the project.` },
@@ -2079,7 +2081,7 @@ export function generateServicePage(
 
   return htmlShell({
     metaTitle: content?.metaTitle || `${service} in ${data.city} | ${data.businessName}`,
-    metaDescription: content?.metaDescription || `Professional ${service.toLowerCase()} in ${data.city}, ${data.state}. ${data.businessName} — certified technicians, 24/7 availability. Call ${data.phone} for a free assessment.`,
+    metaDescription: content?.metaDescription || `${data.businessName} provides professional ${service.toLowerCase()} in ${data.city}, ${data.state}. ${(data._trustBadges || ['Licensed & Insured'])[0]}. Free estimates — call ${data.phone} today.`,
     canonicalUrl,
     theme: resolveTheme(data),
     googleAnalyticsId: data.googleAnalyticsId || undefined,
@@ -2119,8 +2121,8 @@ export function generateLocationPage(
     `${data.businessName} works with all major insurance providers when applicable and can guide you through the process from start to finish. We document everything to support your claim and keep you informed every step of the way.`,
   ];
 
-  const servCityH2 = content?.servicesInCitySection?.h2 || `Our Services in ${city}`;
-  const servCityIntro = content?.servicesInCitySection?.intro || `We provide a full range of professional ${data.primaryKeyword.toLowerCase()} services to homeowners and businesses in ${city}.`;
+  const servCityH2 = content?.servicesInCitySection?.h2 || `Our ${data.primaryKeyword} Services in ${city}`;
+  const servCityIntro = content?.servicesInCitySection?.intro || `${data.businessName} provides a full range of professional ${data.primaryKeyword.toLowerCase()} services to homeowners and businesses throughout ${city} and surrounding areas.`;
   const serviceCards = content?.servicesInCitySection?.serviceCards?.length
     ? content.servicesInCitySection.serviceCards
     : data.services.map(s => ({

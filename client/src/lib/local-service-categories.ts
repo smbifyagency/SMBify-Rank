@@ -40,6 +40,8 @@ export interface CategoryConfig {
     trustBadges: string[];       // 3 badges shown in hero/header
     whyUsPoints: string[];       // 4 points in "Why Choose Us" section
     emergencyBadge?: string;     // e.g. "24/7 Emergency Service"
+    // Service page benefit cards (6 items)
+    servicePageBenefits?: Array<{ heading: string; body: string }>;
     // Homepage section overrides
     schemaDescription?: string;
     schemaOfferCatalogName?: string;
@@ -96,6 +98,14 @@ const waterDamageConfig: CategoryConfig = {
     ctaSubtext: 'Every minute counts. Standing water causes mold within 24–48 hours. Call now for immediate response.',
     ctaButton: 'Call Now — Free Inspection',
     emergencyBadge: '24/7 Emergency Response',
+    servicePageBenefits: [
+      { heading: 'IICRC-Certified Restoration', body: 'Every technician holds current IICRC certifications — ensuring your property is restored to industry-recognized standards, not guesswork.' },
+      { heading: 'Stops Damage from Spreading', body: 'Fast professional response limits how far water migrates into walls, floors, and structural cavities — reducing total repair scope and cost.' },
+      { heading: 'Prevents Mold Growth', body: 'Thorough structural drying to IICRC moisture targets eliminates the conditions mold needs to establish — protecting your family\'s health.' },
+      { heading: 'Full Insurance Documentation', body: 'We provide complete moisture logs, equipment records, and photos your adjuster needs — streamlining your claim from day one.' },
+      { heading: 'Industrial Equipment', body: 'Truck-mounted extractors and professional-grade drying systems work dramatically faster than consumer equipment, shortening your disruption.' },
+      { heading: 'Single Point of Contact', body: 'We manage the entire project in-house — from emergency extraction through final repairs — so you never have to coordinate multiple contractors.' },
+    ],
     trustBadges: ['IICRC Certified', 'Licensed & Insured', '24/7 Response'],
     whyUsPoints: [
       'IICRC-certified technicians on every job',
@@ -215,6 +225,14 @@ const plumbingConfig: CategoryConfig = {
     ctaSubtext: 'Burst pipes and major leaks can cause thousands in damage within hours. Call now for immediate response.',
     ctaButton: 'Call Now — Fast Response',
     emergencyBadge: '24/7 Emergency Plumbing',
+    servicePageBenefits: [
+      { heading: 'State-Licensed Plumbers', body: 'Every plumber is state-licensed and background-checked — legally qualified to handle the work and accountable for the results.' },
+      { heading: 'Fixed-Price Estimates', body: 'You get a written flat-rate estimate before work begins. No hourly surprises, no price changes after the fact.' },
+      { heading: 'Same-Day Service Available', body: 'Most plumbing jobs can be scheduled same-day. Emergency calls are prioritized and dispatched immediately, 24/7.' },
+      { heading: 'Prevents Costly Water Damage', body: 'Leaks and pipe failures cause thousands in property damage fast. Professional repair stops the problem at the source before it escalates.' },
+      { heading: 'All Major Brands & Systems', body: 'We service all pipe materials, fixture brands, and water heater types — no need to call a specialist for each component.' },
+      { heading: '100% Satisfaction Guarantee', body: 'Our work is backed by a satisfaction guarantee. If the problem returns or something isn\'t right, we come back and fix it.' },
+    ],
     trustBadges: ['Licensed & Bonded', 'Upfront Pricing', 'Same-Day Service'],
     whyUsPoints: [
       'State-licensed, background-checked plumbers',
@@ -393,6 +411,14 @@ const roofingConfig: CategoryConfig = {
     ctaSubtext: 'A damaged roof can lead to water intrusion, mold, and structural damage within days. Call now for a free inspection.',
     ctaButton: 'Call Now — Free Roof Inspection',
     emergencyBadge: '24/7 Emergency Roof Repair',
+    servicePageBenefits: [
+      { heading: 'Licensed Roofing Contractors', body: 'All roofing work is performed by state-licensed contractors carrying full liability and workers\' compensation insurance — protecting you throughout the job.' },
+      { heading: 'Free Roof Inspection', body: 'Every job starts with a thorough free inspection and detailed written report. No obligation, no pressure — just honest findings.' },
+      { heading: 'Manufacturer Warranties', body: 'We install materials from leading manufacturers and provide both product warranties and our own workmanship guarantee on every project.' },
+      { heading: 'Insurance Claim Experts', body: 'We document all damage in the format insurance adjusters require and can communicate directly with your carrier to maximize your claim.' },
+      { heading: 'Protects Your Entire Home', body: 'A properly repaired or replaced roof protects everything beneath it — insulation, structure, walls, and belongings — from water intrusion and weather damage.' },
+      { heading: 'Clean Job Sites', body: 'We protect your landscaping, clean up all roofing debris, and use magnetic rollers to collect stray nails before we leave your property.' },
+    ],
     trustBadges: ['Licensed & Insured', 'Free Inspections', 'Insurance Claims Help'],
     whyUsPoints: [
       'State-licensed, fully insured roofing contractors',
@@ -551,6 +577,14 @@ const hvacConfig: CategoryConfig = {
     ctaSubtext: 'No heat in winter or no AC in summer can be dangerous. Call now for fast, same-day HVAC service.',
     ctaButton: 'Call Now — Same-Day Service',
     emergencyBadge: '24/7 Emergency HVAC Service',
+    servicePageBenefits: [
+      { heading: 'NATE-Certified Technicians', body: 'Our technicians hold NATE certifications — the most respected credential in the HVAC industry — ensuring your system is serviced to the highest standard.' },
+      { heading: 'All Brands Serviced', body: 'We service and install all major HVAC brands. Our trucks carry common parts for faster same-day repairs without waiting on orders.' },
+      { heading: 'Lower Energy Bills', body: 'A properly serviced HVAC system runs more efficiently — reducing energy consumption and lowering your monthly utility costs noticeably.' },
+      { heading: 'Extends System Lifespan', body: 'Professional maintenance and correct repairs extend your equipment\'s lifespan significantly, delaying the cost of full system replacement.' },
+      { heading: 'Upfront Flat-Rate Pricing', body: 'We quote the full price before starting. No hourly billing surprises — you approve the cost first, every time.' },
+      { heading: 'Comfort Guaranteed', body: 'If your system isn\'t working correctly after our service, we return and make it right. Your comfort is our commitment.' },
+    ],
     trustBadges: ['NATE Certified', 'Licensed & Insured', 'Same-Day Service'],
     whyUsPoints: [
       'NATE-certified technicians on every job',
@@ -691,6 +725,14 @@ const electricalConfig: CategoryConfig = {
     ctaSubtext: 'Electrical issues are a leading cause of house fires. Don\'t wait — call a licensed electrician now for a safe, fast fix.',
     ctaButton: 'Call Now — Licensed Electrician',
     emergencyBadge: '24/7 Emergency Electrical Service',
+    servicePageBenefits: [
+      { heading: 'State-Licensed Electricians', body: 'All work is performed by state-licensed electricians — legally qualified, fully insured, and accountable for safe, code-compliant results.' },
+      { heading: 'Eliminates Fire & Safety Risk', body: 'Faulty wiring is a leading cause of residential fires. Professional electrical work eliminates hazards and keeps your home and family safe.' },
+      { heading: 'Code Compliant — Permits Pulled', body: 'We pull permits when required and ensure all work passes inspection — protecting your home\'s value and your insurance coverage.' },
+      { heading: 'Accurate Diagnosis', body: 'Electrical problems are often symptoms of deeper issues. We trace problems to the source and fix them correctly rather than just treating the surface symptom.' },
+      { heading: 'Upfront Written Estimates', body: 'You receive a flat-rate written estimate before any work begins. No hourly billing, no guesswork on the final invoice.' },
+      { heading: 'Future-Proofed Work', body: 'We install to current NEC standards, giving your electrical system capacity for modern demands like EV chargers, home offices, and smart home devices.' },
+    ],
     trustBadges: ['Licensed Electrician', 'Code Compliant', 'Upfront Pricing'],
     whyUsPoints: [
       'State-licensed, fully insured electricians',
@@ -824,6 +866,14 @@ const locksmithConfig: CategoryConfig = {
     ctaSubtext: 'Don\'t break a window. Our licensed locksmiths arrive fast — usually within 30 minutes — with no damage to your lock or door.',
     ctaButton: 'Call Now — Fast Arrival',
     emergencyBadge: '24/7 Emergency Locksmith',
+    servicePageBenefits: [
+      { heading: 'Licensed, Bonded & Background-Checked', body: 'Every locksmith carries proper licensing and bonding and has passed a background check — giving you verified, trustworthy professionals at your door.' },
+      { heading: 'Non-Destructive Entry', body: 'Our locksmiths use professional tools designed to open locks without damaging your hardware or door — saving you the cost of replacement.' },
+      { heading: 'Price Quoted Before We Start', body: 'We give you an upfront price over the phone before arriving. If you\'re not comfortable with the quote, there\'s no obligation to proceed.' },
+      { heading: 'Fast Arrival', body: 'We aim for 30-minute response times across our service area. Getting you back inside quickly — and safely — is our priority.' },
+      { heading: 'Improves Your Security', body: 'A lockout is a good opportunity to assess your locks. We can rekey, upgrade, or replace hardware on the spot to improve your home\'s security.' },
+      { heading: 'Available Every Day, Every Hour', body: 'Lockouts happen at inconvenient times. We\'re available 24/7, including weekends and holidays, with no after-hours premium surprises.' },
+    ],
     trustBadges: ['Licensed & Bonded', '30-Min Response', 'Upfront Pricing'],
     whyUsPoints: [
       'Licensed, bonded, and background-checked locksmiths',
@@ -955,6 +1005,14 @@ const fireDamageConfig: CategoryConfig = {
     ctaSubtext: 'Smoke and soot cause ongoing damage every hour after a fire. Call now for immediate response and a free damage assessment.',
     ctaButton: 'Call Now — Free Assessment',
     emergencyBadge: '24/7 Emergency Response',
+    servicePageBenefits: [
+      { heading: 'IICRC-Certified Restoration Team', body: 'Fire and smoke restoration requires specialized training. Our IICRC-certified technicians follow proven protocols to restore your property safely and completely.' },
+      { heading: 'Immediate Board-Up & Securing', body: 'We secure your property immediately after arrival — boarding up openings and tarping roof damage to prevent further weather, theft, or vandalism damage.' },
+      { heading: 'Complete Smoke & Odor Elimination', body: 'Smoke penetrates deep into materials. We use industrial air scrubbers, thermal fogging, and ozone treatment to neutralize odor at the molecular level — not mask it.' },
+      { heading: 'Full Insurance Claim Support', body: 'We provide complete damage documentation in the format insurers require, communicate directly with your adjuster, and work to maximize your claim coverage.' },
+      { heading: 'Contents Cleaning & Pack-Out', body: 'We professionally clean and restore salvageable belongings — furniture, documents, clothing, electronics — rather than simply replacing everything.' },
+      { heading: 'Single Contractor, Full Restoration', body: 'We handle everything from emergency response through structural reconstruction in-house — one point of contact, one timeline, no coordination headaches.' },
+    ],
     trustBadges: ['IICRC Certified', 'Licensed & Insured', 'Insurance Claims Help'],
     whyUsPoints: [
       'IICRC-certified fire and smoke restoration technicians',
@@ -1068,6 +1126,14 @@ const moldRemediationConfig: CategoryConfig = {
     ctaSubtext: 'Mold spreads quickly and affects indoor air quality. Get a professional inspection today — before the problem grows.',
     ctaButton: 'Call Now — Free Consultation',
     emergencyBadge: 'IICRC Certified Mold Removal',
+    servicePageBenefits: [
+      { heading: 'IICRC-Certified Mold Specialists', body: 'Mold remediation requires specialized training and EPA-compliant protocols. Our IICRC-certified specialists handle every job to industry-recognized standards.' },
+      { heading: 'Proper Containment', body: 'We establish negative air pressure containment zones before removing mold — preventing spores from spreading to unaffected areas of your property during the process.' },
+      { heading: 'Root Cause Correction', body: 'Mold always has a moisture source. We identify and address the underlying cause — not just the visible growth — so the mold doesn\'t return after remediation.' },
+      { heading: 'Third-Party Verification Testing', body: 'After remediation, independent air quality testing verifies spore levels are normal — giving you documented proof the job was done completely.' },
+      { heading: 'Protects Your Family\'s Health', body: 'Mold exposure causes respiratory issues, allergy symptoms, and other health problems. Professional remediation restores safe indoor air quality for your household.' },
+      { heading: 'Insurance Documentation', body: 'We provide complete remediation reports, air quality test results, and work documentation to support your insurance claim from start to finish.' },
+    ],
     trustBadges: ['IICRC Certified', 'Licensed & Insured', 'Post-Remediation Testing'],
     whyUsPoints: [
       'IICRC-certified mold remediation specialists',
