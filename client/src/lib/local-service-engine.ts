@@ -5,8 +5,8 @@
  * in local-service-categories.ts — no generator changes needed.
  */
 
-import { generateWaterDamageWebsite, WDBusinessData } from './water-damage-generator';
-import { getCategoryConfig, CategoryConfig } from './local-service-categories';
+import { generateWaterDamageWebsite, WDBusinessData } from './water-damage-generator.js';
+import { getCategoryConfig, CategoryConfig } from './local-service-categories.js';
 
 export type { CategoryConfig };
 export { getCategoryConfig };

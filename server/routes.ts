@@ -29,7 +29,6 @@ import { encrypt, decrypt } from './crypto.js';
 import { netlifyService } from "./services/netlify.js";
 import { deployToNetlify, validateNetlifyToken } from "./services/netlify-deployment.js";
 import { generateWaterDamageWebsite } from "../client/src/lib/water-damage-generator.js";
-import { getCategoryConfig, generateLocalServiceWebsite } from "../client/src/lib/local-service-engine.js";
 import {
   MASTER_SYSTEM_PROMPT,
   buildHomePagePrompt,
@@ -6430,7 +6429,8 @@ Generated on: ${new Date().toISOString()}`;
 
       const bd = (website.businessData || {}) as any;
       const categoryId = bd.categoryId || website.template || 'water-damage';
-      const catConfig = getCategoryConfig(categoryId);
+      const { getCategoryConfig: getCC } = await import('../client/src/lib/local-service-engine.js');
+      const catConfig = getCC(categoryId);
 
       const aiContent = await generateLocalServiceAIContent(
         bd, userId, catConfig.name, catConfig.defaultPrimaryKeyword
@@ -6505,9 +6505,11 @@ Generated on: ${new Date().toISOString()}`;
       // Generate all HTML files using the appropriate category template
       const categoryId = (bd as any).categoryId || website.template || 'water-damage';
 
+      const { getCategoryConfig: getCC2, generateLocalServiceWebsite: genLS } = await import('../client/src/lib/local-service-engine.js');
+
       // Generate AI-written unique content and inject into bd before template generation
       try {
-        const catConfig = getCategoryConfig(categoryId);
+        const catConfig = getCC2(categoryId);
         const aiContent = await generateLocalServiceAIContent(
           bd, userId, catConfig.name, catConfig.defaultPrimaryKeyword
         );
@@ -6521,7 +6523,7 @@ Generated on: ${new Date().toISOString()}`;
         console.error('AI content injection skipped:', aiErr);
       }
 
-      const files = generateLocalServiceWebsite(categoryId, bd, domain);
+      const files = genLS(categoryId, bd, domain);
 
       // Apply any visual editor overrides saved in customFiles
       const storedCustomFiles = website.customFiles as Record<string, string> | null;
