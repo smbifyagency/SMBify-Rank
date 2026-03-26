@@ -362,12 +362,171 @@ const plumbingConfig: CategoryConfig = {
   },
 };
 
+// ─── Roofing ──────────────────────────────────────────────────────────────────
+
+const roofingConfig: CategoryConfig = {
+  id: 'roofing',
+  name: 'Roofing Services',
+  icon: '🏠',
+  tagline: 'Roof repair, replacement & inspection',
+  isEmergency: true,
+  defaultPrimaryKeyword: 'Roofing Services',
+  defaultPalette: { primary: '#7f1d1d', secondary: '#dc2626' },
+  defaultServices: [
+    'Roof Repair',
+    'Roof Replacement',
+    'Roof Inspection',
+    'Storm Damage Repair',
+    'Emergency Roof Tarping',
+    'Shingle Replacement',
+    'Flat Roof Repair & Replacement',
+    'Metal Roofing Installation',
+    'Gutter Installation & Repair',
+    'Skylight Installation & Repair',
+    'Roof Leak Detection & Repair',
+    'Insurance Claim Assistance',
+  ],
+  copy: {
+    heroTagline: 'Licensed Roofers. Storm Ready.',
+    heroSubheading: 'From emergency repairs to full replacements — certified roofers protecting your home, any time of year.',
+    ctaHeadline: 'Roof Damaged or Leaking?',
+    ctaSubtext: 'A damaged roof can lead to water intrusion, mold, and structural damage within days. Call now for a free inspection.',
+    ctaButton: 'Call Now — Free Roof Inspection',
+    emergencyBadge: '24/7 Emergency Roof Repair',
+    trustBadges: ['Licensed & Insured', 'Free Inspections', 'Insurance Claims Help'],
+    whyUsPoints: [
+      'State-licensed, fully insured roofing contractors',
+      'Free roof inspections with no-obligation estimates',
+      'Insurance claim assistance from start to finish',
+      '100% satisfaction guarantee on all roofing work',
+    ],
+    schemaDescription: `Professional roofing services in {{city}}, {{state}}. Licensed & insured roofers for roof repair, replacement, storm damage, and inspections. Free estimates.`,
+    schemaOfferCatalogName: 'Roofing Services',
+    footerEmergencyText: 'Available around the clock for emergency roof repairs.',
+    whatsappMessage: 'Hi, I need a roofer!',
+    introParas: [
+      `Your roof is your home's first line of defense against the elements. When it's damaged — whether from a storm, age, or wear — fast professional repair is essential to prevent water intrusion, mold, and costly structural damage. {{businessName}} provides expert roofing services throughout {{city}} with licensed, insured crews who get the job done right.`,
+      `We use premium materials and proven installation techniques on every project. From a simple shingle repair to a complete roof replacement, our team delivers lasting results backed by manufacturer warranties and our own workmanship guarantee.`,
+      `{{businessName}} has earned a trusted reputation throughout {{city}} for transparent pricing, clean job sites, and standing behind our work. We also work directly with insurance companies to help you maximize your storm damage claim.`,
+    ],
+    processH2: 'Our Roofing Service Process',
+    processSteps: [
+      { step: 1, heading: 'Free Inspection', body: 'We perform a thorough roof inspection at no charge, documenting all damage with photos and a detailed written report.' },
+      { step: 2, heading: 'Honest Estimate', body: 'We provide a clear, itemized written estimate with no hidden fees. We explain exactly what needs to be done and why.' },
+      { step: 3, heading: 'Insurance Coordination', body: 'If your damage is storm-related, we work directly with your insurance adjuster and handle the documentation to support your claim.' },
+      { step: 4, heading: 'Expert Installation', body: 'Our licensed crews complete the work using quality materials, following manufacturer specs and local building codes.' },
+      { step: 5, heading: 'Final Walkthrough', body: 'We inspect the completed work with you, clean up all debris, and walk you through the warranty before we leave.' },
+    ],
+    faqH2: 'Frequently Asked Questions About Roofing Services',
+    faqs: [
+      { question: 'How do I know if my roof needs to be replaced or just repaired?', answer: 'A repair is usually sufficient for isolated damage — a few missing shingles, a small leak, or minor storm damage. Replacement is recommended when the roof is over 20–25 years old, has widespread shingle failure, significant storm damage, or recurring leaks. Our free inspection will give you an honest assessment with no pressure.' },
+      { question: 'Do you offer free roof inspections?', answer: 'Yes. We provide free roof inspections with a detailed written report and photo documentation. There is no obligation to hire us after the inspection.' },
+      { question: 'Does homeowner\'s insurance cover roof damage?', answer: 'Most standard homeowner\'s insurance policies cover sudden and accidental roof damage caused by storms, hail, wind, and falling objects. Damage from normal wear and age is typically not covered. We work directly with your insurance company and can help document the damage for your claim.' },
+      { question: 'How long does a roof replacement take?', answer: 'Most residential roof replacements are completed in 1–2 days. Larger or more complex roofs may take 2–3 days. We work efficiently to minimize disruption and always clean up thoroughly at the end of each day.' },
+      { question: 'What roofing materials do you work with?', answer: 'We install and repair all major roofing types including asphalt shingles, architectural shingles, metal roofing, flat/TPO roofing, and more. We\'ll recommend the best material for your home, budget, and local climate.' },
+      { question: 'How long will my new roof last?', answer: 'Lifespan depends on the material. Standard 3-tab asphalt shingles last 15–20 years, architectural shingles 25–30 years, and metal roofing 40–70 years. Proper installation and periodic maintenance significantly extend any roof\'s lifespan.' },
+      { question: 'Do you offer emergency roof repair?', answer: 'Yes. We offer 24/7 emergency roof repair and tarping services for situations where immediate action is needed to prevent further interior damage — such as after a severe storm or sudden structural failure.' },
+      { question: 'Are you licensed and insured?', answer: 'Yes. We are fully licensed and insured in the state of {{state}}. We carry general liability and workers\' compensation coverage, protecting you and your property throughout the job.' },
+    ],
+    seoBody: `{{businessName}} is {{city}}'s trusted roofing contractor. We provide comprehensive roofing services including roof repair, full roof replacement, storm damage repair, emergency tarping, gutter installation, and insurance claim assistance. Our licensed, insured roofing crews serve homeowners and businesses throughout {{city}} and the surrounding region. Whether you need a quick repair or a complete new roof, we deliver quality workmanship and lasting results.`,
+  },
+  seo: {
+    schemaType: 'RoofingContractor',
+    metaDescriptionTemplate:
+      'Licensed roofing contractor in {{city}}. {{keyword}}, storm damage repair, inspections & more. Free estimates. Call {{businessName}} today.',
+  },
+  calculator: {
+    enabled: true,
+    title: 'Roofing Cost Estimator',
+    tabs: [
+      {
+        id: 'repair',
+        label: 'Roof Repair',
+        resultLabel: 'Estimated Repair Cost',
+        baseMin: 300,
+        baseMax: 800,
+        fields: [
+          {
+            id: 'type',
+            label: 'Type of damage',
+            type: 'select',
+            options: [
+              { label: 'Missing / damaged shingles (small area)', value: 1 },
+              { label: 'Flashing repair (chimney, vents)', value: 1.4 },
+              { label: 'Roof leak repair', value: 1.6 },
+              { label: 'Storm damage (large area)', value: 3.5 },
+            ],
+          },
+          {
+            id: 'pitch',
+            label: 'Roof pitch / steepness',
+            type: 'select',
+            options: [
+              { label: 'Low pitch (walkable)', value: 1 },
+              { label: 'Moderate pitch', value: 1.2 },
+              { label: 'Steep pitch', value: 1.5 },
+            ],
+          },
+          {
+            id: 'emergency',
+            label: 'Emergency / same-day service?',
+            type: 'checkbox',
+            adder: 200,
+          },
+        ],
+      },
+      {
+        id: 'replacement',
+        label: 'Roof Replacement',
+        resultLabel: 'Estimated Replacement Cost',
+        baseMin: 5000,
+        baseMax: 10000,
+        fields: [
+          {
+            id: 'size',
+            label: 'Home size',
+            type: 'select',
+            options: [
+              { label: 'Small (under 1,200 sq ft)', value: 0.7 },
+              { label: 'Medium (1,200–2,000 sq ft)', value: 1 },
+              { label: 'Large (2,000–3,000 sq ft)', value: 1.5 },
+              { label: 'Extra large (3,000+ sq ft)', value: 2.2 },
+            ],
+          },
+          {
+            id: 'material',
+            label: 'Roofing material',
+            type: 'select',
+            options: [
+              { label: 'Architectural asphalt shingles', value: 1 },
+              { label: 'Impact-resistant shingles', value: 1.3 },
+              { label: 'Metal roofing (standing seam)', value: 2.2 },
+              { label: 'Flat / TPO membrane', value: 1.4 },
+            ],
+          },
+          {
+            id: 'layers',
+            label: 'Layers to tear off',
+            type: 'select',
+            options: [
+              { label: 'One layer (standard)', value: 1 },
+              { label: 'Two layers', value: 1.15 },
+              { label: 'Three or more layers', value: 1.3 },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
 // ─── Registry ─────────────────────────────────────────────────────────────────
 
 export const CATEGORIES: CategoryConfig[] = [
   waterDamageConfig,
   plumbingConfig,
-  // future: hvacConfig, roofingConfig, electricalConfig, ...
+  roofingConfig,
+  // future: hvacConfig, electricalConfig, locksmithConfig, ...
 ];
 
 export function getCategoryConfig(id: string): CategoryConfig {
