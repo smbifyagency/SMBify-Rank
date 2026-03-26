@@ -2104,8 +2104,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/users', isAdmin, async (req, res) => {
     try {
-      const users = await storage.listUsers();
-      res.json(users);
+      const [users, allWebsites] = await Promise.all([
+        storage.listUsers(),
+        storage.listWebsites(),
+      ]);
+      // Count actual websites per user
+      const countMap: Record<string, number> = {};
+      for (const w of allWebsites as any[]) {
+        if (w.userId) countMap[String(w.userId)] = (countMap[String(w.userId)] || 0) + 1;
+      }
+      const enriched = (users as any[]).map(u => ({
+        ...u,
+        websitesCreated: countMap[String(u.id)] ?? 0,
+      }));
+      res.json(enriched);
     } catch (error) {
       console.error("Error fetching users:", error);
       res.status(500).json({ message: "Failed to fetch users" });

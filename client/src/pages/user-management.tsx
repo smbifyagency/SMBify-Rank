@@ -131,6 +131,7 @@ export default function UserManagement() {
               <Button
                 onClick={() => window.location.href = "/"}
                 variant="outline"
+                className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
               >
                 Back to Home
               </Button>
