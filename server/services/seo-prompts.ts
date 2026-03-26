@@ -461,6 +461,71 @@ Return strict JSON:
 `;
 }
 
+/**
+ * Generates unique, AI-written copy for local service sites
+ * (water damage, plumbing, roofing, HVAC, etc.).
+ * Output is injected into the _introParas, _faqs, and _seoBody fields
+ * of the water-damage-generator template engine.
+ */
+export function buildLocalServiceContentPrompt(
+  biz: PromptBusinessContext,
+  categoryName: string,
+  primaryKeyword: string
+): string {
+  return `
+Write unique SEO-optimized copy for a local ${categoryName} business website.
+
+BUSINESS DETAILS
+- Business Name: ${biz.name}
+- Service Category: ${categoryName}
+- Primary Keyword: ${primaryKeyword}
+- Primary City: ${biz.primaryCity}
+- All Areas Served: ${formatList(biz.locations)}
+- Services Offered: ${formatList(biz.services)}
+- Phone: ${biz.phone}
+- Years in Business: ${biz.yearsInBusiness || "over 10 years"}
+- Key Differentiators: ${biz.usp || "licensed, insured, fast response, free estimates"}
+
+WRITING RULES
+- Write as if you are the business owner talking to a potential customer in ${biz.primaryCity}
+- Mention ${biz.primaryCity} naturally in at least 2 intro paragraphs
+- Every FAQ answer must be 80-120 words and genuinely helpful
+- Do NOT invent fake statistics, star ratings, or review counts
+- Do NOT use superlatives like "#1 in the city"
+- Sound like a trusted local expert: warm, confident, specific
+- Vary sentence length; avoid repetitive structure
+
+OUTPUT FORMAT (strict JSON, no markdown fences):
+{
+  "introParas": [
+    "Paragraph 1: 120-180 words. Explain the problem homeowners face, why ${biz.primaryCity} residents trust ${biz.name}, and what makes you different.",
+    "Paragraph 2: 120-180 words. Describe your service process, credentials, and commitment to quality in ${biz.primaryCity}.",
+    "Paragraph 3: 100-150 words. Call to action paragraph mentioning the service areas and why acting fast matters."
+  ],
+  "faqs": [
+    { "question": "Specific question about ${primaryKeyword} in ${biz.primaryCity}", "answer": "80-120 word detailed answer" },
+    { "question": "Question about pricing or cost", "answer": "80-120 word detailed answer" },
+    { "question": "Question about qualifications or licensing", "answer": "80-120 word detailed answer" },
+    { "question": "Question about response time or availability", "answer": "80-120 word detailed answer" },
+    { "question": "Question about the process or what to expect", "answer": "80-120 word detailed answer" },
+    { "question": "Question about a common problem or concern", "answer": "80-120 word detailed answer" },
+    { "question": "Question about safety or guarantees", "answer": "80-120 word detailed answer" },
+    { "question": "Question about service area coverage", "answer": "80-120 word detailed answer" }
+  ],
+  "seoBody": "150-200 word paragraph naturally weaving in ${primaryKeyword}, ${biz.primaryCity}, business name, and key services. Reads like expert local content, not keyword stuffing.",
+  "processSteps": [
+    { "step": 1, "heading": "Step name", "body": "60-80 word description of what happens at this step" },
+    { "step": 2, "heading": "Step name", "body": "60-80 word description" },
+    { "step": 3, "heading": "Step name", "body": "60-80 word description" },
+    { "step": 4, "heading": "Step name", "body": "60-80 word description" },
+    { "step": 5, "heading": "Step name", "body": "60-80 word description" }
+  ]
+}
+
+Generate all content above as valid JSON. Each introParas item must be a single string paragraph.
+`;
+}
+
 export function buildSchemaPrompt(
   biz: PromptBusinessContext,
   pageType: string,

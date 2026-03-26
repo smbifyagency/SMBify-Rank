@@ -79,13 +79,17 @@ export function generateLocalServiceWebsite(
   if (c.schemaOfferCatalogName) d._schemaOfferCatalogName = c.schemaOfferCatalogName;
   if (c.footerEmergencyText)    d._footerEmergencyText    = c.footerEmergencyText;
   if (c.whatsappMessage)        d._whatsappMessage        = c.whatsappMessage;
-  if (c.introParas)             d._introParas             = interpolateArr(c.introParas, enriched);
-  if (c.processH2)              d._processH2              = c.processH2;
-  if (c.processSteps)           d._processSteps           = c.processSteps;
-  if (c.faqH2)                  d._faqH2                  = c.faqH2;
-  if (c.faqs)                   d._faqs                   = c.faqs;
-  if (c.seoBody)                d._seoBody                = interpolate(c.seoBody, enriched);
   if (c.servicePageBenefits)    d._servicePageBenefits    = c.servicePageBenefits;
+
+  // Use AI-generated content when available (set by server deploy route),
+  // otherwise fall back to the template copy from the category config.
+  d._introParas   = d._aiIntroParas   ?? (c.introParas   ? interpolateArr(c.introParas, enriched)    : undefined);
+  d._processSteps = d._aiProcessSteps ?? (c.processSteps ? c.processSteps                            : undefined);
+  d._faqs         = d._aiFaqs         ?? (c.faqs         ? c.faqs                                    : undefined);
+  d._seoBody      = d._aiSeoBody      ?? (c.seoBody      ? interpolate(c.seoBody, enriched)          : undefined);
+
+  if (c.processH2) d._processH2 = c.processH2;
+  if (c.faqH2)     d._faqH2     = c.faqH2;
 
   return generateWaterDamageWebsite(enriched, domain) as Record<string, string>;
 }

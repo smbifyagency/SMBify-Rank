@@ -34,6 +34,7 @@ import {
   buildHomePagePrompt,
   buildLocationPagePrompt,
   buildServicePagePrompt,
+  buildLocalServiceContentPrompt,
   type PromptBusinessContext,
   type ServiceLink,
   type ServiceLocationLink,
@@ -947,6 +948,65 @@ async function generateLocationPageContentWithProvider(location: string, busines
     }
 
     return fallbackLocationPageContent(location, businessData);
+  }
+}
+
+/**
+ * Generate AI-written unique content for a local service site.
+ * Returns fields that override the template defaults in the WD generator.
+ * If no API key is configured (or user role doesn't allow it), returns null
+ * and the template falls back to its built-in copy.
+ */
+async function generateLocalServiceAIContent(
+  bd: any,
+  userId: string,
+  categoryName: string,
+  primaryKeyword: string
+): Promise<{ introParas?: string[]; faqs?: any[]; seoBody?: string; processSteps?: any[] } | null> {
+  try {
+    const user = await storage.getUser(userId);
+    if (!user || (user.role !== 'user' && user.role !== 'paid' && user.role !== 'admin')) {
+      console.log('Local service AI content: skipping (user role)');
+      return null;
+    }
+
+    const provider: 'openai' | 'gemini' | 'openrouter' = bd.contentAiProvider || 'openai';
+    const apiKey = await getAIProviderConfig(userId, provider);
+    if (!apiKey) {
+      console.log('Local service AI content: skipping (no API key)');
+      return null;
+    }
+
+    const biz: PromptBusinessContext = {
+      name: bd.businessName || 'Local Business',
+      type: categoryName,
+      primaryCity: bd.city || bd.primaryCity || '',
+      locations: Array.isArray(bd.serviceAreas) ? bd.serviceAreas : (bd.serviceAreas || '').split(',').map((s: string) => s.trim()).filter(Boolean),
+      services: Array.isArray(bd.services) ? bd.services : (bd.services || '').split(',').map((s: string) => s.trim()).filter(Boolean),
+      phone: bd.phone || '',
+      yearsInBusiness: bd.yearsInBusiness,
+      usp: bd.usp || bd.uniqueSellingPoint,
+    };
+
+    const prompt = buildLocalServiceContentPrompt(biz, categoryName, primaryKeyword);
+    console.log(`Generating AI content for local service site: ${biz.name} (${categoryName})`);
+
+    const result = await generateStructuredJsonWithProvider(provider, apiKey, prompt, {
+      maxTokens: 4000,
+      temperature: 0.7,
+    });
+
+    const out: Record<string, any> = {};
+    if (Array.isArray(result.introParas) && result.introParas.length > 0) out.introParas = result.introParas;
+    if (Array.isArray(result.faqs) && result.faqs.length > 0) out.faqs = result.faqs;
+    if (typeof result.seoBody === 'string' && result.seoBody.trim()) out.seoBody = result.seoBody;
+    if (Array.isArray(result.processSteps) && result.processSteps.length > 0) out.processSteps = result.processSteps;
+
+    console.log(`AI content generated: introParas=${out.introParas?.length ?? 0}, faqs=${out.faqs?.length ?? 0}`);
+    return out;
+  } catch (err) {
+    console.error('Local service AI content generation failed, using template fallback:', err);
+    return null;
   }
 }
 
@@ -6400,6 +6460,24 @@ Generated on: ${new Date().toISOString()}`;
 
       // Generate all HTML files using the appropriate category template
       const categoryId = (bd as any).categoryId || website.template || 'water-damage';
+
+      // Generate AI-written unique content and inject into bd before template generation
+      try {
+        const { getCategoryConfig } = await import('../client/src/lib/local-service-engine.js');
+        const catConfig = getCategoryConfig(categoryId);
+        const aiContent = await generateLocalServiceAIContent(
+          bd, userId, catConfig.name, catConfig.defaultPrimaryKeyword
+        );
+        if (aiContent) {
+          if (aiContent.introParas)  bd._aiIntroParas  = aiContent.introParas;
+          if (aiContent.faqs)        bd._aiFaqs        = aiContent.faqs;
+          if (aiContent.seoBody)     bd._aiSeoBody     = aiContent.seoBody;
+          if (aiContent.processSteps) bd._aiProcessSteps = aiContent.processSteps;
+        }
+      } catch (aiErr) {
+        console.error('AI content injection skipped:', aiErr);
+      }
+
       const { generateLocalServiceWebsite } = await import('../client/src/lib/local-service-engine.js');
       const files = generateLocalServiceWebsite(categoryId, bd, domain);
 
