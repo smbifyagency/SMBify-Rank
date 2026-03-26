@@ -1222,6 +1222,585 @@ const moldRemediationConfig: CategoryConfig = {
   },
 };
 
+// ─── Pest Control ─────────────────────────────────────────────────────────────
+
+const pestControlConfig: CategoryConfig = {
+  id: 'pest-control',
+  name: 'Pest Control',
+  icon: '🐛',
+  tagline: 'Pest extermination & prevention',
+  isEmergency: false,
+  defaultPrimaryKeyword: 'Pest Control',
+  defaultPalette: { primary: '#365314', secondary: '#65a30d' },
+  defaultServices: [
+    'General Pest Control',
+    'Ant Extermination',
+    'Roach Extermination',
+    'Bed Bug Treatment',
+    'Termite Inspection & Treatment',
+    'Rodent Control & Removal',
+    'Spider Control',
+    'Wasp & Bee Removal',
+    'Mosquito Control',
+    'Wildlife Removal',
+    'Preventive Pest Treatments',
+    'Commercial Pest Control',
+  ],
+  copy: {
+    heroTagline: 'Licensed Exterminators. Guaranteed Results.',
+    heroSubheading: 'From termites to bed bugs — certified pest control professionals protecting your home and family.',
+    ctaHeadline: 'Pest Problem?',
+    ctaSubtext: 'Pests spread fast and cause real damage. Get a free inspection today and stop the problem before it gets worse.',
+    ctaButton: 'Call Now — Free Inspection',
+    emergencyBadge: 'Licensed & Certified Exterminators',
+    servicePageBenefits: [
+      { heading: 'Licensed & State-Certified', body: 'All our pest control technicians hold valid state pesticide applicator licenses — legally certified to apply treatments safely and effectively.' },
+      { heading: 'Child & Pet Safe Treatments', body: 'We use EPA-registered products and apply them precisely to minimize any exposure risk to children, pets, and beneficial insects.' },
+      { heading: 'Targets Root Cause', body: 'We find where pests are entering, nesting, and breeding — and treat the source, not just what you see on the surface.' },
+      { heading: 'Prevents Costly Damage', body: 'Termites, rodents, and carpenter ants cause billions in structural damage annually. Early professional treatment is far cheaper than repairing the damage later.' },
+      { heading: 'Satisfaction Guarantee', body: 'If pests return between scheduled treatments, we come back at no additional charge. Your satisfaction and your pest-free home are our commitment.' },
+      { heading: 'Ongoing Prevention Plans', body: 'One-time treatments address current infestations. Our recurring prevention plans keep pests out season after season with scheduled inspections and barrier treatments.' },
+    ],
+    trustBadges: ['State Licensed', 'Pet Safe Treatments', 'Satisfaction Guarantee'],
+    whyUsPoints: [
+      'State-licensed, certified pest control technicians',
+      'EPA-registered, family-safe treatment products',
+      'Free inspections with no-obligation estimates',
+      'Satisfaction guarantee — we return if pests do',
+    ],
+    schemaDescription: `Professional pest control services in {{city}}, {{state}}. Licensed exterminators for termites, bed bugs, rodents, ants, roaches, and more. Free inspections.`,
+    schemaOfferCatalogName: 'Pest Control Services',
+    footerEmergencyText: 'Call us for fast pest inspections and treatments.',
+    whatsappMessage: 'Hi, I have a pest problem and need help!',
+    introParas: [
+      `A pest infestation in your {{city}} home or business is more than an annoyance — it's a threat to your property, your health, and your peace of mind. {{businessName}} provides professional pest control services throughout {{city}}, eliminating infestations fast and keeping them from coming back.`,
+      `Our licensed technicians identify the species, locate nesting and entry points, and apply targeted treatments that address the root of the problem. We use EPA-registered products applied precisely to protect your family and pets while eliminating pests effectively.`,
+      `{{businessName}} backs every treatment with a satisfaction guarantee. If pests return between scheduled visits, so do we — at no extra charge.`,
+    ],
+    processH2: 'Our Pest Control Process',
+    processSteps: [
+      { step: 1, heading: 'Free Inspection', body: 'Our technician inspects your property thoroughly — identifying the pest species, infestation size, entry points, and nesting areas.' },
+      { step: 2, heading: 'Custom Treatment Plan', body: 'We design a targeted treatment plan based on the specific pest, infestation level, and your home\'s layout — not a one-size-fits-all spray.' },
+      { step: 3, heading: 'Professional Treatment', body: 'We apply EPA-registered treatments to targeted areas using the safest and most effective methods for your specific pest problem.' },
+      { step: 4, heading: 'Entry Point Sealing', body: 'Where possible, we seal gaps, cracks, and entry points to prevent re-infestation after the initial treatment.' },
+      { step: 5, heading: 'Follow-Up & Prevention', body: 'We schedule follow-up visits to verify results and offer ongoing prevention plans to keep your home pest-free year-round.' },
+    ],
+    faqH2: 'Frequently Asked Questions About Pest Control',
+    faqs: [
+      { question: 'How do I know if I have an infestation?', answer: 'Common signs include droppings, gnaw marks, shed skins, live or dead insects, unusual odors, or unexplained damage to wood, fabric, or food packaging. Some pests like termites can be active for years before visible signs appear — regular inspections are the best early detection.' },
+      { question: 'Are pest control treatments safe for my kids and pets?', answer: 'Yes, when applied by a licensed professional. We use EPA-registered products and apply them precisely to targeted areas, minimizing exposure. We provide specific re-entry instructions for each treatment so you know exactly when it\'s safe to return to treated areas.' },
+      { question: 'How long does pest control treatment take?', answer: 'A standard residential treatment takes 30 minutes to 2 hours depending on the pest and the size of your home. Termite treatments and fumigations take longer and may require you to vacate temporarily.' },
+      { question: 'How long until I see results?', answer: 'Many treatments show results within 24–72 hours. Some treatments, like baiting systems for ants or termites, work more gradually over 1–2 weeks as the product spreads through the colony. We\'ll explain the expected timeline for your specific treatment.' },
+      { question: 'Do I need to leave my home during treatment?', answer: 'For most general pest treatments, you can remain home. For certain treatments (fumigation, some bed bug treatments), temporary evacuation is required. We\'ll advise you in advance and provide clear re-entry instructions.' },
+      { question: 'Will one treatment be enough?', answer: 'It depends on the pest and severity. Some infestations are resolved with a single treatment. Others, like bed bugs or termites, typically require multiple treatments. Our satisfaction guarantee means we return if pests come back between visits at no additional cost.' },
+      { question: 'How can I prevent pests from coming back?', answer: 'Seal entry points, keep food in airtight containers, eliminate standing water, maintain your yard, and schedule regular preventive treatments. Our ongoing prevention plans include quarterly inspections and barrier treatments that dramatically reduce re-infestation risk.' },
+      { question: 'Are you licensed to treat termites in {{state}}?', answer: 'Yes. Our technicians hold valid state pesticide applicator licenses covering all pest types including termites. Termite treatment requires specialized licensing, and we maintain all required certifications for {{state}}.' },
+    ],
+    seoBody: `{{businessName}} is {{city}}'s trusted pest control company. We provide comprehensive extermination and prevention services for termites, bed bugs, rodents, ants, cockroaches, spiders, wasps, mosquitoes, and more. Our licensed technicians serve homeowners and businesses throughout {{city}} and the surrounding region with targeted treatments, free inspections, and a satisfaction guarantee.`,
+  },
+  seo: {
+    schemaType: 'PestControlService',
+    metaDescriptionTemplate:
+      'Licensed pest control in {{city}}. {{keyword}}, termite inspection, bed bug treatment & more. Free inspection. Call {{businessName}} today.',
+  },
+  calculator: {
+    enabled: true,
+    title: 'Pest Control Cost Estimator',
+    tabs: [
+      {
+        id: 'general',
+        label: 'General Treatment',
+        resultLabel: 'Estimated Treatment Cost',
+        baseMin: 150,
+        baseMax: 400,
+        fields: [
+          {
+            id: 'pest',
+            label: 'Primary pest',
+            type: 'select',
+            options: [
+              { label: 'Ants or roaches', value: 1 },
+              { label: 'Spiders or silverfish', value: 0.9 },
+              { label: 'Wasps or bees', value: 1.2 },
+              { label: 'Bed bugs', value: 3.5 },
+              { label: 'Rodents (mice / rats)', value: 2 },
+              { label: 'Termites', value: 5 },
+            ],
+          },
+          {
+            id: 'size',
+            label: 'Property size',
+            type: 'select',
+            options: [
+              { label: 'Apartment / small home', value: 0.8 },
+              { label: 'Medium home (1,500–3,000 sq ft)', value: 1 },
+              { label: 'Large home (3,000+ sq ft)', value: 1.5 },
+              { label: 'Commercial property', value: 2.5 },
+            ],
+          },
+          {
+            id: 'recurring',
+            label: 'Recurring prevention plan?',
+            type: 'checkbox',
+            adder: -30,
+          },
+        ],
+      },
+    ],
+  },
+};
+
+// ─── Tree Service ──────────────────────────────────────────────────────────────
+
+const treeServiceConfig: CategoryConfig = {
+  id: 'tree-service',
+  name: 'Tree Service',
+  icon: '🌳',
+  tagline: 'Tree removal, trimming & stump grinding',
+  isEmergency: true,
+  defaultPrimaryKeyword: 'Tree Service',
+  defaultPalette: { primary: '#14532d', secondary: '#16a34a' },
+  defaultServices: [
+    'Tree Removal',
+    'Emergency Tree Removal',
+    'Tree Trimming & Pruning',
+    'Stump Grinding & Removal',
+    'Storm Damage Tree Cleanup',
+    'Fallen Tree Removal',
+    'Dead Tree Removal',
+    'Tree Health Assessment',
+    'Lot Clearing',
+    'Arborist Consulting',
+    'Cabling & Bracing',
+    'Firewood Processing',
+  ],
+  copy: {
+    heroTagline: 'Certified Arborists. Safe Removal.',
+    heroSubheading: 'From emergency storm cleanup to routine trimming — ISA-certified tree professionals protecting your property.',
+    ctaHeadline: 'Tree Emergency or Removal Needed?',
+    ctaSubtext: 'Damaged or leaning trees are a serious hazard. Call now for a fast, free assessment from certified arborists.',
+    ctaButton: 'Call Now — Free Assessment',
+    emergencyBadge: '24/7 Emergency Tree Service',
+    servicePageBenefits: [
+      { heading: 'ISA-Certified Arborists', body: 'Our team includes ISA-certified arborists — the highest professional credential in tree care — ensuring safe, expert work on every job.' },
+      { heading: 'Full Liability Insurance', body: 'Tree work carries real risk. We carry comprehensive general liability and workers\' compensation insurance, fully protecting you if anything goes wrong.' },
+      { heading: 'Complete Cleanup Included', body: 'We chip or haul away all wood, branches, and debris. Your property is left clean — often cleaner than before we arrived.' },
+      { heading: 'Protects Your Property', body: 'Dead, diseased, or storm-damaged trees can fall without warning. Professional removal eliminates the risk of damage to your home, vehicles, and neighbors.' },
+      { heading: 'Emergency Response', body: 'Storm damage can\'t wait. We offer 24/7 emergency response for trees on structures, blocking roads, or posing immediate hazards.' },
+      { heading: 'Honest Assessment', body: 'Not every tree needs to come down. We give you an honest recommendation — trimming or cabling when it\'s the right solution, not just the most profitable one.' },
+    ],
+    trustBadges: ['ISA Certified Arborist', 'Fully Insured', 'Free Estimates'],
+    whyUsPoints: [
+      'ISA-certified arborists on staff',
+      'Full liability and workers\' comp insurance',
+      'Complete debris cleanup included',
+      '24/7 emergency storm response',
+    ],
+    schemaDescription: `Professional tree service in {{city}}, {{state}}. ISA-certified arborists for tree removal, trimming, stump grinding, and emergency storm cleanup. Free estimates.`,
+    schemaOfferCatalogName: 'Tree Services',
+    footerEmergencyText: 'Available 24/7 for emergency tree removal and storm cleanup.',
+    whatsappMessage: 'Hi, I need tree service help!',
+    introParas: [
+      `Trees add beauty and value to your {{city}} property — but when they\'re damaged, diseased, or overgrown, they become a serious hazard. {{businessName}} provides professional tree services throughout {{city}}, from routine trimming and pruning to emergency storm removal and complete lot clearing.`,
+      `Our ISA-certified arborists assess each tree\'s health and structure before recommending any work. We take safety seriously — for your property, our crew, and your neighbors — using proper rigging, equipment, and techniques on every job.`,
+      `{{businessName}} includes complete cleanup on every job. We chip branches, haul debris, and grind stumps — leaving your {{city}} property looking better than when we arrived.`,
+    ],
+    processH2: 'Our Tree Service Process',
+    processSteps: [
+      { step: 1, heading: 'Free Assessment', body: 'A certified arborist visits your property, evaluates the tree(s), identifies any hazards, and provides a written estimate at no charge.' },
+      { step: 2, heading: 'Safety Planning', body: 'We plan the safest removal or trimming approach, considering proximity to structures, power lines, and neighboring properties before any work begins.' },
+      { step: 3, heading: 'Professional Removal or Trimming', body: 'Our crew uses professional rigging, climbing gear, and equipment to complete the work safely and efficiently.' },
+      { step: 4, heading: 'Stump Grinding', body: 'We grind the stump below grade and backfill with wood chips, eliminating the tripping hazard and allowing you to replant or sod over the area.' },
+      { step: 5, heading: 'Complete Cleanup', body: 'All wood, branches, and debris are chipped or hauled away. We rake and blow the area clean before leaving your property.' },
+    ],
+    faqH2: 'Frequently Asked Questions About Tree Service',
+    faqs: [
+      { question: 'How do I know if a tree needs to be removed?', answer: 'Signs that a tree may need removal include: large dead branches, a significant lean toward a structure, cracks or splits in the trunk, visible rot or fungal growth at the base, roots lifting pavement or damaging foundations, or a tree that has died entirely. A free assessment from our certified arborist will give you an honest recommendation.' },
+      { question: 'Is tree removal covered by homeowner\'s insurance?', answer: 'If a tree falls and damages a covered structure (your home, garage, or fence), your homeowner\'s insurance typically covers the removal and damage repairs. Removal of a living tree that hasn\'t fallen yet is generally not covered. We provide documentation to support your insurance claim when applicable.' },
+      { question: 'How much does tree removal cost?', answer: 'Tree removal costs vary widely based on size, location, and complexity. Small trees may cost $200–$500, while large trees near structures can run $1,500–$3,000+. We provide free written estimates before any work begins.' },
+      { question: 'Do you remove the stump as well?', answer: 'Stump removal is typically quoted separately. We offer stump grinding, which removes the stump below grade and leaves wood chips you can use as mulch or haul away. Complete stump removal (including the root ball) is also available for replanting areas.' },
+      { question: 'Do you work in all weather conditions?', answer: 'We work in most weather conditions. We do not work during active lightning storms or high winds that would make the work unsafe. For emergency situations after a storm, we respond as soon as conditions are safe.' },
+      { question: 'Will you clean up after the job?', answer: 'Yes. Complete cleanup is included on every job. We chip or haul all branches and debris, and grind or remove the stump. We rake and blow the area when finished.' },
+      { question: 'Do I need a permit to remove a tree in {{city}}?', answer: 'Permit requirements vary by city and sometimes by tree species or size. We are familiar with local regulations in {{city}} and can advise you on whether a permit is required for your specific situation. In many cases we handle the permit process for you.' },
+      { question: 'Are your crews insured?', answer: 'Yes. {{businessName}} carries full general liability insurance and workers\' compensation coverage. Never hire a tree company without verifying insurance — if an uninsured worker is injured on your property, you could be held liable.' },
+    ],
+    seoBody: `{{businessName}} is {{city}}'s trusted tree service company. We provide professional tree removal, tree trimming and pruning, stump grinding, emergency storm cleanup, dead tree removal, lot clearing, and arborist consulting. Our ISA-certified team serves homeowners and businesses throughout {{city}} and the surrounding region with safe, efficient service and complete cleanup on every job.`,
+  },
+  seo: {
+    schemaType: 'LandscapingBusiness',
+    metaDescriptionTemplate:
+      'Professional tree service in {{city}}. {{keyword}}, stump grinding, storm cleanup & emergency removal. Free estimates. Call {{businessName}}.',
+  },
+  calculator: {
+    enabled: true,
+    title: 'Tree Service Cost Estimator',
+    tabs: [
+      {
+        id: 'removal',
+        label: 'Tree Removal',
+        resultLabel: 'Estimated Removal Cost',
+        baseMin: 300,
+        baseMax: 800,
+        fields: [
+          {
+            id: 'size',
+            label: 'Tree size',
+            type: 'select',
+            options: [
+              { label: 'Small (under 25 ft)', value: 0.6 },
+              { label: 'Medium (25–50 ft)', value: 1 },
+              { label: 'Large (50–75 ft)', value: 1.8 },
+              { label: 'Extra large (75+ ft)', value: 3 },
+            ],
+          },
+          {
+            id: 'location',
+            label: 'Tree location',
+            type: 'select',
+            options: [
+              { label: 'Open yard (easy access)', value: 1 },
+              { label: 'Near fence or structure', value: 1.4 },
+              { label: 'Near power lines', value: 1.7 },
+              { label: 'Against house or roof', value: 2.2 },
+            ],
+          },
+          {
+            id: 'stump',
+            label: 'Stump grinding included?',
+            type: 'checkbox',
+            adder: 150,
+          },
+        ],
+      },
+      {
+        id: 'trimming',
+        label: 'Trimming & Pruning',
+        resultLabel: 'Estimated Trimming Cost',
+        baseMin: 150,
+        baseMax: 400,
+        fields: [
+          {
+            id: 'size',
+            label: 'Tree size',
+            type: 'select',
+            options: [
+              { label: 'Small shrub / ornamental', value: 0.5 },
+              { label: 'Medium tree (25–45 ft)', value: 1 },
+              { label: 'Large tree (45+ ft)', value: 2 },
+            ],
+          },
+          {
+            id: 'count',
+            label: 'Number of trees',
+            type: 'select',
+            options: [
+              { label: '1 tree', value: 1 },
+              { label: '2–3 trees', value: 1.8 },
+              { label: '4–6 trees', value: 2.8 },
+              { label: '7+ trees', value: 4 },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+// ─── Garage Door ──────────────────────────────────────────────────────────────
+
+const garageDoorConfig: CategoryConfig = {
+  id: 'garage-door',
+  name: 'Garage Door Services',
+  icon: '🚗',
+  tagline: 'Repair, replacement & installation',
+  isEmergency: true,
+  defaultPrimaryKeyword: 'Garage Door Repair',
+  defaultPalette: { primary: '#1e3a5f', secondary: '#475569' },
+  defaultServices: [
+    'Garage Door Repair',
+    'Garage Door Replacement',
+    'Garage Door Installation',
+    'Garage Door Spring Repair & Replacement',
+    'Garage Door Opener Repair & Installation',
+    'Broken Cable Repair',
+    'Off-Track Door Repair',
+    'Garage Door Panel Replacement',
+    'Smart Garage Door Opener Installation',
+    'Commercial Garage Door Service',
+    'Emergency Garage Door Repair',
+    'Garage Door Tune-Up & Maintenance',
+  ],
+  copy: {
+    heroTagline: 'Same-Day Garage Door Repair.',
+    heroSubheading: 'Broken spring, stuck door, or failed opener — certified technicians fixing it fast, same day.',
+    ctaHeadline: 'Garage Door Not Working?',
+    ctaSubtext: 'A broken garage door leaves your home unsecured. Call now for same-day repair from certified technicians.',
+    ctaButton: 'Call Now — Same-Day Repair',
+    emergencyBadge: 'Same-Day & Emergency Service',
+    servicePageBenefits: [
+      { heading: 'Same-Day Service Available', body: 'Most garage door repairs are completed the same day you call. Our trucks are stocked with common parts so we can fix it in one visit.' },
+      { heading: 'Secures Your Home Immediately', body: 'A broken garage door is a security vulnerability. We prioritize getting your door working and your home secured as fast as possible.' },
+      { heading: 'Upfront Written Estimates', body: 'We provide a clear price before any work begins. No hourly labor surprises — you approve the cost first, every time.' },
+      { heading: 'All Brands Serviced', body: 'We repair and install all major garage door and opener brands — LiftMaster, Chamberlain, Genie, Craftsman, Clopay, and more.' },
+      { heading: 'Spring Safety Expertise', body: 'Broken springs are dangerous and should only be replaced by professionals. Our technicians are trained in safe spring replacement procedures.' },
+      { heading: 'Maintenance Extends Door Life', body: 'A properly maintained garage door lasts 15–30 years. Our tune-up service adjusts balance, lubricates moving parts, and catches problems before they become costly.' },
+    ],
+    trustBadges: ['Same-Day Service', 'All Brands', 'Upfront Pricing'],
+    whyUsPoints: [
+      'Same-day service — most repairs done in one visit',
+      'Trucks stocked with parts for all major brands',
+      'Upfront flat-rate pricing, no hourly billing',
+      'Trained spring and cable specialists',
+    ],
+    schemaDescription: `Professional garage door repair and installation in {{city}}, {{state}}. Same-day service for broken springs, openers, cables, and panels. All brands serviced.`,
+    schemaOfferCatalogName: 'Garage Door Services',
+    footerEmergencyText: 'Available for same-day and emergency garage door repair.',
+    whatsappMessage: 'Hi, I need garage door repair!',
+    introParas: [
+      `A broken garage door is more than an inconvenience — it\'s a security risk and a daily disruption. {{businessName}} provides fast, professional garage door repair and installation throughout {{city}}, with same-day service available for most jobs.`,
+      `Our technicians arrive with trucks stocked with springs, cables, rollers, and opener parts for all major brands — meaning most repairs are completed in a single visit. We provide upfront written estimates before any work begins.`,
+      `{{businessName}} has served {{city}} homeowners with reliable garage door service built on honest pricing and same-day results. Whether it\'s a broken spring at 7am or a failed opener on a weekend, we\'re ready.`,
+    ],
+    processH2: 'Our Garage Door Service Process',
+    processSteps: [
+      { step: 1, heading: 'Call & Schedule', body: 'Call anytime — we offer same-day appointments for most garage door repairs and 24/7 emergency service for doors that won\'t close.' },
+      { step: 2, heading: 'Diagnosis', body: 'Our technician inspects the door, opener, springs, cables, and tracks — identifying all issues and explaining them clearly before quoting.' },
+      { step: 3, heading: 'Upfront Quote', body: 'You receive a written flat-rate estimate covering all parts and labor. We never start without your approval.' },
+      { step: 4, heading: 'Same-Day Repair', body: 'Most repairs are completed immediately from parts on our truck. If a specialty part is needed, we schedule a follow-up as fast as possible.' },
+      { step: 5, heading: 'Safety Check', body: 'We test balance, force settings, and auto-reverse safety features before leaving — ensuring your door is safe and working perfectly.' },
+    ],
+    faqH2: 'Frequently Asked Questions About Garage Door Repair',
+    faqs: [
+      { question: 'How much does garage door repair cost?', answer: 'Costs depend on the repair needed. Spring replacement typically runs $150–$350, opener repair or replacement $150–$400, cable repair $100–$200, and off-track repair $125–$250. We provide a written upfront estimate before starting any work.' },
+      { question: 'Can I replace a garage door spring myself?', answer: 'We strongly advise against it. Garage door springs are under extreme tension and can cause serious injury or death if handled incorrectly. Spring replacement is one of the most dangerous DIY home repairs — professional service is highly recommended.' },
+      { question: 'How long do garage door springs last?', answer: 'Standard torsion springs are rated for 10,000 cycles (1 open + 1 close = 1 cycle). For a door used 4 times per day, that\'s about 7 years. High-cycle springs rated for 20,000–30,000 cycles are also available and recommended for frequently-used doors.' },
+      { question: 'Why is my garage door so loud?', answer: 'Noisy garage doors are usually caused by worn rollers, loose hardware, or lack of lubrication. A tune-up — including roller replacement, hardware tightening, and lubrication — resolves most noise issues and extends the door\'s life significantly.' },
+      { question: 'My garage door won\'t close all the way — what\'s wrong?', answer: 'Common causes include misaligned safety sensors, an obstruction in the door\'s path, or an out-of-adjustment limit setting on the opener. In some cases it can indicate a broken spring or cable. We can diagnose and fix the issue same-day.' },
+      { question: 'How long does a garage door replacement take?', answer: 'A standard single-car garage door replacement is typically completed in 3–4 hours. A double-car door takes 4–6 hours. This includes removal of the old door, installation of the new door and all hardware, and a full safety check.' },
+      { question: 'Do you install smart garage door openers?', answer: 'Yes. We install and program smart openers from LiftMaster, Chamberlain (myQ), Genie, and other brands — allowing you to open, close, and monitor your garage door from your smartphone.' },
+      { question: 'What if my door won\'t close and my home is unsecured?', answer: 'Call us immediately. We treat unsecured garage doors as an emergency and prioritize getting to you fast. In the meantime, you can manually disconnect the opener and lock the door with a hasp if needed.' },
+    ],
+    seoBody: `{{businessName}} is {{city}}'s trusted garage door company. We provide professional garage door repair, spring and cable replacement, opener installation, off-track repair, panel replacement, and new door installation. Our technicians serve homeowners and businesses throughout {{city}} and the surrounding region with same-day service, all-brand expertise, and upfront pricing.`,
+  },
+  seo: {
+    schemaType: 'HomeAndConstructionBusiness',
+    metaDescriptionTemplate:
+      'Garage door repair in {{city}}. {{keyword}}, spring replacement, opener installation & same-day service. Call {{businessName}} now.',
+  },
+  calculator: {
+    enabled: true,
+    title: 'Garage Door Cost Estimator',
+    tabs: [
+      {
+        id: 'repair',
+        label: 'Repair Cost',
+        resultLabel: 'Estimated Repair Cost',
+        baseMin: 100,
+        baseMax: 300,
+        fields: [
+          {
+            id: 'issue',
+            label: 'Issue type',
+            type: 'select',
+            options: [
+              { label: 'Broken spring (torsion)', value: 1.5 },
+              { label: 'Broken cable', value: 1 },
+              { label: 'Door off track', value: 1.2 },
+              { label: 'Opener repair', value: 1.3 },
+              { label: 'Panel replacement (per panel)', value: 1.8 },
+              { label: 'Roller / hinge replacement', value: 0.7 },
+            ],
+          },
+          {
+            id: 'emergency',
+            label: 'Same-day / emergency?',
+            type: 'checkbox',
+            adder: 75,
+          },
+        ],
+      },
+      {
+        id: 'replacement',
+        label: 'New Door',
+        resultLabel: 'Estimated New Door Cost',
+        baseMin: 800,
+        baseMax: 2000,
+        fields: [
+          {
+            id: 'size',
+            label: 'Door size',
+            type: 'select',
+            options: [
+              { label: 'Single car (8–9 ft wide)', value: 0.8 },
+              { label: 'Double car (16 ft wide)', value: 1 },
+              { label: 'RV / oversized', value: 1.6 },
+            ],
+          },
+          {
+            id: 'material',
+            label: 'Door material',
+            type: 'select',
+            options: [
+              { label: 'Steel (standard)', value: 1 },
+              { label: 'Steel (insulated)', value: 1.3 },
+              { label: 'Wood composite', value: 1.7 },
+              { label: 'Aluminum / glass', value: 2 },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
+// ─── Foundation Repair ────────────────────────────────────────────────────────
+
+const foundationRepairConfig: CategoryConfig = {
+  id: 'foundation-repair',
+  name: 'Foundation Repair',
+  icon: '🏗️',
+  tagline: 'Foundation repair & waterproofing',
+  isEmergency: false,
+  defaultPrimaryKeyword: 'Foundation Repair',
+  defaultPalette: { primary: '#292524', secondary: '#78716c' },
+  defaultServices: [
+    'Foundation Crack Repair',
+    'Foundation Settlement Repair',
+    'Basement Waterproofing',
+    'Crawl Space Encapsulation',
+    'Pier & Beam Foundation Repair',
+    'Slab Foundation Repair',
+    'Helical Pier Installation',
+    'Push Pier Installation',
+    'Wall Crack Repair',
+    'Bowing Wall Repair',
+    'Drainage Correction',
+    'Foundation Inspection',
+  ],
+  copy: {
+    heroTagline: 'Structural Engineers. Lasting Repairs.',
+    heroSubheading: 'Foundation cracks, settling, or bowing walls — certified structural repair specialists protecting your home from the ground up.',
+    ctaHeadline: 'Foundation Problem?',
+    ctaSubtext: 'Foundation issues worsen over time and cost more the longer they go unaddressed. Get a free inspection before it becomes a major structural problem.',
+    ctaButton: 'Call Now — Free Inspection',
+    emergencyBadge: 'Structural Repair Specialists',
+    servicePageBenefits: [
+      { heading: 'Certified Structural Specialists', body: 'Foundation repair requires engineering expertise. Our team includes certified structural repair specialists who assess and fix problems correctly the first time.' },
+      { heading: 'Transferable Warranty', body: 'Our foundation repairs come with a written, transferable warranty — protecting your investment and adding value when you sell your home.' },
+      { heading: 'Stops Problems from Worsening', body: 'Foundation issues never fix themselves. Professional repair stops settlement, cracking, and water intrusion before they escalate into catastrophic structural failure.' },
+      { heading: 'Protects Property Value', body: 'Foundation problems are the most feared issue for home buyers. A professionally repaired and warranted foundation protects — and often restores — your home\'s market value.' },
+      { heading: 'Minimally Invasive Methods', body: 'Modern pier and helical anchor systems stabilize and lift foundations with minimal excavation, reducing disruption to your landscaping and property.' },
+      { heading: 'Free Detailed Inspection', body: 'We provide a thorough free inspection with a written report, photos, and a clear explanation of findings — no pressure, no obligation to proceed.' },
+    ],
+    trustBadges: ['Transferable Warranty', 'Free Inspections', 'Certified Specialists'],
+    whyUsPoints: [
+      'Certified structural repair specialists',
+      'Written transferable warranty on all repairs',
+      'Free inspections with no-obligation reports',
+      'Minimally invasive repair methods',
+    ],
+    schemaDescription: `Professional foundation repair in {{city}}, {{state}}. Certified specialists for crack repair, settlement, basement waterproofing, and crawl space encapsulation. Free inspections.`,
+    schemaOfferCatalogName: 'Foundation Repair Services',
+    footerEmergencyText: 'Contact us for free foundation inspections and consultations.',
+    whatsappMessage: 'Hi, I have a foundation issue I need assessed!',
+    introParas: [
+      `Your home\'s foundation is its most critical structural element. Cracks, settling, or water intrusion that go unaddressed can escalate into serious structural damage — and the longer you wait, the more expensive the fix. {{businessName}} provides professional foundation repair throughout {{city}}, stopping problems at their source with proven, warrantied solutions.`,
+      `Our certified specialists use the latest repair methods — helical piers, push piers, carbon fiber straps, and drainage correction — to stabilize and restore your foundation with minimal disruption to your property.`,
+      `Every {{businessName}} repair comes with a written, transferable warranty. We back our work completely, and our warranty transfers to future owners — protecting your investment and your home\'s resale value.`,
+    ],
+    processH2: 'Our Foundation Repair Process',
+    processSteps: [
+      { step: 1, heading: 'Free Inspection', body: 'A certified specialist inspects your foundation inside and out, documents all cracking, settling, and water intrusion with photos and measurements.' },
+      { step: 2, heading: 'Written Report & Estimate', body: 'You receive a detailed written report explaining what we found, what\'s causing it, what we recommend, and the exact cost — with no obligation to proceed.' },
+      { step: 3, heading: 'Engineering Review', body: 'For complex repairs, our team reviews the structural engineering requirements and obtains any required permits before work begins.' },
+      { step: 4, heading: 'Expert Repair', body: 'Our certified crew installs the appropriate repair system — piers, anchors, straps, or waterproofing — following manufacturer specs and structural standards.' },
+      { step: 5, heading: 'Warranty & Documentation', body: 'We provide a written transferable warranty and full documentation of all work completed — protecting your investment and your home\'s future resale.' },
+    ],
+    faqH2: 'Frequently Asked Questions About Foundation Repair',
+    faqs: [
+      { question: 'How do I know if I have a foundation problem?', answer: 'Warning signs include cracks in drywall (especially diagonal cracks from door and window corners), doors or windows that stick or won\'t close properly, uneven or sloping floors, gaps between walls and ceilings or floors, visible cracks in the foundation itself, and water in the basement or crawl space. A free inspection will confirm whether these symptoms indicate a foundation problem.' },
+      { question: 'Are foundation cracks always serious?', answer: 'Not all cracks are equal. Hairline cracks in poured concrete are often normal settling and may not require repair. Horizontal cracks, stair-step cracks in block walls, and cracks wider than 1/4 inch are more serious and warrant professional evaluation. Our free inspection will tell you which category your cracks fall into.' },
+      { question: 'How much does foundation repair cost?', answer: 'Foundation repair costs vary widely based on the type and extent of the problem. Crack injection repairs may cost $500–$2,000. Full stabilization with piers can run $5,000–$15,000 or more for serious settlement. We provide a free, detailed estimate after inspection — there are no surprises.' },
+      { question: 'Will foundation repair affect my home\'s resale value?', answer: 'A properly repaired and warranted foundation actually protects and often restores your home\'s value. Buyers fear unresolved foundation issues — but a professional repair with a transferable warranty is a documented asset that can reassure buyers and their lenders.' },
+      { question: 'How long does foundation repair take?', answer: 'Simple crack repairs can be completed in a day. Pier installation for settlement repair typically takes 1–3 days depending on the number of piers required. Basement waterproofing projects usually take 1–3 days as well. We provide a timeline estimate after our inspection.' },
+      { question: 'Do you offer a warranty?', answer: 'Yes. All our structural foundation repairs come with a written warranty. Our warranties are also transferable to future owners of the home — an important selling point that can be documented for buyers and their lenders.' },
+      { question: 'Will the repair be disruptive to my landscaping?', answer: 'Modern pier systems are installed with minimal excavation — typically small holes that are backfilled and restored after installation. We take care to minimize disruption to landscaping, concrete, and other finished surfaces. We discuss the scope of any disturbance before work begins.' },
+      { question: 'Does homeowner\'s insurance cover foundation repair?', answer: 'Standard homeowner\'s insurance typically does not cover foundation repair caused by soil movement, settling, or drainage issues. Coverage may apply if the damage resulted from a sudden covered event (like a burst pipe). We recommend reviewing your policy and can provide documentation for your insurance company.' },
+    ],
+    seoBody: `{{businessName}} is {{city}}'s trusted foundation repair company. We provide professional foundation crack repair, settlement stabilization, helical and push pier installation, basement waterproofing, crawl space encapsulation, bowing wall repair, and drainage correction. Our certified specialists serve homeowners throughout {{city}} and the surrounding region with written transferable warranties and free detailed inspections.`,
+  },
+  seo: {
+    schemaType: 'HomeAndConstructionBusiness',
+    metaDescriptionTemplate:
+      'Foundation repair in {{city}}. {{keyword}}, basement waterproofing, crawl space encapsulation & free inspections. Transferable warranty. Call {{businessName}}.',
+  },
+  calculator: {
+    enabled: true,
+    title: 'Foundation Repair Cost Estimator',
+    tabs: [
+      {
+        id: 'crack-repair',
+        label: 'Crack Repair',
+        resultLabel: 'Estimated Crack Repair Cost',
+        baseMin: 400,
+        baseMax: 1200,
+        fields: [
+          {
+            id: 'type',
+            label: 'Crack type',
+            type: 'select',
+            options: [
+              { label: 'Hairline / minor surface crack', value: 0.5 },
+              { label: 'Moderate crack (1/8–1/4 inch)', value: 1 },
+              { label: 'Wide crack (over 1/4 inch)', value: 1.8 },
+              { label: 'Horizontal / structural crack', value: 3 },
+            ],
+          },
+          {
+            id: 'count',
+            label: 'Number of cracks',
+            type: 'select',
+            options: [
+              { label: '1 crack', value: 1 },
+              { label: '2–3 cracks', value: 1.8 },
+              { label: '4+ cracks', value: 2.8 },
+            ],
+          },
+        ],
+      },
+      {
+        id: 'stabilization',
+        label: 'Settlement / Piers',
+        resultLabel: 'Estimated Stabilization Cost',
+        baseMin: 4000,
+        baseMax: 10000,
+        fields: [
+          {
+            id: 'type',
+            label: 'Foundation type',
+            type: 'select',
+            options: [
+              { label: 'Concrete slab', value: 1 },
+              { label: 'Basement / block wall', value: 1.2 },
+              { label: 'Pier & beam / crawl space', value: 0.9 },
+            ],
+          },
+          {
+            id: 'severity',
+            label: 'Settlement severity',
+            type: 'select',
+            options: [
+              { label: 'Minor (cosmetic cracks only)', value: 0.5 },
+              { label: 'Moderate (sticking doors, visible slope)', value: 1 },
+              { label: 'Severe (significant movement)', value: 2 },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+};
+
 // ─── Registry ─────────────────────────────────────────────────────────────────
 
 export const CATEGORIES: CategoryConfig[] = [
@@ -1233,7 +1812,11 @@ export const CATEGORIES: CategoryConfig[] = [
   locksmithConfig,
   fireDamageConfig,
   moldRemediationConfig,
-  // future: pestControlConfig, treeServiceConfig, ...
+  pestControlConfig,
+  treeServiceConfig,
+  garageDoorConfig,
+  foundationRepairConfig,
+  // future: carpetCleaningConfig, windowConfig, paintingConfig, ...
 ];
 
 export function getCategoryConfig(id: string): CategoryConfig {
