@@ -1731,7 +1731,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   <section aria-labelledby="process-heading">
     <div class="container">
       <h2 id="process-heading">${processH2}</h2>
-      <p class="section-intro">Here's exactly what happens when you call ${data.businessName} for water damage restoration in ${data.city}.</p>
+      <p class="section-intro">Here's exactly what happens when you call ${data.businessName} for ${data.primaryKeyword.toLowerCase()} in ${data.city}.</p>
       <div class="process-steps">
         ${processStepsHTML}
       </div>
@@ -1835,46 +1835,44 @@ export function generateServicePage(
 
   const h1 = content?.hero?.h1 || `${service} in ${data.city}, ${data.state}`;
   const heroSub = content?.hero?.subheadline || `Professional ${service.toLowerCase()} services for homeowners and businesses in ${data.city}. Fast response, certified technicians.`;
-  const trustBadges = content?.hero?.trustBadges || ['IICRC Certified', 'Licensed & Insured', '24/7 Available', 'Free Estimates'];
+  const trustBadges = content?.hero?.trustBadges || data._trustBadges || ['Licensed & Insured', '24/7 Available', 'Free Estimates', 'Upfront Pricing'];
 
   const overviewH2 = content?.overviewSection?.h2 || `What Is ${service} and Why It Matters`;
   const overviewParas = content?.overviewSection?.body || [
-    `${service} is a critical step in protecting your ${data.city} property from long-term damage after a water intrusion event. Whether caused by a burst pipe, appliance failure, roof leak, or flooding, water that is not properly addressed within the first 24 to 48 hours can cause structural deterioration and mold growth that significantly increases repair costs.`,
-    `Professional ${service.toLowerCase()} involves more than just removing visible water. Certified technicians use moisture meters and thermal imaging to locate water that has migrated into walls, under floors, and inside building cavities — areas where trapped moisture causes the most damage. Without detecting and drying these hidden moisture pockets, even thorough surface cleaning will leave your property vulnerable.`,
-    `${data.businessName} brings industrial-grade equipment and certified expertise to every ${service.toLowerCase()} project in ${data.city}. Our technicians follow IICRC S500 standards for water damage restoration, ensuring that your property is dried to measurable targets — not just until it looks or feels dry.`,
+    `${service} is an important service for protecting your ${data.city} property. Whether it's an emergency situation or a planned project, getting professional help quickly can prevent further damage and higher costs down the road.`,
+    `Professional ${service.toLowerCase()} requires specialized equipment, training, and experience. Our certified technicians assess the full scope of the problem and address it completely — not just the visible symptoms.`,
+    `${data.businessName} brings the right expertise and equipment to every ${service.toLowerCase()} project in ${data.city}. We follow industry best practices and keep you informed throughout the entire process.`,
   ];
 
   const processH2 = content?.processSection?.h2 || `Our ${service} Process in ${data.city}`;
   const processIntro = content?.processSection?.intro || `Every ${service.toLowerCase()} project follows a systematic process to ensure thorough results.`;
-  const processSteps = content?.processSection?.steps || [
-    { step: 1, heading: 'Emergency Dispatch', body: `When you call ${data.phone}, our dispatcher immediately routes the nearest available ${data.city} crew to your location.` },
-    { step: 2, heading: 'Site Assessment', body: 'Technicians document the source, category, and scope of water damage using moisture meters and thermal cameras before any work begins.' },
-    { step: 3, heading: 'Water Extraction', body: 'Truck-mounted extractors and portable units remove standing water quickly. Carpet and padding are assessed for salvageability.' },
-    { step: 4, heading: 'Content Manipulation', body: 'Furniture and personal belongings are moved, dried, or packed out as needed to protect your property during drying.' },
-    { step: 5, heading: 'Structural Drying Setup', body: 'Industrial air movers and refrigerant dehumidifiers are positioned and calculated per LGR drying science to create optimal drying conditions.' },
-    { step: 6, heading: 'Daily Monitoring', body: 'We return each day to record moisture readings, adjust equipment placement, and document progress with photos.' },
-    { step: 7, heading: 'Final Inspection', body: 'Once moisture levels reach IICRC targets, equipment is removed and a final walkthrough confirms the structure is dry and ready for restoration.' },
+  const processSteps = content?.processSection?.steps || data._processSteps || [
+    { step: 1, heading: 'Contact & Dispatch', body: `When you call ${data.phone}, our dispatcher immediately routes the nearest available ${data.city} crew to your location.` },
+    { step: 2, heading: 'Assessment', body: 'Our technicians inspect the situation thoroughly, document all findings, and explain exactly what needs to be done before any work begins.' },
+    { step: 3, heading: 'Upfront Estimate', body: 'You receive a clear written estimate with no hidden fees. We never start work without your approval.' },
+    { step: 4, heading: 'Professional Service', body: `We complete the ${service.toLowerCase()} work using quality materials and proven techniques, following all applicable codes and standards.` },
+    { step: 5, heading: 'Final Walkthrough', body: 'We inspect the completed work with you, answer any questions, and ensure you are fully satisfied before we leave.' },
   ];
 
   const benefitsH2 = content?.benefitsSection?.h2 || `Benefits of Professional ${service}`;
   const benefitPoints = content?.benefitsSection?.points || [
-    { heading: 'Prevents Mold Growth', body: `Mold can establish within 24 hours of water intrusion. Professional drying eliminates the moisture mold needs to grow, protecting your ${data.city} property and your family's health.` },
-    { heading: 'Reduces Repair Costs', body: 'Thorough drying prevents wood rot, drywall deterioration, and structural damage — all of which are significantly more expensive to fix than the initial water removal.' },
-    { heading: 'Preserves Property Value', body: 'Evidence of improper water damage remediation can appear during home inspections and reduce your property value. Professional documentation proves the work was done correctly.' },
-    { heading: 'Insurance Compliance', body: 'Insurance policies require that water damage be addressed promptly and professionally. Our documentation and IICRC-certified process satisfies adjuster requirements.' },
-    { heading: 'Faster Recovery', body: 'Industrial equipment dries structures many times faster than consumer-grade fans and dehumidifiers, reducing the time your home or business is disrupted.' },
-    { heading: 'Certified Peace of Mind', body: 'Our IICRC certification means your restoration is completed to recognized industry standards — not guesswork.' },
+    { heading: 'Proper Diagnosis', body: `Professionals identify the root cause of the problem — not just the visible symptoms — preventing the issue from recurring.` },
+    { heading: 'Reduces Total Cost', body: 'Addressing the problem correctly the first time prevents escalating damage and avoids the higher costs of repeat repairs or extensive remediation later.' },
+    { heading: 'Preserves Property Value', body: 'Professional, documented work protects your property value and provides records that matter during home inspections and insurance claims.' },
+    { heading: 'Insurance Compliance', body: 'Professional documentation of the work done supports insurance claims and satisfies adjuster requirements.' },
+    { heading: 'Faster Resolution', body: 'Our team has the right tools and experience to complete the job faster and more thoroughly than DIY approaches.' },
+    { heading: 'Peace of Mind', body: `Our work is backed by a satisfaction guarantee. If something isn't right, we make it right.` },
   ];
 
   const warningsH2 = content?.warningSignsSection?.h2 || `Signs You Need ${service} Right Away`;
-  const warningsIntro = content?.warningSignsSection?.intro || `Do not wait if you notice any of the following signs of water damage in your ${data.city} property.`;
+  const warningsIntro = content?.warningSignsSection?.intro || `Do not wait if you notice any of the following signs in your ${data.city} property.`;
   const warningSigns = content?.warningSignsSection?.signs || [
-    { sign: 'Visible standing water or pooling', body: 'Any amount of standing water inside your property requires immediate professional extraction to prevent further absorption into structural materials.' },
-    { sign: 'Wet or damp walls, floors, or ceilings', body: 'Surface dampness indicates that water has already penetrated building materials and moisture meters are needed to assess the full extent.' },
-    { sign: 'Musty or earthy odor', body: 'A musty smell is an early indicator of mold or bacterial growth, which means moisture is present in areas that may not be visibly wet.' },
-    { sign: 'Bubbling, peeling, or staining on walls', body: 'Paint and wallboard react to moisture by bubbling, discoloring, or separating — signs that water has penetrated beneath the surface.' },
-    { sign: 'Warped or buckling flooring', body: 'Wood and laminate floors absorb water and buckle. This indicates significant moisture that must be addressed before permanent damage sets in.' },
-    { sign: 'Sudden spike in water bill', body: 'An unexplained increase in your water bill may indicate a hidden pipe leak that has been slowly saturating structural materials.' },
+    { sign: 'Visible damage or deterioration', body: 'Any obvious damage should be addressed promptly to prevent it from worsening and becoming more expensive to fix.' },
+    { sign: 'Unusual odors or sounds', body: 'Strange odors or sounds often indicate a problem that is not immediately visible but needs professional attention.' },
+    { sign: 'Rising utility bills', body: 'An unexplained increase in energy or water bills can be a sign of an underlying problem that needs to be diagnosed.' },
+    { sign: 'Recurring issues', body: 'If the same problem keeps coming back, a professional assessment will identify the root cause and provide a lasting fix.' },
+    { sign: 'Property age', body: 'Older properties often have systems and materials that need professional inspection and updating to remain safe and efficient.' },
+    { sign: 'Post-storm or emergency event', body: 'After a major storm, flood, or fire event, a professional inspection helps identify damage that may not be immediately visible.' },
   ];
 
   const locationClusterH2 = content?.locationClusterSection?.h2 || `${service} Near You — Areas We Serve`;
@@ -1890,14 +1888,14 @@ export function generateServicePage(
 
   const faqH2 = content?.faqSection?.h2 || `${service} — Frequently Asked Questions`;
   const faqs = content?.faqSection?.faqs || [
-    { question: `How much does ${service.toLowerCase()} cost in ${data.city}?`, answer: `The cost of ${service.toLowerCase()} depends on the severity of the damage, the square footage affected, and the category of water involved. Minor incidents may cost a few hundred dollars, while larger losses can run into the thousands. We provide free on-site assessments and written estimates before any work begins. Most costs are covered by homeowner's insurance for sudden and accidental water damage.` },
-    { question: `How long does ${service.toLowerCase()} take?`, answer: `The extraction phase is typically completed within a few hours. Structural drying usually takes 3 to 5 days to reach IICRC moisture targets. More severe damage or larger areas may require additional time. We monitor moisture daily and will not remove equipment until the structure is verifiably dry.` },
-    { question: `Can I do ${service.toLowerCase()} myself?`, answer: `While you can remove surface water with a wet/dry vacuum, effective ${service.toLowerCase()} requires calibrated moisture detection equipment and industrial drying systems that are not available to consumers. Without identifying and drying hidden moisture pockets, you risk mold growth and structural deterioration that will cost significantly more to correct than professional restoration.` },
-    { question: `Will my insurance cover ${service.toLowerCase()} in ${data.city}?`, answer: `Most standard homeowner's insurance policies in ${data.state} cover sudden and accidental water damage — including burst pipes, appliance failures, and HVAC leaks. Flood damage from external sources requires separate flood insurance. We provide complete documentation for insurance claims and can communicate directly with your adjuster.` },
-    { question: `Do you use IICRC standards for ${service.toLowerCase()}?`, answer: `Yes. All of our water damage restoration work follows IICRC S500 standards, which define the industry's best practices for water extraction, structural drying, and moisture documentation. Our technicians are IICRC certified and our drying documentation meets insurance adjuster requirements.` },
+    { question: `How much does ${service.toLowerCase()} cost in ${data.city}?`, answer: `The cost of ${service.toLowerCase()} depends on the scope of the work needed. We provide free on-site assessments and written estimates before any work begins — no surprises. Call us for an accurate quote for your specific situation.` },
+    { question: `How long does ${service.toLowerCase()} take?`, answer: `Timelines vary depending on the size and complexity of the job. We will give you a realistic timeline during our initial assessment and keep you updated throughout the project.` },
+    { question: `Can I do ${service.toLowerCase()} myself?`, answer: `Some minor issues can be addressed by homeowners, but most ${service.toLowerCase()} work requires professional tools, training, and experience to be done safely and correctly. Improper work can lead to bigger problems and higher costs — professional service is almost always the better investment.` },
+    { question: `Will my insurance cover ${service.toLowerCase()} in ${data.city}?`, answer: `Coverage depends on your specific policy and the cause of the damage. We recommend contacting your insurance provider. We provide complete documentation to support your claim and can communicate with your adjuster if needed.` },
+    { question: `Are you licensed and insured for ${service.toLowerCase()} in ${data.state}?`, answer: `Yes. ${data.businessName} is fully licensed and insured. All work is performed by qualified professionals following applicable codes and industry standards.` },
   ];
 
-  const crossH2 = content?.crossLinkSection?.h2 || 'Related Restoration Services';
+  const crossH2 = content?.crossLinkSection?.h2 || `Related ${data.primaryKeyword} Services`;
   const crossLinks = content?.crossLinkSection?.links?.length
     ? content.crossLinkSection.links
     : data.services
@@ -2110,19 +2108,19 @@ export function generateLocationPage(
   const content = data.locationContent?.[city];
   const prefix = '../';
 
-  const h1 = content?.hero?.h1 || `Water Damage Restoration in ${city}, ${data.state}`;
-  const heroSub = content?.hero?.subheadline || `${data.businessName} provides fast, professional water damage restoration services in ${city}. We are available 24/7 for emergencies.`;
-  const trustBadges = content?.hero?.trustBadges || ['24/7 Emergency', 'IICRC Certified', 'Free Estimates', 'Insurance Approved'];
+  const h1 = content?.hero?.h1 || `${data.primaryKeyword} in ${city}, ${data.state}`;
+  const heroSub = content?.hero?.subheadline || `${data.businessName} provides fast, professional ${data.primaryKeyword.toLowerCase()} services in ${city}. Call now for a free estimate.`;
+  const trustBadges = content?.hero?.trustBadges || data._trustBadges || ['Licensed & Insured', 'Free Estimates', 'Upfront Pricing', '24/7 Available'];
 
-  const introH2 = content?.localIntroSection?.h2 || `${data.businessName} — Water Damage Experts in ${city}`;
+  const introH2 = content?.localIntroSection?.h2 || `${data.businessName} — ${data.primaryKeyword} Experts in ${city}`;
   const introParas = content?.localIntroSection?.paragraphs || [
-    `When water damage strikes a ${city} property, fast professional response makes the difference between a manageable repair and a major loss. ${data.businessName} serves homeowners and businesses throughout ${city} with rapid-response water damage restoration, structural drying, mold remediation, and full property restoration.`,
-    `Our team is familiar with ${city}'s homes — the construction styles, common water damage causes, and local weather patterns that affect how water damage occurs and progresses. This local knowledge informs how we approach every project, from the initial assessment through the final walkthrough.`,
-    `${data.businessName} works with all major insurance providers and can guide you through the claims process from start to finish. We document everything — moisture readings, equipment logs, photos, and reports — to give your adjuster exactly what they need.`,
+    `When you need ${data.primaryKeyword.toLowerCase()} in ${city}, fast professional response makes the difference. ${data.businessName} serves homeowners and businesses throughout ${city} with expert service, licensed technicians, and upfront pricing.`,
+    `Our team knows ${city} — the local properties, common issues, and what it takes to get the job done right. This local expertise means faster service and better results for your specific situation.`,
+    `${data.businessName} works with all major insurance providers when applicable and can guide you through the process from start to finish. We document everything to support your claim and keep you informed every step of the way.`,
   ];
 
   const servCityH2 = content?.servicesInCitySection?.h2 || `Our Services in ${city}`;
-  const servCityIntro = content?.servicesInCitySection?.intro || `We provide a full range of water damage and restoration services to ${city} properties.`;
+  const servCityIntro = content?.servicesInCitySection?.intro || `We provide a full range of professional ${data.primaryKeyword.toLowerCase()} services to homeowners and businesses in ${city}.`;
   const serviceCards = content?.servicesInCitySection?.serviceCards?.length
     ? content.servicesInCitySection.serviceCards
     : data.services.map(s => ({
@@ -2134,27 +2132,27 @@ export function generateLocationPage(
 
   const whyLocalH2 = content?.whyLocalSection?.h2 || `Why ${city} Residents Trust ${data.businessName}`;
   const whyLocalPoints = content?.whyLocalSection?.points || [
-    { heading: `Local ${city} Knowledge`, body: `We understand the specific water damage challenges that affect ${city} properties — from aging infrastructure to local weather patterns.` },
-    { heading: 'Rapid Response Time', body: `Our crews are positioned to reach ${city} properties quickly, minimizing the time water has to cause additional damage.` },
-    { heading: 'Community Reputation', body: `${data.businessName} has earned the trust of ${city} homeowners through honest assessments and professional results.` },
-    { heading: 'Full-Service Restoration', body: 'We handle every phase of restoration in-house, from emergency extraction through final repairs — no subcontracting.' },
+    { heading: `Local ${city} Knowledge`, body: `We understand the specific needs of ${city} properties and deliver service that's tailored to local conditions and requirements.` },
+    { heading: 'Rapid Response Time', body: `Our crews are positioned to reach ${city} properties quickly — because fast service often means better outcomes.` },
+    { heading: 'Community Reputation', body: `${data.businessName} has earned the trust of ${city} homeowners through honest assessments, upfront pricing, and professional results.` },
+    { heading: 'Complete Service', body: `We handle every phase of the job in-house — no subcontracting — so you deal with one team from start to finish.` },
   ];
 
   const areasH2 = content?.localAreaSection?.h2 || `Areas and Neighborhoods We Serve in ${city}`;
   const areasBody = content?.localAreaSection?.body || `${data.businessName} serves all neighborhoods and districts within ${city}. Our response coverage includes the greater ${city} area, surrounding communities, and neighboring ZIP codes. If you are unsure whether we cover your location, call us at ${data.phone} — we will give you an honest answer.`;
 
-  const faqH2 = content?.faqSection?.h2 || `Water Damage Restoration in ${city} — Common Questions`;
+  const faqH2 = content?.faqSection?.h2 || `${data.primaryKeyword} in ${city} — Common Questions`;
   const faqs = content?.faqSection?.faqs || [
-    { question: `How fast can you respond to water damage in ${city}?`, answer: `Our ${city} response team is on call 24 hours a day. We typically arrive within 60 minutes of your call, though response times may vary depending on your specific location and current demand. We will give you an honest ETA when you call.` },
-    { question: `What types of water damage do you handle in ${city}?`, answer: `We handle all categories of water damage in ${city}: clean water from burst pipes or appliances (Category 1), gray water from dishwashers or washing machines (Category 2), and black water from sewage backups or flooding (Category 3). Each category requires different protocols, and our technicians are trained for all of them.` },
-    { question: `Does ${data.businessName} work with insurance in ${city}?`, answer: `Yes. We work with all major insurance carriers serving ${city} and ${data.state}. We can provide your adjuster with moisture documentation, equipment logs, and photo records that support your claim. We can also communicate directly with your insurance company if you prefer.` },
-    { question: `How long will water damage restoration take in my ${city} home?`, answer: `Initial water extraction is completed within hours. Structural drying typically takes 3 to 5 days, monitored daily with calibrated moisture meters. Repair and restoration work varies depending on the extent of damage, but most residential losses in ${city} are completed within one to two weeks.` },
-    { question: `Can I stay in my ${city} home during restoration?`, answer: `In most cases, yes. We set up containment and work efficiently to minimize disruption. If there is significant structural damage or sewage contamination, we may recommend temporary relocation, but we will discuss this openly with you before making any recommendation.` },
-    { question: `Do you provide free estimates for ${city} properties?`, answer: `Yes. We provide free on-site assessments for water damage in ${city}. A technician will inspect the affected areas, document the damage, and provide a written estimate before any work begins. There is no obligation.` },
+    { question: `How fast can you respond in ${city}?`, answer: `Our ${city} team is available around the clock. Response times depend on your location and current demand — we will give you an honest ETA when you call.` },
+    { question: `Do you serve all of ${city}?`, answer: `Yes. We serve all areas within ${city} as well as surrounding communities. If you are unsure whether we cover your specific location, just call us and we will confirm immediately.` },
+    { question: `Does ${data.businessName} work with insurance companies?`, answer: `Yes. We work with all major insurance carriers. We provide complete documentation to support your claim and can communicate directly with your adjuster if you prefer.` },
+    { question: `How long will the job take in my ${city} property?`, answer: `Timelines depend on the scope of the work. We provide a realistic estimate during our initial assessment and keep you updated throughout the process.` },
+    { question: `Do you provide free estimates in ${city}?`, answer: `Yes. We offer free on-site assessments with no obligation. A technician will inspect the situation and provide a written estimate before any work begins.` },
+    { question: `Are you licensed and insured in ${data.state}?`, answer: `Yes. ${data.businessName} is fully licensed and insured in ${data.state}. All work is performed by qualified professionals following applicable codes and industry standards.` },
   ];
 
-  const ctaH2 = content?.finalCTA?.h2 || `Need Water Damage Help in ${city}? Contact Us Now`;
-  const ctaBody = content?.finalCTA?.body || `${data.businessName} is ready to respond to water damage emergencies in ${city} around the clock. Do not wait — call now or submit a request and we will follow up promptly.`;
+  const ctaH2 = content?.finalCTA?.h2 || `Need ${data.primaryKeyword} in ${city}? Contact Us Now`;
+  const ctaBody = content?.finalCTA?.body || `${data.businessName} is ready to help ${city} homeowners and businesses with professional ${data.primaryKeyword.toLowerCase()}. Call now or submit a request and we will follow up promptly.`;
 
   // Build HTML sections
   const introParagraphsHTML = introParas.map(p => `<p>${p}</p>`).join('');
@@ -2292,8 +2290,8 @@ export function generateLocationPage(
   ${generateFooter(data, 'locations/')}`;
 
   return htmlShell({
-    metaTitle: content?.metaTitle || `Water Damage Restoration in ${city} | ${data.businessName}`,
-    metaDescription: content?.metaDescription || `Professional water damage restoration in ${city}, ${data.state}. ${data.businessName} — 24/7 emergency response, certified technicians. Call ${data.phone}.`,
+    metaTitle: content?.metaTitle || `${data.primaryKeyword} in ${city} | ${data.businessName}`,
+    metaDescription: content?.metaDescription || `Professional ${data.primaryKeyword.toLowerCase()} in ${city}, ${data.state}. ${data.businessName} — licensed & insured, free estimates. Call ${data.phone}.`,
     canonicalUrl,
     theme: resolveTheme(data),
     googleAnalyticsId: data.googleAnalyticsId || undefined,
@@ -2319,14 +2317,14 @@ export function generateAboutPage(data: WDBusinessData, domain: string): string 
   const yearsText = data.yearsInBusiness ? `With ${data.yearsInBusiness} years of experience` : 'With years of experience';
 
   const aboutText = data.aboutContent ||
-    `${data.businessName} was founded to give homeowners and businesses in ${data.city} a restoration company they could genuinely trust during one of the most stressful events they may ever face. Water damage is disruptive, expensive, and time-sensitive — and too many property owners have been let down by contractors who cut corners or disappeared after the initial extraction.
+    `${data.businessName} was founded to give homeowners and businesses in ${data.city} a ${data.primaryKeyword.toLowerCase()} company they could genuinely trust. Too many property owners have been let down by contractors who cut corners, gave vague estimates, or disappeared after collecting payment.
 
-We built this company differently. Every technician we hire is IICRC-certified before they set foot on a customer's property. Every project is documented with moisture readings, equipment logs, and photos so you always know exactly what was done and why. And we stay on the job until the structure is verifiably dry — not just until it looks dry.
+We built this company differently. Every technician we hire is properly licensed and trained before they set foot on a customer's property. Every project is documented thoroughly so you always know exactly what was done and why.
 
-${data.businessName} serves all of ${data.city} and surrounding communities. We handle emergency response, structural drying, mold remediation, sewage cleanup, and complete property restoration — everything from the first call to the final walkthrough.`;
+${data.businessName} serves all of ${data.city} and surrounding communities. We handle everything from first call to final walkthrough — delivering professional results and honest service every time.`;
 
   const teamText = data.teamDescription ||
-    `Our team is made up of career restoration professionals, not day laborers or subcontractors. Every person on our crew has been trained in water damage science, moisture measurement, and IICRC restoration standards. When you call ${data.businessName}, you get people who know what they are doing and take your property seriously.`;
+    `Our team is made up of licensed professionals, not day laborers or subcontractors. Every person on our crew has been trained to the highest standards in their field. When you call ${data.businessName}, you get people who know what they are doing and take your property seriously.`;
 
   const body = `
   ${generateNav(data)}
@@ -2340,7 +2338,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
   <section class="page-hero" role="banner">
     <div class="container">
       <h1>About ${data.businessName}</h1>
-      <p>A water damage restoration company built on certified expertise, honest assessments, and thorough results.</p>
+      <p>${data.primaryKeyword} — built on certified expertise, honest assessments, and thorough results.</p>
     </div>
   </section>
 
@@ -2374,8 +2372,8 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
         <div class="why-us-item">
           <span class="why-us-icon">🎓</span>
           <div>
-            <h3>IICRC Certified Technicians</h3>
-            <p>All field technicians hold current IICRC certifications in Water Damage Restoration (WRT) and Applied Structural Drying (ASD).</p>
+            <h3>Licensed &amp; Trained Technicians</h3>
+            <p>All field technicians hold proper licenses and certifications for ${data.primaryKeyword.toLowerCase()} work in ${data.state}.</p>
           </div>
         </div>
         <div class="why-us-item">
@@ -2389,7 +2387,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
           <span class="why-us-icon">🏆</span>
           <div>
             <h3>${yearsText}</h3>
-            <p>Hundreds of ${data.city} properties restored. Our experience means fewer surprises and better outcomes for every customer.</p>
+            <p>Hundreds of ${data.city} jobs completed. Our experience means fewer surprises and better outcomes for every customer.</p>
           </div>
         </div>
         <div class="why-us-item">
@@ -2406,23 +2404,23 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
   <section class="content-section">
     <div class="container">
       <h2>Our Certifications &amp; Standards</h2>
-      <p style="color:#475569;max-width:760px;">Water damage restoration is a science. Drying a structure correctly requires understanding moisture movement, psychrometrics, and building materials — not just pointing fans at wet floors. Our certifications ensure that every job is approached with the technical rigor it requires.</p>
+      <p style="color:#475569;max-width:760px;">${data.primaryKeyword} requires specialized knowledge, proper licensing, and adherence to industry standards. Our certifications and training ensure that every job is approached with the technical rigor and professionalism it requires.</p>
       <div class="benefits-grid" style="margin-top:1.5rem;">
         <div class="benefit-item">
-          <h3>IICRC S500 — Water Damage</h3>
-          <p>The industry standard for water damage restoration. Defines categories and classes of water damage, extraction protocols, and drying science.</p>
+          <h3>State Licensed &amp; Insured</h3>
+          <p>Fully licensed to operate in ${data.state} with comprehensive liability and workers' compensation insurance on every project.${data.licenseNumber ? ` License #${data.licenseNumber}.` : ''}</p>
         </div>
         <div class="benefit-item">
-          <h3>IICRC S520 — Mold Remediation</h3>
-          <p>Governs mold assessment and remediation procedures to protect occupant health and ensure proper containment.</p>
+          <h3>Industry Certified</h3>
+          <p>Our technicians hold relevant industry certifications and complete ongoing training to stay current with best practices and code requirements.</p>
         </div>
         <div class="benefit-item">
-          <h3>IICRC S540 — Trauma &amp; Crime Scene</h3>
-          <p>Standards for biohazard and sewage cleanup — relevant when water damage involves Category 3 black water contamination.</p>
+          <h3>Code Compliant</h3>
+          <p>All work follows applicable local, state, and national codes and standards. Permits are pulled when required, providing proper documentation for your records.</p>
         </div>
         <div class="benefit-item">
-          <h3>Applied Structural Drying (ASD)</h3>
-          <p>Advanced certification in psychrometric calculations and equipment placement science for efficient structural drying.</p>
+          <h3>Background Checked</h3>
+          <p>Every technician is background-checked before joining our team. You can trust the professionals we send to your home or business.</p>
         </div>
       </div>
     </div>
@@ -2431,7 +2429,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
   <section class="content-section" style="background:#f8fafc;">
     <div class="container">
       <h2>Service Area: ${data.city} and Surrounding Communities</h2>
-      <p style="color:#475569;">We respond to water damage emergencies throughout ${data.city}, ${data.state} and the surrounding region. Our crews are positioned for rapid deployment across our full service area.</p>
+      <p style="color:#475569;">We provide ${data.primaryKeyword.toLowerCase()} services throughout ${data.city}, ${data.state} and the surrounding region. Our crews are positioned for fast response across our full service area.</p>
       <div class="locations-grid" style="margin-top:1.5rem;">
         ${data.serviceAreas.map(l => `<a href="locations/${slugify(l)}.html" class="location-link">${l}</a>`).join('')}
       </div>
@@ -2452,8 +2450,8 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
   ${generateFooter(data)}`;
 
   return htmlShell({
-    metaTitle: `About ${data.businessName} | Water Damage Restoration in ${data.city}`,
-    metaDescription: `Learn about ${data.businessName} — IICRC-certified water damage restoration in ${data.city}, ${data.state}. ${yearsText} serving homeowners and businesses.`,
+    metaTitle: `About ${data.businessName} | ${data.primaryKeyword} in ${data.city}`,
+    metaDescription: `Learn about ${data.businessName} — licensed ${data.primaryKeyword.toLowerCase()} in ${data.city}, ${data.state}. ${yearsText} serving homeowners and businesses.`,
     canonicalUrl,
     theme,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
@@ -2489,14 +2487,14 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
   <section class="page-hero" role="banner">
     <div class="container">
       <h1>Contact ${data.businessName}</h1>
-      <p>For water damage emergencies, call us immediately — we are available 24/7. For non-urgent inquiries, use the form below.</p>
+      <p>For emergencies, call us immediately — we are available 24/7. For non-urgent inquiries, use the form below.</p>
     </div>
   </section>
 
   <!-- Emergency Banner -->
   <div style="background:#dc2626;color:#fff;padding:1.25rem 0;text-align:center;">
     <div class="container">
-      <strong>🚨 Water Damage Emergency?</strong> Don't wait — call us now:
+      <strong>🚨 ${data._emergencyBadge || data.primaryKeyword + ' Emergency'}?</strong> Don't wait — call us now:
       <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" style="color:#fff;font-size:1.2rem;font-weight:800;margin-left:.75rem;">${data.phone}</a>
     </div>
   </div>
