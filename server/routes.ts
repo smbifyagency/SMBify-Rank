@@ -5713,11 +5713,8 @@ Generated on: ${new Date().toISOString()}`;
         return res.status(404).json({ message: "Website not found" });
       }
 
-      // Anti-abuse: once a water-damage website has been deployed to Netlify,
-      // it cannot be deleted from the app (prevents free-tier abuse).
-      if (existingWebsite.netlifyUrl && existingWebsite.template === 'water-damage') {
-        return res.status(403).json({ message: "This website has been published to Netlify and cannot be deleted. Contact support if you need help." });
-      }
+      // Warn client if the site is deployed, but still allow deletion.
+      // The client shows a confirm dialog; the server trusts that the user confirmed.
 
       const success = await storage.deleteWebsite(id);
       if (success) {

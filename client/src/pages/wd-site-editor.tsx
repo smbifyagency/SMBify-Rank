@@ -789,7 +789,7 @@ export default function WDSiteEditor() {
               ✓ AI Ready
             </span>
           )}
-          <Button variant="outline" size="sm" onClick={regenerateFiles} disabled={isRegenerating} className="border-gray-700 text-gray-300 hover:text-white">
+          <Button variant="outline" size="sm" onClick={regenerateFiles} disabled={isRegenerating} className="border-amber-600 bg-amber-600/10 text-amber-400 hover:bg-amber-600/20 hover:text-amber-300 font-medium">
             {isRegenerating ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <RefreshCw className="w-4 h-4 mr-1" />}
             Regenerate
           </Button>
@@ -799,7 +799,7 @@ export default function WDSiteEditor() {
           {autoSaveStatus === "saved" && (
             <span className="text-xs text-green-500 whitespace-nowrap">✓ Saved</span>
           )}
-          <Button variant="outline" size="sm" onClick={saveChanges} disabled={isSaving} className="border-gray-700 text-gray-300 hover:text-white">
+          <Button variant="outline" size="sm" onClick={saveChanges} disabled={isSaving} className="border-blue-600 bg-blue-600/10 text-blue-400 hover:bg-blue-600/20 hover:text-blue-300 font-medium">
             {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Save className="w-4 h-4 mr-1" />}
             Save
           </Button>
@@ -810,7 +810,7 @@ export default function WDSiteEditor() {
               </Button>
             </a>
           )}
-          <Button size="sm" onClick={deployToNetlify} disabled={isDeploying} className="bg-blue-600 hover:bg-blue-700">
+          <Button size="sm" onClick={deployToNetlify} disabled={isDeploying} className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold shadow-md">
             {isDeploying ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Rocket className="w-4 h-4 mr-1" />}
             {isDeploying ? "Deploying..." : deployedUrl ? "Update to Netlify" : "Publish to Netlify"}
           </Button>
@@ -1039,7 +1039,7 @@ export default function WDSiteEditor() {
             <TabsContent value="content" className="p-4 space-y-5 mt-0">
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-sm text-gray-300">Page Content</h3>
-                <Button variant="outline" size="sm" onClick={regenerateFiles} disabled={isRegenerating} className="border-gray-700 text-xs text-gray-400">
+                <Button variant="outline" size="sm" onClick={regenerateFiles} disabled={isRegenerating} className="border-amber-600 bg-amber-600/10 text-amber-400 hover:bg-amber-600/20 text-xs font-medium">
                   {isRegenerating ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <RefreshCw className="w-3 h-3 mr-1" />}
                   Re-generate
                 </Button>
@@ -1554,7 +1554,7 @@ export default function WDSiteEditor() {
               size="sm"
               onClick={() => setShowVisualEditor(true)}
               disabled={Object.keys(generatedFiles).length === 0}
-              className="ml-auto border-[#AADD00]/40 text-[#AADD00] hover:bg-[#AADD00]/10 text-xs h-7 px-2"
+              className="ml-auto border-[#AADD00]/60 bg-[#AADD00]/10 text-[#AADD00] hover:bg-[#AADD00]/20 font-medium text-xs h-7 px-2"
             >
               <Edit3 className="w-3 h-3 mr-1" /> Visual Editor
             </Button>
