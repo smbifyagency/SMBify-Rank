@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft, Save, Rocket, Image as ImageIcon, RefreshCw,
   Loader2, ExternalLink, CheckCircle2, ChevronDown, ChevronUp,
-  Globe, Phone, MapPin, FileText, Layers, Edit3
+  Globe, Phone, MapPin, FileText, Layers, Edit3, Sparkles, Wand2
 } from "lucide-react";
 import { generateLocalServiceWebsite } from "../lib/local-service-engine";
 import { getCategoryConfig } from "../lib/local-service-categories";
@@ -161,6 +161,10 @@ function siteDataToWDData(data: WDSiteData): Record<string, any> {
     serviceContent: data.serviceContent,
     locationContent: data.locationContent,
     galleryImages: data.galleryImages,
+    _aiIntroParas: (data as any)._aiIntroParas,
+    _aiFaqs: (data as any)._aiFaqs,
+    _aiSeoBody: (data as any)._aiSeoBody,
+    _aiProcessSteps: (data as any)._aiProcessSteps,
   } as any;
 }
 
@@ -185,6 +189,7 @@ export default function WDSiteEditor() {
   const [isDeploying, setIsDeploying] = useState(false);
   const [isUnpublishing, setIsUnpublishing] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [activeTab, setActiveTab] = useState("business");
   const [previewPage, setPreviewPage] = useState("index.html");
   const [generatedFiles, setGeneratedFiles] = useState<Record<string, string>>({});
@@ -302,6 +307,10 @@ export default function WDSiteEditor() {
         logoUrl: bd.logoUrl,
         faviconUrl: bd.faviconUrl,
         customHeadCode: bd.customHeadCode || "",
+        _aiIntroParas: bd._aiIntroParas,
+        _aiFaqs: bd._aiFaqs,
+        _aiSeoBody: bd._aiSeoBody,
+        _aiProcessSteps: bd._aiProcessSteps,
         netlifyUrl: data.netlifyUrl,
         deploymentStatus: data.netlifyDeploymentStatus,
       } as any;
@@ -403,6 +412,46 @@ export default function WDSiteEditor() {
       toast({ title: "Error", description: String(err), variant: "destructive" });
     } finally {
       setIsRegenerating(false);
+    }
+  }
+
+  // ── AI Content Generation ─────────────────────────────────────────────
+
+  async function generateAIContent() {
+    if (!websiteId || !siteData) return;
+    setIsGeneratingAI(true);
+    try {
+      const res = await fetch(`/api/websites/${websiteId}/generate-local-ai`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        if (res.status === 402) {
+          toast({ title: "No AI API key", description: "Add an OpenAI or Gemini API key in Settings first.", variant: "destructive" });
+        } else {
+          throw new Error(errData.error || `Server error ${res.status}`);
+        }
+        return;
+      }
+      const data = await res.json();
+      const content = data.content || {};
+      // Merge AI fields into siteData and rebuild preview
+      const next = {
+        ...siteData,
+        _aiIntroParas: content.introParas,
+        _aiFaqs: content.faqs,
+        _aiSeoBody: content.seoBody,
+        _aiProcessSteps: content.processSteps,
+      } as any;
+      setSiteData(next);
+      rebuildPreview(next);
+      toast({ title: "AI content generated!", description: "Preview updated with unique content." });
+    } catch (err) {
+      toast({ title: "Generation failed", description: String(err), variant: "destructive" });
+    } finally {
+      setIsGeneratingAI(false);
     }
   }
 
@@ -890,6 +939,9 @@ export default function WDSiteEditor() {
               <TabsTrigger value="content" className="flex-1 rounded-none text-xs py-3 data-[state=active]:bg-gray-800">
                 <FileText className="w-3 h-3 mr-1" />Content
               </TabsTrigger>
+              <TabsTrigger value="ai" className="flex-1 rounded-none text-xs py-3 data-[state=active]:bg-gray-800">
+                <Sparkles className="w-3 h-3 mr-1" />AI
+              </TabsTrigger>
               <TabsTrigger value="images" className="flex-1 rounded-none text-xs py-3 data-[state=active]:bg-gray-800">
                 <ImageIcon className="w-3 h-3 mr-1" />Images
               </TabsTrigger>
@@ -1194,11 +1246,109 @@ export default function WDSiteEditor() {
                 </ContentSection>
               )}
 
-              {!siteData.homepageContent && (
+              {/* Local-service AI content summary */}
+              {!siteData.homepageContent && ((siteData as any)._aiIntroParas || (siteData as any)._aiFaqs || (siteData as any)._aiSeoBody || (siteData as any)._aiProcessSteps) && (
+                <div className="rounded-lg border border-green-800 bg-green-950/40 p-4 space-y-2">
+                  <p className="text-xs font-semibold text-green-400 flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> AI content generated
+                  </p>
+                  {(siteData as any)._aiIntroParas && (
+                    <div className="text-xs text-gray-400 space-y-1">
+                      <p className="text-gray-500 font-medium">Intro paragraphs:</p>
+                      {((siteData as any)._aiIntroParas as string[]).map((p: string, i: number) => (
+                        <p key={i} className="line-clamp-2 text-gray-400">{p}</p>
+                      ))}
+                    </div>
+                  )}
+                  {(siteData as any)._aiFaqs && (
+                    <div className="text-xs text-gray-400 space-y-1 border-t border-gray-700 pt-2">
+                      <p className="text-gray-500 font-medium">FAQs ({((siteData as any)._aiFaqs as any[]).length}):</p>
+                      {((siteData as any)._aiFaqs as any[]).slice(0, 3).map((faq: any, i: number) => (
+                        <p key={i} className="truncate">Q: {faq.question}</p>
+                      ))}
+                      {((siteData as any)._aiFaqs as any[]).length > 3 && (
+                        <p className="text-gray-600">+ {((siteData as any)._aiFaqs as any[]).length - 3} more</p>
+                      )}
+                    </div>
+                  )}
+                  <p className="text-xs text-gray-600 pt-1">Go to the <button onClick={() => setActiveTab("ai")} className="text-[#AADD00] underline">AI tab</button> to regenerate.</p>
+                </div>
+              )}
+
+              {!siteData.homepageContent && !(siteData as any)._aiIntroParas && (
                 <div className="rounded-lg border border-dashed border-gray-700 p-6 text-center">
-                  <RefreshCw className="w-8 h-8 text-gray-600 mx-auto mb-2" />
+                  <Sparkles className="w-8 h-8 text-gray-600 mx-auto mb-2" />
                   <p className="text-sm text-gray-500">No AI content generated yet.</p>
-                  <p className="text-xs text-gray-600 mt-1">Click "Re-generate" to create AI content for all pages.</p>
+                  <p className="text-xs text-gray-600 mt-1">Go to the <button onClick={() => setActiveTab("ai")} className="text-[#AADD00] underline">AI tab</button> to generate unique content.</p>
+                </div>
+              )}
+            </TabsContent>
+
+            {/* ── AI Content Tab ──────────────────────────────────────── */}
+            <TabsContent value="ai" className="p-4 space-y-4 mt-0">
+              <div className="space-y-2">
+                <h3 className="font-semibold text-sm text-gray-300 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#AADD00]" />
+                  AI Content Generator
+                </h3>
+                <p className="text-xs text-gray-500">
+                  Generate unique, SEO-optimized content for your website — intro paragraphs, FAQs, process steps, and an SEO body. Requires an AI API key in Settings.
+                </p>
+              </div>
+
+              {/* Status badges */}
+              {((siteData as any)._aiIntroParas || (siteData as any)._aiFaqs || (siteData as any)._aiSeoBody || (siteData as any)._aiProcessSteps) && (
+                <div className="rounded-lg border border-green-800 bg-green-950/40 p-3 space-y-1.5">
+                  <p className="text-xs font-semibold text-green-400 mb-2">Generated content active:</p>
+                  {(siteData as any)._aiIntroParas && (
+                    <div className="flex items-center gap-2 text-xs text-green-300">
+                      <CheckCircle2 className="w-3 h-3" /> Intro paragraphs ({((siteData as any)._aiIntroParas as string[]).length})
+                    </div>
+                  )}
+                  {(siteData as any)._aiProcessSteps && (
+                    <div className="flex items-center gap-2 text-xs text-green-300">
+                      <CheckCircle2 className="w-3 h-3" /> Process steps ({((siteData as any)._aiProcessSteps as any[]).length})
+                    </div>
+                  )}
+                  {(siteData as any)._aiFaqs && (
+                    <div className="flex items-center gap-2 text-xs text-green-300">
+                      <CheckCircle2 className="w-3 h-3" /> FAQs ({((siteData as any)._aiFaqs as any[]).length})
+                    </div>
+                  )}
+                  {(siteData as any)._aiSeoBody && (
+                    <div className="flex items-center gap-2 text-xs text-green-300">
+                      <CheckCircle2 className="w-3 h-3" /> SEO body text
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Generate button */}
+              <Button
+                onClick={generateAIContent}
+                disabled={isGeneratingAI || apiStatus === "none"}
+                className="w-full bg-[#AADD00] hover:bg-[#bef000] text-black font-bold"
+              >
+                {isGeneratingAI ? (
+                  <><Loader2 className="w-4 h-4 animate-spin mr-2" />Generating with AI...</>
+                ) : (siteData as any)._aiIntroParas ? (
+                  <><Wand2 className="w-4 h-4 mr-2" />Regenerate AI Content</>
+                ) : (
+                  <><Sparkles className="w-4 h-4 mr-2" />Generate Content with AI</>
+                )}
+              </Button>
+
+              {apiStatus === "none" && (
+                <div className="rounded-lg border border-yellow-800 bg-yellow-950/40 p-3 text-xs text-yellow-400">
+                  No AI API key configured. Go to <strong>Settings → API Keys</strong> to add your OpenAI or Gemini key.
+                </div>
+              )}
+
+              {!(siteData as any)._aiIntroParas && apiStatus !== "none" && (
+                <div className="rounded-lg border border-dashed border-gray-700 p-5 text-center">
+                  <Sparkles className="w-8 h-8 text-gray-600 mx-auto mb-2" />
+                  <p className="text-sm text-gray-500">No AI content yet.</p>
+                  <p className="text-xs text-gray-600 mt-1">Click the button above to generate unique content for this business.</p>
                 </div>
               )}
             </TabsContent>

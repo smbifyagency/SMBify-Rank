@@ -29,6 +29,7 @@ import { encrypt, decrypt } from './crypto.js';
 import { netlifyService } from "./services/netlify.js";
 import { deployToNetlify, validateNetlifyToken } from "./services/netlify-deployment.js";
 import { generateWaterDamageWebsite } from "../client/src/lib/water-damage-generator.js";
+import { getCategoryConfig, generateLocalServiceWebsite } from "../client/src/lib/local-service-engine.js";
 import {
   MASTER_SYSTEM_PROMPT,
   buildHomePagePrompt,
@@ -6414,6 +6415,49 @@ Generated on: ${new Date().toISOString()}`;
     }
   });
 
+  // ── Generate AI content for a local service site ────────────────────────────
+  // Called from the editor BEFORE deploy. Generates unique copy and saves it
+  // to businessData so rebuildPreview() picks it up immediately.
+  app.post("/api/websites/:id/generate-local-ai", isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user.id;
+
+      const website = await storage.getWebsite(id);
+      if (!website || website.userId !== userId) {
+        return res.status(404).json({ error: "Website not found" });
+      }
+
+      const bd = (website.businessData || {}) as any;
+      const categoryId = bd.categoryId || website.template || 'water-damage';
+      const catConfig = getCategoryConfig(categoryId);
+
+      const aiContent = await generateLocalServiceAIContent(
+        bd, userId, catConfig.name, catConfig.defaultPrimaryKeyword
+      );
+
+      if (!aiContent) {
+        return res.status(402).json({ error: "No AI API key configured. Go to Settings → API Keys to add OpenAI or Gemini." });
+      }
+
+      // Save AI content fields into businessData
+      const updatedBd = {
+        ...bd,
+        _aiIntroParas:   aiContent.introParas   ?? bd._aiIntroParas,
+        _aiFaqs:         aiContent.faqs         ?? bd._aiFaqs,
+        _aiSeoBody:      aiContent.seoBody       ?? bd._aiSeoBody,
+        _aiProcessSteps: aiContent.processSteps  ?? bd._aiProcessSteps,
+      };
+
+      await storage.updateWebsite(id, { businessData: updatedBd });
+
+      return res.json({ success: true, content: aiContent });
+    } catch (err: any) {
+      console.error("generate-local-ai error:", err);
+      return res.status(500).json({ error: err.message || "AI generation failed" });
+    }
+  });
+
   // ── WD Website Deploy (water-damage template specific) ───────────────────────
   // Bypasses the old generic generator; uses generateWaterDamageWebsite directly.
   // Does NOT poll for deploy completion — returns URL immediately after ZIP upload
@@ -6463,7 +6507,6 @@ Generated on: ${new Date().toISOString()}`;
 
       // Generate AI-written unique content and inject into bd before template generation
       try {
-        const { getCategoryConfig } = await import('../client/src/lib/local-service-engine.js');
         const catConfig = getCategoryConfig(categoryId);
         const aiContent = await generateLocalServiceAIContent(
           bd, userId, catConfig.name, catConfig.defaultPrimaryKeyword
@@ -6478,7 +6521,6 @@ Generated on: ${new Date().toISOString()}`;
         console.error('AI content injection skipped:', aiErr);
       }
 
-      const { generateLocalServiceWebsite } = await import('../client/src/lib/local-service-engine.js');
       const files = generateLocalServiceWebsite(categoryId, bd, domain);
 
       // Apply any visual editor overrides saved in customFiles
