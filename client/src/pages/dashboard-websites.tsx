@@ -19,8 +19,16 @@ export default function DashboardWebsites() {
 
     const handleCreateWebsite = () => setLocation("/dashboard/new-website");
 
-    const handleDelete = async (id: string, name: string) => {
-        if (!confirm(`Delete "${name}"? This cannot be undone.`)) return;
+    const handleDelete = async (id: string, name: string, isPublished: boolean) => {
+        if (isPublished) {
+            toast({
+                title: "Cannot delete published site",
+                description: "This website is live on Netlify. Unpublish it first or contact support to remove it.",
+                variant: "destructive",
+            });
+            return;
+        }
+        if (!confirm(`Delete "${name}"?\n\nThis site has not been published yet. Once deleted it cannot be recovered.`)) return;
         setDeletingId(id);
         try {
             const res = await fetch(`/api/websites/${id}`, { method: "DELETE" });
@@ -144,9 +152,10 @@ export default function DashboardWebsites() {
                                                 </button>
                                             </Link>
                                             <button
-                                                onClick={() => handleDelete(String(site.id), businessData?.businessName || site.title || "Untitled")}
+                                                onClick={() => handleDelete(String(site.id), businessData?.businessName || site.title || "Untitled", !!isPublished)}
                                                 disabled={deletingId === String(site.id)}
-                                                className="flex items-center justify-center gap-1 text-xs py-1.5 px-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-all disabled:opacity-50"
+                                                title={isPublished ? "Cannot delete a published site" : "Delete site"}
+                                                className={`flex items-center justify-center gap-1 text-xs py-1.5 px-3 rounded-lg transition-all disabled:opacity-50 ${isPublished ? "bg-gray-500/10 text-gray-600 cursor-not-allowed" : "bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300"}`}
                                             >
                                                 {deletingId === String(site.id) ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
                                             </button>

@@ -5713,8 +5713,10 @@ Generated on: ${new Date().toISOString()}`;
         return res.status(404).json({ message: "Website not found" });
       }
 
-      // Warn client if the site is deployed, but still allow deletion.
-      // The client shows a confirm dialog; the server trusts that the user confirmed.
+      // Block deletion of published sites — they are live on Netlify
+      if (existingWebsite.netlifyUrl && existingWebsite.netlifyUrl !== "pending") {
+        return res.status(403).json({ message: "This website is published and cannot be deleted. Unpublish it first or contact support." });
+      }
 
       const success = await storage.deleteWebsite(id);
       if (success) {
