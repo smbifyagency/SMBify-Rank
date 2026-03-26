@@ -101,6 +101,17 @@ export interface WDBusinessData {
   serviceContent?: Record<string, WDServiceContent>;
   locationContent?: Record<string, WDLocationContent>;
   faqContent?: WDFAQPageContent;
+  // Multi-category support — injected by generateLocalServiceWebsite()
+  _categoryId?: string;
+  _heroTagline?: string;
+  _heroSubheading?: string;
+  _ctaHeadline?: string;
+  _ctaSubtext?: string;
+  _ctaButton?: string;
+  _emergencyBadge?: string;
+  _trustBadges?: string[];
+  _whyUsPoints?: Array<{ icon: string; heading: string; body: string }>;
+  _schemaType?: string;
 }
 
 export interface WDGalleryImage {
@@ -1517,7 +1528,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
 
   // Fallback content if AI content not yet generated
   const h1 = content?.hero?.h1 || `${data.primaryKeyword} in ${data.city}, ${data.state}`;
-  const heroSub = content?.hero?.subheadline || `Trusted water damage restoration specialists serving ${data.city} and surrounding areas. We respond fast to protect your property.`;
+  const heroSub = content?.hero?.subheadline || data._heroSubheading || `Trusted ${data.primaryKeyword.toLowerCase()} specialists serving ${data.city} and surrounding areas. We respond fast to protect your property.`;
   const introH2 = content?.intro?.h2 || `Water Damage Restoration Services in ${data.city}`;
   const introParas = content?.intro?.paragraphs || [
     `When water damage strikes your ${data.city} home or business, every minute matters. Moisture moves fast — soaking into walls, floors, and building materials before you even realize the full extent of the damage. ${data.businessName} provides rapid-response water damage restoration to limit destruction and get your property back to normal.`,
@@ -1537,14 +1548,15 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
       }));
 
   const whyH2 = content?.whyUsSection?.h2 || `Why ${data.city} Chooses ${data.businessName}`;
-  const whyPoints = content?.whyUsSection?.points || [
-    { icon: '🚨', heading: '24/7 Emergency Response', body: `Water damage doesn't follow business hours. Our ${data.city} team is available around the clock, every day of the year.` },
-    { icon: '🎓', heading: 'Certified Technicians', body: 'Our restoration specialists hold IICRC certifications and follow industry-standard protocols for every job.' },
+  const defaultWhyPoints = data._whyUsPoints || [
+    { icon: '🚨', heading: '24/7 Emergency Response', body: `${data.primaryKeyword} emergencies don't follow business hours. Our ${data.city} team is available around the clock, every day of the year.` },
+    { icon: '🎓', heading: 'Certified Technicians', body: 'Our specialists hold industry certifications and follow best-practice protocols for every job.' },
     { icon: '🏠', heading: 'Insurance Claim Help', body: 'We work directly with your insurance adjuster and provide thorough documentation to support your claim.' },
-    { icon: '⚡', heading: 'Fast, Thorough Drying', body: 'Industrial dehumidifiers and air movers remove moisture quickly, reducing the risk of mold growth.' },
-    { icon: '🔍', heading: 'Moisture Detection', body: 'Thermal imaging and moisture meters find hidden water behind walls and under floors before it causes structural damage.' },
+    { icon: '⚡', heading: 'Fast Response', body: `We dispatch quickly — because when you need ${data.primaryKeyword.toLowerCase()}, every minute counts.` },
+    { icon: '🔍', heading: 'Thorough Assessment', body: 'We inspect fully and document everything so you understand exactly what needs to be done and why.' },
     { icon: '📋', heading: 'Transparent Pricing', body: 'No surprise charges. We provide written estimates and explain every step before work begins.' },
   ];
+  const whyPoints = content?.whyUsSection?.points || defaultWhyPoints;
 
   const processH2 = content?.processSection?.h2 || `Our Water Damage Restoration Process`;
   const processSteps = content?.processSection?.steps || [
@@ -1578,9 +1590,9 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
     { question: 'How do I prevent water damage in my home?', answer: 'Regular maintenance is key — inspect your roof annually, clean gutters, check appliance hoses and connections, maintain your water heater, and know where your main water shutoff is located. Installing water leak detectors near appliances and under sinks can also provide early warnings before major damage occurs.' },
   ];
 
-  const ctaH2 = content?.finalCTA?.h2 || `Need Water Damage Restoration in ${data.city}? Call Now`;
-  const ctaBody = content?.finalCTA?.body || `Don't wait. Standing water causes more damage with every passing hour. Contact ${data.businessName} now for immediate assistance. We are available 24/7 for emergency response throughout ${data.city}.`;
-  const ctaBtn = content?.finalCTA?.ctaButton || 'Call for Emergency Help';
+  const ctaH2 = content?.finalCTA?.h2 || data._ctaHeadline || `Need ${data.primaryKeyword} in ${data.city}? Call Now`;
+  const ctaBody = content?.finalCTA?.body || data._ctaSubtext || `Don't wait. Contact ${data.businessName} now for immediate assistance. We are available 24/7 for emergency response throughout ${data.city}.`;
+  const ctaBtn = content?.finalCTA?.ctaButton || data._ctaButton || 'Call for Emergency Help';
 
   const seoH2 = content?.seoFootnote?.h2 || `${data.primaryKeyword} - ${data.city}, ${data.state}`;
   const seoBody = content?.seoFootnote?.body || `${data.businessName} is ${data.city}'s trusted water damage restoration company. We provide comprehensive restoration services including emergency water extraction, structural drying, mold remediation, sewage cleanup, and full property restoration. Our IICRC-certified team serves homeowners and businesses throughout ${data.city} and the surrounding region. When water damage strikes, we respond fast to minimize losses and restore your property safely and efficiently.`;
@@ -1659,17 +1671,17 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   <section class="hero" role="banner">
     <div class="hero-inner">
       <div class="hero-content">
-        <span class="hero-badge">24/7 Emergency Response</span>
+        ${data._emergencyBadge || data._categoryId ? `<span class="hero-badge">${data._emergencyBadge || '24/7 Emergency Response'}</span>` : '<span class="hero-badge">24/7 Emergency Response</span>'}
         <h1>${h1}</h1>
         <p class="hero-sub">${heroSub}</p>
         <div class="hero-actions">
           <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
           <a href="#contact" class="btn-secondary">Get Free Estimate</a>
         </div>
-        <p class="hero-trust">Licensed • Insured • IICRC Certified</p>
+        <p class="hero-trust">${(data._trustBadges || ['Licensed', 'Insured', 'Certified']).join(' • ')}</p>
       </div>
       <div class="hero-cta-card" aria-label="Emergency contact">
-        <h3>🚨 Water Emergency?</h3>
+        <h3>🚨 ${data._ctaHeadline || `${data.primaryKeyword} Emergency?`}</h3>
         <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="hero-cta-phone">${data.phone}</a>
         <p class="hero-cta-divider">or</p>
         <a href="#contact" class="hero-cta-form-btn">Request a Callback</a>

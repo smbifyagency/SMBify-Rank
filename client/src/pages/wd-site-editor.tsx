@@ -18,6 +18,7 @@ import {
   Globe, Phone, MapPin, FileText, Layers, Edit3
 } from "lucide-react";
 import { generateWaterDamageWebsite } from "../lib/water-damage-generator";
+import { getCategoryConfig } from "../lib/local-service-categories";
 import { VisualEditor } from "@/components/visual-editor";
 
 // ── Premade color palettes for non-tech users ─────────────────────────────
@@ -178,6 +179,7 @@ export default function WDSiteEditor() {
   const { toast } = useToast();
 
   const [siteData, setSiteData] = useState<WDSiteData | null>(null);
+  const [categoryId, setCategoryId] = useState("water-damage");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeploying, setIsDeploying] = useState(false);
@@ -276,7 +278,7 @@ export default function WDSiteEditor() {
         address: bd.address || "",
         city: bd.city || "",
         state: bd.state || "",
-        primaryKeyword: bd.primaryKeyword || "Water Damage Restoration",
+        primaryKeyword: bd.primaryKeyword || bd.categoryId && getCategoryConfig(bd.categoryId).defaultPrimaryKeyword || "Water Damage Restoration",
         services: Array.isArray(bd.services) ? bd.services : bd.services ? String(bd.services).split(/[\n;]/).map((s: string) => s.trim()).filter(Boolean) : [],
         serviceAreas: Array.isArray(bd.serviceAreas) ? bd.serviceAreas : bd.serviceAreas ? String(bd.serviceAreas).split(/[\n;]/).map((s: string) => s.trim()).filter(Boolean) : [],
         urlSlug: bd.urlSlug || "",
@@ -305,6 +307,7 @@ export default function WDSiteEditor() {
       } as any;
       setSiteData(loadedSiteData);
       if (data.netlifyUrl) setDeployedUrl(data.netlifyUrl);
+      if (data.template) setCategoryId(data.template);
 
       // Load saved Netlify token if available — mark as connected immediately
       // (token was already verified when saved, no need to re-verify on every load)
@@ -823,7 +826,7 @@ export default function WDSiteEditor() {
           </Button>
           <div>
             <h1 className="font-bold text-white text-sm">{siteData.businessName}</h1>
-            <p className="text-xs text-gray-400">{siteData.city}, {siteData.state} • Water Damage Template</p>
+            <p className="text-xs text-gray-400">{siteData.city}, {siteData.state} • {getCategoryConfig(categoryId).name}</p>
           </div>
           {siteData.deploymentStatus === "deployed" && (
             <Badge variant="outline" className="text-green-400 border-green-400">

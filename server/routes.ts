@@ -29,6 +29,7 @@ import { encrypt, decrypt } from './crypto.js';
 import { netlifyService } from "./services/netlify.js";
 import { deployToNetlify, validateNetlifyToken } from "./services/netlify-deployment.js";
 import { generateWaterDamageWebsite } from "../client/src/lib/water-damage-generator.js";
+import { generateLocalServiceWebsite, getCategoryConfig } from "../client/src/lib/local-service-engine.js";
 import { buildHomePagePrompt, buildServicePagePrompt, buildLocationPagePrompt } from "./services/seo-prompts.js";
 import {
   MASTER_SYSTEM_PROMPT,
@@ -6399,8 +6400,9 @@ Generated on: ${new Date().toISOString()}`;
         return res.status(400).json({ error: "Site name is required." });
       }
 
-      // Generate all HTML files using water-damage template
-      const files = generateWaterDamageWebsite(bd, domain);
+      // Generate all HTML files using the appropriate category template
+      const categoryId = (bd as any).categoryId || website.template || 'water-damage';
+      const files = generateLocalServiceWebsite(categoryId, bd, domain);
 
       // Apply any visual editor overrides saved in customFiles
       const storedCustomFiles = website.customFiles as Record<string, string> | null;
