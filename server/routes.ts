@@ -6597,6 +6597,13 @@ Generated on: ${new Date().toISOString()}`;
         netlifyDeploymentStatus: 'deployed',
       });
 
+      // Ping Google and Bing to discover the new sitemap (fire-and-forget)
+      const sitemapUrl = encodeURIComponent(`${siteUrl}/sitemap.xml`);
+      Promise.all([
+        fetch(`https://www.google.com/ping?sitemap=${sitemapUrl}`).catch(() => {}),
+        fetch(`https://www.bing.com/ping?sitemap=${sitemapUrl}`).catch(() => {}),
+      ]).catch(() => {});
+
       res.json({ url: siteUrl, siteName: domain });
     } catch (err: any) {
       console.error("WD deploy error:", err);

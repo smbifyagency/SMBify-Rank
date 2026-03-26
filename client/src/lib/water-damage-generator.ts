@@ -3883,14 +3883,16 @@ export function generateWaterDamageWebsite(
   files['sitemap.xml'] = generateSitemap(data, domain);
   files['robots.txt']  = generateRobots(domain);
 
-  // Netlify headers for performance
+  // Netlify headers for performance + indexing
   files['_headers'] = `/*
   Cache-Control: public, max-age=3600
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
+  X-Robots-Tag: index, follow
 
 /*.html
   Cache-Control: public, max-age=3600
+  X-Robots-Tag: index, follow
 
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8
