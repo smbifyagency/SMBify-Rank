@@ -161,6 +161,7 @@ export default function WDSiteEditor() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeploying, setIsDeploying] = useState(false);
+  const [isUnpublishing, setIsUnpublishing] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [activeTab, setActiveTab] = useState("business");
   const [previewPage, setPreviewPage] = useState("index.html");
@@ -444,6 +445,29 @@ export default function WDSiteEditor() {
       toast({ title: "Deploy Error", description: String(err), variant: "destructive" });
     } finally {
       setIsDeploying(false);
+    }
+  }
+
+  // ── Unpublish site ────────────────────────────────────────────────────
+  async function unpublishSite() {
+    if (!websiteId) return;
+    const confirmed = window.confirm(
+      "Unpublish this site?\n\nThe live Netlify URL will stop working and you'll be able to delete this website. This cannot be undone from here."
+    );
+    if (!confirmed) return;
+    setIsUnpublishing(true);
+    try {
+      const res = await fetch(`/api/websites/${websiteId}/unpublish`, {
+        method: "POST",
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("Failed to unpublish");
+      setDeployedUrl("");
+      toast({ title: "Unpublished", description: "The site has been unpublished. You can now delete it if needed." });
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message, variant: "destructive" });
+    } finally {
+      setIsUnpublishing(false);
     }
   }
 
@@ -1382,12 +1406,22 @@ export default function WDSiteEditor() {
 
               {deployedUrl && (
                 <div className="rounded-lg bg-green-900/30 border border-green-800 p-3">
-                  <div className="flex items-center gap-2 text-green-400 text-sm font-medium mb-1">
-                    <CheckCircle2 className="w-4 h-4" /> Live Site
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2 text-green-400 text-sm font-medium">
+                      <CheckCircle2 className="w-4 h-4" /> Live Site
+                    </div>
+                    <button
+                      onClick={unpublishSite}
+                      disabled={isUnpublishing}
+                      className="text-xs px-2 py-1 rounded bg-red-900/40 border border-red-800/60 text-red-400 hover:bg-red-900/70 hover:text-red-300 transition-colors disabled:opacity-50 whitespace-nowrap"
+                    >
+                      {isUnpublishing ? "Unpublishing..." : "Unpublish"}
+                    </button>
                   </div>
                   <a href={deployedUrl} target="_blank" rel="noopener noreferrer" className="text-xs text-green-300 underline break-all">
                     {deployedUrl}
                   </a>
+                  <p className="text-xs text-gray-500 mt-1.5">Unpublish to remove this site from Netlify and enable deletion.</p>
                 </div>
               )}
 

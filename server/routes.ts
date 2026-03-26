@@ -5702,6 +5702,26 @@ Generated on: ${new Date().toISOString()}`;
     }
   });
 
+  // Unpublish — clears netlifyUrl so the site can be deleted or re-deployed elsewhere
+  app.post("/api/websites/:id/unpublish", isAuthenticated, async (req: any, res) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user.id;
+      const existingWebsite = await storage.getWebsite(id);
+      if (!existingWebsite || existingWebsite.userId !== userId) {
+        return res.status(404).json({ message: "Website not found" });
+      }
+      await storage.updateWebsite(id, {
+        netlifyUrl: null,
+        netlifyDeploymentStatus: "unpublished",
+      } as any);
+      res.json({ message: "Website unpublished successfully" });
+    } catch (error) {
+      console.error("Error unpublishing website:", error);
+      res.status(500).json({ message: "Failed to unpublish website" });
+    }
+  });
+
   app.delete("/api/websites/:id", isAuthenticated, async (req: any, res) => {
     try {
       const { id } = req.params;
