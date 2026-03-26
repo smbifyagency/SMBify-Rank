@@ -248,7 +248,7 @@ export default function WDSiteEditor() {
       const data = await res.json();
 
       const bd = data.businessData || {};
-      setSiteData({
+      const loadedSiteData: WDSiteData = {
         id: data.id,
         businessName: bd.businessName || data.title || "",
         phone: bd.phone || "",
@@ -277,9 +277,13 @@ export default function WDSiteEditor() {
         floatingCTA: bd.floatingCTA || "call",
         whatsappNumber: bd.whatsappNumber || "",
         galleryImages: Array.isArray(bd.galleryImages) ? bd.galleryImages : [],
+        logoUrl: bd.logoUrl,
+        faviconUrl: bd.faviconUrl,
+        customHeadCode: bd.customHeadCode || "",
         netlifyUrl: data.netlifyUrl,
         deploymentStatus: data.netlifyDeploymentStatus,
-      });
+      } as any;
+      setSiteData(loadedSiteData);
       if (data.netlifyUrl) setDeployedUrl(data.netlifyUrl);
 
       // Load saved Netlify token if available — mark as connected immediately
@@ -306,7 +310,7 @@ export default function WDSiteEditor() {
       });
 
       // Try to load pre-generated files (stored as customFiles in DB)
-      if (data.customFiles && typeof data.customFiles === "object") {
+      if (data.customFiles && typeof data.customFiles === "object" && Object.keys(data.customFiles).length > 0) {
         setGeneratedFiles(data.customFiles);
         // Load visual editor HTML overrides
         const htmlOverrides: Record<string, string> = {};
@@ -314,6 +318,15 @@ export default function WDSiteEditor() {
           if (k.endsWith('.html') && typeof v === 'string') htmlOverrides[k] = v;
         }
         if (Object.keys(htmlOverrides).length > 0) setVisualEditorOverrides(htmlOverrides);
+      } else {
+        // No saved files — auto-generate client-side so preview & Visual Editor work immediately
+        try {
+          const domain = (loadedSiteData as any).urlSlug || ((loadedSiteData.businessName || 'my-site').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+          const autoFiles = generateWaterDamageWebsite(siteDataToWDData(loadedSiteData as any), domain);
+          setGeneratedFiles(autoFiles);
+        } catch (e) {
+          console.error('Auto-generate preview failed:', e);
+        }
       }
     } catch (err) {
       toast({ title: "Error", description: "Could not load website data.", variant: "destructive" });
@@ -550,7 +563,6 @@ export default function WDSiteEditor() {
 
   // Rebuild the preview files client-side (pure template, no AI, instant)
   function rebuildPreview(data: WDSiteData) {
-    if (Object.keys(generatedFiles).length === 0) return; // no preview yet
     try {
       const domain = data.urlSlug || data.businessName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       const newFiles = generateWaterDamageWebsite(siteDataToWDData(data), domain);
