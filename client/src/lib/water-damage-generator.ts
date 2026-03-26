@@ -112,6 +112,20 @@ export interface WDBusinessData {
   _trustBadges?: string[];
   _whyUsPoints?: Array<{ icon: string; heading: string; body: string }>;
   _schemaType?: string;
+  _schemaDescription?: string;
+  _schemaOfferCatalogName?: string;
+  _footerEmergencyText?: string;
+  _whatsappMessage?: string;
+  _introH2?: string;
+  _introParas?: string[];
+  _servicesH2?: string;
+  _servicesIntro?: string;
+  _processH2?: string;
+  _processSteps?: Array<{ step: number; heading: string; body: string }>;
+  _locationsBody?: string;
+  _faqH2?: string;
+  _faqs?: Array<{ question: string; answer: string }>;
+  _seoBody?: string;
 }
 
 export interface WDGalleryImage {
@@ -501,7 +515,7 @@ function generateFooter(data: WDBusinessData, currentPath: string = ''): string 
       <div class="footer-contact">
         <h3>24/7 Emergency Line</h3>
         <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="footer-phone">${data.phone}</a>
-        <p>Available around the clock for water damage emergencies.</p>
+        <p>${data._footerEmergencyText || 'Available around the clock for emergencies.'}</p>
         ${data.licenseNumber ? `<p style="font-size:.8rem;color:#64748b;margin-top:.5rem;">License: ${data.licenseNumber}</p>` : ''}
         ${data.insuranceInfo ? `<p style="font-size:.8rem;color:#64748b;">${data.insuranceInfo}</p>` : ''}
       </div>
@@ -522,7 +536,7 @@ function generateLocalBusinessSchema(data: WDBusinessData, domain: string): stri
     "@type": "LocalBusiness",
     "@id": `https://${domain}/#organization`,
     "name": data.businessName,
-    "description": `Professional water damage restoration services in ${data.city}, ${data.state}. 24/7 emergency response for water extraction, structural drying, mold remediation, and more.`,
+    "description": data._schemaDescription || `Professional water damage restoration services in ${data.city}, ${data.state}. 24/7 emergency response for water extraction, structural drying, mold remediation, and more.`,
     "telephone": data.phone,
     "email": data.email || undefined,
     "address": {
@@ -540,7 +554,7 @@ function generateLocalBusinessSchema(data: WDBusinessData, domain: string): stri
     "openingHours": "Mo-Su 00:00-24:00",
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
-      "name": "Water Damage Restoration Services",
+      "name": data._schemaOfferCatalogName || "Water Damage Restoration Services",
       "itemListElement": data.services.map(service => ({
         "@type": "Offer",
         "itemOffered": {
@@ -1397,7 +1411,7 @@ function generateFloatingCTA(data: WDBusinessData): string {
   if (cta === 'none') return '';
   if (cta === 'whatsapp') {
     const num = (data.whatsappNumber || data.phone).replace(/\D/g, '');
-    const msg = encodeURIComponent(`Hi, I need water damage help!`);
+    const msg = encodeURIComponent(data._whatsappMessage || `Hi, I need help!`);
     return `<a href="https://wa.me/${num}?text=${msg}" class="floating-cta floating-cta--whatsapp" aria-label="WhatsApp us">💬 WhatsApp Us</a>`;
   }
   // default: call
@@ -1529,15 +1543,15 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   // Fallback content if AI content not yet generated
   const h1 = content?.hero?.h1 || `${data.primaryKeyword} in ${data.city}, ${data.state}`;
   const heroSub = content?.hero?.subheadline || data._heroSubheading || `Trusted ${data.primaryKeyword.toLowerCase()} specialists serving ${data.city} and surrounding areas. We respond fast to protect your property.`;
-  const introH2 = content?.intro?.h2 || `Water Damage Restoration Services in ${data.city}`;
-  const introParas = content?.intro?.paragraphs || [
+  const introH2 = content?.intro?.h2 || data._introH2 || `${data.primaryKeyword} Services in ${data.city}`;
+  const introParas = content?.intro?.paragraphs || data._introParas || [
     `When water damage strikes your ${data.city} home or business, every minute matters. Moisture moves fast — soaking into walls, floors, and building materials before you even realize the full extent of the damage. ${data.businessName} provides rapid-response water damage restoration to limit destruction and get your property back to normal.`,
     `Our certified technicians arrive equipped with industrial-grade water extraction equipment, structural drying systems, and moisture detection tools. We handle everything from the initial assessment to the final walkthrough, keeping you informed at every step.`,
     `${data.businessName} has built a reputation throughout ${data.city} for honest assessments, thorough work, and professional service. We work directly with most insurance companies and can help you document the damage for your claim from day one.`,
   ];
 
-  const servH2 = content?.servicesSection?.h2 || `Our Water Damage Restoration Services in ${data.city}`;
-  const servIntro = content?.servicesSection?.intro || `We offer a full range of water damage and restoration services to homeowners and businesses throughout ${data.city}.`;
+  const servH2 = content?.servicesSection?.h2 || data._servicesH2 || `Our ${data.primaryKeyword} Services in ${data.city}`;
+  const servIntro = content?.servicesSection?.intro || data._servicesIntro || `We offer a full range of professional ${data.primaryKeyword.toLowerCase()} services to homeowners and businesses throughout ${data.city}.`;
   const serviceCards = content?.servicesSection?.cards?.length
     ? content.servicesSection.cards
     : data.services.map(s => ({
@@ -1558,8 +1572,8 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   ];
   const whyPoints = content?.whyUsSection?.points || defaultWhyPoints;
 
-  const processH2 = content?.processSection?.h2 || `Our Water Damage Restoration Process`;
-  const processSteps = content?.processSection?.steps || [
+  const processH2 = content?.processSection?.h2 || data._processH2 || `Our ${data.primaryKeyword} Process`;
+  const processSteps = content?.processSection?.steps || data._processSteps || [
     { step: 1, heading: 'Emergency Contact', body: `Call us anytime. Our ${data.city} dispatcher will assess your situation and dispatch a team immediately.` },
     { step: 2, heading: 'Inspection & Assessment', body: 'Technicians identify the water source, categorize the damage, and document affected areas with photos and moisture readings.' },
     { step: 3, heading: 'Water Extraction', body: 'Truck-mounted and portable extractors remove standing water from floors, carpets, and building cavities.' },
@@ -1570,24 +1584,19 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   ];
 
   const locH2 = content?.locationsSection?.h2 || `Serving ${data.city} and Surrounding Communities`;
-  const locBody = content?.locationsSection?.body || `${data.businessName} responds to water damage emergencies across ${data.city} and the surrounding region. Our crews are strategically positioned to reach most areas within 60 minutes of your call. Whether you are in the heart of ${data.city} or a neighboring suburb, we are your local water damage restoration team.`;
+  const locBody = content?.locationsSection?.body || data._locationsBody || `${data.businessName} provides professional ${data.primaryKeyword.toLowerCase()} services across ${data.city} and the surrounding region. Our crews are strategically positioned to reach most areas quickly. Whether you are in the heart of ${data.city} or a neighboring suburb, we are your local ${data.primaryKeyword.toLowerCase()} team.`;
 
   const locationLinks = content?.locationsSection?.locationLinks?.length
     ? content.locationsSection.locationLinks
     : data.serviceAreas.map(l => ({ city: l, anchor: l, slug: `locations/${slugify(l)}.html` }));
 
-  const faqH2 = content?.faqSection?.h2 || `Frequently Asked Questions About Water Damage Restoration in ${data.city}`;
-  const faqs = content?.faqSection?.faqs || [
-    { question: `How quickly can you respond to water damage in ${data.city}?`, answer: `Our ${data.city} response team is available 24 hours a day, 7 days a week. We typically arrive within 60 minutes of your call, depending on your location. Fast response is critical to limiting damage and preventing mold growth.` },
-    { question: 'How long does the water damage restoration process take?', answer: 'Structural drying typically takes 3 to 5 days, though larger or more severe losses may take longer. The full restoration — including repairs to drywall, flooring, and cabinets — can take 1 to 2 weeks depending on the extent of damage.' },
-    { question: "Will my homeowner's insurance cover water damage restoration?", answer: "Most standard homeowner's insurance policies cover sudden and accidental water damage, such as burst pipes or appliance failures. Flood damage from external sources typically requires separate flood insurance. We work with your insurer and provide full documentation to support your claim." },
-    { question: 'Is the water damage covered if it was a slow leak?', answer: 'Slow or gradual leaks are often excluded from coverage because insurance policies expect homeowners to maintain their property and address known issues. We recommend contacting your insurance agent directly to review your policy. Regardless of coverage, we can help you restore the damage.' },
+  const faqH2 = content?.faqSection?.h2 || data._faqH2 || `Frequently Asked Questions About ${data.primaryKeyword} in ${data.city}`;
+  const faqs = content?.faqSection?.faqs || data._faqs || [
+    { question: `How quickly can you respond in ${data.city}?`, answer: `Our ${data.city} team is available 24 hours a day, 7 days a week. We typically arrive quickly after your call, depending on your location.` },
     { question: `What areas in ${data.city} do you serve?`, answer: `We serve all areas within ${data.city} as well as surrounding communities including ${data.serviceAreas.slice(0, 5).join(', ')}. Call us to confirm coverage in your specific neighborhood.` },
-    { question: 'Do I need to leave my home during restoration?', answer: 'In most cases, you can remain in your home during the drying process. We will set up containment as needed to minimize disruption. If there is significant structural damage or sewage contamination, temporary relocation may be recommended for safety.' },
-    { question: 'Can mold develop after water damage?', answer: 'Yes. Mold can begin to grow within 24 to 48 hours in moist conditions. This is why rapid response and thorough structural drying are critical. Our team applies antimicrobial treatments and monitors moisture levels throughout the process to prevent mold from taking hold.' },
-    { question: 'What is the difference between water mitigation and water restoration?', answer: 'Water mitigation refers to the emergency services performed to stop damage from getting worse — extraction, drying, and antimicrobial treatment. Water restoration refers to the repair and rebuild phase, where damaged materials are replaced and the property is returned to its pre-loss condition. We handle both phases.' },
-    { question: 'How do I know if all the water has been removed?', answer: 'We use calibrated moisture meters and thermal imaging cameras to verify moisture levels in structural materials. We will not conclude the drying phase until readings confirm that affected materials have reached acceptable moisture levels per IICRC standards.' },
-    { question: 'How do I prevent water damage in my home?', answer: 'Regular maintenance is key — inspect your roof annually, clean gutters, check appliance hoses and connections, maintain your water heater, and know where your main water shutoff is located. Installing water leak detectors near appliances and under sinks can also provide early warnings before major damage occurs.' },
+    { question: `Are you licensed and insured?`, answer: `Yes. ${data.businessName} is fully licensed and insured. We follow all local regulations and industry standards on every job.` },
+    { question: `Do you offer free estimates?`, answer: `Yes. We provide free on-site assessments and written estimates before any work begins. There are no surprise charges.` },
+    { question: `What payment methods do you accept?`, answer: `We accept all major credit cards, cash, and checks. Financing options may be available — call us for details.` },
   ];
 
   const ctaH2 = content?.finalCTA?.h2 || data._ctaHeadline || `Need ${data.primaryKeyword} in ${data.city}? Call Now`;
@@ -1595,7 +1604,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   const ctaBtn = content?.finalCTA?.ctaButton || data._ctaButton || 'Call for Emergency Help';
 
   const seoH2 = content?.seoFootnote?.h2 || `${data.primaryKeyword} - ${data.city}, ${data.state}`;
-  const seoBody = content?.seoFootnote?.body || `${data.businessName} is ${data.city}'s trusted water damage restoration company. We provide comprehensive restoration services including emergency water extraction, structural drying, mold remediation, sewage cleanup, and full property restoration. Our IICRC-certified team serves homeowners and businesses throughout ${data.city} and the surrounding region. When water damage strikes, we respond fast to minimize losses and restore your property safely and efficiently.`;
+  const seoBody = content?.seoFootnote?.body || data._seoBody || `${data.businessName} is ${data.city}'s trusted ${data.primaryKeyword.toLowerCase()} company. We provide comprehensive ${data.primaryKeyword.toLowerCase()} services to homeowners and businesses throughout ${data.city} and the surrounding region. Our licensed, insured team delivers fast, professional results on every job.`;
 
   const servicesCardsHTML = serviceCards.map(card => `
       <article class="service-card" data-placeholder-section="service-${slugify(card.service)}">

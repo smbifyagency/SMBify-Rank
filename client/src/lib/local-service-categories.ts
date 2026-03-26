@@ -40,6 +40,17 @@ export interface CategoryConfig {
     trustBadges: string[];       // 3 badges shown in hero/header
     whyUsPoints: string[];       // 4 points in "Why Choose Us" section
     emergencyBadge?: string;     // e.g. "24/7 Emergency Service"
+    // Homepage section overrides
+    schemaDescription?: string;
+    schemaOfferCatalogName?: string;
+    footerEmergencyText?: string;
+    whatsappMessage?: string;
+    introParas?: string[];
+    processH2?: string;
+    processSteps?: Array<{ step: number; heading: string; body: string }>;
+    faqH2?: string;
+    faqs?: Array<{ question: string; answer: string }>;
+    seoBody?: string;
   };
 
   seo: {
@@ -211,6 +222,35 @@ const plumbingConfig: CategoryConfig = {
       'Same-day & emergency service available',
       '100% satisfaction guarantee on all work',
     ],
+    schemaDescription: `Professional plumbing services in {{city}}, {{state}}. Licensed & bonded plumbers available 24/7 for drain cleaning, pipe repair, water heaters, and more.`,
+    schemaOfferCatalogName: 'Plumbing Services',
+    footerEmergencyText: 'Available around the clock for plumbing emergencies.',
+    whatsappMessage: 'Hi, I need a plumber!',
+    introParas: [
+      `When a plumbing problem hits your {{city}} home or business, fast action prevents costly damage. Whether it's a burst pipe, stubborn clog, or failing water heater, {{businessName}} dispatches licensed plumbers who arrive equipped and ready to fix the problem right the first time.`,
+      `Our certified plumbers use the latest diagnostic tools to pinpoint issues quickly — saving you time and money. From routine maintenance to full repipes, we handle every job with upfront pricing and no hidden fees.`,
+      `{{businessName}} has earned a trusted reputation throughout {{city}} for honest service, expert workmanship, and lasting results. We back every job with a 100% satisfaction guarantee.`,
+    ],
+    processH2: 'Our Plumbing Service Process',
+    processSteps: [
+      { step: 1, heading: 'Call & Schedule', body: 'Call anytime — our dispatchers are available 24/7 to take your call and get a plumber on the way.' },
+      { step: 2, heading: 'Diagnosis & Estimate', body: 'Our licensed plumber inspects the issue, explains the problem clearly, and provides an upfront written estimate before any work begins.' },
+      { step: 3, heading: 'Expert Repair', body: 'We fix the problem using quality parts and proven techniques — done right the first time to prevent repeat issues.' },
+      { step: 4, heading: 'Cleanup & Inspection', body: 'We clean up our work area completely and run a final check to make sure everything is working perfectly before we leave.' },
+      { step: 5, heading: 'Satisfaction Guarantee', body: 'All our work is backed by a 100% satisfaction guarantee. If you have any concerns after the job, we make it right.' },
+    ],
+    faqH2: 'Frequently Asked Questions About Plumbing Services',
+    faqs: [
+      { question: 'Do you offer 24/7 emergency plumbing?', answer: 'Yes. Our licensed plumbers are on call 24 hours a day, 7 days a week — including weekends and holidays. Burst pipes and serious leaks cannot wait, and neither do we.' },
+      { question: 'How much does a plumber cost?', answer: 'Costs vary depending on the type of job. Simple repairs like unclogging a drain may start around $100–$200, while larger jobs like water heater replacement or repiping cost more. We always provide a written upfront estimate before starting any work — no surprise charges.' },
+      { question: 'Are your plumbers licensed and insured?', answer: 'Yes. Every plumber on our team is state-licensed, background-checked, and fully insured. We follow all local building codes on every job.' },
+      { question: 'How quickly can you arrive for a plumbing emergency?', answer: 'We aim to arrive as fast as possible — often within 60 minutes for emergencies in our service area. Call us and our dispatcher will give you an accurate ETA based on your location.' },
+      { question: 'Do you offer upfront pricing?', answer: 'Yes. We provide written flat-rate estimates before any work begins. You approve the price first — we never start work without your agreement.' },
+      { question: 'What plumbing services do you offer?', answer: 'We handle drain cleaning, pipe repair and replacement, water heater installation and repair, leak detection, toilet and faucet repair, sewer line work, repiping, hydro jetting, and more. If it involves plumbing, we can help.' },
+      { question: 'Can a slow drip cause serious damage?', answer: 'Yes. Even a small leak can cause significant water damage, mold growth, and structural issues over time. It can also waste thousands of gallons of water and raise your utility bills. We recommend addressing leaks promptly.' },
+      { question: 'How do I know if I need to repipe my home?', answer: 'Signs you may need repiping include frequent leaks, rusty or discolored water, low water pressure throughout the home, or pipes that are over 50 years old. Our plumbers can inspect your system and advise you on the best solution.' },
+    ],
+    seoBody: `{{businessName}} is {{city}}'s trusted plumbing company. We provide comprehensive plumbing services including drain cleaning, pipe repair, water heater installation, leak detection, and emergency plumbing. Our licensed, bonded plumbers serve homeowners and businesses throughout {{city}} and the surrounding region. When a plumbing problem strikes, we respond fast with upfront pricing and expert workmanship.`,
   },
   seo: {
     schemaType: 'Plumber',
