@@ -30,7 +30,6 @@ import { netlifyService } from "./services/netlify.js";
 import { deployToNetlify, validateNetlifyToken } from "./services/netlify-deployment.js";
 import { generateWaterDamageWebsite } from "../client/src/lib/water-damage-generator.js";
 import { generateLocalServiceWebsite, getCategoryConfig } from "../client/src/lib/local-service-engine.js";
-import { buildHomePagePrompt, buildServicePagePrompt, buildLocationPagePrompt } from "./services/seo-prompts.js";
 import {
   MASTER_SYSTEM_PROMPT,
   buildHomePagePrompt,
