@@ -20,6 +20,26 @@ import {
 import { generateWaterDamageWebsite } from "../lib/water-damage-generator";
 import { VisualEditor } from "@/components/visual-editor";
 
+// ── Premade color palettes for non-tech users ─────────────────────────────
+const COLOR_PALETTES = [
+  { name: "Ocean Blue",    primary: "#1e3a5f", secondary: "#0ea5e9" },
+  { name: "Forest Green",  primary: "#14532d", secondary: "#22c55e" },
+  { name: "Sunset Fire",   primary: "#7c2d12", secondary: "#f97316" },
+  { name: "Royal Purple",  primary: "#3b0764", secondary: "#a855f7" },
+  { name: "Navy Elite",    primary: "#172554", secondary: "#3b82f6" },
+  { name: "Cherry Red",    primary: "#7f1d1d", secondary: "#ef4444" },
+  { name: "Teal Modern",   primary: "#134e4a", secondary: "#14b8a6" },
+  { name: "Golden Pro",    primary: "#713f12", secondary: "#eab308" },
+  { name: "Rose Pink",     primary: "#881337", secondary: "#f43f5e" },
+  { name: "Emerald",       primary: "#064e3b", secondary: "#059669" },
+  { name: "Slate Gray",    primary: "#1e293b", secondary: "#64748b" },
+  { name: "Copper",        primary: "#431407", secondary: "#c2410c" },
+  { name: "Indigo",        primary: "#1e1b4b", secondary: "#6366f1" },
+  { name: "Cyan Fresh",    primary: "#083344", secondary: "#06b6d4" },
+  { name: "Midnight",      primary: "#0f172a", secondary: "#475569" },
+  { name: "Charcoal",      primary: "#111827", secondary: "#9ca3af" },
+] as const;
+
 interface WDSiteData {
   id?: string;
   businessName: string;
@@ -997,20 +1017,38 @@ export default function WDSiteEditor() {
                 )}
               </div>
 
-              <div className="pt-2 grid grid-cols-2 gap-2">
-                <div>
-                  <Label className="text-xs text-gray-400">Primary Color</Label>
-                  <div className="flex gap-2 mt-1">
-                    <input type="color" value={siteData.primaryColor} onChange={e => updateField("primaryColor", e.target.value)} className="w-8 h-8 rounded cursor-pointer border-0" />
-                    <Input value={siteData.primaryColor} onChange={e => updateField("primaryColor", e.target.value)} className="bg-gray-800 border-gray-700 text-white text-sm h-8" />
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-xs text-gray-400">Secondary Color</Label>
-                  <div className="flex gap-2 mt-1">
-                    <input type="color" value={siteData.secondaryColor} onChange={e => updateField("secondaryColor", e.target.value)} className="w-8 h-8 rounded cursor-pointer border-0" />
-                    <Input value={siteData.secondaryColor} onChange={e => updateField("secondaryColor", e.target.value)} className="bg-gray-800 border-gray-700 text-white text-sm h-8" />
-                  </div>
+              {/* Color Theme Picker */}
+              <div className="pt-2">
+                <Label className="text-xs text-gray-400">Color Theme</Label>
+                <div className="grid grid-cols-4 gap-1.5 mt-2">
+                  {COLOR_PALETTES.map(palette => {
+                    const isActive =
+                      siteData.primaryColor === palette.primary &&
+                      siteData.secondaryColor === palette.secondary;
+                    return (
+                      <button
+                        key={palette.name}
+                        title={palette.name}
+                        onClick={() => {
+                          updateField("primaryColor", palette.primary);
+                          updateField("secondaryColor", palette.secondary);
+                        }}
+                        className={`rounded overflow-hidden text-left transition-transform hover:scale-105 focus:outline-none ${
+                          isActive ? "ring-2 ring-[#AADD00] ring-offset-1 ring-offset-gray-900" : "ring-1 ring-white/10"
+                        }`}
+                      >
+                        {/* Two-tone swatch */}
+                        <div className="flex h-6">
+                          <div className="w-3/5" style={{ backgroundColor: palette.primary }} />
+                          <div className="w-2/5" style={{ backgroundColor: palette.secondary }} />
+                        </div>
+                        {/* Name */}
+                        <div className="bg-gray-800 px-1 py-0.5">
+                          <span className="text-[9px] text-gray-300 leading-none block truncate">{palette.name}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
 
