@@ -19,6 +19,25 @@
 
 export type WDFontFamily = 'inter' | 'poppins' | 'montserrat' | 'merriweather';
 
+/** Darken a hex color by multiplying each channel by `factor` (0–1). */
+function darkenHex(hex: string, factor: number): string {
+  try {
+    const c = hex.replace('#', '');
+    const r = Math.round(parseInt(c.slice(0, 2), 16) * factor);
+    const g = Math.round(parseInt(c.slice(2, 4), 16) * factor);
+    const b = Math.round(parseInt(c.slice(4, 6), 16) * factor);
+    return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+  } catch { return '#0f2244'; }
+}
+
+/** Convert hex to "r, g, b" string for use inside rgba(). */
+function hexToRgb(hex: string): string {
+  try {
+    const c = hex.replace('#', '');
+    return `${parseInt(c.slice(0,2),16)}, ${parseInt(c.slice(2,4),16)}, ${parseInt(c.slice(4,6),16)}`;
+  } catch { return '15, 34, 68'; }
+}
+
 export interface WDTheme {
   primaryColor: string;    // header, buttons, headings
   secondaryColor: string;  // links, accents, hover
@@ -617,12 +636,12 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 
 /* ── Header ───────────────────────────────────── */
 .site-header {
-  background: #fff;
-  border-bottom: 1px solid #e2e8f0;
+  background: ${primaryColor};
+  border-bottom: 1px solid ${darkenHex(primaryColor, 0.8)};
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 1px 6px rgba(0,0,0,.06);
+  box-shadow: 0 2px 12px rgba(0,0,0,.18);
 }
 
 .header-inner {
@@ -639,7 +658,7 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 .brand-name {
   font-size: 1.25rem;
   font-weight: 800;
-  color: ${primaryColor};
+  color: #fff;
   text-decoration: none;
   flex-shrink: 0;
 }
@@ -670,7 +689,7 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 }
 
 .nav-list a {
-  color: #334155;
+  color: rgba(255,255,255,0.88);
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
   font-size: 0.9rem;
@@ -680,8 +699,8 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 }
 
 .nav-list a:hover {
-  background: #f1f5f9;
-  color: ${primaryColor};
+  background: rgba(255,255,255,0.15);
+  color: #fff;
   text-decoration: none;
 }
 
@@ -738,14 +757,14 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   display: block;
   width: 24px;
   height: 2px;
-  background: ${primaryColor};
+  background: #fff;
   border-radius: 2px;
 }
 
 /* ── Hero ──────────────────────────────────────── */
 .hero {
   position: relative;
-  background: linear-gradient(135deg, ${primaryColor} 0%, #0f2244 100%);
+  background: linear-gradient(135deg, ${primaryColor} 0%, ${darkenHex(primaryColor, 0.45)} 100%);
   color: #fff;
   padding: 5rem 0 4rem;
   overflow: hidden;
@@ -762,7 +781,7 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(15,34,68,0.75) 0%, rgba(15,34,68,0.55) 100%);
+  background: linear-gradient(135deg, rgba(${hexToRgb(darkenHex(primaryColor,0.35))},0.72) 0%, rgba(${hexToRgb(darkenHex(primaryColor,0.3))},0.52) 100%);
 }
 
 .hero-inner {
@@ -894,7 +913,7 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   transition: background .15s;
 }
 
-.hero-cta-form-btn:hover { background: #0f2244; text-decoration: none; }
+.hero-cta-form-btn:hover { background: ${darkenHex(primaryColor, 0.7)}; text-decoration: none; }
 
 /* ── Services Grid ─────────────────────────────── */
 .services-grid {
@@ -1065,7 +1084,7 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 
 /* ── CTA Section ───────────────────────────────── */
 .cta-section {
-  background: linear-gradient(135deg, ${primaryColor} 0%, #0f2244 100%);
+  background: linear-gradient(135deg, ${primaryColor} 0%, ${darkenHex(primaryColor, 0.45)} 100%);
   color: #fff;
   text-align: center;
   padding: 5rem 0;
@@ -1088,7 +1107,7 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 
 /* ── Content Page Hero ─────────────────────────── */
 .page-hero {
-  background: linear-gradient(135deg, ${primaryColor} 0%, #0f2244 100%);
+  background: linear-gradient(135deg, ${primaryColor} 0%, ${darkenHex(primaryColor, 0.5)} 100%);
   color: #fff;
   padding: 3.5rem 0 3rem;
 }

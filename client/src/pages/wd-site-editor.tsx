@@ -912,8 +912,9 @@ export default function WDSiteEditor() {
                           key={palette.name}
                           title={palette.name}
                           onClick={() => {
-                            updateField("primaryColor", palette.primary);
-                            updateField("secondaryColor", palette.secondary);
+                            const next = { ...siteData, primaryColor: palette.primary, secondaryColor: palette.secondary };
+                            setSiteData(next as any);
+                            rebuildPreview(next as any);
                           }}
                           className={`rounded overflow-hidden text-left transition-transform hover:scale-105 focus:outline-none ${
                             isActive ? "ring-2 ring-[#AADD00] ring-offset-1 ring-offset-gray-900" : "ring-1 ring-white/10"
