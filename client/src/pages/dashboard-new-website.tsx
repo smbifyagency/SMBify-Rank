@@ -8,6 +8,25 @@ import {
   ArrowRight, ArrowLeft, Droplets, Loader2, CheckCircle2,
   Phone, MapPin, Wrench, Globe, Palette, ChevronRight
 } from "lucide-react";
+
+const COLOR_PALETTES = [
+  { name: "Ocean Blue",   primary: "#1e3a5f", secondary: "#0ea5e9" },
+  { name: "Forest Green", primary: "#14532d", secondary: "#22c55e" },
+  { name: "Sunset Fire",  primary: "#7c2d12", secondary: "#f97316" },
+  { name: "Royal Purple", primary: "#3b0764", secondary: "#a855f7" },
+  { name: "Navy Elite",   primary: "#172554", secondary: "#3b82f6" },
+  { name: "Cherry Red",   primary: "#7f1d1d", secondary: "#ef4444" },
+  { name: "Teal Modern",  primary: "#134e4a", secondary: "#14b8a6" },
+  { name: "Golden Pro",   primary: "#713f12", secondary: "#eab308" },
+  { name: "Rose Pink",    primary: "#881337", secondary: "#f43f5e" },
+  { name: "Emerald",      primary: "#064e3b", secondary: "#059669" },
+  { name: "Slate Gray",   primary: "#1e293b", secondary: "#64748b" },
+  { name: "Copper",       primary: "#431407", secondary: "#c2410c" },
+  { name: "Indigo",       primary: "#1e1b4b", secondary: "#6366f1" },
+  { name: "Cyan Fresh",   primary: "#083344", secondary: "#06b6d4" },
+  { name: "Midnight",     primary: "#0f172a", secondary: "#475569" },
+  { name: "Charcoal",     primary: "#111827", secondary: "#9ca3af" },
+] as const;
 import { useToast } from "@/hooks/use-toast";
 
 const STEPS = ["Business Info", "Services & Areas", "Brand & Domain", "Generate"];
@@ -330,27 +349,32 @@ export default function DashboardNewWebsite() {
 
             <div>
               <Label className="text-gray-300 text-sm mb-3 flex items-center gap-1.5">
-                <Palette className="h-3.5 w-3.5 text-[#AADD00]" /> Brand Colors
+                <Palette className="h-3.5 w-3.5 text-[#AADD00]" /> Color Theme
               </Label>
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { label: "Primary", key: "primaryColor", hint: "Header, buttons, headings" },
-                  { label: "Secondary", key: "secondaryColor", hint: "Links & accents" },
-                  { label: "Accent", key: "accentColor", hint: "Emergency CTA" },
-                ].map(({ label, key, hint }) => (
-                  <div key={key} className="flex flex-col items-center gap-2">
-                    <div className="relative w-full h-14 rounded-lg border border-white/10 overflow-hidden cursor-pointer"
-                      style={{ backgroundColor: (form as any)[key] }}>
-                      <input type="color" value={(form as any)[key]}
-                        onChange={e => set(key, e.target.value)}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
-                    </div>
-                    <div className="text-center">
-                      <p className="text-xs text-gray-300 font-medium">{label}</p>
-                      <p className="text-xs text-gray-600">{hint}</p>
-                    </div>
-                  </div>
-                ))}
+              <div className="grid grid-cols-4 gap-2">
+                {COLOR_PALETTES.map(palette => {
+                  const isActive =
+                    form.primaryColor === palette.primary &&
+                    (form as any).secondaryColor === palette.secondary;
+                  return (
+                    <button
+                      key={palette.name}
+                      type="button"
+                      onClick={() => { set("primaryColor", palette.primary); set("secondaryColor", palette.secondary); }}
+                      className={`rounded-lg overflow-hidden text-left transition-transform hover:scale-105 focus:outline-none ${
+                        isActive ? "ring-2 ring-[#AADD00] ring-offset-1 ring-offset-gray-900 shadow-lg" : "ring-1 ring-white/10"
+                      }`}
+                    >
+                      <div className="flex h-8">
+                        <div className="w-3/5" style={{ backgroundColor: palette.primary }} />
+                        <div className="w-2/5" style={{ backgroundColor: palette.secondary }} />
+                      </div>
+                      <div className="bg-gray-800 px-1.5 py-1">
+                        <span className="text-[10px] text-gray-300 leading-none block truncate">{palette.name}</span>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

@@ -899,6 +899,39 @@ export default function WDSiteEditor() {
               <h3 className="font-semibold text-sm text-gray-300">Business Information</h3>
 
               <div className="space-y-3">
+                {/* Color Theme — shown first so it's easy to find */}
+                <div>
+                  <Label className="text-xs text-gray-400">Color Theme</Label>
+                  <div className="grid grid-cols-4 gap-1.5 mt-2">
+                    {COLOR_PALETTES.map(palette => {
+                      const isActive =
+                        siteData.primaryColor === palette.primary &&
+                        siteData.secondaryColor === palette.secondary;
+                      return (
+                        <button
+                          key={palette.name}
+                          title={palette.name}
+                          onClick={() => {
+                            updateField("primaryColor", palette.primary);
+                            updateField("secondaryColor", palette.secondary);
+                          }}
+                          className={`rounded overflow-hidden text-left transition-transform hover:scale-105 focus:outline-none ${
+                            isActive ? "ring-2 ring-[#AADD00] ring-offset-1 ring-offset-gray-900" : "ring-1 ring-white/10"
+                          }`}
+                        >
+                          <div className="flex h-6">
+                            <div className="w-3/5" style={{ backgroundColor: palette.primary }} />
+                            <div className="w-2/5" style={{ backgroundColor: palette.secondary }} />
+                          </div>
+                          <div className="bg-gray-800 px-1 py-0.5">
+                            <span className="text-[9px] text-gray-300 leading-none block truncate">{palette.name}</span>
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
                 <div>
                   <Label className="text-xs text-gray-400">Business Name</Label>
                   <Input value={siteData.businessName} onChange={e => updateField("businessName", e.target.value)} className="bg-gray-800 border-gray-700 text-white mt-1 text-sm" />
@@ -1017,40 +1050,6 @@ export default function WDSiteEditor() {
                 )}
               </div>
 
-              {/* Color Theme Picker */}
-              <div className="pt-2">
-                <Label className="text-xs text-gray-400">Color Theme</Label>
-                <div className="grid grid-cols-4 gap-1.5 mt-2">
-                  {COLOR_PALETTES.map(palette => {
-                    const isActive =
-                      siteData.primaryColor === palette.primary &&
-                      siteData.secondaryColor === palette.secondary;
-                    return (
-                      <button
-                        key={palette.name}
-                        title={palette.name}
-                        onClick={() => {
-                          updateField("primaryColor", palette.primary);
-                          updateField("secondaryColor", palette.secondary);
-                        }}
-                        className={`rounded overflow-hidden text-left transition-transform hover:scale-105 focus:outline-none ${
-                          isActive ? "ring-2 ring-[#AADD00] ring-offset-1 ring-offset-gray-900" : "ring-1 ring-white/10"
-                        }`}
-                      >
-                        {/* Two-tone swatch */}
-                        <div className="flex h-6">
-                          <div className="w-3/5" style={{ backgroundColor: palette.primary }} />
-                          <div className="w-2/5" style={{ backgroundColor: palette.secondary }} />
-                        </div>
-                        {/* Name */}
-                        <div className="bg-gray-800 px-1 py-0.5">
-                          <span className="text-[9px] text-gray-300 leading-none block truncate">{palette.name}</span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
 
               {/* Social Media */}
               <div className="rounded-lg border border-dashed border-gray-700 p-3 space-y-2">
