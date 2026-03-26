@@ -17,7 +17,7 @@ import {
   Loader2, ExternalLink, CheckCircle2, ChevronDown, ChevronUp,
   Globe, Phone, MapPin, FileText, Layers, Edit3
 } from "lucide-react";
-import { generateWaterDamageWebsite } from "../lib/water-damage-generator";
+import { generateLocalServiceWebsite } from "../lib/local-service-engine";
 import { getCategoryConfig } from "../lib/local-service-categories";
 import { VisualEditor } from "@/components/visual-editor";
 
@@ -130,8 +130,8 @@ const PREVIEW_CLICK_SCRIPT = `
 })();
 </script>`;
 
-// Convert WDSiteData → the shape generateWaterDamageWebsite expects
-function siteDataToWDData(data: WDSiteData): Parameters<typeof generateWaterDamageWebsite>[0] {
+// Convert WDSiteData → the shape the generator expects
+function siteDataToWDData(data: WDSiteData): Record<string, any> {
   return {
     businessName: data.businessName,
     countryCode: data.countryCode,
@@ -345,7 +345,8 @@ export default function WDSiteEditor() {
         // No saved files — auto-generate client-side so preview & Visual Editor work immediately
         try {
           const domain = (loadedSiteData as any).urlSlug || ((loadedSiteData.businessName || 'my-site').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
-          const autoFiles = generateWaterDamageWebsite(siteDataToWDData(loadedSiteData as any), domain);
+          const catId = (data.template as string) || 'water-damage';
+          const autoFiles = generateLocalServiceWebsite(catId, siteDataToWDData(loadedSiteData as any), domain);
           setGeneratedFiles(autoFiles);
         } catch (e) {
           console.error('Auto-generate preview failed:', e);
@@ -588,7 +589,7 @@ export default function WDSiteEditor() {
   function rebuildPreview(data: WDSiteData) {
     try {
       const domain = data.urlSlug || data.businessName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-      const newFiles = generateWaterDamageWebsite(siteDataToWDData(data), domain);
+      const newFiles = generateLocalServiceWebsite(categoryId, siteDataToWDData(data), domain);
       setGeneratedFiles(newFiles);
     } catch (e) {
       console.error('Preview rebuild failed:', e);
