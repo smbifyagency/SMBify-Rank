@@ -1744,7 +1744,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   <section style="padding: 0;" aria-hidden="true">
     <div class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
       <img
-        src="${WD_PLACEHOLDER_IMAGES.team}"
+        src="${data.customImages?.['main-image'] || WD_PLACEHOLDER_IMAGES.team}"
         alt="PLACEHOLDER: Replace with a photo of your team or equipment — add descriptive alt text for SEO"
         class="placeholder-img"
         data-placeholder="main-image"
@@ -1990,7 +1990,7 @@ export function generateServicePage(
   <!-- ── Placeholder Image ─────────────────────── -->
   <div class="container" style="padding-bottom:2rem;">
     <img
-      src="${WD_PLACEHOLDER_IMAGES.equipment}"
+      src="${data.customImages?.['service-image-' + slug] || data.customImages?.['service-image'] || WD_PLACEHOLDER_IMAGES.equipment}"
       alt="PLACEHOLDER: Replace with a photo showing your ${service.toLowerCase()} work or equipment — use descriptive alt text"
       class="placeholder-img"
       data-placeholder="service-image-${slug}"
@@ -2225,7 +2225,7 @@ export function generateLocationPage(
   <!-- ── Placeholder Image ─────────────────────── -->
   <div class="container" style="padding-bottom:2rem;">
     <img
-      src="${WD_PLACEHOLDER_IMAGES.drying}"
+      src="${data.customImages?.['location-image-' + citySlug] || data.customImages?.['location-image'] || WD_PLACEHOLDER_IMAGES.drying}"
       alt="PLACEHOLDER: Replace with a photo of your ${city} team or a recent project — add specific alt text"
       class="placeholder-img"
       data-placeholder="location-image-${citySlug}"
@@ -2352,7 +2352,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
       </div>
       <div>
         <img
-          src="${WD_PLACEHOLDER_IMAGES.team}"
+          src="${data.customImages?.['about-team-photo'] || data.customImages?.['about-image'] || WD_PLACEHOLDER_IMAGES.team}"
           alt="PLACEHOLDER: Replace with a real photo of your team or office"
           class="placeholder-img"
           data-placeholder="about-team-photo"

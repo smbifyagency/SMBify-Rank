@@ -21,6 +21,11 @@ import { generateLocalServiceWebsite } from "../lib/local-service-engine";
 import { getCategoryConfig } from "../lib/local-service-categories";
 import { VisualEditor } from "@/components/visual-editor";
 
+type AIProvider = "openai" | "gemini" | "openrouter";
+
+const isAIProvider = (value: unknown): value is AIProvider =>
+  value === "openai" || value === "gemini" || value === "openrouter";
+
 // ── Premade color palettes for non-tech users ─────────────────────────────
 const COLOR_PALETTES = [
   { name: "Ocean Blue",    primary: "#1e3a5f", secondary: "#0ea5e9" },
@@ -64,6 +69,7 @@ interface WDSiteData {
   // AI Keys (stored per-website so they survive deployments)
   openaiApiKey?: string;
   geminiApiKey?: string;
+  contentAiProvider?: AIProvider;
   // Custom images: placeholder key → data URL or hosted URL
   customImages?: Record<string, string>;
   // Social media
@@ -160,6 +166,7 @@ function siteDataToWDData(data: WDSiteData): Record<string, any> {
     homepageContent: data.homepageContent,
     serviceContent: data.serviceContent,
     locationContent: data.locationContent,
+    contentAiProvider: data.contentAiProvider,
     galleryImages: data.galleryImages,
     _aiIntroParas: (data as any)._aiIntroParas,
     _aiFaqs: (data as any)._aiFaqs,
@@ -292,6 +299,13 @@ export default function WDSiteEditor() {
         contactFormEmbed: bd.contactFormEmbed || "",
         openaiApiKey: bd.openaiApiKey || "",
         geminiApiKey: bd.geminiApiKey || "",
+        contentAiProvider: isAIProvider(bd.contentAiProvider)
+          ? bd.contentAiProvider
+          : bd.geminiApiKey
+            ? "gemini"
+            : bd.openaiApiKey
+              ? "openai"
+              : "gemini",
         homepageContent: bd.homepageContent,
         serviceContent: bd.serviceContent,
         locationContent: bd.locationContent,
@@ -336,8 +350,9 @@ export default function WDSiteEditor() {
       Promise.all([
         fetch("/api/settings/openai", { credentials: "include" }).then(r => r.ok ? r.json() : null).catch(() => null),
         fetch("/api/settings/gemini", { credentials: "include" }).then(r => r.ok ? r.json() : null).catch(() => null),
-      ]).then(([openai, gemini]) => {
-        const hasKey = (openai?.apiKey) || (gemini?.apiKey) || bd.openaiApiKey || bd.geminiApiKey;
+        fetch("/api/settings/openrouter", { credentials: "include" }).then(r => r.ok ? r.json() : null).catch(() => null),
+      ]).then(([openai, gemini, openrouter]) => {
+        const hasKey = (openai?.apiKey) || (gemini?.apiKey) || (openrouter?.apiKey) || bd.openaiApiKey || bd.geminiApiKey;
         setApiStatus(hasKey ? "ready" : "none");
       });
 
@@ -429,7 +444,7 @@ export default function WDSiteEditor() {
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
         if (res.status === 402) {
-          toast({ title: "No AI API key", description: "Add an OpenAI or Gemini API key in Settings first.", variant: "destructive" });
+          toast({ title: "No AI API key", description: "Add or save an OpenAI, Gemini, or OpenRouter key first.", variant: "destructive" });
         } else {
           throw new Error(errData.error || `Server error ${res.status}`);
         }
@@ -486,6 +501,9 @@ export default function WDSiteEditor() {
       return;
     }
 
+    // Show animation immediately so user knows the button was clicked
+    setIsDeploying(true);
+
     const slug = (desiredSlug || siteData.urlSlug || "").trim();
 
     // Guard: check if another website in this account already uses the same slug
@@ -503,13 +521,23 @@ export default function WDSiteEditor() {
           const proceed = window.confirm(
             `⚠️ WARNING: "${conflictName}" is already deployed to a URL that contains "${slug}".\n\nDeploying will OVERWRITE that site's content on Netlify.\n\nAre you sure you want to continue?`
           );
-          if (!proceed) return;
+          if (!proceed) {
+            setIsDeploying(false);
+            return;
+          }
         }
       }
     } catch { /* non-blocking — let deploy proceed if the check fails */ }
 
-    setIsDeploying(true);
     try {
+      // Save latest changes (including logo) to DB before reading on server
+      await fetch(`/api/websites/${websiteId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ businessData: stripDeploymentFields(siteData) }),
+      });
+
       const res = await fetch(`/api/websites/${websiteId}/deploy-wd`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1082,6 +1110,18 @@ export default function WDSiteEditor() {
               <div className="rounded-lg border border-dashed border-gray-700 p-3 space-y-2">
                 <p className="text-xs font-medium text-gray-400">AI Content Generation Keys</p>
                 <div>
+                  <Label className="text-xs text-gray-500">Preferred AI Provider</Label>
+                  <select
+                    value={isAIProvider(siteData.contentAiProvider) ? siteData.contentAiProvider : "gemini"}
+                    onChange={e => updateField("contentAiProvider", e.target.value)}
+                    className="mt-1 w-full h-10 px-3 rounded-md bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-[#AADD00]"
+                  >
+                    <option value="gemini">Google Gemini</option>
+                    <option value="openai">OpenAI</option>
+                    <option value="openrouter">OpenRouter</option>
+                  </select>
+                </div>
+                <div>
                   <Label className="text-xs text-gray-500">OpenAI API Key</Label>
                   <Input
                     type="password"
@@ -1101,7 +1141,7 @@ export default function WDSiteEditor() {
                     placeholder="AIza..."
                   />
                 </div>
-                <p className="text-xs text-gray-600">Keys saved here are used for all future generations. Click <strong>Save</strong> after entering.</p>
+                <p className="text-xs text-gray-600">Provider + keys saved here are used for future AI generation. Click <strong>Save</strong> after changing them.</p>
                 {(siteData.openaiApiKey || siteData.geminiApiKey) && (
                   <p className="text-xs text-green-400">✓ Key entered — click Save to apply</p>
                 )}
@@ -1340,7 +1380,7 @@ export default function WDSiteEditor() {
 
               {apiStatus === "none" && (
                 <div className="rounded-lg border border-yellow-800 bg-yellow-950/40 p-3 text-xs text-yellow-400">
-                  No AI API key configured. Go to <strong>Settings → API Keys</strong> to add your OpenAI or Gemini key.
+                  No AI API key configured. Go to <strong>Settings → API Keys</strong> to add your OpenAI, Gemini, or OpenRouter key.
                 </div>
               )}
 
