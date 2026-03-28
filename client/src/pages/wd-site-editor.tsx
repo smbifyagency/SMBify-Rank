@@ -359,12 +359,9 @@ export default function WDSiteEditor() {
       // Try to load pre-generated files (stored as customFiles in DB)
       if (data.customFiles && typeof data.customFiles === "object" && Object.keys(data.customFiles).length > 0) {
         setGeneratedFiles(data.customFiles);
-        // Load visual editor HTML overrides
-        const htmlOverrides: Record<string, string> = {};
-        for (const [k, v] of Object.entries(data.customFiles as Record<string, string>)) {
-          if (k.endsWith('.html') && typeof v === 'string') htmlOverrides[k] = v;
-        }
-        if (Object.keys(htmlOverrides).length > 0) setVisualEditorOverrides(htmlOverrides);
+        // Do NOT set visualEditorOverrides from customFiles — generatedFiles already contains
+        // them and overrides should only be set during live Visual Editor edits this session.
+        // Setting overrides here would prevent image uploads from refreshing the preview.
       } else {
         // No saved files — auto-generate client-side so preview & Visual Editor work immediately
         try {
@@ -409,6 +406,7 @@ export default function WDSiteEditor() {
         const data = await res.json();
         const files = data.files || {};
         setGeneratedFiles(files);
+        setVisualEditorOverrides({});
         setApiStatus("ready");
         // Files + businessData are already persisted by the server in the same request.
         // No extra PUT needed here.
@@ -668,6 +666,8 @@ export default function WDSiteEditor() {
       const domain = data.urlSlug || data.businessName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
       const newFiles = generateLocalServiceWebsite(categoryId, siteDataToWDData(data), domain);
       setGeneratedFiles(newFiles);
+      // Clear visual editor overrides so the freshly generated HTML (with new images) is shown
+      setVisualEditorOverrides({});
     } catch (e) {
       console.error('Preview rebuild failed:', e);
     }

@@ -96,6 +96,15 @@ async function getAIProviderConfig(userId: string, provider: 'openai' | 'gemini'
 
 type AIProvider = 'openai' | 'gemini' | 'openrouter';
 
+const isAIProvider = (value: unknown): value is AIProvider =>
+  value === 'openai' || value === 'gemini' || value === 'openrouter';
+
+const getAIProviderOrder = (...preferredProviders: unknown[]): AIProvider[] => {
+  const fallbackOrder: AIProvider[] = ['gemini', 'openai', 'openrouter'];
+  const ordered = [...preferredProviders, ...fallbackOrder].filter(isAIProvider);
+  return [...new Set(ordered)];
+};
+
 const stringValue = (value: unknown): string => {
   if (typeof value !== "string") return "";
   return value.replace(/\s+/g, " ").trim();
@@ -962,7 +971,7 @@ async function generateLocalServiceAIContent(
   userId: string,
   categoryName: string,
   primaryKeyword: string
-): Promise<{ introParas?: string[]; faqs?: any[]; seoBody?: string; processSteps?: any[] } | null> {
+): Promise<{ providerUsed: AIProvider; introParas?: string[]; faqs?: any[]; seoBody?: string; processSteps?: any[] } | null> {
   try {
     const user = await storage.getUser(userId);
     if (!user || (user.role !== 'user' && user.role !== 'paid' && user.role !== 'admin')) {
@@ -970,8 +979,36 @@ async function generateLocalServiceAIContent(
       return null;
     }
 
-    const provider: 'openai' | 'gemini' | 'openrouter' = bd.contentAiProvider || 'openai';
-    const apiKey = await getAIProviderConfig(userId, provider);
+    const providerOrder = getAIProviderOrder(
+      bd.contentAiProvider,
+      bd.aiProvider
+    );
+
+    let provider: AIProvider = providerOrder[0] || 'gemini';
+    let apiKey: string | null = null;
+
+    for (const candidateProvider of providerOrder) {
+      const websiteApiKey =
+        candidateProvider === 'openai'
+          ? stringValue(bd.openaiApiKey)
+          : candidateProvider === 'gemini'
+            ? stringValue(bd.geminiApiKey)
+            : stringValue(bd.openrouterApiKey);
+
+      if (websiteApiKey) {
+        provider = candidateProvider;
+        apiKey = websiteApiKey;
+        break;
+      }
+
+      const storedApiKey = await getAIProviderConfig(userId, candidateProvider);
+      if (storedApiKey) {
+        provider = candidateProvider;
+        apiKey = storedApiKey;
+        break;
+      }
+    }
+
     if (!apiKey) {
       console.log('Local service AI content: skipping (no API key)');
       return null;
@@ -996,7 +1033,7 @@ async function generateLocalServiceAIContent(
       temperature: 0.7,
     });
 
-    const out: Record<string, any> = {};
+    const out: Record<string, any> = { providerUsed: provider };
     if (Array.isArray(result.introParas) && result.introParas.length > 0) out.introParas = result.introParas;
     if (Array.isArray(result.faqs) && result.faqs.length > 0) out.faqs = result.faqs;
     if (typeof result.seoBody === 'string' && result.seoBody.trim()) out.seoBody = result.seoBody;
@@ -6166,7 +6203,7 @@ Generated on: ${new Date().toISOString()}`;
   app.post("/api/websites/generate-content", isAuthenticated, async (req: any, res) => {
     try {
       const userId = req.user.id;
-      const { businessData, provider = 'openai' } = req.body;
+      const { businessData, provider } = req.body;
 
       if (!businessData) {
         return res.status(400).json({ error: "Missing businessData for generation" });
@@ -6178,20 +6215,39 @@ Generated on: ${new Date().toISOString()}`;
         return res.status(403).json({ error: "Unauthorized for AI generation." });
       }
 
-      // Check for valid API key context
-      const apiKey = await getAIProviderConfig(userId, provider);
-      if (!apiKey) {
-        return res.status(400).json({ error: `Missing API Key for provider: ${provider}` });
+      const providerOrder = getAIProviderOrder(
+        provider,
+        businessData?.contentAiProvider,
+        businessData?.aiProvider
+      );
+
+      let resolvedProvider = providerOrder[0] || 'gemini';
+      let apiKey: string | null = null;
+
+      for (const candidateProvider of providerOrder) {
+        const candidateApiKey = await getAIProviderConfig(userId, candidateProvider);
+        if (candidateApiKey) {
+          resolvedProvider = candidateProvider;
+          apiKey = candidateApiKey;
+          break;
+        }
       }
 
-      console.log(`Starting Mass Page Build via Configurator for user ${userId} using ${provider}`);
+      if (!apiKey) {
+        return res.status(400).json({
+          error: `Missing API Key for providers: ${providerOrder.join(', ')}`
+        });
+      }
+
+      console.log(`Starting Mass Page Build via Configurator for user ${userId} using ${resolvedProvider}`);
 
       // Use the existing solid dynamic generation pipeline
-      const aiContent = await generateAIContentForDynamicPages(businessData, userId, provider);
+      const aiContent = await generateAIContentForDynamicPages(businessData, userId, resolvedProvider);
 
       res.json({
         success: true,
-        message: `Generated ${aiContent.serviceContent.length} service pages and ${aiContent.locationContent.length} location pages.`,
+        message: `Generated ${aiContent.serviceContent.length} service pages and ${aiContent.locationContent.length} location pages using ${resolvedProvider}.`,
+        provider: resolvedProvider,
         data: aiContent
       });
 
@@ -6449,12 +6505,13 @@ Generated on: ${new Date().toISOString()}`;
       );
 
       if (!aiContent) {
-        return res.status(402).json({ error: "No AI API key configured. Go to Settings → API Keys to add OpenAI or Gemini." });
+        return res.status(402).json({ error: "No AI API key configured. Save an OpenAI, Gemini, or OpenRouter key on this site or in Settings → API Keys." });
       }
 
       // Save AI content fields into businessData
       const updatedBd = {
         ...bd,
+        contentAiProvider: aiContent.providerUsed ?? bd.contentAiProvider,
         _aiIntroParas:   aiContent.introParas   ?? bd._aiIntroParas,
         _aiFaqs:         aiContent.faqs         ?? bd._aiFaqs,
         _aiSeoBody:      aiContent.seoBody       ?? bd._aiSeoBody,
@@ -6519,20 +6576,40 @@ Generated on: ${new Date().toISOString()}`;
 
       const { getCategoryConfig: getCC2, generateLocalServiceWebsite: genLS } = await import('../client/src/lib/local-service-engine.js');
 
-      // Generate AI-written unique content and inject into bd before template generation
-      try {
-        const catConfig = getCC2(categoryId);
-        const aiContent = await generateLocalServiceAIContent(
-          bd, userId, catConfig.name, catConfig.defaultPrimaryKeyword
-        );
-        if (aiContent) {
-          if (aiContent.introParas)  bd._aiIntroParas  = aiContent.introParas;
-          if (aiContent.faqs)        bd._aiFaqs        = aiContent.faqs;
-          if (aiContent.seoBody)     bd._aiSeoBody     = aiContent.seoBody;
-          if (aiContent.processSteps) bd._aiProcessSteps = aiContent.processSteps;
+      // Only generate AI content if not already present — avoid slow API call on every redeploy
+      const hasAiContent = bd._aiIntroParas || bd._aiFaqs || bd._aiSeoBody || bd._aiProcessSteps;
+      if (!hasAiContent) {
+        try {
+          const catConfig = getCC2(categoryId);
+          const aiContent = await generateLocalServiceAIContent(
+            bd, userId, catConfig.name, catConfig.defaultPrimaryKeyword
+          );
+          if (aiContent) {
+            if (aiContent.introParas)   bd._aiIntroParas   = aiContent.introParas;
+            if (aiContent.faqs)         bd._aiFaqs         = aiContent.faqs;
+            if (aiContent.seoBody)      bd._aiSeoBody      = aiContent.seoBody;
+            if (aiContent.processSteps) bd._aiProcessSteps = aiContent.processSteps;
+          }
+        } catch (aiErr) {
+          console.error('AI content injection skipped:', aiErr);
         }
-      } catch (aiErr) {
-        console.error('AI content injection skipped:', aiErr);
+      }
+
+      // Extract favicon data URL to a real binary file before generation,
+      // so it ends up as /favicon.* in the ZIP instead of an inline data URL
+      let faviconBinary: Buffer | null = null;
+      let faviconFilename: string | null = null;
+      if (bd.faviconUrl && typeof bd.faviconUrl === 'string' && bd.faviconUrl.startsWith('data:')) {
+        const fmatch = bd.faviconUrl.match(/^data:([^;]+);base64,([A-Za-z0-9+/=\n]+)$/);
+        if (fmatch) {
+          const rawType = fmatch[1];
+          const ext = /x-icon|vnd\.microsoft\.icon/.test(rawType) ? 'ico'
+                    : rawType === 'image/svg+xml' ? 'svg'
+                    : rawType === 'image/jpeg' ? 'jpg' : 'png';
+          faviconFilename = `favicon.${ext}`;
+          faviconBinary = Buffer.from(fmatch[2].replace(/\n/g, ''), 'base64');
+          bd.faviconUrl = `/${faviconFilename}`; // replace data URL with actual path in HTML
+        }
       }
 
       const files = genLS(categoryId, bd, domain);
@@ -6575,14 +6652,18 @@ Generated on: ${new Date().toISOString()}`;
         const base64 = dataUrl.split(',')[1];
         zip.file(imgPath.slice(1), Buffer.from(base64, 'base64')); // slice removes leading /
       }
+      // Add favicon as a real file at the root
+      if (faviconFilename && faviconBinary) {
+        zip.file(faviconFilename, faviconBinary);
+      }
       const zipBuffer = await zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
 
-      // Resolve or create Netlify site (use JS SDK to find/create, raw fetch to upload)
+      // Resolve or create Netlify site — filter by name to avoid fetching all sites
       const { NetlifyAPI } = await import('netlify');
       const netlify = new NetlifyAPI(netlifyApiKey);
       let site: any;
       try {
-        const sites = await netlify.listSites({ filter: 'all' });
+        const sites = await netlify.listSites({ name: domain });
         site = (sites as any[]).find((s: any) => s.name === domain);
       } catch { /* will create */ }
 
