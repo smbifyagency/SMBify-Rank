@@ -98,6 +98,29 @@ export default function DashboardNewWebsite() {
 
   const selectedCategory = CATEGORIES.find(c => c.id === categoryId);
 
+  const fillSampleData = () => {
+    const cat = selectedCategory;
+    if (!cat) return;
+    const bizName = `Austin ${cat.name}`;
+    const slug = bizName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    setForm(f => ({
+      ...f,
+      businessName: bizName,
+      phone: '(512) 555-0182',
+      email: `info@${slug}.com`,
+      address: '4821 Oak Hollow Drive',
+      city: 'Austin',
+      state: 'TX',
+      primaryKeyword: cat.defaultPrimaryKeyword,
+      targetKeywords: cat.defaultServices.slice(0, 4).join(', '),
+      services: cat.defaultServices.slice(0, 8),
+      serviceAreas: 'Austin, TX\nRound Rock, TX\nCedar Park, TX\nGeorgetown, TX\nPflugerville, TX',
+      urlSlug: slug,
+      primaryColor: cat.defaultPalette.primary,
+      secondaryColor: cat.defaultPalette.secondary,
+    }));
+  };
+
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
@@ -198,6 +221,17 @@ export default function DashboardNewWebsite() {
         {/* ── Step 1: Business Info + Logo ─────────────────────────── */}
         {step === 1 && (
           <div className="space-y-5">
+            {/* Sample data button for quick testing */}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={fillSampleData}
+                className="text-xs px-3 py-1.5 rounded-lg bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/10 transition-colors"
+              >
+                Fill sample data
+              </button>
+            </div>
+
             {/* Logo upload */}
             <div>
               <Label className="text-gray-300 text-sm mb-2 block">Business Logo (optional)</Label>
