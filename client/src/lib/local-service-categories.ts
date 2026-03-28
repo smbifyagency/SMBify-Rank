@@ -2299,6 +2299,133 @@ const junkRemovalConfig: CategoryConfig = {
   },
 };
 
+// ─── Category Placeholder Images ──────────────────────────────────────────────
+// Category-specific Unsplash placeholder images shown before a user uploads
+// their own photos. Keys match data-placeholder attributes in the generator.
+
+export type CategoryPlaceholderImages = {
+  hero: string;
+  'main-image': string;
+  'service-image': string;
+  'location-image': string;
+  'about-team-photo': string;
+};
+
+export const CATEGORY_PLACEHOLDER_IMAGES: Record<string, CategoryPlaceholderImages> = {
+  'water-damage': {
+    hero:              'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1601760562234-9814eea6663a?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
+  },
+  'plumbing': {
+    hero:              'https://images.unsplash.com/photo-1621905251189-00ac5234bee3?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1584469353253-9af3f6a10db0?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1571942676516-bcab84649e44?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+  },
+  'roofing': {
+    hero:              'https://images.unsplash.com/photo-1635424685267-bd8a3f0cde18?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1519642929-ef42f2f40e86?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+  },
+  'hvac': {
+    hero:              'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1599579946622-0a0d1b5d26f8?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+  },
+  'electrical': {
+    hero:              'https://images.unsplash.com/photo-1621905251189-00ac5234bee3?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1590330297626-d033d3a35be6?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+  },
+  'locksmith': {
+    hero:              'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1556909397-2e4a83b41e05?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1562183241-a1dcd5a8fa93?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+  },
+  'fire-damage': {
+    hero:              'https://images.unsplash.com/photo-1542621334-a254cf47733d?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
+  },
+  'mold-remediation': {
+    hero:              'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+  },
+  'pest-control': {
+    hero:              'https://images.unsplash.com/photo-1618333258404-fc21b04e0e78?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+  },
+  'tree-service': {
+    hero:              'https://images.unsplash.com/photo-1564419320406-aad99b1e6b35?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1519642929-ef42f2f40e86?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+  },
+  'garage-door': {
+    hero:              'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+  },
+  'foundation-repair': {
+    hero:              'https://images.unsplash.com/photo-1621905251189-00ac5234bee3?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+  },
+  'carpet-cleaning': {
+    hero:              'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+  },
+  'window-replacement': {
+    hero:              'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1519642929-ef42f2f40e86?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+  },
+  'house-painting': {
+    hero:              'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+  },
+  'junk-removal': {
+    hero:              'https://images.unsplash.com/photo-1621905251189-00ac5234bee3?w=1200&q=80',
+    'main-image':      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    'service-image':   'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
+    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
+    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+  },
+};
+
 // ─── Registry ─────────────────────────────────────────────────────────────────
 
 export const CATEGORIES: CategoryConfig[] = [

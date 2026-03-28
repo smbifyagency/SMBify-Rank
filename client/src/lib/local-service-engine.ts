@@ -6,7 +6,7 @@
  */
 
 import { generateWaterDamageWebsite, WDBusinessData } from './water-damage-generator.js';
-import { getCategoryConfig, CategoryConfig } from './local-service-categories.js';
+import { getCategoryConfig, CategoryConfig, CATEGORY_PLACEHOLDER_IMAGES } from './local-service-categories.js';
 
 export type { CategoryConfig };
 export { getCategoryConfig };
@@ -90,6 +90,11 @@ export function generateLocalServiceWebsite(
 
   if (c.processH2) d._processH2 = c.processH2;
   if (c.faqH2)     d._faqH2     = c.faqH2;
+
+  // Inject category-specific placeholder images so each vertical gets
+  // visually relevant defaults before the user uploads their own photos.
+  const categoryImages = CATEGORY_PLACEHOLDER_IMAGES[categoryId];
+  if (categoryImages) d._categoryImages = categoryImages;
 
   return generateWaterDamageWebsite(enriched, domain) as Record<string, string>;
 }

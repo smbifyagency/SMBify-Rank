@@ -99,6 +99,28 @@ const WD_IMAGE_SLOTS = [
   { key: "gallery-1",      label: "Gallery — Before Photo",   page: "Gallery",          defaultSrc: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80", hint: "Before photo from an actual restoration job" },
 ];
 
+// Sample data for each category — used only by the "Fill sample" button during testing.
+// Never persisted automatically; AI still generates all actual content.
+function getSampleData(catId: string): Partial<WDSiteData> {
+  const config = getCategoryConfig(catId);
+  const bizName = `Austin ${config.name}`;
+  const slug = bizName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+  return {
+    businessName: bizName,
+    phone: '(512) 555-0182',
+    email: `info@${slug}.com`,
+    address: '4821 Oak Hollow Drive',
+    city: 'Austin',
+    state: 'TX',
+    primaryKeyword: config.defaultPrimaryKeyword,
+    services: config.defaultServices.slice(0, 8),
+    serviceAreas: ['Austin', 'Round Rock', 'Cedar Park', 'Georgetown', 'Pflugerville'],
+    urlSlug: slug,
+    primaryColor: config.defaultPalette.primary,
+    secondaryColor: config.defaultPalette.secondary,
+  };
+}
+
 // Script injected into every preview page so images become click-to-upload
 const PREVIEW_CLICK_SCRIPT = `
 <style>
@@ -980,7 +1002,22 @@ export default function WDSiteEditor() {
 
             {/* ── Business Info Tab ───────────────────────────────────── */}
             <TabsContent value="business" className="p-4 space-y-4 mt-0">
-              <h3 className="font-semibold text-sm text-gray-300">Business Information</h3>
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-sm text-gray-300">Business Information</h3>
+                <button
+                  type="button"
+                  title="Fill form with sample data for testing"
+                  onClick={() => {
+                    const sample = getSampleData(categoryId);
+                    const next = { ...siteData, ...sample } as WDSiteData;
+                    setSiteData(next);
+                    rebuildPreview(next);
+                  }}
+                  className="text-[10px] px-2 py-1 rounded bg-gray-700 text-gray-400 hover:bg-gray-600 hover:text-white transition-colors"
+                >
+                  Fill sample data
+                </button>
+              </div>
 
               <div className="space-y-3">
                 {/* Color Theme — shown first so it's easy to find */}
