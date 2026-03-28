@@ -6624,6 +6624,27 @@ Generated on: ${new Date().toISOString()}`;
         }
       }
 
+      // Re-apply customImages after customFiles override — storedCustomFiles may contain
+      // old HTML with placeholder URLs that would overwrite the freshly generated images.
+      if (bd.customImages && typeof bd.customImages === 'object' && Object.keys(bd.customImages).length > 0) {
+        for (const [filename, html] of Object.entries(files as Record<string, string>)) {
+          if (!filename.endsWith('.html') || typeof html !== 'string') continue;
+          let updated = html as string;
+          for (const [key, customSrc] of Object.entries(bd.customImages as Record<string, string>)) {
+            if (!customSrc) continue;
+            updated = updated.replace(
+              new RegExp(`(<img[^>]*data-placeholder="${key}"[^>]*)src="[^"]*"`, 'gs'),
+              `$1src="${customSrc}"`
+            );
+            updated = updated.replace(
+              new RegExp(`(<img[^>]*)src="[^"]*"([^>]*data-placeholder="${key}")`, 'gs'),
+              `$1src="${customSrc}"$2`
+            );
+          }
+          (files as any)[filename] = updated;
+        }
+      }
+
       // Extract any embedded data-URL images to real files (keeps HTML lean for Netlify)
       const extractedImages = new Map<string, string>(); // dataUrl → /images/custom-N.ext
       let imgIndex = 0;
