@@ -22,25 +22,38 @@ export default function DashboardWebsites() {
 
     const handleCreateWebsite = () => setLocation("/dashboard/new-website");
 
-    const handleDelete = async (id: string, name: string, isPublished: boolean) => {
-        if (isPublished && !isAdmin) {
-            toast({
-                title: "Cannot delete published site",
-                description: "This website is live on Netlify. Unpublish it first or contact support to remove it.",
-                variant: "destructive",
-            });
-            return;
+    const handleDelete = async (id: string, name: string, isPublished: boolean, netlifyDomain?: string) => {
+        let msg: string;
+        if (isPublished) {
+            msg = `⚠️ DELETE PUBLISHED SITE "${name}"?\n\n` +
+                `• This website slot will NOT be freed — it still counts toward your limit.\n` +
+                `• You will need to create a new website if you want to replace it.\n` +
+                `• The live Netlify site will NOT be removed automatically.\n`;
+            if (netlifyDomain) {
+                msg += `• Go to netlify.com → Sites → ${netlifyDomain} → Site Settings → Delete site to fully remove it.\n`;
+            }
+            msg += `\nAre you sure you want to proceed?`;
+        } else {
+            msg = `Delete "${name}"?\n\nThis site has not been published yet. Once deleted it cannot be recovered.`;
         }
-        const msg = isPublished
-            ? `Force delete published site "${name}"?\n\nThis will remove the database entry. The Netlify deployment may still exist.`
-            : `Delete "${name}"?\n\nThis site has not been published yet. Once deleted it cannot be recovered.`;
         if (!confirm(msg)) return;
         setDeletingId(id);
         try {
-            const url = isPublished ? `/api/websites/${id}?force=true` : `/api/websites/${id}`;
+            const url = `/api/websites/${id}?force=true`;
             const res = await fetch(url, { method: "DELETE", credentials: "include" });
-            if (!res.ok) throw new Error("Failed to delete");
+            if (!res.ok) {
+                const err = await res.json().catch(() => ({}));
+                throw new Error(err.message || "Failed to delete");
+            }
             toast({ title: "Deleted", description: `"${name}" has been removed.` });
+            if (isPublished) {
+                toast({
+                    title: "Netlify Site Still Live",
+                    description: netlifyDomain
+                        ? `Go to netlify.com and manually delete "${netlifyDomain}" to take the site offline.`
+                        : "The Netlify deployment may still be live. Remove it manually from your Netlify dashboard.",
+                });
+            }
             refetch();
         } catch (error: any) {
             toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -159,10 +172,10 @@ export default function DashboardWebsites() {
                                                 </button>
                                             </Link>
                                             <button
-                                                onClick={() => handleDelete(String(site.id), businessData?.businessName || site.title || "Untitled", !!isPublished)}
+                                                onClick={() => handleDelete(String(site.id), businessData?.businessName || site.title || "Untitled", !!isPublished, domain?.replace(/^https?:\/\//, ''))}
                                                 disabled={deletingId === String(site.id)}
-                                                title={isPublished && !isAdmin ? "Cannot delete a published site" : isPublished && isAdmin ? "Admin: force delete published site" : "Delete site"}
-                                                className={`flex items-center justify-center gap-1 text-xs py-1.5 px-3 rounded-lg transition-all disabled:opacity-50 ${isPublished && !isAdmin ? "bg-gray-500/10 text-gray-600 cursor-not-allowed" : "bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300"}`}
+                                                title={isPublished ? "Delete site (Netlify must be removed manually)" : "Delete site"}
+                                                className={`flex items-center justify-center gap-1 text-xs py-1.5 px-3 rounded-lg transition-all disabled:opacity-50 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300`}
                                             >
                                                 {deletingId === String(site.id) ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
                                             </button>

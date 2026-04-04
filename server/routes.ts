@@ -5849,13 +5849,8 @@ Generated on: ${new Date().toISOString()}`;
         return res.status(404).json({ message: "Website not found" });
       }
 
-      // Block deletion of published sites for non-admin (admin can force-delete)
-      if (!isAdmin && existingWebsite.netlifyUrl && existingWebsite.netlifyUrl !== "pending") {
-        return res.status(403).json({ message: "This website is published and cannot be deleted. Unpublish it first or contact support." });
-      }
-
-      // Admin force-delete: clear Netlify deployment status first
-      if (isAdmin && force && existingWebsite.netlifyUrl) {
+      // For published sites, clear the Netlify reference before deleting
+      if (force && existingWebsite.netlifyUrl) {
         await storage.updateWebsite(id, {
           netlifyUrl: null,
           netlifyDeploymentStatus: "deleted",
@@ -5864,7 +5859,7 @@ Generated on: ${new Date().toISOString()}`;
 
       const success = await storage.deleteWebsite(id);
       if (success) {
-        res.json({ message: "Website deleted successfully" });
+        res.json({ message: "Website deleted successfully", netlifyUrl: existingWebsite.netlifyUrl || null });
       } else {
         res.status(404).json({ message: "Website not found" });
       }
