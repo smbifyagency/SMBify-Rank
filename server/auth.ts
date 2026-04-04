@@ -208,7 +208,7 @@ export async function setupAuth(app: Express) {
         return res.status(400).json({ message: "Invalid input", errors: error.errors });
       }
       console.error("Login error:", error);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: "Internal server error", debug: (error as any)?.message || String(error) });
     }
   });
 
