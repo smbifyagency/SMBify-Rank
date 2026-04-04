@@ -235,6 +235,7 @@ function BlogWriterSection({ siteData, onPostsChange, onRebuildPreview }: BlogWr
   const [editPostId, setEditPostId] = useState<string | null>(null);
   const [editingImageId, setEditingImageId] = useState<string | null>(null);
   const [tempImageUrl, setTempImageUrl] = useState('');
+  const blogImageInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
   const posts = siteData.blogPosts || [];
@@ -659,12 +660,34 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
                       </div>
                       {editingImageId === post.id ? (
                         <div className="space-y-2">
-                          <Input
-                            value={tempImageUrl}
-                            onChange={e => setTempImageUrl(e.target.value)}
-                            placeholder="Paste image URL (Unsplash, etc.)"
-                            className="bg-gray-900 border-gray-600 text-sm text-gray-200 h-8"
-                          />
+                          <div className="flex gap-2">
+                            <Input
+                              value={tempImageUrl}
+                              onChange={e => setTempImageUrl(e.target.value)}
+                              placeholder="Paste image URL..."
+                              className="bg-gray-900 border-gray-600 text-sm text-gray-200 h-8 flex-1"
+                            />
+                            <label className="cursor-pointer flex items-center gap-1 px-2 h-8 bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs rounded-md border border-gray-600 transition whitespace-nowrap">
+                              <ImagePlus className="w-3 h-3" /> Upload
+                              <input
+                                ref={blogImageInputRef}
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={e => {
+                                  const file = e.target.files?.[0];
+                                  if (!file) return;
+                                  const reader = new FileReader();
+                                  reader.onload = ev => {
+                                    const dataUrl = ev.target?.result as string;
+                                    setTempImageUrl(dataUrl);
+                                  };
+                                  reader.readAsDataURL(file);
+                                  e.target.value = '';
+                                }}
+                              />
+                            </label>
+                          </div>
                           {tempImageUrl && (
                             <img
                               src={tempImageUrl}
