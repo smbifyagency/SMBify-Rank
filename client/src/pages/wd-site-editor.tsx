@@ -2409,6 +2409,82 @@ export default function WDSiteEditor() {
                       </div>
                     ))}
                   </div>
+
+                  {/* Estimated word count & token usage */}
+                  {(() => {
+                    const svcCount = siteData.services?.length || 0;
+                    const locCount = siteData.serviceAreas?.length || 0;
+                    const blogCount = 5;
+                    // Word estimates per section
+                    const introWords = 4 * 180;        // 4 paragraphs × ~180 words
+                    const stepsWords = 7 * 100;        // 7 steps × ~100 words
+                    const faqWords = 10 * 125;         // 10 FAQs × ~125 words
+                    const seoWords = 250;              // SEO body
+                    const whyUsWords = 6 * 100;        // 6 why-us points × ~100 words
+                    const aboutWords = 300;            // About page content
+                    const testimonialsWords = 5 * 80;  // 5 reviews × ~80 words
+                    const svcDescWords = svcCount * 125; // Per-service description
+                    const blogWords = blogCount * 1200;  // 5 posts × ~1200 words
+                    const locWords = locCount * 300;    // Location page template content
+
+                    const aiGeneratedWords = introWords + stepsWords + faqWords + seoWords + whyUsWords + aboutWords + testimonialsWords + svcDescWords + blogWords;
+                    const templateWords = locWords + (svcCount * 500) + 800 + 600 + 400; // svc pages template, contact, privacy, terms
+                    const totalWords = aiGeneratedWords + templateWords;
+
+                    // Token estimates (~1.3 tokens per word for English)
+                    const promptTokens = 800 + (blogCount * 600);  // Main prompt + 5 blog prompts
+                    const outputTokens = Math.round(aiGeneratedWords * 1.3);
+                    const totalTokens = promptTokens + outputTokens;
+
+                    // Total pages
+                    const totalPages = 1 + 1 + 1 + 1 + 1 + 1 + svcCount + locCount + blogCount + 6; // home, about, contact, faq, gallery, blog index + services + locations + blog posts + calculators
+
+                    const rows = [
+                      { label: 'Homepage (AI)', words: introWords + stepsWords + faqWords + seoWords + whyUsWords + testimonialsWords },
+                      { label: 'About Page (AI)', words: aboutWords },
+                      { label: `FAQ Page (AI)`, words: faqWords },
+                      { label: `Service Pages ×${svcCount} (AI + template)`, words: svcDescWords + (svcCount * 500) },
+                      { label: `Location Pages ×${locCount} (template)`, words: locWords },
+                      { label: `Blog Posts ×${blogCount} (AI)`, words: blogWords },
+                    ];
+
+                    return (
+                      <div className="rounded-lg bg-gray-800/40 border border-gray-700/50 p-3 space-y-2">
+                        <p className="text-xs font-semibold text-gray-300 flex items-center gap-1.5">
+                          📊 Estimated Content Volume
+                        </p>
+                        <div className="space-y-1">
+                          {rows.map(r => (
+                            <div key={r.label} className="flex justify-between text-[11px]">
+                              <span className="text-gray-400">{r.label}</span>
+                              <span className="text-gray-300 font-mono">{r.words.toLocaleString()} words</span>
+                            </div>
+                          ))}
+                          <div className="border-t border-gray-700/50 pt-1 mt-1 flex justify-between text-[11px] font-semibold">
+                            <span className="text-white">Total Website Content</span>
+                            <span className="text-[#AADD00] font-mono">{totalWords.toLocaleString()} words</span>
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-2 pt-1">
+                          <div className="text-center bg-gray-900/50 rounded px-2 py-1.5 border border-gray-700/30">
+                            <p className="text-[10px] text-gray-500">Total Pages</p>
+                            <p className="text-sm font-bold text-white">{totalPages}</p>
+                          </div>
+                          <div className="text-center bg-gray-900/50 rounded px-2 py-1.5 border border-gray-700/30">
+                            <p className="text-[10px] text-gray-500">AI Tokens (est.)</p>
+                            <p className="text-sm font-bold text-white">{(totalTokens / 1000).toFixed(1)}K</p>
+                          </div>
+                          <div className="text-center bg-gray-900/50 rounded px-2 py-1.5 border border-gray-700/30">
+                            <p className="text-[10px] text-gray-500">API Calls</p>
+                            <p className="text-sm font-bold text-white">{1 + blogCount}</p>
+                          </div>
+                        </div>
+                        <p className="text-[10px] text-gray-600 leading-relaxed">
+                          1 AI call for page content + {blogCount} calls for blog posts. Tokens vary by provider. Template pages (locations, contact, privacy) use no AI tokens.
+                        </p>
+                      </div>
+                    );
+                  })()}
                 </div>
               )}
             </TabsContent>
