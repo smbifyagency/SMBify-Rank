@@ -18,8 +18,20 @@ import {
   Globe, Phone, MapPin, FileText, Layers, Edit3, Sparkles, Wand2, Trash2,
   Eye, X as XIcon, ImagePlus, PenSquare, Plus
 } from "lucide-react";
-import { generateLocalServiceWebsite } from "../lib/local-service-engine";
+import { generateLocalServiceWebsite, enrichBusinessDataForCategory } from "../lib/local-service-engine";
 import { getCategoryConfig } from "../lib/local-service-categories";
+import {
+  generateServicePage,
+  generateLocationPage,
+  generateServiceLocationMatrixPage,
+  generateBlogPostPage,
+  generateBlogArchivePage,
+  generateHomepage,
+  generateSitemap,
+  generateHTMLSitemap,
+  generateLLMsTxt,
+  generateRobots,
+} from "../lib/water-damage-generator";
 import { VisualEditor } from "@/components/visual-editor";
 
 type AIProvider = "openai" | "gemini" | "openrouter";
@@ -1443,6 +1455,100 @@ export default function WDSiteEditor() {
     }
   }
 
+  // Helper to slugify strings the same way as the generator
+  const toSlug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+
+  /**
+   * Incremental page generation — only generate pages that don't already exist.
+   * Merges new pages into the existing generatedFiles without regenerating everything.
+   * Also updates homepage (for nav/service cards), sitemap, and blog archive.
+   *
+   * @param mode  Which type of pages to add: 'services' | 'locations' | 'matrix' | 'blog'
+   */
+  function generateIncrementalPages(mode: 'services' | 'locations' | 'matrix' | 'blog') {
+    if (!siteData) return;
+    const data = siteData;
+    const domain = data.urlSlug || data.businessName.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const wdData = enrichBusinessDataForCategory(categoryId, siteDataToWDData(data)) as any;
+    const existing = { ...generatedFiles };
+    let newCount = 0;
+
+    if (mode === 'services') {
+      const citySlug = toSlug(data.city || '');
+      for (const svc of (data.services || [])) {
+        const filename = `services/${toSlug(svc)}-${citySlug}.html`;
+        if (!existing[filename]) {
+          existing[filename] = generateServicePage(wdData, svc, domain);
+          newCount++;
+        }
+      }
+    }
+
+    if (mode === 'locations') {
+      for (const loc of (data.serviceAreas || [])) {
+        const filename = `locations/${toSlug(loc)}.html`;
+        if (!existing[filename]) {
+          existing[filename] = generateLocationPage(wdData, loc, domain);
+          newCount++;
+        }
+      }
+    }
+
+    if (mode === 'matrix') {
+      for (const svc of (data.services || [])) {
+        for (const loc of (data.serviceAreas || [])) {
+          const filename = `matrix/${toSlug(svc)}-in-${toSlug(loc)}.html`;
+          if (!existing[filename]) {
+            existing[filename] = generateServiceLocationMatrixPage(wdData, svc, loc, domain);
+            newCount++;
+          }
+        }
+      }
+    }
+
+    if (mode === 'blog') {
+      const posts = data.blogPosts || [];
+      for (const post of posts) {
+        const filename = `blog/${post.slug}.html`;
+        if (!existing[filename]) {
+          existing[filename] = generateBlogPostPage(wdData, {
+            slug: post.slug,
+            title: post.title,
+            excerpt: post.excerpt || '',
+            content: post.content,
+            featuredImage: post.featuredImage,
+            date: new Date().toISOString().split('T')[0],
+            category: post.category,
+          }, domain);
+          newCount++;
+        }
+      }
+      // Always update blog archive so new posts appear
+      existing['blog.html'] = generateBlogArchivePage(wdData, domain);
+    }
+
+    // Update homepage (service cards, nav, locations links change with new pages)
+    existing['index.html'] = generateHomepage(wdData, domain);
+
+    // Update sitemaps
+    existing['sitemap.xml'] = generateSitemap(wdData, domain);
+    existing['sitemap.html'] = generateHTMLSitemap(wdData, domain);
+    existing['robots.txt'] = generateRobots(wdData, domain);
+    existing['llms.txt'] = generateLLMsTxt(wdData, domain);
+
+    setGeneratedFiles(existing);
+
+    const labels: Record<string, string> = {
+      services: 'service', locations: 'location', matrix: 'matrix', blog: 'blog'
+    };
+    toast({
+      title: newCount > 0
+        ? `${newCount} new ${labels[mode]} page${newCount > 1 ? 's' : ''} generated`
+        : `All ${labels[mode]} pages already exist`,
+      description: newCount > 0 ? 'Merged into existing site — no full rebuild needed' : undefined,
+    });
+  }
+
   function handleCustomImageUpload(key: string, file: File) {
     const reader = new FileReader();
     reader.onload = e => {
@@ -1882,12 +1988,28 @@ export default function WDSiteEditor() {
                       </div>
                     ))}
                   </div>
-                  <button
-                    onClick={() => updateField("services", [...(siteData.services || []), ""])}
-                    className="mt-1.5 flex items-center gap-1 text-xs text-[#AADD00] hover:text-[#c8ff00] transition-colors w-full justify-center py-1.5 border border-dashed border-gray-700 hover:border-[#AADD00]/40 rounded-md"
-                  >
-                    <Plus className="w-3 h-3" /> Add Service
-                  </button>
+                  <div className="flex gap-1.5 mt-1.5">
+                    <button
+                      onClick={() => updateField("services", [...(siteData.services || []), ""])}
+                      className="flex-1 flex items-center gap-1 text-xs text-[#AADD00] hover:text-[#c8ff00] transition-colors justify-center py-1.5 border border-dashed border-gray-700 hover:border-[#AADD00]/40 rounded-md"
+                    >
+                      <Plus className="w-3 h-3" /> Add Service
+                    </button>
+                    {(() => {
+                      const citySlug = (siteData.city || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                      const newSvcs = (siteData.services || []).filter(s => s && !generatedFiles[`services/${s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}-${citySlug}.html`]);
+                      if (newSvcs.length === 0 || Object.keys(generatedFiles).length === 0) return null;
+                      return (
+                        <button
+                          onClick={() => generateIncrementalPages('services')}
+                          className="flex items-center gap-1 text-[10px] bg-[#AADD00]/15 text-[#AADD00] hover:bg-[#AADD00]/25 px-2.5 py-1.5 rounded-md transition-colors font-medium whitespace-nowrap"
+                          title={`Generate ${newSvcs.length} new service page(s) without full rebuild`}
+                        >
+                          <Sparkles className="w-3 h-3" /> +{newSvcs.length} New
+                        </button>
+                      );
+                    })()}
+                  </div>
                 </div>
 
                 {/* ── Service Areas / Locations (dynamic add/remove) ── */}
@@ -1925,12 +2047,27 @@ export default function WDSiteEditor() {
                       </div>
                     ))}
                   </div>
-                  <button
-                    onClick={() => updateField("serviceAreas", [...(siteData.serviceAreas || []), ""])}
-                    className="mt-1.5 flex items-center gap-1 text-xs text-[#AADD00] hover:text-[#c8ff00] transition-colors w-full justify-center py-1.5 border border-dashed border-gray-700 hover:border-[#AADD00]/40 rounded-md"
-                  >
-                    <Plus className="w-3 h-3" /> Add Location
-                  </button>
+                  <div className="flex gap-1.5 mt-1.5">
+                    <button
+                      onClick={() => updateField("serviceAreas", [...(siteData.serviceAreas || []), ""])}
+                      className="flex-1 flex items-center gap-1 text-xs text-[#AADD00] hover:text-[#c8ff00] transition-colors justify-center py-1.5 border border-dashed border-gray-700 hover:border-[#AADD00]/40 rounded-md"
+                    >
+                      <Plus className="w-3 h-3" /> Add Location
+                    </button>
+                    {(() => {
+                      const newLocs = (siteData.serviceAreas || []).filter(l => l && !generatedFiles[`locations/${l.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}.html`]);
+                      if (newLocs.length === 0 || Object.keys(generatedFiles).length === 0) return null;
+                      return (
+                        <button
+                          onClick={() => generateIncrementalPages('locations')}
+                          className="flex items-center gap-1 text-[10px] bg-[#AADD00]/15 text-[#AADD00] hover:bg-[#AADD00]/25 px-2.5 py-1.5 rounded-md transition-colors font-medium whitespace-nowrap"
+                          title={`Generate ${newLocs.length} new location page(s) without full rebuild`}
+                        >
+                          <Sparkles className="w-3 h-3" /> +{newLocs.length} New
+                        </button>
+                      );
+                    })()}
+                  </div>
                   <p className="text-[10px] text-gray-600 mt-1">Each city = separate SEO location page</p>
                 </div>
 
@@ -1970,6 +2107,25 @@ export default function WDSiteEditor() {
                           Example: <span className="text-gray-400">{siteData.services?.[0] || 'Service'} in {siteData.serviceAreas?.[0] || 'City'}</span>
                           {matrixCount > 0 && <span className="text-gray-600"> + {matrixCount - 1} more</span>}
                         </div>
+                        {(() => {
+                          if (Object.keys(generatedFiles).length === 0) return null;
+                          const newMatrix = (siteData.services || []).flatMap(sv =>
+                            (siteData.serviceAreas || []).filter(lo => {
+                              const f = `matrix/${sv.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}-in-${lo.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}.html`;
+                              return sv && lo && !generatedFiles[f];
+                            })
+                          );
+                          if (newMatrix.length === 0) return null;
+                          return (
+                            <button
+                              onClick={() => generateIncrementalPages('matrix')}
+                              className="w-full mt-1.5 flex items-center justify-center gap-1 text-[10px] bg-[#AADD00]/15 text-[#AADD00] hover:bg-[#AADD00]/25 px-2.5 py-1.5 rounded-md transition-colors font-medium"
+                              title={`Generate ${newMatrix.length} new matrix page(s) without full rebuild`}
+                            >
+                              <Sparkles className="w-3 h-3" /> Generate {newMatrix.length} New Matrix Pages
+                            </button>
+                          );
+                        })()}
                       </div>
                     );
                   })()}
@@ -2844,6 +3000,21 @@ export default function WDSiteEditor() {
 
             {/* ── Blog Writer Tab ─────────────────────────────────────── */}
             <TabsContent value="blog" className="p-4 space-y-4 mt-0">
+              {/* Incremental blog generation button */}
+              {(() => {
+                if (!siteData || Object.keys(generatedFiles).length === 0) return null;
+                const newBlogPosts = (siteData.blogPosts || []).filter(p => p.slug && !generatedFiles[`blog/${p.slug}.html`]);
+                if (newBlogPosts.length === 0) return null;
+                return (
+                  <button
+                    onClick={() => generateIncrementalPages('blog')}
+                    className="w-full flex items-center justify-center gap-1.5 text-xs bg-[#AADD00]/15 text-[#AADD00] hover:bg-[#AADD00]/25 px-3 py-2 rounded-lg transition-colors font-medium border border-[#AADD00]/20"
+                    title={`Generate ${newBlogPosts.length} new blog page(s) without full rebuild`}
+                  >
+                    <Sparkles className="w-3.5 h-3.5" /> Generate {newBlogPosts.length} New Blog Post Page{newBlogPosts.length > 1 ? 's' : ''} (incremental)
+                  </button>
+                );
+              })()}
               <BlogWriterSection
                 siteData={siteData!}
                 onPostsChange={(posts) => {

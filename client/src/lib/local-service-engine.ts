@@ -98,3 +98,58 @@ export function generateLocalServiceWebsite(
 
   return generateWaterDamageWebsite(enriched, domain) as Record<string, string>;
 }
+
+/**
+ * Enrich raw business data with category config, exactly as generateLocalServiceWebsite does,
+ * but without running the full website generation. Returns WDBusinessData-like object
+ * that can be passed to individual page generators (generateServicePage, generateLocationPage, etc.)
+ */
+export function enrichBusinessDataForCategory(
+  categoryId: string,
+  rawData: Record<string, any>
+): Record<string, any> {
+  const config = getCategoryConfig(categoryId);
+
+  const whyUsPoints = config.copy.whyUsPoints.map((point, i) => {
+    const icons = ['🚨', '🎓', '✅', '⚡', '🔍', '📋'];
+    return { icon: icons[i] ?? '✅', heading: point, body: point };
+  });
+
+  const enriched: any = {
+    primaryKeyword: config.defaultPrimaryKeyword,
+    primaryColor: config.defaultPalette.primary,
+    secondaryColor: config.defaultPalette.secondary,
+    services: config.defaultServices,
+    ...rawData,
+    _categoryId: config.id,
+    _heroTagline: config.copy.heroTagline,
+    _heroSubheading: config.copy.heroSubheading,
+    _ctaHeadline: config.copy.ctaHeadline,
+    _ctaSubtext: config.copy.ctaSubtext,
+    _ctaButton: config.copy.ctaButton,
+    _emergencyBadge: config.copy.emergencyBadge,
+    _trustBadges: config.copy.trustBadges,
+    _whyUsPoints: whyUsPoints,
+    _schemaType: config.seo.schemaType,
+  };
+
+  const c = config.copy;
+  if (c.schemaDescription)      enriched._schemaDescription      = interpolate(c.schemaDescription, enriched);
+  if (c.schemaOfferCatalogName) enriched._schemaOfferCatalogName = c.schemaOfferCatalogName;
+  if (c.footerEmergencyText)    enriched._footerEmergencyText    = c.footerEmergencyText;
+  if (c.whatsappMessage)        enriched._whatsappMessage        = c.whatsappMessage;
+  if (c.servicePageBenefits)    enriched._servicePageBenefits    = c.servicePageBenefits;
+
+  enriched._introParas   = enriched._aiIntroParas   ?? (c.introParas   ? interpolateArr(c.introParas, enriched)    : undefined);
+  enriched._processSteps = enriched._aiProcessSteps ?? (c.processSteps ? c.processSteps                            : undefined);
+  enriched._faqs         = enriched._aiFaqs         ?? (c.faqs         ? c.faqs                                    : undefined);
+  enriched._seoBody      = enriched._aiSeoBody      ?? (c.seoBody      ? interpolate(c.seoBody, enriched)          : undefined);
+
+  if (c.processH2) enriched._processH2 = c.processH2;
+  if (c.faqH2)     enriched._faqH2     = c.faqH2;
+
+  const categoryImages = CATEGORY_PLACEHOLDER_IMAGES[categoryId];
+  if (categoryImages) enriched._categoryImages = categoryImages;
+
+  return enriched;
+}
