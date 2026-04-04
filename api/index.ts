@@ -45,9 +45,36 @@ app.get('/api/debug-health', (req: any, res: any) => {
     });
 });
 
+// POST debug endpoint — mirrors the login shape to diagnose body parsing
+app.post('/api/debug-post', (req: any, res: any) => {
+    res.json({
+        ok: true,
+        url: req.url,
+        method: req.method,
+        hasBody: !!req.body,
+        bodyType: typeof req.body,
+        bodyKeys: req.body ? Object.keys(req.body) : [],
+        bodyPreview: req.body ? JSON.stringify(req.body).substring(0, 200) : null,
+        headers: {
+            contentType: req.headers['content-type'],
+            contentLength: req.headers['content-length'],
+        },
+        ts: new Date().toISOString(),
+    });
+});
+
 export default async function handler(req: any, res: any) {
     if (!routesRegistered) {
         await registerRoutes(app);
+        // Global error handler — catch anything Express doesn't handle
+        app.use((err: any, _req: any, errRes: any, _next: any) => {
+            console.error('Unhandled Express error:', err.message, err.stack);
+            errRes.status(err.statusCode || err.status || 500).json({
+                error: err.message || 'Internal Server Error',
+                type: err.type || 'unknown',
+                source: 'api-error-handler',
+            });
+        });
         routesRegistered = true;
     }
     return app(req, res);
