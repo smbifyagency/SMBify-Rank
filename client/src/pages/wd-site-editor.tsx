@@ -1275,10 +1275,7 @@ export default function WDSiteEditor() {
                 <Phone className="w-3 h-3 mr-1" />Business
               </TabsTrigger>
               <TabsTrigger value="content" className="flex-1 rounded-none text-xs py-3 data-[state=active]:bg-gray-800">
-                <FileText className="w-3 h-3 mr-1" />Content
-              </TabsTrigger>
-              <TabsTrigger value="ai" className="flex-1 rounded-none text-xs py-3 data-[state=active]:bg-gray-800">
-                <Sparkles className="w-3 h-3 mr-1" />AI
+                <Sparkles className="w-3 h-3 mr-1" />AI Content
               </TabsTrigger>
               <TabsTrigger value="images" className="flex-1 rounded-none text-xs py-3 data-[state=active]:bg-gray-800">
                 <ImageIcon className="w-3 h-3 mr-1" />Images
@@ -1438,18 +1435,6 @@ export default function WDSiteEditor() {
               <div className="rounded-lg border border-dashed border-gray-700 p-3 space-y-2">
                 <p className="text-xs font-medium text-gray-400">AI Content Generation Keys</p>
                 <div>
-                  <Label className="text-xs text-gray-500">Preferred AI Provider</Label>
-                  <select
-                    value={aiProvider}
-                    onChange={e => { setAiProvider(e.target.value as AIProvider); updateField("contentAiProvider", e.target.value); }}
-                    className="mt-1 w-full h-10 px-3 rounded-md bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-[#AADD00]"
-                  >
-                    <option value="gemini">Google Gemini</option>
-                    <option value="openai">OpenAI</option>
-                    <option value="openrouter">OpenRouter</option>
-                  </select>
-                </div>
-                <div>
                   <Label className="text-xs text-gray-500">OpenAI API Key</Label>
                   <Input
                     type="password"
@@ -1535,12 +1520,80 @@ export default function WDSiteEditor() {
 
             {/* ── Content Tab ─────────────────────────────────────────── */}
             <TabsContent value="content" className="p-4 space-y-5 mt-0">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-sm text-gray-300">Page Content</h3>
-                <Button variant="outline" size="sm" onClick={regenerateFiles} disabled={isRegenerating} className="border-amber-600 bg-amber-600/10 text-amber-400 hover:bg-amber-600/20 text-xs font-medium">
-                  {isRegenerating ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <RefreshCw className="w-3 h-3 mr-1" />}
-                  Re-generate
-                </Button>
+              {/* ── AI Content Generator ──────────────────────────────── */}
+              <div className="rounded-lg border border-gray-700 bg-gray-800/30 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-sm text-gray-300 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-[#AADD00]" />
+                    AI Content Generator
+                  </h3>
+                  <Button variant="outline" size="sm" onClick={regenerateFiles} disabled={isRegenerating} className="border-amber-600 bg-amber-600/10 text-amber-400 hover:bg-amber-600/20 text-xs font-medium">
+                    {isRegenerating ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <RefreshCw className="w-3 h-3 mr-1" />}
+                    Re-generate
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500">
+                  Generate unique, SEO-optimized content — intro paragraphs, FAQs, process steps, and SEO body.
+                </p>
+
+                {/* AI Provider selector + Generate button */}
+                <div className="flex items-end gap-2">
+                  <div className="flex-1">
+                    <Label className="text-xs text-gray-400">AI Provider</Label>
+                    <select
+                      className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white mt-1"
+                      value={aiProvider}
+                      onChange={e => { setAiProvider(e.target.value as AIProvider); updateField("contentAiProvider", e.target.value); }}
+                    >
+                      <option value="openai">OpenAI</option>
+                      <option value="gemini">Gemini</option>
+                      <option value="openrouter">OpenRouter</option>
+                    </select>
+                  </div>
+                  <Button
+                    onClick={generateAIContent}
+                    disabled={isGeneratingAI || apiStatus === "none"}
+                    className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold h-[38px] px-4"
+                  >
+                    {isGeneratingAI ? (
+                      <><Loader2 className="w-4 h-4 animate-spin mr-1" />Generating...</>
+                    ) : (siteData as any)._aiIntroParas ? (
+                      <><Wand2 className="w-4 h-4 mr-1" />Regenerate</>
+                    ) : (
+                      <><Sparkles className="w-4 h-4 mr-1" />Generate</>
+                    )}
+                  </Button>
+                </div>
+
+                {apiStatus === "none" && (
+                  <p className="text-xs text-yellow-400">No AI API key configured. Go to <strong>Settings → API Keys</strong> to add one.</p>
+                )}
+
+                {/* Status badges */}
+                {((siteData as any)._aiIntroParas || (siteData as any)._aiFaqs || (siteData as any)._aiSeoBody || (siteData as any)._aiProcessSteps) && (
+                  <div className="flex flex-wrap gap-2 pt-1">
+                    {(siteData as any)._aiIntroParas && (
+                      <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-950/40 border border-green-800 rounded px-2 py-0.5">
+                        <CheckCircle2 className="w-3 h-3" /> Intro ({((siteData as any)._aiIntroParas as string[]).length})
+                      </span>
+                    )}
+                    {(siteData as any)._aiProcessSteps && (
+                      <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-950/40 border border-green-800 rounded px-2 py-0.5">
+                        <CheckCircle2 className="w-3 h-3" /> Steps ({((siteData as any)._aiProcessSteps as any[]).length})
+                      </span>
+                    )}
+                    {(siteData as any)._aiFaqs && (
+                      <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-950/40 border border-green-800 rounded px-2 py-0.5">
+                        <CheckCircle2 className="w-3 h-3" /> FAQs ({((siteData as any)._aiFaqs as any[]).length})
+                      </span>
+                    )}
+                    {(siteData as any)._aiSeoBody && (
+                      <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-950/40 border border-green-800 rounded px-2 py-0.5">
+                        <CheckCircle2 className="w-3 h-3" /> SEO body
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Homepage Hero */}
@@ -1639,7 +1692,7 @@ export default function WDSiteEditor() {
                       )}
                     </div>
                   )}
-                  <p className="text-xs text-gray-600 pt-1">Go to the <button onClick={() => setActiveTab("ai")} className="text-[#AADD00] underline">AI tab</button> to regenerate.</p>
+                  <p className="text-xs text-gray-600 pt-1">Click the "Regenerate" button above to refresh AI content.</p>
                 </div>
               )}
 
@@ -1647,90 +1700,7 @@ export default function WDSiteEditor() {
                 <div className="rounded-lg border border-dashed border-gray-700 p-6 text-center">
                   <Sparkles className="w-8 h-8 text-gray-600 mx-auto mb-2" />
                   <p className="text-sm text-gray-500">No AI content generated yet.</p>
-                  <p className="text-xs text-gray-600 mt-1">Go to the <button onClick={() => setActiveTab("ai")} className="text-[#AADD00] underline">AI tab</button> to generate unique content.</p>
-                </div>
-              )}
-            </TabsContent>
-
-            {/* ── AI Content Tab ──────────────────────────────────────── */}
-            <TabsContent value="ai" className="p-4 space-y-4 mt-0">
-              <div className="space-y-2">
-                <h3 className="font-semibold text-sm text-gray-300 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-[#AADD00]" />
-                  AI Content Generator
-                </h3>
-                <p className="text-xs text-gray-500">
-                  Generate unique, SEO-optimized content for your website — intro paragraphs, FAQs, process steps, and an SEO body. Requires an AI API key in Settings.
-                </p>
-              </div>
-
-              {/* AI Provider selector */}
-              <div className="space-y-1">
-                <Label className="text-xs text-gray-400">AI Provider</Label>
-                <select
-                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
-                  value={aiProvider}
-                  onChange={e => setAiProvider(e.target.value as AIProvider)}
-                >
-                  <option value="openai">OpenAI</option>
-                  <option value="gemini">Gemini</option>
-                  <option value="openrouter">OpenRouter</option>
-                </select>
-              </div>
-
-              {/* Status badges */}
-              {((siteData as any)._aiIntroParas || (siteData as any)._aiFaqs || (siteData as any)._aiSeoBody || (siteData as any)._aiProcessSteps) && (
-                <div className="rounded-lg border border-green-800 bg-green-950/40 p-3 space-y-1.5">
-                  <p className="text-xs font-semibold text-green-400 mb-2">Generated content active:</p>
-                  {(siteData as any)._aiIntroParas && (
-                    <div className="flex items-center gap-2 text-xs text-green-300">
-                      <CheckCircle2 className="w-3 h-3" /> Intro paragraphs ({((siteData as any)._aiIntroParas as string[]).length})
-                    </div>
-                  )}
-                  {(siteData as any)._aiProcessSteps && (
-                    <div className="flex items-center gap-2 text-xs text-green-300">
-                      <CheckCircle2 className="w-3 h-3" /> Process steps ({((siteData as any)._aiProcessSteps as any[]).length})
-                    </div>
-                  )}
-                  {(siteData as any)._aiFaqs && (
-                    <div className="flex items-center gap-2 text-xs text-green-300">
-                      <CheckCircle2 className="w-3 h-3" /> FAQs ({((siteData as any)._aiFaqs as any[]).length})
-                    </div>
-                  )}
-                  {(siteData as any)._aiSeoBody && (
-                    <div className="flex items-center gap-2 text-xs text-green-300">
-                      <CheckCircle2 className="w-3 h-3" /> SEO body text
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Generate button */}
-              <Button
-                onClick={generateAIContent}
-                disabled={isGeneratingAI || apiStatus === "none"}
-                className="w-full bg-[#AADD00] hover:bg-[#bef000] text-black font-bold"
-              >
-                {isGeneratingAI ? (
-                  <><Loader2 className="w-4 h-4 animate-spin mr-2" />Generating with AI...</>
-                ) : (siteData as any)._aiIntroParas ? (
-                  <><Wand2 className="w-4 h-4 mr-2" />Regenerate AI Content</>
-                ) : (
-                  <><Sparkles className="w-4 h-4 mr-2" />Generate Content with AI</>
-                )}
-              </Button>
-
-              {apiStatus === "none" && (
-                <div className="rounded-lg border border-yellow-800 bg-yellow-950/40 p-3 text-xs text-yellow-400">
-                  No AI API key configured. Go to <strong>Settings → API Keys</strong> to add your OpenAI, Gemini, or OpenRouter key.
-                </div>
-              )}
-
-              {!(siteData as any)._aiIntroParas && apiStatus !== "none" && (
-                <div className="rounded-lg border border-dashed border-gray-700 p-5 text-center">
-                  <Sparkles className="w-8 h-8 text-gray-600 mx-auto mb-2" />
-                  <p className="text-sm text-gray-500">No AI content yet.</p>
-                  <p className="text-xs text-gray-600 mt-1">Click the button above to generate unique content for this business.</p>
+                  <p className="text-xs text-gray-600 mt-1">Use the "Generate" button above to create unique content.</p>
                 </div>
               )}
             </TabsContent>
