@@ -2313,116 +2313,116 @@ export type CategoryPlaceholderImages = {
 
 export const CATEGORY_PLACEHOLDER_IMAGES: Record<string, CategoryPlaceholderImages> = {
   'water-damage': {
-    hero:              'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1601760562234-9814eea6663a?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1525438160292-a4a860951216?w=1200&q=80',  // water damage flood cleanup
+    'main-image':      'https://images.unsplash.com/photo-1585325701953-4dfa0972e9cf?w=800&q=80',  // professional restoration crew
+    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',  // industrial equipment
+    'location-image':  'https://images.unsplash.com/photo-1494526585095-c41746248156?w=800&q=80',  // residential home exterior
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80',  // professional team meeting
   },
   'plumbing': {
-    hero:              'https://images.unsplash.com/photo-1621905251189-00ac5234bee3?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1584469353253-9af3f6a10db0?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1571942676516-bcab84649e44?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=1200&q=80', // plumber fixing pipe
+    'main-image':      'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80',  // plumber with wrench working
+    'service-image':   'https://images.unsplash.com/photo-1585704032915-c3400ca199e7?w=800&q=80',  // bathroom plumbing fixtures
+    'location-image':  'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80',  // modern house exterior
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=800&q=80',  // professional plumbing team
   },
   'roofing': {
-    hero:              'https://images.unsplash.com/photo-1635424685267-bd8a3f0cde18?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1519642929-ef42f2f40e86?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1632759145351-1d592919f522?w=1200&q=80', // roofer on roof with shingles
+    'main-image':      'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&q=80',    // roof tiles close-up
+    'service-image':   'https://images.unsplash.com/photo-1635424685267-bd8a3f0cde18?w=800&q=80',  // roofing work in progress
+    'location-image':  'https://images.unsplash.com/photo-1449844908441-8829872d2607?w=800&q=80',  // beautiful house with roof
+    'about-team-photo':'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',  // construction crew
   },
   'hvac': {
-    hero:              'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1599579946622-0a0d1b5d26f8?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=1200&q=80', // HVAC unit outdoor
+    'main-image':      'https://images.unsplash.com/photo-1631545806609-18e42baa7c34?w=800&q=80',  // HVAC tech working on unit
+    'service-image':   'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80',  // AC condenser outdoor
+    'location-image':  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80',  // modern home exterior
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80',  // professional team
   },
   'electrical': {
-    hero:              'https://images.unsplash.com/photo-1621905251189-00ac5234bee3?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1590330297626-d033d3a35be6?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=1200&q=80', // electrician working on panel
+    'main-image':      'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?w=800&q=80',    // electrical wiring work
+    'service-image':   'https://images.unsplash.com/photo-1590330297626-d033d3a35be6?w=800&q=80',  // electrical panel
+    'location-image':  'https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=800&q=80',  // residential property
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=800&q=80',  // electrician team
   },
   'locksmith': {
-    hero:              'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1556909397-2e4a83b41e05?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1562183241-a1dcd5a8fa93?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1558002038-1055907df827?w=1200&q=80',    // door lock close-up
+    'main-image':      'https://images.unsplash.com/photo-1582139329536-e7284fece509?w=800&q=80',  // locksmith working on lock
+    'service-image':   'https://images.unsplash.com/photo-1562113530-57ba467cea38?w=800&q=80',    // keys and lock mechanism
+    'location-image':  'https://images.unsplash.com/photo-1494526585095-c41746248156?w=800&q=80',  // house front door
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80',  // professional team
   },
   'fire-damage': {
-    hero:              'https://images.unsplash.com/photo-1542621334-a254cf47733d?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1542621334-a254cf47733d?w=1200&q=80',    // fire damage scene
+    'main-image':      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',  // restoration equipment
+    'service-image':   'https://images.unsplash.com/photo-1585325701953-4dfa0972e9cf?w=800&q=80',  // cleanup crew
+    'location-image':  'https://images.unsplash.com/photo-1494526585095-c41746248156?w=800&q=80',  // residential house
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80',  // professional team
   },
   'mold-remediation': {
-    hero:              'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=1200&q=80', // mold inspection
+    'main-image':      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',  // remediation equipment
+    'service-image':   'https://images.unsplash.com/photo-1585325701953-4dfa0972e9cf?w=800&q=80',  // protective equipment crew
+    'location-image':  'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80',  // home exterior
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80',  // professional team
   },
   'pest-control': {
-    hero:              'https://images.unsplash.com/photo-1618333258404-fc21b04e0e78?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1632935190508-1ee1a05a7868?w=1200&q=80', // pest control technician
+    'main-image':      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&q=80',  // pest inspection home
+    'service-image':   'https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?w=800&q=80',  // pest control spraying
+    'location-image':  'https://images.unsplash.com/photo-1449844908441-8829872d2607?w=800&q=80',  // suburban home
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=800&q=80',  // uniformed team
   },
   'tree-service': {
-    hero:              'https://images.unsplash.com/photo-1564419320406-aad99b1e6b35?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1519642929-ef42f2f40e86?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1564419320406-aad99b1e6b35?w=1200&q=80', // tree trimming
+    'main-image':      'https://images.unsplash.com/photo-1598300056393-4aac492f4344?w=800&q=80',  // arborist cutting tree
+    'service-image':   'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=800&q=80',  // tree canopy
+    'location-image':  'https://images.unsplash.com/photo-1518156677180-95a2893f3e9f?w=800&q=80',  // tree-lined street
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80',  // crew team
   },
   'garage-door': {
-    hero:              'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1558036117-15d82a90b9b1?w=1200&q=80',    // garage door on house
+    'main-image':      'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80',  // modern garage
+    'service-image':   'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=800&q=80',  // garage mechanism repair
+    'location-image':  'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80',  // luxury house with garage
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=800&q=80',  // professional team
   },
   'foundation-repair': {
-    hero:              'https://images.unsplash.com/photo-1621905251189-00ac5234bee3?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1541888946425-d81bb19240f5?w=1200&q=80', // foundation construction
+    'main-image':      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',  // construction equipment
+    'service-image':   'https://images.unsplash.com/photo-1590069261209-f8e9b8642343?w=800&q=80',  // concrete foundation work
+    'location-image':  'https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?w=800&q=80',  // residential house
+    'about-team-photo':'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',  // construction crew
   },
   'carpet-cleaning': {
-    hero:              'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1558317374-067fb5f30001?w=1200&q=80',    // clean carpet living room
+    'main-image':      'https://images.unsplash.com/photo-1527515545081-5db817172677?w=800&q=80',  // carpet cleaning machine
+    'service-image':   'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80',    // clean interior floor
+    'location-image':  'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80',  // modern home
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80',  // cleaning team
   },
   'window-replacement': {
-    hero:              'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1519642929-ef42f2f40e86?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1487958449943-2429e8be8625?w=1200&q=80', // modern windows on building
+    'main-image':      'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',    // window installation
+    'service-image':   'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80',  // glass windows close-up
+    'location-image':  'https://images.unsplash.com/photo-1449844908441-8829872d2607?w=800&q=80',  // house with windows
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=800&q=80',  // installation crew
   },
   'house-painting': {
-    hero:              'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=1200&q=80', // painter painting wall
+    'main-image':      'https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=800&q=80',    // paint roller on wall
+    'service-image':   'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?w=800&q=80',  // freshly painted room
+    'location-image':  'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800&q=80',  // painted house exterior
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=800&q=80',  // painting team
   },
   'junk-removal': {
-    hero:              'https://images.unsplash.com/photo-1621905251189-00ac5234bee3?w=1200&q=80',
-    'main-image':      'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
-    'service-image':   'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800&q=80',
-    'location-image':  'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&q=80',
-    'about-team-photo':'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=800&q=80',
+    hero:              'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?w=1200&q=80', // cleanup/hauling
+    'main-image':      'https://images.unsplash.com/photo-1567393528677-d6adae7d4a0a?w=800&q=80',  // organized removal
+    'service-image':   'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',    // truck/dumpster
+    'location-image':  'https://images.unsplash.com/photo-1494526585095-c41746248156?w=800&q=80',  // clean property
+    'about-team-photo':'https://images.unsplash.com/photo-1600880292089-90a7e086ee0c?w=800&q=80',  // removal crew
   },
 };
 

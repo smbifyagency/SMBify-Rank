@@ -1186,14 +1186,14 @@ function getCategoryImage(category: string, type: 'team' | 'equipment' | 'result
       results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Roofing": {
-      team: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1632759145351-1d592919f522?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1635424685267-bd8a3f0cde18?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1449844908441-8829872d2607?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Roofing Replacement": {
-      team: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1632759145351-1d592919f522?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1635424685267-bd8a3f0cde18?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1449844908441-8829872d2607?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Landscaping & Lawn Care": {
       team: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
@@ -1508,9 +1508,9 @@ function getCategoryImage(category: string, type: 'team' | 'equipment' | 'result
       results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Garage Door Repair": {
-      team: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1558036117-15d82a90b9b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1534430480872-3498386e7856?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     // Appliance Services
     "Appliance Repair": {
@@ -1530,14 +1530,14 @@ function getCategoryImage(category: string, type: 'team' | 'equipment' | 'result
     },
     // Pest Control
     "Bed Bug Exterminator": {
-      team: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1632935190508-1ee1a05a7868?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Fumigation": {
-      team: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1632935190508-1ee1a05a7868?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     // Solar & Energy
     "Solar Panel Installation": {
@@ -1557,9 +1557,9 @@ function getCategoryImage(category: string, type: 'team' | 'equipment' | 'result
       results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Foundation Repair": {
-      team: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1590069261209-f8e9b8642343?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     // Gutters & Roofing Accessories
     "Gutter Cleaning": {
@@ -1631,19 +1631,19 @@ function getCategoryImage(category: string, type: 'team' | 'equipment' | 'result
     },
     // Specialty Services
     "Locksmith": {
-      team: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1582139329536-e7284fece509?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1562113530-57ba467cea38?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1558002038-1055907df827?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Junk Removal": {
-      team: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1567393528677-d6adae7d4a0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Moving Help": {
-      team: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1600518464441-9154a4dea21b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1567393528677-d6adae7d4a0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Demolition": {
       team: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
@@ -1661,9 +1661,9 @@ function getCategoryImage(category: string, type: 'team' | 'equipment' | 'result
       results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Mold Removal": {
-      team: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1585325701953-4dfa0972e9cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Grout Cleaning": {
       team: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
@@ -1859,9 +1859,9 @@ function getCategoryImage(category: string, type: 'team' | 'equipment' | 'result
       results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Window Installation": {
-      team: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Window Repair": {
       team: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
@@ -1869,9 +1869,9 @@ function getCategoryImage(category: string, type: 'team' | 'equipment' | 'result
       results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Window Replacement": {
-      team: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1487958449943-2429e8be8625?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Shower Doors": {
       team: "https://images.unsplash.com/photo-1587293852726-70cdb56c2866?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
@@ -1906,20 +1906,20 @@ function getCategoryImage(category: string, type: 'team' | 'equipment' | 'result
     },
     // Tree Services
     "Tree Removal": {
-      team: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1598300056393-4aac492f4344?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1564419320406-aad99b1e6b35?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Tree Trimming": {
-      team: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1598300056393-4aac492f4344?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1564419320406-aad99b1e6b35?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     // Water Services
     "Water Damage": {
-      team: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1525438160292-a4a860951216?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Water Heater Repair": {
       team: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
@@ -1943,24 +1943,24 @@ function getCategoryImage(category: string, type: 'team' | 'equipment' | 'result
     },
     // Pest Control Services
     "Pest Control": {
-      team: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1632935190508-1ee1a05a7868?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Organic Pest Control": {
-      team: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1632935190508-1ee1a05a7868?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Termite Control": {
-      team: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1632935190508-1ee1a05a7868?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Termite Inspection": {
-      team: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1572981779307-38b8cabb2407?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1632935190508-1ee1a05a7868?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1628177142898-93e36e4e3a50?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Poison Ivy Removal": {
       team: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
@@ -2107,14 +2107,14 @@ function getCategoryImage(category: string, type: 'team' | 'equipment' | 'result
     },
     // Fire & Disaster Restoration
     "Fire Damage Restoration": {
-      team: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1585325701953-4dfa0972e9cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1542621334-a254cf47733d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Mold Remediation": {
-      team: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      equipment: "https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-      results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+      team: "https://images.unsplash.com/photo-1585325701953-4dfa0972e9cf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      equipment: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+      results: "https://images.unsplash.com/photo-1585771724684-38269d6639fd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
     },
     "Hoarding Clean-Up Services": {
       team: "https://images.unsplash.com/photo-1527515637462-cff94eecc1ac?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
@@ -2203,9 +2203,9 @@ function getCategoryImage(category: string, type: 'team' | 'equipment' | 'result
   };
 
   const fallback = {
-    team: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    equipment: "https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
-    results: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
+    team: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    equipment: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80",
+    results: "https://images.unsplash.com/photo-1494526585095-c41746248156?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80"
   };
 
   return categoryImages[category]?.[type] || fallback[type];
@@ -2430,7 +2430,29 @@ Disallow: /.well-known/
 
 # Allow critical resources for rendering
 Allow: /styles.css
-Allow: /script.js`;
+Allow: /script.js
+
+# LLM / AI Crawlers — allow for visibility
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /`;
 }
 
 // Generate sitemap.xml file with all website pages
@@ -2505,6 +2527,144 @@ ${urls.map(url => `  <url>
 </urlset>`;
 
   return sitemapXml;
+}
+
+// Generate llms.txt for AI/LLM crawlers
+function generateLlmsTxt(businessData: BusinessData, domain?: string, additionalLocations?: string[], additionalServices?: string[]): string {
+  const baseUrl = domain || 'https://yourdomain.com';
+  const biz = businessData.businessName || 'Business';
+  const service = businessData.heroService || businessData.category || 'Professional Services';
+  const city = businessData.heroLocation || 'Local Area';
+  const phone = businessData.phone || '';
+
+  let txt = `# ${biz}
+> ${service} in ${city}
+
+## About
+${biz} provides professional ${service.toLowerCase()} services in ${city} and surrounding areas.
+${businessData.aboutDescription || ''}
+
+## Contact
+- Phone: ${phone}
+- Email: ${businessData.email || ''}
+- Address: ${businessData.address || ''}
+
+## Pages
+- Homepage: ${baseUrl}/
+- Blog: ${baseUrl}/blog.html
+- Sitemap: ${baseUrl}/sitemap.xml
+`;
+
+  if (additionalServices && additionalServices.length > 0) {
+    txt += `\n## Services\n`;
+    additionalServices.forEach(s => {
+      const url = generateServiceUrl(s, businessData.heroLocation);
+      txt += `- ${s}: ${baseUrl}/${url}\n`;
+    });
+  }
+
+  if (additionalLocations && additionalLocations.length > 0) {
+    txt += `\n## Service Areas\n`;
+    additionalLocations.forEach(l => {
+      const url = generateLocationUrl(l, businessData.category);
+      txt += `- ${l}: ${baseUrl}/${url}\n`;
+    });
+  }
+
+  if (businessData.blogPosts && businessData.blogPosts.length > 0) {
+    txt += `\n## Blog Posts\n`;
+    businessData.blogPosts.forEach((post: any) => {
+      const slug = post.slug || post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+      txt += `- ${post.title}: ${baseUrl}/blog-${slug}.html\n`;
+    });
+  }
+
+  return txt;
+}
+
+// Generate HTML sitemap page for user navigation
+function generateHtmlSitemapPage(businessData: BusinessData, template: Template, domain?: string, additionalLocations?: string[], additionalServices?: string[], siteSettings?: SiteSetting[]): string {
+  const baseUrl = domain || '';
+  const biz = businessData.businessName || 'Business';
+  const primaryColor = template.primaryColor || '#667eea';
+
+  let sections = `
+    <div class="sitemap-section">
+      <h2>Main Pages</h2>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="sitemap.html">Sitemap</a></li>
+      </ul>
+    </div>`;
+
+  if (additionalServices && additionalServices.length > 0) {
+    sections += `
+    <div class="sitemap-section">
+      <h2>Services</h2>
+      <ul>
+        ${additionalServices.map(s => {
+          const url = generateServiceUrl(s, businessData.heroLocation);
+          return `<li><a href="${url}">${s}</a></li>`;
+        }).join('\n        ')}
+      </ul>
+    </div>`;
+  }
+
+  if (additionalLocations && additionalLocations.length > 0) {
+    sections += `
+    <div class="sitemap-section">
+      <h2>Service Areas</h2>
+      <ul>
+        ${additionalLocations.map(l => {
+          const url = generateLocationUrl(l, businessData.category);
+          return `<li><a href="${url}">${businessData.heroService || businessData.category} in ${l}</a></li>`;
+        }).join('\n        ')}
+      </ul>
+    </div>`;
+  }
+
+  if (businessData.blogPosts && businessData.blogPosts.length > 0) {
+    sections += `
+    <div class="sitemap-section">
+      <h2>Blog Posts</h2>
+      <ul>
+        ${businessData.blogPosts.map((post: any) => {
+          const slug = post.slug || post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+          return `<li><a href="blog-${slug}.html">${post.title}</a></li>`;
+        }).join('\n        ')}
+      </ul>
+    </div>`;
+  }
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sitemap - ${biz}</title>
+  <meta name="description" content="Complete sitemap for ${biz}. Browse all pages, services, locations, and blog posts.">
+  <meta name="robots" content="noindex, follow">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .sitemap-container { max-width: 900px; margin: 3rem auto; padding: 0 1.5rem; }
+    .sitemap-container h1 { font-size: 2rem; color: ${primaryColor}; margin-bottom: 2rem; }
+    .sitemap-section { margin-bottom: 2.5rem; }
+    .sitemap-section h2 { font-size: 1.25rem; color: ${primaryColor}; margin-bottom: 1rem; padding-bottom: .5rem; border-bottom: 2px solid ${primaryColor}22; }
+    .sitemap-section ul { list-style: none; padding: 0; }
+    .sitemap-section li { padding: .4rem 0; }
+    .sitemap-section a { color: #334155; text-decoration: none; transition: color .2s; }
+    .sitemap-section a:hover { color: ${primaryColor}; text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="sitemap-container">
+    <h1>Sitemap</h1>
+    <p style="color:#64748b;margin-bottom:2rem;">Browse all pages on ${biz}'s website.</p>
+    ${sections}
+  </div>
+</body>
+</html>`;
 }
 
 // Note: _redirects generation removed to prevent Netlify deployment issues
@@ -2612,6 +2772,8 @@ export function generateAllWebsiteFiles(businessData: BusinessData, templateId: 
   // Generate essential SEO files for proper search engine indexing (after all page arrays are created)
   files['robots.txt'] = generateRobotsTxt(domain);
   files['sitemap.xml'] = generateSitemapXml(businessData, domain, additionalLocations, additionalServices);
+  files['llms.txt'] = generateLlmsTxt(businessData, domain, additionalLocations, additionalServices);
+  files['sitemap.html'] = generateHtmlSitemapPage(businessData, template, domain, additionalLocations, additionalServices, siteSettings);
 
   // Replace tel: links with country code in all html files
   if (businessData.phone) {

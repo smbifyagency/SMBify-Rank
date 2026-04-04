@@ -15,7 +15,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft, Save, Rocket, Image as ImageIcon, RefreshCw,
   Loader2, ExternalLink, CheckCircle2, ChevronDown, ChevronUp,
-  Globe, Phone, MapPin, FileText, Layers, Edit3, Sparkles, Wand2, Trash2
+  Globe, Phone, MapPin, FileText, Layers, Edit3, Sparkles, Wand2, Trash2,
+  Eye, X as XIcon, ImagePlus, PenSquare
 } from "lucide-react";
 import { generateLocalServiceWebsite } from "../lib/local-service-engine";
 import { getCategoryConfig } from "../lib/local-service-categories";
@@ -225,6 +226,10 @@ function BlogWriterSection({ siteData, onPostsChange }: BlogWriterSectionProps) 
   const [errors, setErrors] = useState<string[]>([]);
   const [expandedPost, setExpandedPost] = useState<string | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [previewPostId, setPreviewPostId] = useState<string | null>(null);
+  const [editPostId, setEditPostId] = useState<string | null>(null);
+  const [editingImageId, setEditingImageId] = useState<string | null>(null);
+  const [tempImageUrl, setTempImageUrl] = useState('');
   const { toast } = useToast();
 
   const posts = siteData.blogPosts || [];
@@ -362,6 +367,78 @@ function BlogWriterSection({ siteData, onPostsChange }: BlogWriterSectionProps) 
 
   function removeAllPosts() {
     onPostsChange([]);
+  }
+
+  function updatePost(id: string, updates: Partial<NonNullable<WDSiteData['blogPosts']>[number]>) {
+    onPostsChange(posts.map(p => p.id === id ? { ...p, ...updates } : p));
+  }
+
+  function startEditImage(post: NonNullable<WDSiteData['blogPosts']>[number]) {
+    setEditingImageId(post.id);
+    setTempImageUrl(post.featuredImage || '');
+  }
+
+  function saveImage(id: string) {
+    updatePost(id, { featuredImage: tempImageUrl });
+    setEditingImageId(null);
+    setTempImageUrl('');
+    toast({ title: "Featured image updated" });
+  }
+
+  // Build blog post preview HTML
+  function buildBlogPreviewHtml(post: NonNullable<WDSiteData['blogPosts']>[number]): string {
+    const primaryColor = siteData.primaryColor || '#1e3a5f';
+    const secondaryColor = siteData.secondaryColor || '#0ea5e9';
+    return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${post.title}</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8fafc;color:#334155;}
+.container{max-width:800px;margin:0 auto;padding:0 1rem;}
+.blog-header{background:linear-gradient(135deg,${primaryColor},${secondaryColor});color:#fff;padding:3rem 2rem;text-align:center;margin-bottom:2rem;}
+.blog-header h1{font-size:2.2rem;font-weight:800;margin-bottom:1rem;text-shadow:0 2px 4px rgba(0,0,0,.2);}
+.blog-meta{display:flex;gap:1.5rem;justify-content:center;color:rgba(255,255,255,.85);font-size:.875rem;flex-wrap:wrap;}
+.blog-img{width:100%;max-height:400px;object-fit:cover;border-radius:12px;margin-bottom:2rem;box-shadow:0 4px 20px rgba(0,0,0,.1);}
+.blog-body{padding:2rem 0;font-size:1.05rem;line-height:1.85;}
+.blog-body h2{font-size:1.5rem;color:${primaryColor};margin:2rem 0 1rem;font-weight:700;border-left:4px solid ${secondaryColor};padding-left:1rem;}
+.blog-body h3{font-size:1.25rem;color:${primaryColor};margin:1.5rem 0 .75rem;font-weight:600;}
+.blog-body p{margin-bottom:1.25rem;}
+.blog-body ul,.blog-body ol{padding-left:1.5rem;margin:1rem 0;}
+.blog-body li{margin-bottom:.5rem;}
+.blog-body strong{color:#1e293b;}
+.blog-body blockquote{border-left:4px solid ${secondaryColor};padding:.75rem 1rem;margin:1.5rem 0;background:${secondaryColor}0a;border-radius:0 8px 8px 0;font-style:italic;color:#475569;}
+.category-badge{display:inline-block;background:${secondaryColor}22;color:${secondaryColor};font-size:.75rem;font-weight:700;padding:.25rem .6rem;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:1rem;}
+.tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid #e2e8f0;}
+.tag{background:#f1f5f9;color:#64748b;font-size:.75rem;padding:.25rem .6rem;border-radius:4px;}
+.cta-box{background:linear-gradient(135deg,${primaryColor},${secondaryColor});color:#fff;padding:2rem;border-radius:12px;text-align:center;margin:3rem 0;}
+.cta-box h3{font-size:1.5rem;margin-bottom:1rem;}
+.cta-box p{color:rgba(255,255,255,.9);margin-bottom:1.5rem;}
+.cta-btn{display:inline-flex;align-items:center;gap:.5rem;background:#fff;color:${primaryColor};padding:.75rem 2rem;border-radius:8px;text-decoration:none;font-weight:700;font-size:1rem;}
+</style></head><body>
+<div class="blog-header">
+  <div class="container">
+    ${post.category ? `<span class="category-badge" style="background:rgba(255,255,255,.15);color:#fff;">${post.category}</span>` : ''}
+    <h1>${post.title}</h1>
+    <div class="blog-meta">
+      <span><i class="fas fa-calendar" style="margin-right:.4rem;"></i>${new Date(post.date || Date.now()).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+      <span><i class="fas fa-user" style="margin-right:.4rem;"></i>${siteData.businessName || 'Author'}</span>
+      ${post.keywords ? `<span><i class="fas fa-tag" style="margin-right:.4rem;"></i>${post.keywords}</span>` : ''}
+    </div>
+  </div>
+</div>
+<div class="container">
+  ${post.featuredImage ? `<img class="blog-img" src="${post.featuredImage}" alt="${post.featuredImageAlt || post.title}">` : ''}
+  <div class="blog-body">${post.content || `<p>${post.excerpt}</p>`}</div>
+  ${(post.tags && post.tags.length > 0) ? `<div class="tags">${post.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>` : ''}
+  <div class="cta-box">
+    <h3>Need Professional Help?</h3>
+    <p>Contact ${siteData.businessName || 'us'} for expert services in ${siteData.city || 'your area'}.</p>
+    <a href="tel:${siteData.phone || ''}" class="cta-btn"><i class="fas fa-phone"></i> Call ${siteData.phone || 'Now'}</a>
+  </div>
+</div>
+</body></html>`;
   }
 
   return (
@@ -562,17 +639,86 @@ function BlogWriterSection({ siteData, onPostsChange }: BlogWriterSectionProps) 
                   </div>
                 </div>
                 {expandedPost === post.id && (
-                  <div className="border-t border-gray-700 p-3 space-y-2">
-                    {post.featuredImage && (
-                      <img src={post.featuredImage} alt={post.featuredImageAlt || ''} className="w-full h-32 object-cover rounded-md" />
-                    )}
+                  <div className="border-t border-gray-700 p-3 space-y-3">
+                    {/* Featured Image Section */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Featured Image</span>
+                        <button
+                          onClick={e => { e.stopPropagation(); startEditImage(post); }}
+                          className="text-xs text-[#AADD00] hover:text-[#bef000] flex items-center gap-1"
+                        >
+                          <ImagePlus className="w-3 h-3" />
+                          {post.featuredImage ? 'Change' : 'Add Image'}
+                        </button>
+                      </div>
+                      {editingImageId === post.id ? (
+                        <div className="space-y-2">
+                          <Input
+                            value={tempImageUrl}
+                            onChange={e => setTempImageUrl(e.target.value)}
+                            placeholder="Paste image URL (Unsplash, etc.)"
+                            className="bg-gray-900 border-gray-600 text-sm text-gray-200 h-8"
+                          />
+                          {tempImageUrl && (
+                            <img
+                              src={tempImageUrl}
+                              alt="Preview"
+                              className="w-full h-28 object-cover rounded-md border border-gray-600"
+                              onError={e => (e.currentTarget.style.display = 'none')}
+                            />
+                          )}
+                          <div className="flex gap-2">
+                            <Button size="sm" className="h-7 text-xs bg-[#AADD00] hover:bg-[#99CC00] text-gray-900" onClick={() => saveImage(post.id)}>
+                              <Save className="w-3 h-3 mr-1" /> Save
+                            </Button>
+                            <Button size="sm" variant="ghost" className="h-7 text-xs text-gray-400" onClick={() => setEditingImageId(null)}>
+                              Cancel
+                            </Button>
+                          </div>
+                        </div>
+                      ) : post.featuredImage ? (
+                        <img src={post.featuredImage} alt={post.featuredImageAlt || ''} className="w-full h-32 object-cover rounded-md cursor-pointer hover:opacity-80 transition" onClick={e => { e.stopPropagation(); startEditImage(post); }} />
+                      ) : (
+                        <div
+                          className="w-full h-24 border-2 border-dashed border-gray-700 rounded-md flex items-center justify-center cursor-pointer hover:border-[#AADD00] transition"
+                          onClick={e => { e.stopPropagation(); startEditImage(post); }}
+                        >
+                          <span className="text-xs text-gray-500">Click to add featured image</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Excerpt */}
                     <p className="text-xs text-gray-400">{post.excerpt}</p>
-                    <div className="flex flex-wrap gap-1 mt-1">
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-1">
                       {post.tags?.map((tag, ti) => (
                         <span key={ti} className="text-[10px] bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">{tag}</span>
                       ))}
                     </div>
-                    <p className="text-[10px] text-gray-600 mt-1">{post.content?.length || 0} chars • {post.metaTitle}</p>
+
+                    {/* Info + Action Buttons */}
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-700/50">
+                      <p className="text-[10px] text-gray-600">{post.content?.length || 0} chars</p>
+                      <div className="flex gap-1.5">
+                        <button
+                          onClick={e => { e.stopPropagation(); setPreviewPostId(post.id); }}
+                          className="flex items-center gap-1 text-xs bg-gray-700 hover:bg-gray-600 text-gray-200 px-2 py-1 rounded transition"
+                          title="Preview blog post"
+                        >
+                          <Eye className="w-3 h-3" /> Preview
+                        </button>
+                        <button
+                          onClick={e => { e.stopPropagation(); setEditPostId(post.id); }}
+                          className="flex items-center gap-1 text-xs bg-[#AADD00]/20 hover:bg-[#AADD00]/30 text-[#AADD00] px-2 py-1 rounded transition"
+                          title="Edit in visual editor"
+                        >
+                          <PenSquare className="w-3 h-3" /> Edit
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -589,6 +735,79 @@ function BlogWriterSection({ siteData, onPostsChange }: BlogWriterSectionProps) 
           After generating, click <strong className="text-gray-400">Regenerate</strong> to rebuild the website with your blog posts included.
         </p>
       </div>
+
+      {/* Blog Post Preview Modal */}
+      {previewPostId && (() => {
+        const post = posts.find(p => p.id === previewPostId);
+        if (!post) return null;
+        return (
+          <div className="fixed inset-0 z-[9999] bg-black/80 flex items-center justify-center p-4" onClick={() => setPreviewPostId(null)}>
+            <div className="bg-white rounded-xl w-full max-w-4xl h-[90vh] flex flex-col overflow-hidden" onClick={e => e.stopPropagation()}>
+              <div className="flex items-center justify-between px-4 py-3 bg-gray-100 border-b">
+                <div className="flex items-center gap-2">
+                  <Eye className="w-4 h-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-800 truncate max-w-[400px]">{post.title}</span>
+                </div>
+                <button onClick={() => setPreviewPostId(null)} className="p-1 hover:bg-gray-200 rounded transition">
+                  <XIcon className="w-5 h-5 text-gray-600" />
+                </button>
+              </div>
+              <iframe
+                srcDoc={buildBlogPreviewHtml(post)}
+                className="flex-1 w-full border-0"
+                title="Blog Post Preview"
+                sandbox="allow-same-origin"
+              />
+            </div>
+          </div>
+        );
+      })()}
+
+      {/* Blog Post Visual Editor */}
+      {editPostId && (() => {
+        const post = posts.find(p => p.id === editPostId);
+        if (!post) return null;
+        return (
+          <VisualEditor
+            initialHtml={`<div class="blog-content" style="font-family:Inter,sans-serif;max-width:800px;margin:0 auto;padding:2rem;color:#334155;line-height:1.8;">
+              ${post.featuredImage ? `<img src="${post.featuredImage}" alt="${post.featuredImageAlt || post.title}" style="width:100%;max-height:400px;object-fit:cover;border-radius:12px;margin-bottom:2rem;">` : ''}
+              <h1 style="font-size:2rem;color:${siteData.primaryColor || '#1e3a5f'};margin-bottom:1rem;">${post.title}</h1>
+              <p style="color:#64748b;font-size:1.1rem;margin-bottom:2rem;font-style:italic;">${post.excerpt}</p>
+              <div class="post-body">${post.content || ''}</div>
+            </div>`}
+            globalCss={`
+              .blog-content h2 { font-size:1.5rem; color:${siteData.primaryColor || '#1e3a5f'}; margin:2rem 0 1rem; font-weight:700; }
+              .blog-content h3 { font-size:1.25rem; color:${siteData.primaryColor || '#1e3a5f'}; margin:1.5rem 0 .75rem; font-weight:600; }
+              .blog-content p { margin-bottom:1.25rem; }
+              .blog-content ul,.blog-content ol { padding-left:1.5rem; margin:1rem 0; }
+              .blog-content li { margin-bottom:.5rem; }
+              .blog-content blockquote { border-left:4px solid ${siteData.secondaryColor || '#0ea5e9'}; padding:.75rem 1rem; margin:1.5rem 0; background:#f1f5f9; border-radius:0 8px 8px 0; }
+              .blog-content img { max-width:100%; border-radius:8px; }
+            `}
+            isOpen={true}
+            onClose={() => setEditPostId(null)}
+            onSave={(html) => {
+              // Extract content from the edited HTML
+              const parser = new DOMParser();
+              const doc = parser.parseFromString(html, 'text/html');
+              const titleEl = doc.querySelector('h1');
+              const excerptEl = doc.querySelector('p[style*="italic"]');
+              const bodyEl = doc.querySelector('.post-body');
+              const imgEl = doc.querySelector('img');
+
+              const updates: Partial<NonNullable<WDSiteData['blogPosts']>[number]> = {};
+              if (titleEl) updates.title = titleEl.textContent || post.title;
+              if (excerptEl) updates.excerpt = excerptEl.textContent || post.excerpt;
+              if (bodyEl) updates.content = bodyEl.innerHTML;
+              if (imgEl) updates.featuredImage = imgEl.getAttribute('src') || post.featuredImage;
+
+              updatePost(post.id, updates);
+              setEditPostId(null);
+              toast({ title: "Blog post updated" });
+            }}
+          />
+        );
+      })()}
     </div>
   );
 }
