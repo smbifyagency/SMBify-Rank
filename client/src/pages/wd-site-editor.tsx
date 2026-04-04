@@ -201,6 +201,7 @@ function siteDataToWDData(data: WDSiteData): Record<string, any> {
     _aiAboutContent: (data as any)._aiAboutContent,
     _aiTestimonials: (data as any)._aiTestimonials,
     _aiServiceDescs: (data as any)._aiServiceDescs,
+    enableMatrixPages: (data as any).enableMatrixPages,
     blogPosts: data.blogPosts || [],
     generateBlog: (data.blogPosts && data.blogPosts.length > 0) ? true : false,
   } as any;
@@ -990,6 +991,7 @@ export default function WDSiteEditor() {
         _aiAboutContent: bd._aiAboutContent,
         _aiTestimonials: bd._aiTestimonials,
         _aiServiceDescs: bd._aiServiceDescs,
+        enableMatrixPages: bd.enableMatrixPages,
         netlifyUrl: data.netlifyUrl,
         deploymentStatus: data.netlifyDeploymentStatus,
       } as any;
@@ -1877,6 +1879,47 @@ export default function WDSiteEditor() {
                   </div>
                 </div>
 
+                {/* Matrix Pages Toggle */}
+                <div className="rounded-lg border border-dashed border-gray-700 p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-gray-400 flex items-center gap-1">
+                        <Layers className="w-3 h-3" /> Matrix Pages (Service × City)
+                      </p>
+                      <p className="text-[10px] text-gray-600 mt-0.5">
+                        Creates a unique page for every service in every city
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => updateField("enableMatrixPages", !(siteData as any).enableMatrixPages)}
+                      className={`relative w-10 h-5 rounded-full transition-colors ${
+                        (siteData as any).enableMatrixPages ? 'bg-[#AADD00]' : 'bg-gray-700'
+                      }`}
+                    >
+                      <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
+                        (siteData as any).enableMatrixPages ? 'translate-x-5' : ''
+                      }`} />
+                    </button>
+                  </div>
+                  {(siteData as any).enableMatrixPages && (() => {
+                    const svcCount = siteData.services?.length || 0;
+                    const locCount = siteData.serviceAreas?.length || 0;
+                    const matrixCount = svcCount * locCount;
+                    return (
+                      <div className="bg-gray-800/50 rounded-md p-2 space-y-1">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-gray-400">{svcCount} services × {locCount} cities</span>
+                          <span className="font-bold text-[#AADD00] font-mono">{matrixCount} pages</span>
+                        </div>
+                        <div className="text-[10px] text-gray-500 leading-relaxed">
+                          Example: <span className="text-gray-400">{siteData.services?.[0] || 'Service'} in {siteData.serviceAreas?.[0] || 'City'}</span>
+                          {matrixCount > 0 && <span className="text-gray-600"> + {matrixCount - 1} more</span>}
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+
                 <div>
                   <Label className="text-xs text-gray-400">Contact Form Embed Code (optional)</Label>
                   <Textarea
@@ -2399,6 +2442,7 @@ export default function WDSiteEditor() {
                       { page: 'FAQ Page', items: '10 detailed Q&A pairs (100-150 words each)' },
                       { page: 'Service Pages', items: `Unique description for each service (${siteData.services?.length || 0} pages)` },
                       { page: 'Location Pages', items: `Local SEO content for each area (${siteData.serviceAreas?.length || 0} pages)` },
+                      ...((siteData as any).enableMatrixPages ? [{ page: 'Matrix Pages', items: `${(siteData.services?.length || 0)} services × ${(siteData.serviceAreas?.length || 0)} cities = ${(siteData.services?.length || 0) * (siteData.serviceAreas?.length || 0)} unique pages` }] : []),
                       { page: 'Blog', items: '5 auto-generated SEO blog posts (1000+ words each)' },
                       { page: 'Contact Page', items: 'Contact form, map embed, business hours' },
                       { page: 'All Pages', items: 'Schema markup, meta tags, sitemap, robots.txt, llms.txt' },
@@ -2415,6 +2459,8 @@ export default function WDSiteEditor() {
                     const svcCount = siteData.services?.length || 0;
                     const locCount = siteData.serviceAreas?.length || 0;
                     const blogCount = 5;
+                    const matrixEnabled = (siteData as any).enableMatrixPages;
+                    const matrixCount = matrixEnabled ? svcCount * locCount : 0;
                     // Word estimates per section
                     const introWords = 4 * 180;        // 4 paragraphs × ~180 words
                     const stepsWords = 7 * 100;        // 7 steps × ~100 words
@@ -2426,9 +2472,10 @@ export default function WDSiteEditor() {
                     const svcDescWords = svcCount * 125; // Per-service description
                     const blogWords = blogCount * 1200;  // 5 posts × ~1200 words
                     const locWords = locCount * 300;    // Location page template content
+                    const matrixWords = matrixCount * 450; // Matrix page content
 
                     const aiGeneratedWords = introWords + stepsWords + faqWords + seoWords + whyUsWords + aboutWords + testimonialsWords + svcDescWords + blogWords;
-                    const templateWords = locWords + (svcCount * 500) + 800 + 600 + 400; // svc pages template, contact, privacy, terms
+                    const templateWords = locWords + (svcCount * 500) + 800 + 600 + 400 + matrixWords; // svc pages template, contact, privacy, terms, matrix
                     const totalWords = aiGeneratedWords + templateWords;
 
                     // Token estimates (~1.3 tokens per word for English)
@@ -2437,7 +2484,7 @@ export default function WDSiteEditor() {
                     const totalTokens = promptTokens + outputTokens;
 
                     // Total pages
-                    const totalPages = 1 + 1 + 1 + 1 + 1 + 1 + svcCount + locCount + blogCount + 6; // home, about, contact, faq, gallery, blog index + services + locations + blog posts + calculators
+                    const totalPages = 1 + 1 + 1 + 1 + 1 + 1 + svcCount + locCount + blogCount + 6 + matrixCount; // home, about, contact, faq, gallery, blog index + services + locations + blog posts + calculators + matrix
 
                     const rows = [
                       { label: 'Homepage (AI)', words: introWords + stepsWords + faqWords + seoWords + whyUsWords + testimonialsWords },
@@ -2445,6 +2492,7 @@ export default function WDSiteEditor() {
                       { label: `FAQ Page (AI)`, words: faqWords },
                       { label: `Service Pages ×${svcCount} (AI + template)`, words: svcDescWords + (svcCount * 500) },
                       { label: `Location Pages ×${locCount} (template)`, words: locWords },
+                      ...(matrixEnabled ? [{ label: `Matrix Pages ×${matrixCount} (template)`, words: matrixWords }] : []),
                       { label: `Blog Posts ×${blogCount} (AI)`, words: blogWords },
                     ];
 
@@ -2952,6 +3000,16 @@ export default function WDSiteEditor() {
                     const slug = `blog/${(p.slug || p.title).toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
                     return <option key={p.id} value={slug}>{p.title}</option>;
                   })}
+                </optgroup>
+              )}
+              {(siteData as any).enableMatrixPages && Array.isArray(siteData.services) && siteData.services.length > 0 && Array.isArray(siteData.serviceAreas) && siteData.serviceAreas.length > 0 && (
+                <optgroup label="Matrix Pages (Service × City)">
+                  {siteData.services.flatMap(s =>
+                    siteData.serviceAreas.map(l => {
+                      const slug = `matrix/${s.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-in-${l.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
+                      return <option key={`${s}-${l}`} value={slug}>{s} in {l}</option>;
+                    })
+                  )}
                 </optgroup>
               )}
             </select>

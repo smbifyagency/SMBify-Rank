@@ -92,6 +92,8 @@ export interface WDBusinessData {
   // Floating CTA: 'call' (default) | 'whatsapp' | 'none'
   floatingCTA?: 'call' | 'whatsapp' | 'none';
   whatsappNumber?: string;
+  // Matrix pages: service × location cross-product
+  enableMatrixPages?: boolean;
   // Gallery images (uploaded by user, hosted on Netlify after publish)
   galleryImages?: WDGalleryImage[];
   // Blog posts
@@ -2674,7 +2676,9 @@ export function generateLocationPage(
         service: s,
         h3: `${s} in ${city}`,
         description: `Professional ${s.toLowerCase()} for ${city} homeowners and businesses. Fast response, certified technicians.`,
-        internalLink: { anchor: `${s} in ${city}`, slug: `../services/${slugify(s)}-${slugify(data.city)}.html` },
+        internalLink: { anchor: `${s} in ${city}`, slug: data.enableMatrixPages
+          ? `../matrix/${slugify(s)}-in-${slugify(city)}.html`
+          : `../services/${slugify(s)}-${slugify(data.city)}.html` },
       }));
 
   const whyLocalH2 = content?.whyLocalSection?.h2 || `Why ${city} Residents Trust ${data.businessName}`;
@@ -2859,6 +2863,168 @@ export function generateLocationPage(
         { name: 'Home', url: `https://${domain}.netlify.app/` },
         { name: 'Service Areas', url: `https://${domain}.netlify.app/#locations` },
         { name: city, url: canonicalUrl },
+      ]),
+    ],
+    bodyContent: body,
+  });
+}
+
+// ─── MATRIX PAGE (Service × Location) ──────────────────────────────────────
+
+export function generateServiceLocationMatrixPage(
+  data: WDBusinessData,
+  service: string,
+  city: string,
+  domain: string
+): string {
+  const svcSlug = slugify(service);
+  const citySlug = slugify(city);
+  const { secondaryColor, accentColor } = resolveTheme(data);
+  const prefix = '../../';
+  const canonicalUrl = `https://${domain}.netlify.app/matrix/${svcSlug}-in-${citySlug}.html`;
+
+  // Use AI service description if available
+  const aiDesc = (data as any)._aiServiceDescs?.[service];
+
+  const h1 = `${service} in ${city}, ${data.state}`;
+  const heroSub = `Looking for professional ${service.toLowerCase()} in ${city}? ${data.businessName} provides fast, reliable service — licensed, insured, and trusted by local homeowners.`;
+
+  const overviewParas = aiDesc ? [
+    aiDesc,
+    `Homeowners and businesses in ${city} rely on ${data.businessName} for ${service.toLowerCase()} because we combine local knowledge with professional expertise. Our technicians know the common issues in ${city} properties and arrive prepared with the right tools.`,
+    `Every job starts with a free on-site assessment. We document the situation thoroughly, provide a written estimate, and never begin work without your approval.`,
+  ] : [
+    `When you need ${service.toLowerCase()} in ${city}, you need a team that responds quickly and does the job right the first time. ${data.businessName} has been serving ${city} homeowners and businesses with professional ${service.toLowerCase()} — delivering honest assessments, upfront pricing, and certified work.`,
+    `Our ${city} technicians are specifically trained in ${service.toLowerCase()} and understand the unique challenges that local properties face. Whether it's an emergency or a planned project, we handle it completely.`,
+    `${data.businessName} works with all major insurance carriers when applicable and provides complete documentation to support your claim. Call ${data.phone} for a free estimate.`,
+  ];
+
+  const processSteps = (data as any)._aiProcessSteps || [
+    { step: 1, heading: 'Contact Us', body: `Call ${data.phone} or submit a request online. Our ${city} dispatcher will confirm your appointment.` },
+    { step: 2, heading: 'Free Assessment', body: `A licensed technician inspects your ${city} property, documents the situation, and explains what needs to be done.` },
+    { step: 3, heading: 'Written Estimate', body: 'You receive a clear, itemized estimate with no hidden fees — we never start work without your approval.' },
+    { step: 4, heading: 'Professional Service', body: `We complete the ${service.toLowerCase()} using professional tools and industry-standard methods, following all applicable codes.` },
+    { step: 5, heading: 'Final Walkthrough', body: 'We inspect the completed work with you, answer questions, and ensure your complete satisfaction before we leave.' },
+  ];
+
+  const faqs = [
+    { question: `How much does ${service.toLowerCase()} cost in ${city}?`, answer: `Costs vary depending on the scope of work. ${data.businessName} provides free on-site assessments and detailed written estimates before any work begins. Call ${data.phone} for a no-obligation quote.` },
+    { question: `How quickly can you get to ${city}?`, answer: `Our crews are positioned to serve ${city} and surrounding areas. We offer same-day service for most requests and rapid response for emergencies.` },
+    { question: `Is ${data.businessName} licensed for ${service.toLowerCase()} in ${data.state}?`, answer: `Yes. We are fully licensed and insured in ${data.state}. All technicians are trained and certified for ${service.toLowerCase()} work.` },
+    { question: `Do you offer free estimates for ${service.toLowerCase()} in ${city}?`, answer: `Absolutely. We provide free on-site assessments with no obligation. A technician will inspect the situation and give you a written estimate before any work begins.` },
+  ];
+
+  const otherServices = data.services.filter(s => s !== service).slice(0, 4);
+  const otherLocations = data.serviceAreas.filter(l => l !== city).slice(0, 4);
+
+  const body = `
+  ${generateNav(data, 'matrix/')}
+
+  <div class="breadcrumb container">
+    <a href="../../index.html">Home</a>
+    <span>›</span>
+    <a href="../../services/${svcSlug}-${slugify(data.city)}.html">${service}</a>
+    <span>›</span>
+    <span aria-current="page">${service} in ${city}</span>
+  </div>
+
+  <section class="page-hero" role="banner">
+    <div class="container">
+      <h1>${h1}</h1>
+      <p>${heroSub}</p>
+      <div class="trust-badges">
+        ${(data._trustBadges || ['Licensed & Insured', '24/7 Available', 'Free Estimates']).map(b => `<span class="trust-badge">${b}</span>`).join('')}
+      </div>
+      <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call ${data.phone}</a>
+        <a href="../../index.html#contact" class="btn-secondary">Get Free Estimate</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section reveal" aria-labelledby="overview-heading">
+    <div class="container">
+      <h2 id="overview-heading">Professional ${service} in ${city}</h2>
+      ${overviewParas.map(p => `<p>${p}</p>`).join('')}
+    </div>
+  </section>
+
+  <section class="content-section reveal" style="background:${secondaryColor || '#f8fafc'};" aria-labelledby="process-heading">
+    <div class="container">
+      <h2 id="process-heading">Our ${service} Process in ${city}</h2>
+      <div class="process-steps stagger-children">
+        ${processSteps.map(s => `
+        <div class="process-step">
+          <h3>${s.heading}</h3>
+          <p>${s.body}</p>
+        </div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section reveal" id="faq" aria-labelledby="faq-heading">
+    <div class="container">
+      <h2 id="faq-heading" class="text-center">${service} in ${city} — Common Questions</h2>
+      <div class="faq-list">
+        ${faqs.map(faq => `
+        <div class="faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
+          <button class="faq-question" itemprop="name">${faq.question}</button>
+          <div class="faq-answer" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
+            <span itemprop="text">${faq.answer}</span>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+  </section>
+
+  ${otherServices.length > 0 ? `
+  <section class="content-section reveal" aria-labelledby="other-services-heading">
+    <div class="container">
+      <h2 id="other-services-heading">Other Services in ${city}</h2>
+      <div class="locations-grid stagger-children">
+        ${otherServices.map(s => `<a href="../../matrix/${slugify(s)}-in-${citySlug}.html" class="location-link">${s} in ${city}</a>`).join('')}
+      </div>
+    </div>
+  </section>` : ''}
+
+  ${otherLocations.length > 0 ? `
+  <section class="content-section reveal" style="background:${secondaryColor || '#f8fafc'};" aria-labelledby="other-locations-heading">
+    <div class="container">
+      <h2 id="other-locations-heading">${service} in Other Areas</h2>
+      <div class="locations-grid stagger-children">
+        ${otherLocations.map(l => `<a href="../../matrix/${svcSlug}-in-${slugify(l)}.html" class="location-link">${service} in ${l}</a>`).join('')}
+      </div>
+    </div>
+  </section>` : ''}
+
+  <section class="cta-section" aria-labelledby="cta-heading">
+    <div class="container reveal">
+      <h2 id="cta-heading">Need ${service} in ${city}? Call Now</h2>
+      <p>${data.businessName} is ready for your ${service.toLowerCase()} needs in ${city}. Contact us today for a free estimate.</p>
+      <div class="cta-actions">
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call Now</a>
+        <a href="../../index.html#contact" class="btn-secondary">Send a Message</a>
+      </div>
+    </div>
+  </section>
+
+  ${generateFooter(data, 'matrix/')}`;
+
+  return htmlShell({
+    metaTitle: `${service} in ${city}, ${data.state} | ${data.businessName}`,
+    metaDescription: `Professional ${service.toLowerCase()} in ${city}, ${data.state}. ${data.businessName} — licensed, insured, free estimates. Call ${data.phone}.`,
+    canonicalUrl,
+    theme: resolveTheme(data),
+    googleAnalyticsId: data.googleAnalyticsId || undefined,
+    faviconUrl: data.faviconUrl || undefined,
+    customHeadCode: data.customHeadCode || undefined,
+    schemaBlocks: [
+      generateFAQSchema(faqs),
+      generateServiceSchema(data, `${domain}.netlify.app`),
+      generateBreadcrumbSchema([
+        { name: 'Home', url: `https://${domain}.netlify.app/` },
+        { name: service, url: `https://${domain}.netlify.app/services/${svcSlug}-${slugify(data.city)}.html` },
+        { name: `${service} in ${city}`, url: canonicalUrl },
       ]),
     ],
     bodyContent: body,
@@ -4797,6 +4963,16 @@ export function generateWaterDamageWebsite(
   for (const location of data.serviceAreas) {
     const filename = `locations/${slugify(location)}.html`;
     files[filename] = generateLocationPage(data, location, domain);
+  }
+
+  // Matrix pages: service × location cross-product
+  if (data.enableMatrixPages) {
+    for (const service of data.services) {
+      for (const location of data.serviceAreas) {
+        const filename = `matrix/${slugify(service)}-in-${slugify(location)}.html`;
+        files[filename] = generateServiceLocationMatrixPage(data, service, location, domain);
+      }
+    }
   }
 
   // Inject floating CTA button into all HTML pages
