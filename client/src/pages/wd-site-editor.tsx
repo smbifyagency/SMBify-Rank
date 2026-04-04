@@ -1961,7 +1961,7 @@ export default function WDSiteEditor() {
                   </Button>
                 </div>
                 <p className="text-xs text-gray-500">
-                  Generate unique, SEO-optimized content — intro paragraphs, FAQs, process steps, SEO body, why choose us, about page, testimonials, and service descriptions.
+                  One click writes unique content for your <strong className="text-gray-400">entire website</strong> — all pages listed below.
                 </p>
 
                 {/* AI Provider selector + Generate button */}
@@ -2147,12 +2147,19 @@ export default function WDSiteEditor() {
               {/* Local-service AI content — editable */}
               {!siteData.homepageContent && ((siteData as any)._aiIntroParas || (siteData as any)._aiFaqs || (siteData as any)._aiSeoBody || (siteData as any)._aiProcessSteps) && (
                 <div className="space-y-4">
+                  {/* Section header */}
+                  <div className="flex items-center gap-2 pb-1 border-b border-gray-700/50">
+                    <CheckCircle2 className="w-4 h-4 text-green-500" />
+                    <span className="text-xs font-semibold text-gray-300">AI Content Generated — Used Across All Pages</span>
+                  </div>
+
                   {/* Intro Paragraphs */}
                   {(siteData as any)._aiIntroParas && (
                     <div className="rounded-lg border border-gray-700 p-3 space-y-2">
                       <p className="text-xs font-semibold text-green-400 flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Intro Paragraphs ({((siteData as any)._aiIntroParas as string[]).length})
                       </p>
+                      <p className="text-[10px] text-gray-500 -mt-1">→ Homepage intro section</p>
                       {((siteData as any)._aiIntroParas as string[]).map((p: string, i: number) => (
                         <Textarea
                           key={i}
@@ -2175,6 +2182,7 @@ export default function WDSiteEditor() {
                       <p className="text-xs font-semibold text-green-400 flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Process Steps ({((siteData as any)._aiProcessSteps as any[]).length})
                       </p>
+                      <p className="text-[10px] text-gray-500 -mt-1">→ Homepage "Our Process" section + Service pages</p>
                       {((siteData as any)._aiProcessSteps as any[]).map((step: any, i: number) => (
                         <div key={i} className="flex gap-2 items-start">
                           <span className="text-xs text-[#AADD00] font-bold mt-2 w-4 flex-shrink-0">{i + 1}.</span>
@@ -2211,6 +2219,7 @@ export default function WDSiteEditor() {
                       <p className="text-xs font-semibold text-green-400 flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> FAQs ({((siteData as any)._aiFaqs as any[]).length})
                       </p>
+                      <p className="text-[10px] text-gray-500 -mt-1">→ Homepage FAQ section + FAQ page</p>
                       {((siteData as any)._aiFaqs as any[]).map((faq: any, i: number) => (
                         <div key={i} className="space-y-1 border-b border-gray-800 pb-2 last:border-0">
                           <Input
@@ -2244,6 +2253,7 @@ export default function WDSiteEditor() {
                       <p className="text-xs font-semibold text-green-400 flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> SEO Body Text
                       </p>
+                      <p className="text-[10px] text-gray-500 -mt-1">→ Homepage footer SEO section</p>
                       <Textarea
                         value={(siteData as any)._aiSeoBody}
                         onChange={e => setSiteData({ ...siteData, _aiSeoBody: e.target.value } as any)}
@@ -2259,6 +2269,7 @@ export default function WDSiteEditor() {
                       <p className="text-xs font-semibold text-blue-400 flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Why Choose Us ({((siteData as any)._aiWhyChooseUs as any[]).length})
                       </p>
+                      <p className="text-[10px] text-gray-500 -mt-1">→ Homepage "Why Choose Us" section</p>
                       {((siteData as any)._aiWhyChooseUs as any[]).map((item: any, i: number) => (
                         <div key={i} className="space-y-1 border-b border-gray-800 pb-2 last:border-0">
                           <Input
@@ -2292,6 +2303,7 @@ export default function WDSiteEditor() {
                       <p className="text-xs font-semibold text-blue-400 flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> About Us Content
                       </p>
+                      <p className="text-[10px] text-gray-500 -mt-1">→ About page main content</p>
                       <Textarea
                         value={(siteData as any)._aiAboutContent}
                         onChange={e => setSiteData({ ...siteData, _aiAboutContent: e.target.value } as any)}
@@ -2307,6 +2319,7 @@ export default function WDSiteEditor() {
                       <p className="text-xs font-semibold text-purple-400 flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Customer Reviews ({((siteData as any)._aiTestimonials as any[]).length})
                       </p>
+                      <p className="text-[10px] text-gray-500 -mt-1">→ Homepage testimonials section</p>
                       {((siteData as any)._aiTestimonials as any[]).map((review: any, i: number) => (
                         <div key={i} className="space-y-1 border-b border-gray-800 pb-2 last:border-0">
                           <div className="flex gap-2">
@@ -2352,6 +2365,7 @@ export default function WDSiteEditor() {
                       <p className="text-xs font-semibold text-purple-400 flex items-center gap-1">
                         <CheckCircle2 className="w-3.5 h-3.5" /> Service Descriptions ({Object.keys((siteData as any)._aiServiceDescs).length})
                       </p>
+                      <p className="text-[10px] text-gray-500 -mt-1">→ Each service page intro paragraph</p>
                       {Object.entries((siteData as any)._aiServiceDescs).map(([svc, desc]: [string, any], i: number) => (
                         <div key={i} className="space-y-1 border-b border-gray-800 pb-2 last:border-0">
                           <Label className="text-xs text-gray-400">{svc}</Label>
@@ -2372,10 +2386,27 @@ export default function WDSiteEditor() {
               )}
 
               {!siteData.homepageContent && !(siteData as any)._aiIntroParas && (
-                <div className="rounded-lg border border-dashed border-gray-700 p-6 text-center">
-                  <Sparkles className="w-8 h-8 text-gray-600 mx-auto mb-2" />
-                  <p className="text-sm text-gray-500">No AI content generated yet.</p>
-                  <p className="text-xs text-gray-600 mt-1">Use the "Generate" button above to create unique content.</p>
+                <div className="rounded-lg border border-dashed border-gray-700 p-4 space-y-3">
+                  <div className="text-center">
+                    <Sparkles className="w-7 h-7 text-gray-600 mx-auto mb-1" />
+                    <p className="text-sm text-gray-400 font-medium">No AI content generated yet</p>
+                    <p className="text-xs text-gray-600 mt-0.5">Click <strong className="text-[#AADD00]">Generate</strong> to write unique content for all these pages:</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1.5 text-[11px]">
+                    {[
+                      { page: 'Homepage', items: 'Intro paragraphs, Why Choose Us, Process Steps, SEO text, Testimonials' },
+                      { page: 'About Page', items: 'Company story, mission, values (250-350 words)' },
+                      { page: 'FAQ Page', items: '10 detailed Q&A pairs (100-150 words each)' },
+                      { page: 'Service Pages', items: 'Unique description for each service' },
+                      { page: 'Blog', items: '5 auto-generated SEO blog posts (1000+ words each)' },
+                      { page: 'All Pages', items: 'Schema markup, meta descriptions, internal links' },
+                    ].map(({ page, items }) => (
+                      <div key={page} className="bg-gray-800/50 rounded-md px-2.5 py-2 border border-gray-700/50">
+                        <p className="font-medium text-gray-300">{page}</p>
+                        <p className="text-gray-500 mt-0.5 leading-relaxed">{items}</p>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </TabsContent>
