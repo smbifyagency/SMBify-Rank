@@ -16,7 +16,7 @@ import {
   ArrowLeft, Save, Rocket, Image as ImageIcon, RefreshCw,
   Loader2, ExternalLink, CheckCircle2, ChevronDown, ChevronUp,
   Globe, Phone, MapPin, FileText, Layers, Edit3, Sparkles, Wand2, Trash2,
-  Eye, X as XIcon, ImagePlus, PenSquare
+  Eye, X as XIcon, ImagePlus, PenSquare, Plus
 } from "lucide-react";
 import { generateLocalServiceWebsite } from "../lib/local-service-engine";
 import { getCategoryConfig } from "../lib/local-service-categories";
@@ -1847,36 +1847,91 @@ export default function WDSiteEditor() {
                   <Input value={siteData.primaryKeyword} onChange={e => updateField("primaryKeyword", e.target.value)} className="bg-gray-800 border-gray-700 text-white mt-1 text-sm" />
                 </div>
 
+                {/* ── Services (dynamic add/remove) ── */}
                 <div>
-                  <Label className="text-xs text-gray-400 flex items-center gap-1 mb-1">
-                    <Layers className="w-3 h-3" /> Services (one per line)
-                  </Label>
-                  <Textarea
-                    value={(Array.isArray(siteData.services) ? siteData.services : []).join("\n")}
-                    onChange={e => updateField("services", e.target.value.split("\n").filter(Boolean))}
-                    className="bg-gray-800 border-gray-700 text-white text-sm font-mono"
-                    rows={5}
-                    placeholder="Water Extraction&#10;Mold Remediation&#10;Flood Cleanup"
-                  />
+                  <div className="flex items-center justify-between mb-1">
+                    <Label className="text-xs text-gray-400 flex items-center gap-1">
+                      <Layers className="w-3 h-3" /> Services
+                    </Label>
+                    <span className="text-[10px] text-[#AADD00] font-mono">{(siteData.services || []).length} services → {(siteData.services || []).length} pages</span>
+                  </div>
+                  <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                    {(Array.isArray(siteData.services) ? siteData.services : []).map((svc: string, i: number) => (
+                      <div key={i} className="flex items-center gap-1.5 group">
+                        <span className="text-[10px] text-gray-600 font-mono w-4 text-right shrink-0">{i + 1}</span>
+                        <Input
+                          value={svc}
+                          onChange={e => {
+                            const updated = [...(siteData.services || [])];
+                            updated[i] = e.target.value;
+                            updateField("services", updated);
+                          }}
+                          className="bg-gray-800 border-gray-700 text-white text-sm h-8 flex-1"
+                          placeholder="Service name..."
+                        />
+                        <button
+                          onClick={() => {
+                            const updated = (siteData.services || []).filter((_: string, idx: number) => idx !== i);
+                            updateField("services", updated);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-400 transition-opacity p-1 shrink-0"
+                          title="Remove service"
+                        >
+                          <XIcon className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => updateField("services", [...(siteData.services || []), ""])}
+                    className="mt-1.5 flex items-center gap-1 text-xs text-[#AADD00] hover:text-[#c8ff00] transition-colors w-full justify-center py-1.5 border border-dashed border-gray-700 hover:border-[#AADD00]/40 rounded-md"
+                  >
+                    <Plus className="w-3 h-3" /> Add Service
+                  </button>
                 </div>
 
+                {/* ── Service Areas / Locations (dynamic add/remove) ── */}
                 <div>
-                  <Label className="text-xs text-gray-400 flex items-center gap-1 mb-1">
-                    <MapPin className="w-3 h-3" /> Service Areas — each line = 1 page
-                  </Label>
-                  <Textarea
-                    value={(Array.isArray(siteData.serviceAreas) ? siteData.serviceAreas : []).join("\n")}
-                    onChange={e => updateField("serviceAreas", e.target.value.split("\n").filter(Boolean))}
-                    className="bg-gray-800 border-gray-700 text-white text-sm font-mono"
-                    rows={5}
-                    placeholder="Austin&#10;Round Rock&#10;Cedar Park"
-                  />
-                  <div className="flex items-center justify-between mt-1">
-                    <p className="text-xs text-gray-500">Each city = separate SEO location page</p>
-                    <span className="text-xs text-[#AADD00] font-mono">
-                      {(Array.isArray(siteData.serviceAreas) ? siteData.serviceAreas : []).length} pages
-                    </span>
+                  <div className="flex items-center justify-between mb-1">
+                    <Label className="text-xs text-gray-400 flex items-center gap-1">
+                      <MapPin className="w-3 h-3" /> Service Areas (Locations)
+                    </Label>
+                    <span className="text-[10px] text-[#AADD00] font-mono">{(siteData.serviceAreas || []).length} cities → {(siteData.serviceAreas || []).length} pages</span>
                   </div>
+                  <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                    {(Array.isArray(siteData.serviceAreas) ? siteData.serviceAreas : []).map((area: string, i: number) => (
+                      <div key={i} className="flex items-center gap-1.5 group">
+                        <span className="text-[10px] text-gray-600 font-mono w-4 text-right shrink-0">{i + 1}</span>
+                        <Input
+                          value={area}
+                          onChange={e => {
+                            const updated = [...(siteData.serviceAreas || [])];
+                            updated[i] = e.target.value;
+                            updateField("serviceAreas", updated);
+                          }}
+                          className="bg-gray-800 border-gray-700 text-white text-sm h-8 flex-1"
+                          placeholder="City name..."
+                        />
+                        <button
+                          onClick={() => {
+                            const updated = (siteData.serviceAreas || []).filter((_: string, idx: number) => idx !== i);
+                            updateField("serviceAreas", updated);
+                          }}
+                          className="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-400 transition-opacity p-1 shrink-0"
+                          title="Remove location"
+                        >
+                          <XIcon className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <button
+                    onClick={() => updateField("serviceAreas", [...(siteData.serviceAreas || []), ""])}
+                    className="mt-1.5 flex items-center gap-1 text-xs text-[#AADD00] hover:text-[#c8ff00] transition-colors w-full justify-center py-1.5 border border-dashed border-gray-700 hover:border-[#AADD00]/40 rounded-md"
+                  >
+                    <Plus className="w-3 h-3" /> Add Location
+                  </button>
+                  <p className="text-[10px] text-gray-600 mt-1">Each city = separate SEO location page</p>
                 </div>
 
                 {/* Matrix Pages Toggle */}
