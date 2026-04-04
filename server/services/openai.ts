@@ -216,14 +216,14 @@ Return a JSON object with these exact fields:
 }`;
 
     const response = await getOpenAIClient(customApiKey).chat.completions.create({
-      model: "gpt-4o",
+      model: "gpt-4o-mini",
       messages: [
         { role: "system", content: systemPrompt },
         { role: "user", content: userPrompt }
       ],
       response_format: { type: "json_object" },
       temperature: 0.7,
-      max_tokens: 4500
+      max_tokens: 3500
     });
 
     const content = response.choices[0].message.content;

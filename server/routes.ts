@@ -6497,6 +6497,13 @@ Generated on: ${new Date().toISOString()}`;
       }
 
       const bd = (website.businessData || {}) as any;
+
+      // Accept provider override from request body
+      const { aiProvider: reqProvider } = req.body || {};
+      if (reqProvider && typeof reqProvider === 'string') {
+        bd.contentAiProvider = reqProvider;
+      }
+
       const categoryId = bd.categoryId || website.template || 'water-damage';
       const { getCategoryConfig: getCC } = await import('../client/src/lib/local-service-engine.js');
       const catConfig = getCC(categoryId);

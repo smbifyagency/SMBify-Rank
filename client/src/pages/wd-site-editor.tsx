@@ -270,6 +270,9 @@ function BlogWriterSection({ siteData, onPostsChange }: BlogWriterSectionProps) 
 
         if (!res.ok) {
           const errData = await res.json().catch(() => ({}));
+          if (res.status === 504) {
+            throw new Error('Timeout — try Gemini or OpenRouter (faster)');
+          }
           throw new Error(errData.message || `HTTP ${res.status}`);
         }
 
@@ -742,6 +745,7 @@ export default function WDSiteEditor() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
+        body: JSON.stringify({ aiProvider }),
       });
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
@@ -1656,6 +1660,20 @@ export default function WDSiteEditor() {
                 <p className="text-xs text-gray-500">
                   Generate unique, SEO-optimized content for your website — intro paragraphs, FAQs, process steps, and an SEO body. Requires an AI API key in Settings.
                 </p>
+              </div>
+
+              {/* AI Provider selector */}
+              <div className="space-y-1">
+                <Label className="text-xs text-gray-400">AI Provider</Label>
+                <select
+                  className="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-sm text-white"
+                  value={aiProvider}
+                  onChange={e => setAiProvider(e.target.value as AIProvider)}
+                >
+                  <option value="openai">OpenAI</option>
+                  <option value="gemini">Gemini</option>
+                  <option value="openrouter">OpenRouter</option>
+                </select>
               </div>
 
               {/* Status badges */}

@@ -401,6 +401,35 @@ function buildLocationSlug(city: string): string {
   return `locations/${slugify(city)}.html`;
 }
 
+// ─── SHARED: Google Map Embed (no API key needed) ──────────────────────────
+
+function generateGoogleMap(data: WDBusinessData, focusCity?: string): string {
+  const city = focusCity || data.city;
+  const query = encodeURIComponent(`${data.businessName}, ${data.address}, ${city}, ${data.state}`);
+  return `<div style="border-radius:12px;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08);margin-top:1rem;">
+    <iframe
+      src="https://www.google.com/maps?q=${query}&output=embed"
+      width="100%" height="350" style="border:0;display:block;" loading="lazy"
+      referrerpolicy="no-referrer-when-downgrade"
+      title="Map showing ${data.businessName} in ${city}, ${data.state}"
+      allowfullscreen></iframe>
+  </div>
+  <div style="display:flex;flex-wrap:wrap;gap:1.5rem;margin-top:1.25rem;padding:1rem;background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.05);">
+    <div style="flex:1;min-width:180px;">
+      <strong style="font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;color:#64748b;">Address</strong>
+      <p style="margin:.25rem 0 0;color:#1e293b;">${data.address}, ${city}, ${data.state}</p>
+    </div>
+    <div style="min-width:140px;">
+      <strong style="font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;color:#64748b;">Phone</strong>
+      <p style="margin:.25rem 0 0;"><a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" style="color:#1e293b;font-weight:600;text-decoration:none;">${data.phone}</a></p>
+    </div>
+    ${data.email ? `<div style="min-width:140px;">
+      <strong style="font-size:.85rem;text-transform:uppercase;letter-spacing:.04em;color:#64748b;">Email</strong>
+      <p style="margin:.25rem 0 0;"><a href="mailto:${data.email}" style="color:#1e293b;text-decoration:none;">${data.email}</a></p>
+    </div>` : ''}
+  </div>`;
+}
+
 // ─── SHARED: Navigation ────────────────────────────────────────────────────
 
 function generateNav(data: WDBusinessData, currentPath: string = ''): string {
@@ -515,12 +544,32 @@ function generateFooter(data: WDBusinessData, currentPath: string = ''): string 
       </div>
 
       <div class="footer-contact">
-        <h3>24/7 Emergency Line</h3>
-        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="footer-phone">${data.phone}</a>
-        <p>${data._footerEmergencyText || 'Available around the clock for emergencies.'}</p>
+        <h3>Contact Information</h3>
+        <div itemscope itemtype="https://schema.org/LocalBusiness" style="font-size:.9rem;">
+          <p itemprop="name" style="font-weight:700;margin-bottom:.5rem;">${data.businessName}</p>
+          <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+            <p><span itemprop="streetAddress">${data.address}</span></p>
+            <p><span itemprop="addressLocality">${data.city}</span>, <span itemprop="addressRegion">${data.state}</span></p>
+          </div>
+          <p style="margin-top:.5rem;">
+            <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="footer-phone" itemprop="telephone">${data.phone}</a>
+          </p>
+          ${data.email ? `<p><a href="mailto:${data.email}" style="color:#94a3b8;text-decoration:none;" itemprop="email">${data.email}</a></p>` : ''}
+        </div>
+        <p style="margin-top:.75rem;font-size:.85rem;color:#94a3b8;">${data._footerEmergencyText || 'Available 24/7 for emergencies.'}</p>
         ${data.licenseNumber ? `<p style="font-size:.8rem;color:#64748b;margin-top:.5rem;">License: ${data.licenseNumber}</p>` : ''}
         ${data.insuranceInfo ? `<p style="font-size:.8rem;color:#64748b;">${data.insuranceInfo}</p>` : ''}
       </div>
+    </div>
+
+    <!-- Footer Map -->
+    <div style="margin:0 auto;max-width:1200px;padding:0 1.5rem 1.5rem;">
+      <iframe
+        src="https://www.google.com/maps?q=${encodeURIComponent(`${data.businessName}, ${data.address}, ${data.city}, ${data.state}`)}&output=embed"
+        width="100%" height="200" style="border:0;border-radius:10px;display:block;" loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="Map showing ${data.businessName}"
+        allowfullscreen></iframe>
     </div>
 
     <div class="footer-bottom">
@@ -754,6 +803,12 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   padding: 0.5rem 0.75rem;
   border-radius: 6px;
   font-size: 0.875rem;
+  color: #1e293b;
+  transition: background .15s, color .15s;
+}
+.dropdown li a:hover {
+  background: ${primaryColor}11;
+  color: ${primaryColor};
 }
 
 .btn-emergency {
@@ -1800,6 +1855,14 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
 
   ${contactSection}
 
+  <!-- ── Map ──────────────────────────────────────────── -->
+  <section class="content-section" style="background:#f8fafc;" aria-labelledby="map-heading">
+    <div class="container">
+      <h2 id="map-heading" style="text-align:center;margin-bottom:1.5rem;">Find Us in ${data.city}</h2>
+      ${generateGoogleMap(data)}
+    </div>
+  </section>
+
   ${generateFooter(data)}`;
 
   const canonicalUrl = `https://${domain}.netlify.app/`;
@@ -2277,6 +2340,14 @@ export function generateLocationPage(
     </div>
   </section>
 
+  <!-- ── Map ─────────────────────────────────────── -->
+  <section class="content-section" style="background:#f8fafc;" aria-labelledby="map-heading">
+    <div class="container">
+      <h2 id="map-heading" style="text-align:center;margin-bottom:1.5rem;">${data.primaryKeyword} in ${city} — Our Service Area</h2>
+      ${generateGoogleMap(data, city)}
+    </div>
+  </section>
+
   <!-- ── CTA ────────────────────────────────────── -->
   <section class="cta-section" aria-labelledby="cta-heading">
     <div class="container">
@@ -2560,13 +2631,8 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
           <h2>Send Us a Message</h2>
           ${formSection}
 
-          <!-- Map placeholder -->
-          <div style="margin-top:1.5rem;background:#e2e8f0;border-radius:10px;height:240px;display:flex;align-items:center;justify-content:center;color:#64748b;" data-placeholder="map-embed">
-            <div style="text-align:center;">
-              <div style="font-size:2rem;margin-bottom:.5rem;">🗺</div>
-              <p style="margin:0;font-size:.9rem;">Map placeholder — embed Google Maps here</p>
-            </div>
-          </div>
+          <!-- Map -->
+          ${generateGoogleMap(data)}
         </div>
       </div>
     </div>
