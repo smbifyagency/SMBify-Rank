@@ -5835,16 +5835,31 @@ Generated on: ${new Date().toISOString()}`;
     try {
       const { id } = req.params;
       const userId = req.user.id;
+      const isAdmin = req.user.role === "admin" || userId === "admin";
+      const force = req.query.force === "true";
 
-      // Check if website belongs to user
+      // Check if website exists
       const existingWebsite = await storage.getWebsite(id);
-      if (!existingWebsite || existingWebsite.userId !== userId) {
+      if (!existingWebsite) {
         return res.status(404).json({ message: "Website not found" });
       }
 
-      // Block deletion of published sites — they are live on Netlify
-      if (existingWebsite.netlifyUrl && existingWebsite.netlifyUrl !== "pending") {
+      // Non-admin users can only delete their own websites
+      if (!isAdmin && existingWebsite.userId !== userId) {
+        return res.status(404).json({ message: "Website not found" });
+      }
+
+      // Block deletion of published sites for non-admin (admin can force-delete)
+      if (!isAdmin && existingWebsite.netlifyUrl && existingWebsite.netlifyUrl !== "pending") {
         return res.status(403).json({ message: "This website is published and cannot be deleted. Unpublish it first or contact support." });
+      }
+
+      // Admin force-delete: clear Netlify deployment status first
+      if (isAdmin && force && existingWebsite.netlifyUrl) {
+        await storage.updateWebsite(id, {
+          netlifyUrl: null,
+          netlifyDeploymentStatus: "deleted",
+        } as any);
       }
 
       const success = await storage.deleteWebsite(id);
@@ -5856,6 +5871,25 @@ Generated on: ${new Date().toISOString()}`;
     } catch (error) {
       console.error("Error deleting website:", error);
       res.status(500).json({ message: "Failed to delete website" });
+    }
+  });
+
+  // Admin bulk delete websites
+  app.post("/api/admin/websites/bulk-delete", isAdmin, async (req: any, res) => {
+    try {
+      const { ids } = req.body;
+      if (!Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({ message: "Provide an array of website IDs" });
+      }
+      let deleted = 0;
+      for (const id of ids) {
+        const success = await storage.deleteWebsite(id);
+        if (success) deleted++;
+      }
+      res.json({ message: `Deleted ${deleted} of ${ids.length} websites` });
+    } catch (error) {
+      console.error("Error bulk deleting:", error);
+      res.status(500).json({ message: "Failed to bulk delete" });
     }
   });
 

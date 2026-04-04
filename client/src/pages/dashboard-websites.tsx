@@ -6,10 +6,13 @@ import type { Website } from "@shared/schema";
 import { format } from "date-fns";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function DashboardWebsites() {
     const [, setLocation] = useLocation();
     const { toast } = useToast();
+    const { user } = useAuth();
+    const isAdmin = user?.role === "admin";
     const [isCreating, setIsCreating] = useState(false);
     const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -20,7 +23,7 @@ export default function DashboardWebsites() {
     const handleCreateWebsite = () => setLocation("/dashboard/new-website");
 
     const handleDelete = async (id: string, name: string, isPublished: boolean) => {
-        if (isPublished) {
+        if (isPublished && !isAdmin) {
             toast({
                 title: "Cannot delete published site",
                 description: "This website is live on Netlify. Unpublish it first or contact support to remove it.",
@@ -28,10 +31,14 @@ export default function DashboardWebsites() {
             });
             return;
         }
-        if (!confirm(`Delete "${name}"?\n\nThis site has not been published yet. Once deleted it cannot be recovered.`)) return;
+        const msg = isPublished
+            ? `Force delete published site "${name}"?\n\nThis will remove the database entry. The Netlify deployment may still exist.`
+            : `Delete "${name}"?\n\nThis site has not been published yet. Once deleted it cannot be recovered.`;
+        if (!confirm(msg)) return;
         setDeletingId(id);
         try {
-            const res = await fetch(`/api/websites/${id}`, { method: "DELETE" });
+            const url = isPublished ? `/api/websites/${id}?force=true` : `/api/websites/${id}`;
+            const res = await fetch(url, { method: "DELETE", credentials: "include" });
             if (!res.ok) throw new Error("Failed to delete");
             toast({ title: "Deleted", description: `"${name}" has been removed.` });
             refetch();
@@ -154,8 +161,8 @@ export default function DashboardWebsites() {
                                             <button
                                                 onClick={() => handleDelete(String(site.id), businessData?.businessName || site.title || "Untitled", !!isPublished)}
                                                 disabled={deletingId === String(site.id)}
-                                                title={isPublished ? "Cannot delete a published site" : "Delete site"}
-                                                className={`flex items-center justify-center gap-1 text-xs py-1.5 px-3 rounded-lg transition-all disabled:opacity-50 ${isPublished ? "bg-gray-500/10 text-gray-600 cursor-not-allowed" : "bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300"}`}
+                                                title={isPublished && !isAdmin ? "Cannot delete a published site" : isPublished && isAdmin ? "Admin: force delete published site" : "Delete site"}
+                                                className={`flex items-center justify-center gap-1 text-xs py-1.5 px-3 rounded-lg transition-all disabled:opacity-50 ${isPublished && !isAdmin ? "bg-gray-500/10 text-gray-600 cursor-not-allowed" : "bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300"}`}
                                             >
                                                 {deletingId === String(site.id) ? <Loader2 className="h-3 w-3 animate-spin" /> : <Trash2 className="h-3 w-3" />}
                                             </button>
