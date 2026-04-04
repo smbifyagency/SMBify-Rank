@@ -518,6 +518,7 @@ export default function WDSiteEditor() {
   const [previewBlobUrl, setPreviewBlobUrl] = useState<string | null>(null);
   const [showVisualEditor, setShowVisualEditor] = useState(false);
   const [visualEditorOverrides, setVisualEditorOverrides] = useState<Record<string, string>>({});
+  const [aiProvider, setAiProvider] = useState<AIProvider>("gemini");
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstLoadRef = useRef(true);
@@ -636,6 +637,7 @@ export default function WDSiteEditor() {
         deploymentStatus: data.netlifyDeploymentStatus,
       } as any;
       setSiteData(loadedSiteData);
+      if (loadedSiteData.contentAiProvider) setAiProvider(loadedSiteData.contentAiProvider as AIProvider);
       if (data.netlifyUrl) setDeployedUrl(data.netlifyUrl);
       if (data.template) setCategoryId(data.template);
 
@@ -1438,8 +1440,8 @@ export default function WDSiteEditor() {
                 <div>
                   <Label className="text-xs text-gray-500">Preferred AI Provider</Label>
                   <select
-                    value={isAIProvider(siteData.contentAiProvider) ? siteData.contentAiProvider : "gemini"}
-                    onChange={e => updateField("contentAiProvider", e.target.value)}
+                    value={aiProvider}
+                    onChange={e => { setAiProvider(e.target.value as AIProvider); updateField("contentAiProvider", e.target.value); }}
                     className="mt-1 w-full h-10 px-3 rounded-md bg-gray-800 border border-gray-700 text-white text-sm focus:outline-none focus:border-[#AADD00]"
                   >
                     <option value="gemini">Google Gemini</option>
