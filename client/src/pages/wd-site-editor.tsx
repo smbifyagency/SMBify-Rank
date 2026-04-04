@@ -2397,9 +2397,11 @@ export default function WDSiteEditor() {
                       { page: 'Homepage', items: 'Intro paragraphs, Why Choose Us, Process Steps, SEO text, Testimonials' },
                       { page: 'About Page', items: 'Company story, mission, values (250-350 words)' },
                       { page: 'FAQ Page', items: '10 detailed Q&A pairs (100-150 words each)' },
-                      { page: 'Service Pages', items: 'Unique description for each service' },
+                      { page: 'Service Pages', items: `Unique description for each service (${siteData.services?.length || 0} pages)` },
+                      { page: 'Location Pages', items: `Local SEO content for each area (${siteData.serviceAreas?.length || 0} pages)` },
                       { page: 'Blog', items: '5 auto-generated SEO blog posts (1000+ words each)' },
-                      { page: 'All Pages', items: 'Schema markup, meta descriptions, internal links' },
+                      { page: 'Contact Page', items: 'Contact form, map embed, business hours' },
+                      { page: 'All Pages', items: 'Schema markup, meta tags, sitemap, robots.txt, llms.txt' },
                     ].map(({ page, items }) => (
                       <div key={page} className="bg-gray-800/50 rounded-md px-2.5 py-2 border border-gray-700/50">
                         <p className="font-medium text-gray-300">{page}</p>
