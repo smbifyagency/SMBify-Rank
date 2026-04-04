@@ -42,6 +42,13 @@ export default function AuthCallback() {
             }
         };
 
+        if (!supabase) {
+            setErrorMsg("Authentication service not configured");
+            toast({ title: "Authentication Failed", description: "Google authentication is not configured.", variant: "destructive" });
+            setTimeout(() => setLocation("/login"), 2000);
+            return;
+        }
+
         supabase.auth.getSession().then(({ data: { session }, error }) => {
             if (error) {
                 setErrorMsg(error.message);

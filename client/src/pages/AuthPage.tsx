@@ -32,6 +32,7 @@ export default function AuthPage() {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(data),
       });
 
@@ -64,6 +65,14 @@ export default function AuthPage() {
   };
 
   const handleGoogleLogin = async () => {
+    if (!supabase) {
+      toast({
+        title: "Google Login Unavailable",
+        description: "Google authentication is not configured. Please use email/password login.",
+        variant: "destructive",
+      });
+      return;
+    }
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
