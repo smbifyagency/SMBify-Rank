@@ -1767,36 +1767,6 @@ export default function WDSiteEditor() {
                 </div>
               </div>
 
-              {/* AI API Keys — saved per-website, survive deployments */}
-              <div className="rounded-lg border border-dashed border-gray-700 p-3 space-y-2">
-                <p className="text-xs font-medium text-gray-400">AI Content Generation Keys</p>
-                <div>
-                  <Label className="text-xs text-gray-500">OpenAI API Key</Label>
-                  <Input
-                    type="password"
-                    value={siteData.openaiApiKey || ""}
-                    onChange={e => updateField("openaiApiKey", e.target.value)}
-                    className="bg-gray-800 border-gray-700 text-white mt-1 text-sm"
-                    placeholder="sk-..."
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs text-gray-500">Gemini API Key</Label>
-                  <Input
-                    type="password"
-                    value={siteData.geminiApiKey || ""}
-                    onChange={e => updateField("geminiApiKey", e.target.value)}
-                    className="bg-gray-800 border-gray-700 text-white mt-1 text-sm"
-                    placeholder="AIza..."
-                  />
-                </div>
-                <p className="text-xs text-gray-600">Provider + keys saved here are used for future AI generation. Click <strong>Save</strong> after changing them.</p>
-                {(siteData.openaiApiKey || siteData.geminiApiKey) && (
-                  <p className="text-xs text-green-400">✓ Key entered — click Save to apply</p>
-                )}
-              </div>
-
-
               {/* Social Media */}
               <div className="rounded-lg border border-dashed border-gray-700 p-3 space-y-2">
                 <p className="text-xs font-medium text-gray-400">Social Media Links (optional)</p>
