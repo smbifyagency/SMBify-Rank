@@ -474,8 +474,18 @@ function generateNav(data: WDBusinessData, currentPath: string = ''): string {
           <li><a href="${prefix}about.html">About</a></li>
           <li><a href="${prefix}gallery.html">Gallery</a></li>
           <li><a href="${prefix}faq.html">FAQ</a></li>
-          <li><a href="${prefix}calculator.html">Calculators</a></li>
-          ${data.blogPosts && data.blogPosts.length > 0 ? `<li><a href="${prefix}blog.html">Blog</a></li>` : ''}
+          <li class="has-dropdown">
+            <a href="${prefix}calculator.html" aria-haspopup="true" aria-expanded="false">Calculators ▾</a>
+            <ul class="dropdown" role="menu">
+              <li><a href="${prefix}calculators/cost-estimator.html">💰 Cost Estimator</a></li>
+              <li><a href="${prefix}calculators/drying-time.html">⏱ Drying Time</a></li>
+              <li><a href="${prefix}calculators/mold-risk.html">🦠 Mold Risk</a></li>
+              <li><a href="${prefix}calculators/insurance-estimator.html">📄 Insurance</a></li>
+              <li><a href="${prefix}calculators/dehumidifier-sizing.html">💧 Dehumidifier</a></li>
+              <li><a href="${prefix}calculators/restore-vs-replace.html">🔨 Restore vs Replace</a></li>
+            </ul>
+          </li>
+          ${data.blogPosts && data.blogPosts.length > 0 ? `<li><a href="${prefix}blog.html">Blog</a></li>` : ''}}
           <li><a href="${prefix}contact.html">Contact</a></li>
         </ul>
       </nav>
@@ -1524,6 +1534,7 @@ function htmlShell(params: {
   schemaBlocks: string[];
   bodyContent: string;
   extraJs?: string;
+  extraCSS?: string;
   ogImage?: string;
   googleVerification?: string;
   googleAnalyticsId?: string;
@@ -1578,6 +1589,7 @@ function htmlShell(params: {
 
   <style>
     ${generateCSS(params.theme)}
+    ${params.extraCSS || ''}
   </style>
 </head>
 <body>
@@ -2819,136 +2831,28 @@ export function generateFAQPage(data: WDBusinessData, domain: string): string {
   });
 }
 
-// ─── CALCULATOR PAGE ────────────────────────────────────────────────────────
+// ─── CALCULATOR PAGES ───────────────────────────────────────────────────────
+
+const CALCULATORS = [
+  { slug: 'cost-estimator',      title: 'Cost Estimator',         icon: '💰', desc: 'Estimate water damage restoration costs based on area size, water category, and severity of damage.' },
+  { slug: 'drying-time',         title: 'Drying Time',            icon: '⏱',  desc: 'Calculate how many days structural drying will take based on material type, humidity, and area size.' },
+  { slug: 'mold-risk',           title: 'Mold Risk Assessment',   icon: '🦠', desc: 'Assess the risk of mold growth based on time since damage, humidity levels, and temperature.' },
+  { slug: 'insurance-estimator', title: 'Insurance Estimator',    icon: '📄', desc: 'Estimate your expected insurance claim payout based on damage type, total cost, and deductible.' },
+  { slug: 'dehumidifier-sizing', title: 'Dehumidifier Sizing',    icon: '💧', desc: 'Find the right dehumidifier capacity (pints/day) for your water-damaged space.' },
+  { slug: 'restore-vs-replace',  title: 'Restore vs Replace',     icon: '🔨', desc: 'Determine whether damaged flooring, drywall, or other materials should be restored or replaced.' },
+];
 
 export function generateCalculatorPage(data: WDBusinessData, domain: string): string {
   const theme = resolveTheme(data);
   const canonicalUrl = `https://${domain}.netlify.app/calculator.html`;
 
-  const calcJS = `
-// ── Tab switching ──────────────────────────────────────────────
-document.querySelectorAll('.calc-tab').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const id = btn.getAttribute('data-calc');
-    document.querySelectorAll('.calc-tab').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.calc-panel').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById(id).classList.add('active');
-  });
-});
-
-// ── 1. Cost Estimator ──────────────────────────────────────────
-function calcCost() {
-  const sqft = parseFloat(document.getElementById('cost-sqft').value) || 0;
-  const category = parseInt(document.getElementById('cost-category').value) || 1;
-  const hasStructural = document.getElementById('cost-structural').checked;
-  const hasMold = document.getElementById('cost-mold').checked;
-  let base = sqft * (category === 1 ? 3.5 : category === 2 ? 5.5 : 8);
-  if (hasStructural) base *= 1.4;
-  if (hasMold) base *= 1.35;
-  const low = Math.round(base * 0.8 / 50) * 50;
-  const high = Math.round(base * 1.3 / 50) * 50;
-  document.getElementById('cost-result').innerHTML =
-    '<strong>Estimated Range: $' + low.toLocaleString() + ' – $' + high.toLocaleString() + '</strong>' +
-    '<p style="margin-top:.5rem;font-size:.85rem;color:#64748b;">This is a rough estimate only. Actual costs depend on local rates, extent of hidden damage, and materials needed. A free on-site assessment provides a written estimate.</p>';
-}
-
-// ── 2. Drying Time ─────────────────────────────────────────────
-function calcDrying() {
-  const sqft = parseFloat(document.getElementById('dry-sqft').value) || 0;
-  const material = document.getElementById('dry-material').value;
-  const humidity = parseFloat(document.getElementById('dry-humidity').value) || 50;
-  let base = material === 'drywall' ? 3.5 : material === 'concrete' ? 5 : material === 'wood' ? 4.5 : 3;
-  if (humidity > 70) base += 1.5;
-  else if (humidity > 55) base += 0.5;
-  if (sqft > 500) base += 1;
-  if (sqft > 1000) base += 1;
-  const low = Math.max(2, Math.floor(base));
-  const high = Math.ceil(base + 2);
-  document.getElementById('dry-result').innerHTML =
-    '<strong>Estimated Drying Time: ' + low + '–' + high + ' days</strong>' +
-    '<p style="margin-top:.5rem;font-size:.85rem;color:#64748b;">Actual drying time depends on equipment used, airflow, and initial moisture levels. We measure daily with calibrated meters and remove equipment only when IICRC targets are met.</p>';
-}
-
-// ── 3. Mold Risk ───────────────────────────────────────────────
-function calcMold() {
-  const hours = parseFloat(document.getElementById('mold-hours').value) || 0;
-  const humidity = parseFloat(document.getElementById('mold-humidity').value) || 50;
-  const temp = parseFloat(document.getElementById('mold-temp').value) || 70;
-  let score = 0;
-  if (hours > 48) score += 3;
-  else if (hours > 24) score += 2;
-  else if (hours > 12) score += 1;
-  if (humidity > 80) score += 3;
-  else if (humidity > 65) score += 2;
-  else if (humidity > 55) score += 1;
-  if (temp >= 70 && temp <= 90) score += 2;
-  else if (temp >= 60) score += 1;
-  let level, color, advice;
-  if (score <= 2) { level = 'Low'; color = '#16a34a'; advice = 'Mold growth is unlikely if drying begins promptly. Standard drying protocols should prevent mold.'; }
-  else if (score <= 4) { level = 'Moderate'; color = '#d97706'; advice = 'Conditions are favorable for mold growth. Professional drying with antimicrobial treatment is recommended without delay.'; }
-  else if (score <= 6) { level = 'High'; color = '#dc2626'; advice = 'Significant mold risk. Immediate professional response is strongly advised. Antimicrobial treatment and thorough drying are essential.'; }
-  else { level = 'Critical'; color = '#7c3aed'; advice = 'Mold may already be present or actively growing. Immediate remediation response required. Do not disturb affected materials without proper containment.'; }
-  document.getElementById('mold-result').innerHTML =
-    '<strong style="color:' + color + '">Mold Risk: ' + level + '</strong>' +
-    '<p style="margin-top:.5rem;font-size:.85rem;color:#475569;">' + advice + '</p>';
-}
-
-// ── 4. Insurance Estimate ──────────────────────────────────────
-function calcInsurance() {
-  const total = parseFloat(document.getElementById('ins-total').value) || 0;
-  const deductible = parseFloat(document.getElementById('ins-deductible').value) || 0;
-  const covered = document.getElementById('ins-covered').value;
-  if (covered === 'no') {
-    document.getElementById('ins-result').innerHTML = '<strong>Flood damage typically requires separate flood insurance and is not covered by standard homeowner policies.</strong><p style="font-size:.85rem;color:#64748b;margin-top:.5rem;">Contact your agent to review your flood insurance coverage.</p>';
-    return;
-  }
-  const payout = Math.max(0, total - deductible);
-  document.getElementById('ins-result').innerHTML =
-    '<strong>Estimated Insurance Payout: $' + payout.toLocaleString() + '</strong>' +
-    '<p style="margin-top:.5rem;font-size:.85rem;color:#64748b;">After your $' + deductible.toLocaleString() + ' deductible. Actual payout depends on your policy terms, adjuster assessment, and any depreciation applied to materials.</p>';
-}
-
-// ── 5. Dehumidifier Sizing ─────────────────────────────────────
-function calcDehumid() {
-  const sqft = parseFloat(document.getElementById('dh-sqft').value) || 0;
-  const level = document.getElementById('dh-level').value;
-  const basement = document.getElementById('dh-basement').checked;
-  let ppd = sqft * (level === 'slightly' ? 0.1 : level === 'moderately' ? 0.14 : 0.2);
-  if (basement) ppd *= 1.2;
-  const low = Math.ceil(ppd / 10) * 10;
-  const high = low + 20;
-  document.getElementById('dh-result').innerHTML =
-    '<strong>Recommended Capacity: ' + low + '–' + high + ' pints/day</strong>' +
-    '<p style="margin-top:.5rem;font-size:.85rem;color:#64748b;">Consumer dehumidifiers max out around 70 pints/day. For water damage restoration, industrial LGR dehumidifiers (70–200 pints/day) are used alongside air movers for proper structural drying.</p>';
-}
-
-// ── 6. Restore vs Replace ──────────────────────────────────────
-function calcRestore() {
-  const material = document.getElementById('rv-material').value;
-  const damage = parseInt(document.getElementById('rv-damage').value) || 0;
-  const age = parseInt(document.getElementById('rv-age').value) || 0;
-  let restoreScore = 0;
-  if (damage < 30) restoreScore += 3;
-  else if (damage < 60) restoreScore += 1;
-  if (age < 5) restoreScore += 2;
-  else if (age < 15) restoreScore += 1;
-  if (material === 'hardwood') restoreScore += 2;
-  else if (material === 'tile') restoreScore += 1;
-  let rec, reason;
-  if (restoreScore >= 5) {
-    rec = 'Restore'; reason = 'Low damage percentage, younger material age, and the material type support restoration as the cost-effective choice.';
-  } else if (restoreScore >= 3) {
-    rec = 'Restore (Borderline)'; reason = 'Restoration may be viable depending on hidden moisture levels and the condition of the subfloor. A professional assessment is recommended before deciding.';
-  } else {
-    rec = 'Replace'; reason = 'High damage percentage, older material, or material type that does not respond well to drying makes replacement the more practical long-term solution.';
-  }
-  document.getElementById('rv-result').innerHTML =
-    '<strong>Recommendation: ' + rec + '</strong>' +
-    '<p style="margin-top:.5rem;font-size:.85rem;color:#475569;">' + reason + '</p>' +
-    '<p style="font-size:.8rem;color:#64748b;margin-top:.25rem;">Note: This is a general guideline. Final decisions should be based on in-person moisture testing and professional assessment.</p>';
-}
-`;
+  const cardsHTML = CALCULATORS.map(c => `
+    <a href="calculators/${c.slug}.html" class="calc-card">
+      <div class="calc-card-icon">${c.icon}</div>
+      <h2 class="calc-card-title">${c.title}</h2>
+      <p class="calc-card-desc">${c.desc}</p>
+      <span class="calc-card-link">Open Calculator →</span>
+    </a>`).join('');
 
   const body = `
   ${generateNav(data)}
@@ -2961,285 +2865,467 @@ function calcRestore() {
 
   <section class="page-hero" role="banner">
     <div class="container">
-      <h1>Water Damage Calculators</h1>
-      <p>Estimate costs, drying time, mold risk, insurance payouts, and more with these free tools. For accurate figures, contact us for a free on-site assessment.</p>
+      <h1>${data._calcPageH1 || 'Free ' + (data.primaryKeyword || 'Water Damage') + ' Calculators'}</h1>
+      <p>Estimate costs, drying time, mold risk, insurance payouts, and more. These tools give you a starting point — for exact figures, call us for a free on-site assessment.</p>
     </div>
   </section>
 
   <section class="content-section">
     <div class="container">
-
-      <!-- Tab Navigation -->
-      <div class="calc-tabs" role="tablist">
-        <button class="calc-tab active" data-calc="calc-cost" role="tab">💰 Cost Estimator</button>
-        <button class="calc-tab" data-calc="calc-dry" role="tab">⏱ Drying Time</button>
-        <button class="calc-tab" data-calc="calc-mold" role="tab">🦠 Mold Risk</button>
-        <button class="calc-tab" data-calc="calc-ins" role="tab">📄 Insurance</button>
-        <button class="calc-tab" data-calc="calc-dh" role="tab">💧 Dehumidifier</button>
-        <button class="calc-tab" data-calc="calc-rv" role="tab">🔨 Restore vs Replace</button>
+      <div class="calc-cards-grid">
+        ${cardsHTML}
       </div>
-
-      <!-- 1. Cost Estimator -->
-      <div class="calc-panel active" id="calc-cost" role="tabpanel">
-        <h2>Water Damage Cost Estimator</h2>
-        <p class="section-intro">Get a rough idea of restoration costs based on the size and severity of the damage.</p>
-        <div class="calc-form">
-          <div class="calc-field">
-            <label for="cost-sqft">Affected Area (sq ft)</label>
-            <input type="number" id="cost-sqft" placeholder="e.g. 200" min="1">
-          </div>
-          <div class="calc-field">
-            <label for="cost-category">Water Category</label>
-            <select id="cost-category">
-              <option value="1">Category 1 — Clean water (burst pipe, appliance)</option>
-              <option value="2">Category 2 — Gray water (washing machine, dishwasher)</option>
-              <option value="3">Category 3 — Black water (sewage, flooding)</option>
-            </select>
-          </div>
-          <div class="calc-field calc-check">
-            <label><input type="checkbox" id="cost-structural"> Structural damage present (wet drywall, flooring, framing)</label>
-          </div>
-          <div class="calc-field calc-check">
-            <label><input type="checkbox" id="cost-mold"> Mold growth visible or suspected</label>
-          </div>
-          <button class="calc-btn" onclick="calcCost()">Calculate Estimate</button>
-          <div class="calc-result" id="cost-result"></div>
-        </div>
-      </div>
-
-      <!-- 2. Drying Time -->
-      <div class="calc-panel" id="calc-dry" role="tabpanel">
-        <h2>Structural Drying Time Calculator</h2>
-        <p class="section-intro">Estimate how many days it will take to dry your structure to IICRC target moisture levels.</p>
-        <div class="calc-form">
-          <div class="calc-field">
-            <label for="dry-sqft">Affected Area (sq ft)</label>
-            <input type="number" id="dry-sqft" placeholder="e.g. 300" min="1">
-          </div>
-          <div class="calc-field">
-            <label for="dry-material">Primary Material Affected</label>
-            <select id="dry-material">
-              <option value="drywall">Drywall / Gypsum board</option>
-              <option value="wood">Wood framing / Hardwood floors</option>
-              <option value="concrete">Concrete slab / Block</option>
-              <option value="carpet">Carpet / Pad</option>
-            </select>
-          </div>
-          <div class="calc-field">
-            <label for="dry-humidity">Current Indoor Humidity (%)</label>
-            <input type="number" id="dry-humidity" placeholder="e.g. 65" min="20" max="100">
-          </div>
-          <button class="calc-btn" onclick="calcDrying()">Calculate Drying Time</button>
-          <div class="calc-result" id="dry-result"></div>
-        </div>
-      </div>
-
-      <!-- 3. Mold Risk -->
-      <div class="calc-panel" id="calc-mold" role="tabpanel">
-        <h2>Mold Risk Calculator</h2>
-        <p class="section-intro">Assess the risk of mold growth based on how long water has been present and current conditions.</p>
-        <div class="calc-form">
-          <div class="calc-field">
-            <label for="mold-hours">Hours Since Water Damage Occurred</label>
-            <input type="number" id="mold-hours" placeholder="e.g. 18" min="0">
-          </div>
-          <div class="calc-field">
-            <label for="mold-humidity">Current Humidity in Affected Area (%)</label>
-            <input type="number" id="mold-humidity" placeholder="e.g. 75" min="0" max="100">
-          </div>
-          <div class="calc-field">
-            <label for="mold-temp">Temperature in Affected Area (°F)</label>
-            <input type="number" id="mold-temp" placeholder="e.g. 72" min="32" max="110">
-          </div>
-          <button class="calc-btn" onclick="calcMold()">Assess Mold Risk</button>
-          <div class="calc-result" id="mold-result"></div>
-        </div>
-      </div>
-
-      <!-- 4. Insurance Estimate -->
-      <div class="calc-panel" id="calc-ins" role="tabpanel">
-        <h2>Insurance Claim Estimator</h2>
-        <p class="section-intro">Estimate your expected insurance payout after your deductible.</p>
-        <div class="calc-form">
-          <div class="calc-field">
-            <label for="ins-covered">Type of Water Damage</label>
-            <select id="ins-covered">
-              <option value="yes">Sudden/accidental — burst pipe, appliance, storm leak</option>
-              <option value="no">Flood water from outside (river, storm surge)</option>
-              <option value="maybe">Gradual leak or seepage</option>
-            </select>
-          </div>
-          <div class="calc-field">
-            <label for="ins-total">Total Estimated Damage ($)</label>
-            <input type="number" id="ins-total" placeholder="e.g. 8000" min="0">
-          </div>
-          <div class="calc-field">
-            <label for="ins-deductible">Your Policy Deductible ($)</label>
-            <input type="number" id="ins-deductible" placeholder="e.g. 1000" min="0">
-          </div>
-          <button class="calc-btn" onclick="calcInsurance()">Estimate Payout</button>
-          <div class="calc-result" id="ins-result"></div>
-        </div>
-      </div>
-
-      <!-- 5. Dehumidifier Sizing -->
-      <div class="calc-panel" id="calc-dh" role="tabpanel">
-        <h2>Dehumidifier Sizing Calculator</h2>
-        <p class="section-intro">Find out what dehumidifier capacity (pints per day) you need for your affected space.</p>
-        <div class="calc-form">
-          <div class="calc-field">
-            <label for="dh-sqft">Area to Dehumidify (sq ft)</label>
-            <input type="number" id="dh-sqft" placeholder="e.g. 400" min="1">
-          </div>
-          <div class="calc-field">
-            <label for="dh-level">Current Moisture Level</label>
-            <select id="dh-level">
-              <option value="slightly">Slightly damp — visible moisture, no standing water</option>
-              <option value="moderately">Moderately wet — soaked materials, some standing water</option>
-              <option value="very">Extremely wet — significant flooding, saturated structure</option>
-            </select>
-          </div>
-          <div class="calc-field calc-check">
-            <label><input type="checkbox" id="dh-basement"> Basement or below-grade space</label>
-          </div>
-          <button class="calc-btn" onclick="calcDehumid()">Calculate Capacity</button>
-          <div class="calc-result" id="dh-result"></div>
-        </div>
-      </div>
-
-      <!-- 6. Restore vs Replace -->
-      <div class="calc-panel" id="calc-rv" role="tabpanel">
-        <h2>Restoration vs. Replacement Calculator</h2>
-        <p class="section-intro">Should you restore or replace damaged flooring, drywall, or other materials?</p>
-        <div class="calc-form">
-          <div class="calc-field">
-            <label for="rv-material">Material Type</label>
-            <select id="rv-material">
-              <option value="hardwood">Hardwood flooring</option>
-              <option value="carpet">Carpet</option>
-              <option value="laminate">Laminate flooring</option>
-              <option value="drywall">Drywall</option>
-              <option value="tile">Tile flooring</option>
-              <option value="subfloor">Subfloor / OSB</option>
-            </select>
-          </div>
-          <div class="calc-field">
-            <label for="rv-damage">Estimated Damage (%)</label>
-            <input type="number" id="rv-damage" placeholder="e.g. 40" min="0" max="100">
-          </div>
-          <div class="calc-field">
-            <label for="rv-age">Material Age (years)</label>
-            <input type="number" id="rv-age" placeholder="e.g. 8" min="0">
-          </div>
-          <button class="calc-btn" onclick="calcRestore()">Get Recommendation</button>
-          <div class="calc-result" id="rv-result"></div>
-        </div>
-      </div>
-
     </div>
   </section>
 
   <section style="background:#f8fafc;padding:3rem 0;">
     <div class="container" style="text-align:center;">
-      <h2>Get an Accurate Assessment — Free</h2>
-      <p style="color:#475569;max-width:600px;margin:0 auto 1.5rem;">These calculators provide estimates, not exact figures. For an accurate assessment and written estimate, call ${data.businessName}. There is no charge for on-site evaluations in ${data.city}.</p>
+      <h2>Need an Accurate Assessment?</h2>
+      <p style="color:#475569;max-width:600px;margin:0 auto 1.5rem;">Calculators provide estimates only. For a precise assessment and written estimate, contact ${data.businessName}. Free on-site evaluations in ${data.city}.</p>
       <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
     </div>
   </section>
 
   ${generateFooter(data)}`;
 
-  const calcCSS = `
-.calc-tabs {
+  return htmlShell({
+    metaTitle: `Free ${data.primaryKeyword || 'Water Damage'} Calculators | ${data.businessName}`,
+    metaDescription: `Free ${data.primaryKeyword?.toLowerCase() || 'water damage'} calculators for ${data.city} homeowners — cost estimator, drying time, mold risk, insurance, dehumidifier sizing, and more.`,
+    canonicalUrl,
+    theme,
+    googleAnalyticsId: data.googleAnalyticsId || undefined,
+    faviconUrl: data.faviconUrl || undefined,
+    customHeadCode: data.customHeadCode || undefined,
+    schemaBlocks: [generateLocalBusinessSchema(data, `${domain}.netlify.app`)],
+    bodyContent: body,
+    extraCSS: `
+.calc-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+.calc-card {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-}
-/* Calculator tabs */
-.calc-tabs {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 2rem;
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 0.75rem;
-}
-.calc-tab {
-  background: #f8fafc;
-  border: 1.5px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 0.55rem 1rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .15s;
-  white-space: nowrap;
-}
-.calc-tab.active { background: ${theme.primaryColor}; color: #fff; border-color: ${theme.primaryColor}; }
-.calc-tab:hover:not(.active) { background: ${theme.primaryColor}20; border-color: ${theme.primaryColor}; color: ${theme.primaryColor}; }
-.calc-panel { display: none; animation: fadeIn .2s ease; }
-.calc-panel.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-/* Calculator card */
-.calc-panel h2 { font-size: 1.4rem; font-weight: 700; color: #1e293b; margin-bottom: 0.4rem; }
-.calc-panel .section-intro { color: #64748b; margin-bottom: 1.5rem; }
-.calc-form {
+  flex-direction: column;
   background: #fff;
   border: 1.5px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 1.75rem;
-  max-width: 600px;
-  box-shadow: 0 1px 4px rgba(0,0,0,.05);
+  border-radius: 14px;
+  padding: 2rem 1.75rem;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+  box-shadow: 0 1px 4px rgba(0,0,0,.04);
+}
+.calc-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.1);
+  border-color: ${theme.primaryColor};
+}
+.calc-card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.calc-card-title { font-size: 1.2rem; font-weight: 700; color: ${theme.primaryColor}; margin: 0 0 .5rem; }
+.calc-card-desc { color: #475569; font-size: .9rem; line-height: 1.6; flex: 1; }
+.calc-card-link {
+  display: inline-block;
+  margin-top: 1rem;
+  font-size: .85rem;
+  font-weight: 700;
+  color: ${theme.secondaryColor};
+}
+@media (max-width: 640px) {
+  .calc-cards-grid { grid-template-columns: 1fr; }
+}`,
+  });
+}
+
+// Individual calculator page generator
+function generateSingleCalculatorPage(data: WDBusinessData, calcIndex: number, domain: string): string {
+  const theme = resolveTheme(data);
+  const calc = CALCULATORS[calcIndex];
+  const canonicalUrl = `https://${domain}.netlify.app/calculators/${calc.slug}.html`;
+  const prefix = '../';
+
+  // Navigation links for other calculators
+  const otherCalcsHTML = CALCULATORS.filter((_, i) => i !== calcIndex).map(c => `
+    <a href="${c.slug}.html" class="other-calc-card">
+      <span class="other-calc-icon">${c.icon}</span>
+      <span class="other-calc-name">${c.title}</span>
+    </a>`).join('');
+
+  // Per-calculator form HTML
+  const formHTML = [
+    // 0: Cost Estimator
+    `<div class="calc-field">
+      <label for="cost-sqft">Affected Area (sq ft)</label>
+      <input type="number" id="cost-sqft" placeholder="e.g. 200" min="1">
+    </div>
+    <div class="calc-field">
+      <label for="cost-category">Water Category</label>
+      <select id="cost-category">
+        <option value="1">Category 1 — Clean water (burst pipe, appliance)</option>
+        <option value="2">Category 2 — Gray water (washing machine, dishwasher)</option>
+        <option value="3">Category 3 — Black water (sewage, flooding)</option>
+      </select>
+    </div>
+    <div class="calc-field calc-check">
+      <label><input type="checkbox" id="cost-structural"> Structural damage present (wet drywall, flooring, framing)</label>
+    </div>
+    <div class="calc-field calc-check">
+      <label><input type="checkbox" id="cost-mold"> Mold growth visible or suspected</label>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate Estimate</button>`,
+
+    // 1: Drying Time
+    `<div class="calc-field">
+      <label for="dry-sqft">Affected Area (sq ft)</label>
+      <input type="number" id="dry-sqft" placeholder="e.g. 300" min="1">
+    </div>
+    <div class="calc-field">
+      <label for="dry-material">Primary Material Affected</label>
+      <select id="dry-material">
+        <option value="drywall">Drywall / Gypsum board</option>
+        <option value="wood">Wood framing / Hardwood floors</option>
+        <option value="concrete">Concrete slab / Block</option>
+        <option value="carpet">Carpet / Pad</option>
+      </select>
+    </div>
+    <div class="calc-field">
+      <label for="dry-humidity">Current Indoor Humidity (%)</label>
+      <input type="number" id="dry-humidity" placeholder="e.g. 65" min="20" max="100">
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate Drying Time</button>`,
+
+    // 2: Mold Risk
+    `<div class="calc-field">
+      <label for="mold-hours">Hours Since Water Damage Occurred</label>
+      <input type="number" id="mold-hours" placeholder="e.g. 18" min="0">
+    </div>
+    <div class="calc-field">
+      <label for="mold-humidity">Current Humidity in Affected Area (%)</label>
+      <input type="number" id="mold-humidity" placeholder="e.g. 75" min="0" max="100">
+    </div>
+    <div class="calc-field">
+      <label for="mold-temp">Temperature in Affected Area (°F)</label>
+      <input type="number" id="mold-temp" placeholder="e.g. 72" min="32" max="110">
+    </div>
+    <button class="calc-btn" onclick="calculate()">Assess Mold Risk</button>`,
+
+    // 3: Insurance Estimator
+    `<div class="calc-field">
+      <label for="ins-covered">Type of Water Damage</label>
+      <select id="ins-covered">
+        <option value="yes">Sudden/accidental — burst pipe, appliance, storm leak</option>
+        <option value="no">Flood water from outside (river, storm surge)</option>
+        <option value="maybe">Gradual leak or seepage</option>
+      </select>
+    </div>
+    <div class="calc-field">
+      <label for="ins-total">Total Estimated Damage ($)</label>
+      <input type="number" id="ins-total" placeholder="e.g. 8000" min="0">
+    </div>
+    <div class="calc-field">
+      <label for="ins-deductible">Your Policy Deductible ($)</label>
+      <input type="number" id="ins-deductible" placeholder="e.g. 1000" min="0">
+    </div>
+    <button class="calc-btn" onclick="calculate()">Estimate Payout</button>`,
+
+    // 4: Dehumidifier Sizing
+    `<div class="calc-field">
+      <label for="dh-sqft">Area to Dehumidify (sq ft)</label>
+      <input type="number" id="dh-sqft" placeholder="e.g. 400" min="1">
+    </div>
+    <div class="calc-field">
+      <label for="dh-level">Current Moisture Level</label>
+      <select id="dh-level">
+        <option value="slightly">Slightly damp — visible moisture, no standing water</option>
+        <option value="moderately">Moderately wet — soaked materials, some standing water</option>
+        <option value="very">Extremely wet — significant flooding, saturated structure</option>
+      </select>
+    </div>
+    <div class="calc-field calc-check">
+      <label><input type="checkbox" id="dh-basement"> Basement or below-grade space</label>
+    </div>
+    <button class="calc-btn" onclick="calculate()">Calculate Capacity</button>`,
+
+    // 5: Restore vs Replace
+    `<div class="calc-field">
+      <label for="rv-material">Material Type</label>
+      <select id="rv-material">
+        <option value="hardwood">Hardwood flooring</option>
+        <option value="carpet">Carpet</option>
+        <option value="laminate">Laminate flooring</option>
+        <option value="drywall">Drywall</option>
+        <option value="tile">Tile flooring</option>
+        <option value="subfloor">Subfloor / OSB</option>
+      </select>
+    </div>
+    <div class="calc-field">
+      <label for="rv-damage">Estimated Damage (%)</label>
+      <input type="number" id="rv-damage" placeholder="e.g. 40" min="0" max="100">
+    </div>
+    <div class="calc-field">
+      <label for="rv-age">Material Age (years)</label>
+      <input type="number" id="rv-age" placeholder="e.g. 8" min="0">
+    </div>
+    <button class="calc-btn" onclick="calculate()">Get Recommendation</button>`,
+  ][calcIndex];
+
+  // Per-calculator info paragraph
+  const infoParagraphs = [
+    `<p>Understanding restoration costs upfront helps you budget, negotiate with insurance adjusters, and avoid surprises. Actual costs depend on local labor rates, extent of hidden damage, and drying time required. Category 1 (clean water) is the least expensive, while Category 3 (sewage or flood) requires specialized hazmat protocols that increase costs significantly.</p>
+    <h3>What Affects Cost?</h3>
+    <ul>
+      <li><strong>Water category</strong> — Clean water is cheapest; sewage requires hazmat procedures</li>
+      <li><strong>Area size</strong> — Larger areas need more equipment and labor hours</li>
+      <li><strong>Structural damage</strong> — Wet drywall, warped framing, or compromised subfloor adds 30–40% to costs</li>
+      <li><strong>Mold presence</strong> — Active mold growth requires containment and remediation, adding 25–35%</li>
+      <li><strong>Access difficulty</strong> — Crawlspaces, multi-story, or hard-to-reach areas increase labor</li>
+    </ul>`,
+
+    `<p>Structural drying time determines how long equipment stays in your property and directly affects restoration costs and inconvenience. IICRC standards require drying to equilibrium moisture content (EMC) before any reconstruction begins.</p>
+    <h3>Factors That Affect Drying Time</h3>
+    <ul>
+      <li><strong>Material type</strong> — Concrete absorbs deeply and dries slowest; carpet dries fastest</li>
+      <li><strong>Humidity</strong> — High ambient humidity slows evaporation significantly</li>
+      <li><strong>Air movement</strong> — Industrial air movers are 4–5× more effective than household fans</li>
+      <li><strong>Temperature</strong> — Warmer conditions accelerate drying</li>
+      <li><strong>Equipment count</strong> — Professional setups use 1 air mover per 10–16 linear feet of wall</li>
+    </ul>`,
+
+    `<p>Mold can begin colonizing within 24–48 hours of water intrusion. Understanding risk factors helps you act before visible growth appears. The three conditions mold needs are moisture, warmth (60–90°F), and organic material (wood, drywall, carpet).</p>
+    <h3>Risk Levels Explained</h3>
+    <ul>
+      <li><strong>Low risk</strong> — Damage caught early, low humidity, or cold temperatures slow growth</li>
+      <li><strong>Moderate risk</strong> — Conditions favor growth; professional drying should begin immediately</li>
+      <li><strong>High risk</strong> — Mold spores likely active; antimicrobial treatment recommended</li>
+      <li><strong>Critical</strong> — Mold may already be established; containment and remediation required</li>
+    </ul>`,
+
+    `<p>Insurance claims for water damage can be complex. Standard homeowner policies typically cover sudden and accidental damage (burst pipes, appliance failures) but exclude flood damage, which requires separate flood insurance. Gradual leaks may or may not be covered depending on your policy.</p>
+    <h3>Tips for Maximizing Your Claim</h3>
+    <ul>
+      <li><strong>Document everything</strong> — Photos, videos, inventory of damaged items</li>
+      <li><strong>Don't throw anything away</strong> — Until the adjuster has documented it</li>
+      <li><strong>Start mitigation immediately</strong> — Insurance requires you to prevent further damage</li>
+      <li><strong>Get a professional estimate</strong> — Independent estimates strengthen your claim</li>
+      <li><strong>Keep all receipts</strong> — Emergency hotel, meals, and temporary expenses</li>
+    </ul>`,
+
+    `<p>Proper dehumidification is critical for structural drying. Consumer-grade dehumidifiers (30–70 pints/day) are useful for maintenance but inadequate for water damage restoration. Professionals use industrial LGR (Low Grain Refrigerant) dehumidifiers rated at 70–200+ pints/day, paired with air movers for optimal evaporation.</p>
+    <h3>Sizing Guidelines</h3>
+    <ul>
+      <li><strong>Light dampness</strong> — 0.1 pints per sq ft/day baseline</li>
+      <li><strong>Moderate saturation</strong> — 0.14 pints per sq ft/day baseline</li>
+      <li><strong>Heavy flooding</strong> — 0.2+ pints per sq ft/day baseline</li>
+      <li><strong>Basement spaces</strong> — Add 20% capacity for below-grade moisture</li>
+      <li><strong>HVAC integration</strong> — Use return air ducts to improve air circulation</li>
+    </ul>`,
+
+    `<p>The restore-vs-replace decision depends on material type, damage extent, and material age. Restoring is usually cheaper if damage is under 30% and the material is in good condition. Older or heavily damaged materials should be replaced to prevent future problems like warping, delamination, or mold recurrence.</p>
+    <h3>Material-Specific Notes</h3>
+    <ul>
+      <li><strong>Hardwood</strong> — Often restorable if caught early; professional sanding and refinishing can save floors</li>
+      <li><strong>Carpet</strong> — Pad almost always needs replacement; carpet itself can sometimes be cleaned and dried</li>
+      <li><strong>Laminate</strong> — Usually must be replaced as it cannot be re-dried without warping</li>
+      <li><strong>Drywall</strong> — If saturated above 2 feet, replacement is standard practice</li>
+      <li><strong>Tile</strong> — Tile itself survives well; concern is usually subfloor and grout integrity</li>
+    </ul>`,
+  ][calcIndex];
+
+  // Per-calculator JS
+  const calcJSFunctions = [
+    // Cost
+    `function calculate() {
+  const sqft = parseFloat(document.getElementById('cost-sqft').value) || 0;
+  const cat = parseInt(document.getElementById('cost-category').value) || 1;
+  const str = document.getElementById('cost-structural').checked;
+  const mld = document.getElementById('cost-mold').checked;
+  let base = sqft * (cat === 1 ? 3.5 : cat === 2 ? 5.5 : 8);
+  if (str) base *= 1.4;
+  if (mld) base *= 1.35;
+  const lo = Math.round(base * 0.8 / 50) * 50;
+  const hi = Math.round(base * 1.3 / 50) * 50;
+  document.getElementById('calc-result').innerHTML =
+    '<strong>Estimated Range: $' + lo.toLocaleString() + ' – $' + hi.toLocaleString() + '</strong>' +
+    '<p style="margin-top:.5rem;font-size:.85rem;color:#64748b;">This is a rough estimate. Actual costs depend on local rates, hidden damage, and materials. Call for a free on-site assessment.</p>';
+}`,
+    // Drying
+    `function calculate() {
+  const sqft = parseFloat(document.getElementById('dry-sqft').value) || 0;
+  const mat = document.getElementById('dry-material').value;
+  const hum = parseFloat(document.getElementById('dry-humidity').value) || 50;
+  let base = mat === 'drywall' ? 3.5 : mat === 'concrete' ? 5 : mat === 'wood' ? 4.5 : 3;
+  if (hum > 70) base += 1.5; else if (hum > 55) base += 0.5;
+  if (sqft > 500) base += 1;
+  if (sqft > 1000) base += 1;
+  const lo = Math.max(2, Math.floor(base));
+  const hi = Math.ceil(base + 2);
+  document.getElementById('calc-result').innerHTML =
+    '<strong>Estimated Drying Time: ' + lo + '–' + hi + ' days</strong>' +
+    '<p style="margin-top:.5rem;font-size:.85rem;color:#64748b;">Actual drying time depends on equipment, airflow, and initial moisture levels. We measure daily and remove equipment only when targets are met.</p>';
+}`,
+    // Mold
+    `function calculate() {
+  const hrs = parseFloat(document.getElementById('mold-hours').value) || 0;
+  const hum = parseFloat(document.getElementById('mold-humidity').value) || 50;
+  const tmp = parseFloat(document.getElementById('mold-temp').value) || 70;
+  let s = 0;
+  if (hrs > 48) s += 3; else if (hrs > 24) s += 2; else if (hrs > 12) s += 1;
+  if (hum > 80) s += 3; else if (hum > 65) s += 2; else if (hum > 55) s += 1;
+  if (tmp >= 70 && tmp <= 90) s += 2; else if (tmp >= 60) s += 1;
+  let lv, cl, ad;
+  if (s <= 2) { lv='Low'; cl='#16a34a'; ad='Mold growth unlikely if drying begins promptly.'; }
+  else if (s <= 4) { lv='Moderate'; cl='#d97706'; ad='Conditions favor mold. Professional drying with antimicrobial treatment recommended.'; }
+  else if (s <= 6) { lv='High'; cl='#dc2626'; ad='Significant mold risk. Immediate professional response strongly advised.'; }
+  else { lv='Critical'; cl='#7c3aed'; ad='Mold may already be present. Immediate remediation required.'; }
+  document.getElementById('calc-result').innerHTML =
+    '<strong style="color:'+cl+'">Mold Risk: '+lv+'</strong><p style="margin-top:.5rem;font-size:.85rem;color:#475569;">'+ad+'</p>';
+}`,
+    // Insurance
+    `function calculate() {
+  const tot = parseFloat(document.getElementById('ins-total').value) || 0;
+  const ded = parseFloat(document.getElementById('ins-deductible').value) || 0;
+  const cov = document.getElementById('ins-covered').value;
+  if (cov === 'no') {
+    document.getElementById('calc-result').innerHTML = '<strong>Flood damage typically requires separate flood insurance and is not covered by standard homeowner policies.</strong>';
+    return;
+  }
+  const pay = Math.max(0, tot - ded);
+  document.getElementById('calc-result').innerHTML =
+    '<strong>Estimated Insurance Payout: $'+pay.toLocaleString()+'</strong>' +
+    '<p style="margin-top:.5rem;font-size:.85rem;color:#64748b;">After your $'+ded.toLocaleString()+' deductible. Actual payout depends on policy terms and adjuster assessment.</p>';
+}`,
+    // Dehumidifier
+    `function calculate() {
+  const sqft = parseFloat(document.getElementById('dh-sqft').value) || 0;
+  const lev = document.getElementById('dh-level').value;
+  const bsmt = document.getElementById('dh-basement').checked;
+  let ppd = sqft * (lev === 'slightly' ? 0.1 : lev === 'moderately' ? 0.14 : 0.2);
+  if (bsmt) ppd *= 1.2;
+  const lo = Math.ceil(ppd / 10) * 10;
+  const hi = lo + 20;
+  document.getElementById('calc-result').innerHTML =
+    '<strong>Recommended Capacity: '+lo+'–'+hi+' pints/day</strong>' +
+    '<p style="margin-top:.5rem;font-size:.85rem;color:#64748b;">Consumer units max ~70 pints/day. Water damage restoration uses industrial LGR dehumidifiers (70–200+ pints/day).</p>';
+}`,
+    // Restore vs Replace
+    `function calculate() {
+  const mat = document.getElementById('rv-material').value;
+  const dmg = parseInt(document.getElementById('rv-damage').value) || 0;
+  const age = parseInt(document.getElementById('rv-age').value) || 0;
+  let sc = 0;
+  if (dmg < 30) sc += 3; else if (dmg < 60) sc += 1;
+  if (age < 5) sc += 2; else if (age < 15) sc += 1;
+  if (mat === 'hardwood') sc += 2; else if (mat === 'tile') sc += 1;
+  let rec, reason;
+  if (sc >= 5) { rec='Restore'; reason='Low damage, younger material, and material type support restoration.'; }
+  else if (sc >= 3) { rec='Restore (Borderline)'; reason='Restoration may be viable. A professional assessment is recommended.'; }
+  else { rec='Replace'; reason='High damage, older material, or type that does not dry well makes replacement more practical.'; }
+  document.getElementById('calc-result').innerHTML =
+    '<strong>Recommendation: '+rec+'</strong><p style="margin-top:.5rem;font-size:.85rem;color:#475569;">'+reason+'</p>';
+}`,
+  ][calcIndex];
+
+  const body = `
+  ${generateNav(data, 'calculators/' + calc.slug)}
+
+  <div class="breadcrumb container">
+    <a href="${prefix}index.html">Home</a>
+    <span>›</span>
+    <a href="${prefix}calculator.html">Calculators</a>
+    <span>›</span>
+    <span aria-current="page">${calc.title}</span>
+  </div>
+
+  <section class="page-hero" role="banner">
+    <div class="container">
+      <div style="font-size:3rem;margin-bottom:.5rem;">${calc.icon}</div>
+      <h1>${calc.title} Calculator</h1>
+      <p>${calc.desc}</p>
+    </div>
+  </section>
+
+  <section class="content-section">
+    <div class="container" style="display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start;">
+      <div>
+        <div class="calc-form">
+          ${formHTML}
+          <div class="calc-result" id="calc-result"></div>
+        </div>
+      </div>
+      <div class="calc-info">
+        <h2>How This Calculator Works</h2>
+        ${infoParagraphs}
+        <div style="margin-top:1.5rem;padding:1rem 1.25rem;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;">
+          <p style="font-size:.85rem;color:#0c4a6e;margin:0;">⚠️ This calculator provides estimates only. For an accurate, free on-site assessment, call <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" style="color:${theme.primaryColor};font-weight:700;">${data.phone}</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content-section" style="background:#f8fafc;">
+    <div class="container">
+      <h2 style="text-align:center;margin-bottom:1.5rem;">Other Calculators</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1rem;">
+        ${otherCalcsHTML}
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container" style="text-align:center;">
+      <h2>Get a Free On-Site Assessment</h2>
+      <p>For an accurate estimate tailored to your property, call ${data.businessName}.</p>
+      <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary" style="margin-top:1rem;display:inline-block;">📞 Call ${data.phone}</a>
+    </div>
+  </section>
+
+  ${generateFooter(data, 'calculators/')}`;
+
+  const calcCSS = `
+.calc-form {
+  background: #fff; border: 1.5px solid #e2e8f0; border-radius: 14px;
+  padding: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,.05);
 }
 .calc-field { margin-bottom: 1.25rem; }
-.calc-field label { display: block; font-weight: 600; margin-bottom: 0.4rem; font-size: 0.9rem; color: #334155; }
+.calc-field label { display: block; font-weight: 600; margin-bottom: .4rem; font-size: .9rem; color: #334155; }
 .calc-field input, .calc-field select {
-  width: 100%;
-  padding: 0.65rem 0.9rem;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-family: inherit;
-  background: #f8fafc;
-  transition: border-color .15s;
-  box-sizing: border-box;
+  width: 100%; padding: .65rem .9rem; border: 1.5px solid #cbd5e1;
+  border-radius: 8px; font-size: 1rem; font-family: inherit;
+  background: #f8fafc; transition: border-color .15s; box-sizing: border-box;
 }
 .calc-field input:focus, .calc-field select:focus { outline: none; border-color: ${theme.primaryColor}; background: #fff; }
-.calc-check label { display: flex; align-items: center; gap: 0.6rem; font-weight: 500; cursor: pointer; color: #475569; }
+.calc-check label { display: flex; align-items: center; gap: .6rem; font-weight: 500; cursor: pointer; color: #475569; }
 .calc-check input[type=checkbox] { width: 1.1rem; height: 1.1rem; accent-color: ${theme.primaryColor}; }
 .calc-btn {
-  background: ${theme.primaryColor};
-  color: #fff;
-  border: none;
-  padding: 0.8rem 2rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: 0.5rem;
+  background: ${theme.primaryColor}; color: #fff; border: none;
+  padding: .8rem 2rem; border-radius: 8px; font-size: 1rem;
+  font-weight: 700; cursor: pointer; margin-top: .5rem;
   transition: background .15s, transform .1s;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
 }
 .calc-btn:hover { background: ${theme.secondaryColor}; transform: translateY(-1px); }
 .calc-result {
-  margin-top: 1.5rem;
-  padding: 1.25rem 1.5rem;
+  margin-top: 1.5rem; padding: 1.25rem 1.5rem;
   background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
-  border: 1.5px solid #bae6fd;
-  border-radius: 10px;
-  min-height: 3rem;
-  font-size: 1rem;
-  color: #0c4a6e;
+  border: 1.5px solid #bae6fd; border-radius: 10px;
+  min-height: 3rem; font-size: 1rem; color: #0c4a6e;
 }
-@media (max-width: 640px) {
-  .calc-tabs { gap: 0.35rem; }
-  .calc-tab { font-size: 0.78rem; padding: 0.45rem 0.7rem; }
-  .calc-form { padding: 1.25rem; }
+.calc-info h2 { font-size: 1.35rem; color: ${theme.primaryColor}; margin-bottom: 1rem; }
+.calc-info h3 { font-size: 1.05rem; color: #1e293b; margin: 1.25rem 0 .5rem; }
+.calc-info p { color: #475569; line-height: 1.7; margin-bottom: .75rem; }
+.calc-info ul { padding-left: 1.25rem; margin-bottom: 1rem; }
+.calc-info li { color: #475569; line-height: 1.7; margin-bottom: .4rem; }
+.other-calc-card {
+  display: flex; align-items: center; gap: .75rem;
+  background: #fff; border: 1.5px solid #e2e8f0; border-radius: 10px;
+  padding: .75rem 1rem; text-decoration: none; color: #1e293b;
+  transition: border-color .2s, transform .15s;
 }
-`;
+.other-calc-card:hover { border-color: ${theme.primaryColor}; transform: translateY(-2px); }
+.other-calc-icon { font-size: 1.4rem; }
+.other-calc-name { font-weight: 600; font-size: .875rem; }
+@media (max-width: 768px) {
+  .content-section > .container { grid-template-columns: 1fr !important; }
+}`;
 
   const fullTheme = resolveTheme(data);
   const fontUrl = FONT_URLS[fullTheme.fontFamily];
@@ -3249,7 +3335,6 @@ function calcRestore() {
   <link href="${fontUrl}" rel="stylesheet">`
     : '';
 
-  // Use manual shell for calculator page to inject extra CSS and JS
   const schemas = [generateLocalBusinessSchema(data, `${domain}.netlify.app`)]
     .map(s => `<script type="application/ld+json">\n${s}\n</script>`)
     .join('\n  ');
@@ -3259,23 +3344,19 @@ function calcRestore() {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Water Damage Calculators | ${data.businessName} — ${data.city}</title>
-  <meta name="description" content="Free water damage calculators for ${data.city} homeowners — cost estimator, drying time, mold risk, insurance payout, dehumidifier sizing, and restoration vs replacement.">
+  <title>${calc.title} Calculator | ${data.businessName} — ${data.city}</title>
+  <meta name="description" content="Free ${calc.title.toLowerCase()} calculator for ${data.city} homeowners. ${calc.desc}">
   <link rel="canonical" href="${canonicalUrl}">
   ${data.faviconUrl ? `<link rel="icon" type="image/png" href="${data.faviconUrl}">
   <link rel="shortcut icon" href="${data.faviconUrl}">` : ''}
   ${fontLink}
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-  ${data.googleVerificationCode ? `<meta name="google-site-verification" content="${data.googleVerificationCode}">` : ''}
-  <meta property="og:title" content="Water Damage Calculators | ${data.businessName}">
+  <meta property="og:title" content="${calc.title} Calculator | ${data.businessName}">
   <meta property="og:type" content="website">
-  <!-- Schema.org -->
   ${schemas}
-  ${data.googleAnalyticsId ? `<!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=${data.googleAnalyticsId}"></script>
+  ${data.googleAnalyticsId ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${data.googleAnalyticsId}"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${data.googleAnalyticsId}');</script>` : ''}
-  ${data.customHeadCode ? `<!-- Custom Head Code -->\n  ${data.customHeadCode.trim()}` : ''}
-
+  ${data.customHeadCode ? data.customHeadCode.trim() : ''}
   <style>
     ${generateCSS(fullTheme)}
     ${calcCSS}
@@ -3285,7 +3366,7 @@ function calcRestore() {
   ${body}
   <script>
     ${generateJS()}
-    ${calcJS}
+    ${calcJSFunctions}
   </script>
 </body>
 </html>`;
@@ -3959,6 +4040,15 @@ export function generateSitemap(data: WDBusinessData, domain: string): string {
   </url>`)
     .join('\n');
 
+  const calculatorUrls = CALCULATORS
+    .map(c => `  <url>
+    <loc>${base}/calculators/${c.slug}.html</loc>
+    <lastmod>${today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>`)
+    .join('\n');
+
   const serviceUrls = data.services
     .map(s => `  <url>
     <loc>${base}/services/${slugify(s)}-${slugify(data.city)}.html</loc>
@@ -3995,6 +4085,7 @@ export function generateSitemap(data: WDBusinessData, domain: string): string {
     <priority>1.0</priority>
   </url>
 ${staticPages}
+${calculatorUrls}
 ${serviceUrls}
 ${locationUrls}
 ${blogPostUrls}
@@ -4060,7 +4151,8 @@ ${data.email ? `- Email: ${data.email}` : ''}
 - [Contact](${base}/contact.html)
 - [FAQ](${base}/faq.html)
 - [Gallery](${base}/gallery.html)
-- [Cost Calculator](${base}/calculator.html)
+- [Calculators](${base}/calculator.html)
+${CALCULATORS.map(c => `- [${c.title} Calculator](${base}/calculators/${c.slug}.html)`).join('\n')}
 ${hasBlog ? `- [Blog](${base}/blog.html)` : ''}
 
 ## Services
@@ -4143,10 +4235,17 @@ export function generateHTMLSitemap(data: WDBusinessData, domain: string): strin
         <li><a href="contact.html">Contact</a></li>
         <li><a href="faq.html">FAQ</a></li>
         <li><a href="gallery.html">Gallery</a></li>
-        <li><a href="calculator.html">Cost Calculator</a></li>
+        <li><a href="calculator.html">Calculators</a></li>
         ${hasBlog ? '<li><a href="blog.html">Blog</a></li>' : ''}
         <li><a href="privacy.html">Privacy Policy</a></li>
         <li><a href="terms.html">Terms of Service</a></li>
+      </ul>
+    </div>
+
+    <div class="sitemap-section">
+      <h2>Calculators</h2>
+      <ul>
+        ${CALCULATORS.map(c => `<li><a href="calculators/${c.slug}.html">${c.icon} ${c.title}</a></li>`).join('\n        ')}
       </ul>
     </div>
 
@@ -4194,6 +4293,11 @@ export function generateWaterDamageWebsite(
   files['contact.html']    = generateContactPage(data, domain);
   files['faq.html']        = generateFAQPage(data, domain);
   files['calculator.html'] = generateCalculatorPage(data, domain);
+
+  // Individual calculator pages
+  for (let i = 0; i < CALCULATORS.length; i++) {
+    files[`calculators/${CALCULATORS[i].slug}.html`] = generateSingleCalculatorPage(data, i, domain);
+  }
   files['gallery.html']    = generateGalleryPage(data, domain);
   // Blog pages — only generate if user has blog posts
   if (data.blogPosts && data.blogPosts.length > 0) {

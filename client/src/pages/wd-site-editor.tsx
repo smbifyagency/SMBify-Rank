@@ -2157,6 +2157,14 @@ export default function WDSiteEditor() {
                 <option value="blog.html">Blog</option>
                 <option value="calculator.html">Calculators</option>
               </optgroup>
+              <optgroup label="Calculator Pages">
+                <option value="calculators/cost-estimator.html">Cost Estimator</option>
+                <option value="calculators/drying-time.html">Drying Time</option>
+                <option value="calculators/mold-risk.html">Mold Risk</option>
+                <option value="calculators/insurance-estimator.html">Insurance Estimator</option>
+                <option value="calculators/dehumidifier-sizing.html">Dehumidifier Sizing</option>
+                <option value="calculators/restore-vs-replace.html">Restore vs Replace</option>
+              </optgroup>
               {(Array.isArray(siteData.services) && siteData.services.length > 0) && (
                 <optgroup label="Service Pages">
                   {siteData.services.map(s => {
