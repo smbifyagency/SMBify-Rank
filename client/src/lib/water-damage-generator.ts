@@ -362,39 +362,80 @@ function buildServiceSlug(service: string, city: string): string {
 }
 
 // ─── Icon name → emoji (AI returns names like "shield", "clock") ────────────
-function iconToEmoji(icon: string): string {
-  if (!icon) return '✅';
-  // Already an emoji or contains non-ASCII
-  if (/[^\x00-\x7F]/.test(icon)) return icon;
+/** Generate a professional inline SVG icon. Falls back to a checkmark. */
+function iconToSVG(icon: string, color: string = 'currentColor'): string {
+  const s = (d: string) => `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${d}</svg>`;
+  if (!icon) return s('<path d="M20 6L9 17l-5-5"/>');
+  const key = icon.toLowerCase().trim().replace(/[\s_]+/g, '-').replace(/[^\x00-\x7F]/g, '');
   const map: Record<string, string> = {
-    'shield': '🛡️', 'shield-check': '🛡️',
-    'clock': '⏰', 'time': '⏰', 'timer': '⏰',
-    'check-circle': '✅', 'check': '✅', 'checkmark': '✅',
-    'star': '⭐', 'award': '🏆', 'trophy': '🏆',
-    'phone': '📞', 'call': '📞',
-    'home': '🏠', 'house': '🏠',
-    'heart': '❤️', 'love': '❤️',
-    'users': '👥', 'team': '👥', 'people': '👥',
-    'tool': '🔧', 'wrench': '🔧', 'settings': '🔧',
-    'zap': '⚡', 'lightning': '⚡', 'fast': '⚡',
-    'alert': '🚨', 'warning': '⚠️', 'emergency': '🚨',
-    'map-pin': '📍', 'map': '📍', 'location': '📍',
-    'dollar': '💲', 'money': '💲', 'price': '💲',
-    'file': '📋', 'clipboard': '📋', 'document': '📋',
-    'water': '💧', 'droplet': '💧', 'drop': '💧',
-    'mold': '🦠', 'bacteria': '🦠',
-    'calendar': '📅', 'date': '📅',
-    'camera': '📷', 'photo': '📷',
-    'search': '🔍', 'magnify': '🔍',
-    'lock': '🔒', 'secure': '🔒',
-    'truck': '🚛', 'van': '🚛', 'vehicle': '🚛',
-    'certified': '🎓', 'certificate': '🎓', 'license': '🎓',
-    'insurance': '📄', 'paper': '📄',
-    'thumbs-up': '👍', 'like': '👍',
-    'smile': '😊', 'happy': '😊',
+    'shield':       s('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'),
+    'shield-check': s('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/>'),
+    'clock':        s('<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'),
+    'time':         s('<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'),
+    'timer':        s('<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>'),
+    'check-circle': s('<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/>'),
+    'check':        s('<path d="M20 6L9 17l-5-5"/>'),
+    'checkmark':    s('<path d="M20 6L9 17l-5-5"/>'),
+    'star':         s('<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'),
+    'award':        s('<circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>'),
+    'trophy':       s('<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>'),
+    'phone':        s('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>'),
+    'call':         s('<path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>'),
+    'home':         s('<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>'),
+    'house':        s('<path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>'),
+    'heart':        s('<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>'),
+    'love':         s('<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>'),
+    'users':        s('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'),
+    'team':         s('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'),
+    'people':       s('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'),
+    'tool':         s('<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'),
+    'wrench':       s('<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'),
+    'settings':     s('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>'),
+    'zap':          s('<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>'),
+    'lightning':    s('<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>'),
+    'fast':         s('<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>'),
+    'alert':        s('<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
+    'warning':      s('<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
+    'emergency':    s('<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
+    'map-pin':      s('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'),
+    'map':          s('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'),
+    'location':     s('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'),
+    'dollar':       s('<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>'),
+    'money':        s('<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>'),
+    'price':        s('<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>'),
+    'file':         s('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'),
+    'clipboard':    s('<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>'),
+    'document':     s('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/>'),
+    'water':        s('<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>'),
+    'droplet':      s('<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>'),
+    'drop':         s('<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>'),
+    'mold':         s('<circle cx="12" cy="12" r="4"/><circle cx="4" cy="8" r="2"/><circle cx="20" cy="8" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="20" cy="16" r="2"/><path d="M8.5 9.5L10 11"/><path d="M15.5 9.5L14 11"/><path d="M8.5 14.5L10 13"/><path d="M15.5 14.5L14 13"/>'),
+    'bacteria':     s('<circle cx="12" cy="12" r="4"/><circle cx="4" cy="8" r="2"/><circle cx="20" cy="8" r="2"/><circle cx="4" cy="16" r="2"/><circle cx="20" cy="16" r="2"/><path d="M8.5 9.5L10 11"/><path d="M15.5 9.5L14 11"/><path d="M8.5 14.5L10 13"/><path d="M15.5 14.5L14 13"/>'),
+    'calendar':     s('<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'),
+    'date':         s('<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'),
+    'camera':       s('<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>'),
+    'photo':        s('<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/>'),
+    'search':       s('<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>'),
+    'magnify':      s('<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>'),
+    'lock':         s('<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'),
+    'secure':       s('<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'),
+    'truck':        s('<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'),
+    'van':          s('<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'),
+    'vehicle':      s('<rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>'),
+    'certified':    s('<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5"/>'),
+    'certificate':  s('<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5"/>'),
+    'license':      s('<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5"/>'),
+    'insurance':    s('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>'),
+    'paper':        s('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>'),
+    'thumbs-up':    s('<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>'),
+    'like':         s('<path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>'),
+    'smile':        s('<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>'),
+    'happy':        s('<circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>'),
+    'hammer':       s('<path d="M15 12l-8.5 8.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0a2.12 2.12 0 0 1 0-3L12 9"/><path d="M17.64 15L22 10.64"/><path d="M20.91 11.7l-1.25-1.25c-.6-.6-.93-1.4-.93-2.25V6.5L14.5 2.5 12 5l2 2-1.5 1.5L14 10l2-1.5L17.5 10 17.64 15z"/>'),
   };
-  const key = icon.toLowerCase().trim().replace(/[\s_]+/g, '-');
-  return map[key] || map[key.split('-')[0]] || '✅';
+  // If icon is already an emoji (non-ASCII), wrap it in the icon container
+  if (/[^\x00-\x7F]/.test(icon)) return s('<path d="M20 6L9 17l-5-5"/>');
+  return map[key] || map[key.split('-')[0]] || s('<path d="M20 6L9 17l-5-5"/>');
 }
 
 function buildLocationSlug(city: string): string {
@@ -477,12 +518,12 @@ function generateNav(data: WDBusinessData, currentPath: string = ''): string {
           <li class="has-dropdown">
             <a href="${prefix}calculator.html" aria-haspopup="true" aria-expanded="false">Calculators ▾</a>
             <ul class="dropdown" role="menu">
-              <li><a href="${prefix}calculators/cost-estimator.html">💰 Cost Estimator</a></li>
-              <li><a href="${prefix}calculators/drying-time.html">⏱ Drying Time</a></li>
-              <li><a href="${prefix}calculators/mold-risk.html">🦠 Mold Risk</a></li>
-              <li><a href="${prefix}calculators/insurance-estimator.html">📄 Insurance</a></li>
-              <li><a href="${prefix}calculators/dehumidifier-sizing.html">💧 Dehumidifier</a></li>
-              <li><a href="${prefix}calculators/restore-vs-replace.html">🔨 Restore vs Replace</a></li>
+              <li><a href="${prefix}calculators/cost-estimator.html">Cost Estimator</a></li>
+              <li><a href="${prefix}calculators/drying-time.html">Drying Time</a></li>
+              <li><a href="${prefix}calculators/mold-risk.html">Mold Risk</a></li>
+              <li><a href="${prefix}calculators/insurance-estimator.html">Insurance</a></li>
+              <li><a href="${prefix}calculators/dehumidifier-sizing.html">Dehumidifier</a></li>
+              <li><a href="${prefix}calculators/restore-vs-replace.html">Restore vs Replace</a></li>
             </ul>
           </li>
           ${data.blogPosts && data.blogPosts.length > 0 ? `<li><a href="${prefix}blog.html">Blog</a></li>` : ''}}
@@ -492,7 +533,7 @@ function generateNav(data: WDBusinessData, currentPath: string = ''): string {
 
       <div class="header-cta">
         <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-emergency" aria-label="Call us now">
-          📞 ${data.phone}
+          ${data.phone}
         </a>
       </div>
 
@@ -688,10 +729,10 @@ body {
   font-family: ${fontStack};
   color: #1e293b;
   line-height: 1.7;
-  background: #fff;
+  background: #f8fafc;
 }
 
-a { color: ${secondaryColor}; text-decoration: none; }
+a { color: ${secondaryColor}; text-decoration: none; transition: color .2s; }
 a:hover { text-decoration: underline; }
 
 img { max-width: 100%; height: auto; display: block; }
@@ -717,17 +758,103 @@ ul { list-style: none; }
   padding: 0 1.5rem;
 }
 
-section { padding: 4rem 0; }
-section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not(.hero) { background: #f8fafc; }
+section { padding: 4.5rem 0; }
+section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not(.hero) { background: #ffffff; }
+
+/* ── Animation Keyframes ──────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+  from { opacity: 0; transform: translateY(-30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+  from { opacity: 0; transform: translateX(-40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 15px ${primaryColor}30; }
+  50% { box-shadow: 0 0 30px ${primaryColor}50, 0 0 60px ${primaryColor}15; }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ── Scroll Reveal ─────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(35px);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+/* Staggered children animation */
+.stagger-children .reveal { transition-delay: calc(var(--i, 0) * 0.1s); }
 
 /* ── Header ───────────────────────────────────── */
 .site-header {
-  background: ${primaryColor};
-  border-bottom: 1px solid ${darkenHex(primaryColor, 0.8)};
+  background: rgba(${hexToRgb(primaryColor)}, 0.95);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
   position: sticky;
   top: 0;
   z-index: 100;
-  box-shadow: 0 2px 12px rgba(0,0,0,.18);
+  box-shadow: 0 1px 20px rgba(0,0,0,.12);
+  transition: all 0.3s ease;
 }
 
 .header-inner {
@@ -856,9 +983,11 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 /* ── Hero ──────────────────────────────────────── */
 .hero {
   position: relative;
-  background: linear-gradient(135deg, ${primaryColor} 0%, ${darkenHex(primaryColor, 0.45)} 100%);
+  background: linear-gradient(135deg, ${primaryColor} 0%, ${darkenHex(primaryColor, 0.35)} 50%, ${darkenHex(primaryColor, 0.5)} 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 12s ease infinite;
   color: #fff;
-  padding: 5rem 0 4rem;
+  padding: 5.5rem 0 4.5rem;
   overflow: hidden;
 }
 
@@ -899,11 +1028,13 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   border-radius: 4px;
   margin-bottom: 1rem;
   text-transform: uppercase;
+  animation: fadeInDown 0.6s ease-out;
 }
 
 .hero h1 {
   color: #fff;
   margin-bottom: 1rem;
+  animation: fadeInUp 0.7s ease-out 0.1s both;
 }
 
 .hero-sub {
@@ -911,42 +1042,58 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   color: #cbd5e1;
   margin-bottom: 2rem;
   max-width: 560px;
+  animation: fadeInUp 0.7s ease-out 0.2s both;
 }
 
-.hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+.hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; animation: fadeInUp 0.7s ease-out 0.3s both; }
 
 .btn-primary {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: #dc2626;
+  background: ${accentColor};
   color: #fff;
   padding: 0.9rem 1.75rem;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 700;
   font-size: 1rem;
-  transition: background .15s, transform .1s;
+  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,.15);
+  position: relative;
+  overflow: hidden;
 }
 
-.btn-primary:hover { background: #b91c1c; transform: translateY(-1px); text-decoration: none; }
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.15) 0%, transparent 50%);
+  opacity: 0;
+  transition: opacity .25s;
+}
+
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,.2); text-decoration: none; }
+.btn-primary:hover::before { opacity: 1; }
+.btn-primary:active { transform: translateY(0); }
 
 .btn-secondary {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  background: transparent;
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(8px);
   color: #fff;
-  border: 2px solid rgba(255,255,255,.5);
+  border: 2px solid rgba(255,255,255,.3);
   padding: 0.9rem 1.75rem;
-  border-radius: 8px;
+  border-radius: 10px;
   font-weight: 700;
   font-size: 1rem;
-  transition: border-color .15s, background .15s;
+  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
 }
 
-.btn-secondary:hover { border-color: #fff; background: rgba(255,255,255,.1); text-decoration: none; }
+.btn-secondary:hover { border-color: #fff; background: rgba(255,255,255,.18); transform: translateY(-2px); text-decoration: none; }
 
 .hero-trust {
   font-size: 0.85rem;
@@ -956,11 +1103,15 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 
 /* Hero CTA Card */
 .hero-cta-card {
-  background: #fff;
-  border-radius: 12px;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 16px;
   padding: 2rem;
-  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  box-shadow: 0 20px 60px rgba(0,0,0,.25), 0 0 0 1px rgba(255,255,255,.1) inset;
   color: #1e293b;
+  animation: fadeInRight 0.8s ease-out 0.3s both;
 }
 
 .hero-cta-card h3 {
@@ -1017,16 +1168,33 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 
 .service-card {
   background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  border: 1px solid rgba(226,232,240,0.6);
+  border-radius: 14px;
   padding: 1.75rem;
-  transition: box-shadow .2s, transform .2s;
+  transition: all .35s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, ${primaryColor}, ${secondaryColor});
+  opacity: 0;
+  transition: opacity .3s;
 }
 
 .service-card:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,.08);
-  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.1);
+  transform: translateY(-4px);
+  border-color: transparent;
 }
+
+.service-card:hover::before { opacity: 1; }
 
 .service-card h3 {
   margin-bottom: 0.75rem;
@@ -1042,23 +1210,55 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
+  transition: gap .2s;
 }
+
+.service-card-link:hover { gap: 0.5rem; text-decoration: none; }
 
 /* ── Why Us ────────────────────────────────────── */
 .why-us-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 2rem;
   margin-top: 2rem;
 }
 
-.why-us-item { display: flex; gap: 1rem; align-items: flex-start; }
+.why-us-item {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 14px;
+  border: 1px solid rgba(226,232,240,0.6);
+  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.why-us-item:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  transform: translateY(-2px);
+  border-color: ${secondaryColor}30;
+}
 
 .why-us-icon {
-  font-size: 1.75rem;
   flex-shrink: 0;
-  margin-top: 0.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, ${primaryColor}12, ${secondaryColor}12);
+  color: ${secondaryColor};
+  transition: all .3s;
 }
+
+.why-us-item:hover .why-us-icon {
+  background: linear-gradient(135deg, ${primaryColor}22, ${secondaryColor}22);
+  transform: scale(1.05);
+}
+
+.why-us-icon svg { width: 26px; height: 26px; }
 
 .why-us-item h3 { margin-bottom: 0.35rem; font-size: 1rem; }
 .why-us-item p { color: #475569; font-size: 0.9rem; margin: 0; }
@@ -1074,28 +1274,35 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 
 .process-step {
   background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 1.5rem;
+  border: 1px solid rgba(226,232,240,0.6);
+  border-radius: 14px;
+  padding: 2rem 1.5rem 1.5rem;
   position: relative;
   counter-increment: step-counter;
+  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.process-step:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  transform: translateY(-2px);
 }
 
 .process-step::before {
   content: counter(step-counter);
   position: absolute;
-  top: -14px;
+  top: -16px;
   left: 1.5rem;
-  background: ${secondaryColor};
+  background: linear-gradient(135deg, ${secondaryColor}, ${primaryColor});
   color: #fff;
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
   font-size: 0.85rem;
+  box-shadow: 0 4px 12px ${secondaryColor}40;
 }
 
 .process-step h3 { margin-top: 0.5rem; margin-bottom: 0.5rem; font-size: 1rem; }
@@ -1112,14 +1319,14 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 .location-link {
   display: block;
   background: #fff;
-  border: 1px solid #e2e8f0;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  border: 1px solid rgba(226,232,240,0.6);
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
   text-align: center;
   font-weight: 600;
   font-size: 0.9rem;
   color: ${primaryColor};
-  transition: background .15s, border-color .15s;
+  transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .location-link:hover {
@@ -1127,17 +1334,24 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   color: #fff;
   border-color: ${primaryColor};
   text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px ${primaryColor}30;
 }
 
 /* ── FAQ ───────────────────────────────────────── */
 .faq-list { max-width: 800px; margin: 2rem auto 0; }
 
 .faq-item {
-  border-bottom: 1px solid #e2e8f0;
-  padding: 1.25rem 0;
+  border: 1px solid rgba(226,232,240,0.6);
+  border-radius: 12px;
+  padding: 0;
+  margin-bottom: 0.75rem;
+  background: #fff;
+  overflow: hidden;
+  transition: all .25s;
 }
 
-.faq-item:last-child { border-bottom: none; }
+.faq-item.open { border-color: ${secondaryColor}30; box-shadow: 0 4px 12px rgba(0,0,0,.04); }
 
 .faq-question {
   width: 100%;
@@ -1152,34 +1366,60 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 0;
+  padding: 1.25rem 1.5rem;
+  transition: color .2s;
 }
+
+.faq-question:hover { color: ${secondaryColor}; }
 
 .faq-question::after {
   content: '+';
   font-size: 1.5rem;
   font-weight: 400;
   flex-shrink: 0;
-  transition: transform .2s;
+  transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: ${primaryColor}08;
 }
 
-.faq-item.open .faq-question::after { transform: rotate(45deg); }
+.faq-item.open .faq-question::after { transform: rotate(45deg); background: ${secondaryColor}15; color: ${secondaryColor}; }
 
 .faq-answer {
   display: none;
-  padding-top: 0.75rem;
+  padding: 0 1.5rem 1.25rem;
   color: #475569;
   line-height: 1.7;
 }
 
-.faq-item.open .faq-answer { display: block; }
+.faq-item.open .faq-answer { display: block; animation: fadeInUp 0.3s ease-out; }
 
 /* ── CTA Section ───────────────────────────────── */
 .cta-section {
-  background: linear-gradient(135deg, ${primaryColor} 0%, ${darkenHex(primaryColor, 0.45)} 100%);
+  background: linear-gradient(135deg, ${primaryColor} 0%, ${darkenHex(primaryColor, 0.4)} 50%, ${darkenHex(primaryColor, 0.55)} 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 10s ease infinite;
   color: #fff;
   text-align: center;
-  padding: 5rem 0;
+  padding: 5.5rem 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .cta-section h2 { color: #fff; margin-bottom: 1rem; }
@@ -1199,33 +1439,54 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 
 /* ── Content Page Hero ─────────────────────────── */
 .page-hero {
-  background: linear-gradient(135deg, ${primaryColor} 0%, ${darkenHex(primaryColor, 0.5)} 100%);
+  background: linear-gradient(135deg, ${primaryColor} 0%, ${darkenHex(primaryColor, 0.4)} 50%, ${darkenHex(primaryColor, 0.55)} 100%);
+  background-size: 200% 200%;
+  animation: gradientShift 12s ease infinite;
   color: #fff;
-  padding: 3.5rem 0 3rem;
+  padding: 4rem 0 3.5rem;
+  position: relative;
+  overflow: hidden;
 }
 
-.page-hero h1 { color: #fff; margin-bottom: 0.75rem; }
-.page-hero p { color: #cbd5e1; font-size: 1.05rem; max-width: 680px; }
+.page-hero::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.page-hero h1 { color: #fff; margin-bottom: 0.75rem; animation: fadeInUp 0.6s ease-out; }
+.page-hero p { color: #cbd5e1; font-size: 1.05rem; max-width: 680px; animation: fadeInUp 0.6s ease-out 0.1s both; }
 
 .trust-badges {
   display: flex;
   gap: 0.75rem;
   flex-wrap: wrap;
   margin-top: 1.25rem;
+  animation: fadeInUp 0.6s ease-out 0.2s both;
 }
 
 .trust-badge {
-  background: rgba(255,255,255,.15);
+  background: rgba(255,255,255,.1);
+  backdrop-filter: blur(8px);
   color: #fff;
-  padding: 0.35rem 0.85rem;
+  padding: 0.4rem 0.95rem;
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 600;
-  border: 1px solid rgba(255,255,255,.25);
+  border: 1px solid rgba(255,255,255,.18);
+  transition: background .2s;
 }
 
+.trust-badge:hover { background: rgba(255,255,255,.18); }
+
 /* ── Overview / Content Sections ──────────────── */
-.content-section { padding: 4rem 0; }
+.content-section { padding: 4.5rem 0; }
 .content-section h2 { margin-bottom: 1.5rem; }
 .content-section p { color: #475569; }
 
@@ -1241,7 +1502,13 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   background: #fff;
   border-left: 4px solid ${secondaryColor};
   padding: 1.25rem 1.5rem;
-  border-radius: 0 8px 8px 0;
+  border-radius: 0 12px 12px 0;
+  transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.benefit-item:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,.06);
+  transform: translateX(4px);
 }
 
 .benefit-item h3 { font-size: 1rem; margin-bottom: 0.4rem; }
@@ -1258,9 +1525,12 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 .warning-item {
   background: #fff9f9;
   border: 1px solid #fecaca;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 1.25rem;
+  transition: all .25s;
 }
+
+.warning-item:hover { box-shadow: 0 4px 12px rgba(220,38,38,.08); transform: translateY(-2px); }
 
 .warning-item h3 {
   font-size: 1rem;
@@ -1269,9 +1539,10 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  padding-left: 0.25rem;
+  border-left: 3px solid #dc2626;
+  padding-left: 0.75rem;
 }
-
-.warning-item h3::before { content: '⚠'; }
 .warning-item p { color: #475569; font-size: 0.9rem; margin: 0; }
 
 /* ── Related Services ──────────────────────────── */
@@ -1330,9 +1601,18 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 
 /* ── Footer ────────────────────────────────────── */
 .site-footer {
-  background: ${primaryColor};
+  background: ${darkenHex(primaryColor, 0.85)};
   color: #cbd5e1;
   padding: 4rem 0 2rem;
+  position: relative;
+}
+
+.site-footer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, transparent 100%);
+  pointer-events: none;
 }
 
 .footer-inner {
@@ -1435,9 +1715,19 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   display: inline-flex; align-items: center; gap: 0.35rem;
   padding: 0.35rem 0.75rem; border-radius: 20px;
   background: rgba(255,255,255,0.08); color: #94a3b8;
-  font-size: 0.8rem; text-decoration: none; transition: background .2s, color .2s;
+  font-size: 0.8rem; text-decoration: none; transition: all .25s;
 }
-.social-link:hover { background: rgba(255,255,255,0.15); color: #fff; text-decoration: none; }
+.social-link:hover { background: rgba(255,255,255,0.15); color: #fff; text-decoration: none; transform: translateY(-1px); }
+
+/* ── Inline SVG Icon Helpers ───────────────────── */
+.btn-icon { display: inline-flex; align-items: center; }
+.btn-icon svg { width: 18px; height: 18px; }
+.cta-icon { display: inline-flex; align-items: center; vertical-align: middle; margin-right: 0.25rem; }
+.cta-icon svg { width: 22px; height: 22px; }
+.contact-icon { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 10px; background: ${primaryColor}10; color: ${secondaryColor}; flex-shrink: 0; }
+.contact-icon svg { width: 20px; height: 20px; }
+.img-caption { display: flex; align-items: center; gap: 0.5rem; font-size: 0.8rem; color: #94a3b8; text-align: center; margin-top: 0.6rem; font-style: italic; justify-content: center; }
+.img-caption svg { width: 16px; height: 16px; flex-shrink: 0; }
 
 /* ── Floating CTA Button ───────────────────────── */
 .floating-cta {
@@ -1479,11 +1769,11 @@ function generateFloatingCTA(data: WDBusinessData): string {
   if (cta === 'whatsapp') {
     const num = (data.whatsappNumber || data.phone).replace(/\D/g, '');
     const msg = encodeURIComponent(data._whatsappMessage || `Hi, I need help!`);
-    return `<a href="https://wa.me/${num}?text=${msg}" class="floating-cta floating-cta--whatsapp" aria-label="WhatsApp us">💬 WhatsApp Us</a>`;
+    return `<a href="https://wa.me/${num}?text=${msg}" class="floating-cta floating-cta--whatsapp" aria-label="WhatsApp us">WhatsApp Us</a>`;
   }
   // default: call
   const tel = data.phone.replace(/\D/g, '');
-  return `<a href="tel:${data.countryCode || '+1'}${tel}" class="floating-cta floating-cta--call" aria-label="Call us now">📞 Call Now</a>`;
+  return `<a href="tel:${data.countryCode || '+1'}${tel}" class="floating-cta floating-cta--call" aria-label="Call us now">Call Now</a>`;
 }
 
 // ─── SHARED: JS ────────────────────────────────────────────────────────────
@@ -1514,11 +1804,47 @@ document.querySelectorAll('.faq-question').forEach(btn => {
   });
 });
 
-// Sticky header shadow on scroll
+// Scroll Reveal Animation (IntersectionObserver)
+(function() {
+  const elements = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+  if (!elements.length) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+  elements.forEach((el, i) => {
+    el.style.transitionDelay = (i % 6) * 0.08 + 's';
+    observer.observe(el);
+  });
+})();
+
+// Sticky header scroll effect
 const header = document.querySelector('.site-header');
 if (header) {
+  let lastScroll = 0;
   window.addEventListener('scroll', () => {
-    header.style.boxShadow = window.scrollY > 10 ? '0 2px 12px rgba(0,0,0,.1)' : '0 1px 6px rgba(0,0,0,.06)';
+    const y = window.scrollY;
+    if (y > 80) {
+      header.style.boxShadow = '0 4px 20px rgba(0,0,0,.15)';
+    } else {
+      header.style.boxShadow = '0 1px 20px rgba(0,0,0,.12)';
+    }
+    lastScroll = y;
+  }, { passive: true });
+}
+
+// Parallax subtle effect for hero
+const hero = document.querySelector('.hero, .page-hero');
+if (hero) {
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    if (y < 800) {
+      hero.style.backgroundPositionY = y * 0.3 + 'px';
+    }
   }, { passive: true });
 }
 `;
@@ -1608,6 +1934,7 @@ function htmlShell(params: {
 export function generateHomepage(data: WDBusinessData, domain: string): string {
   const content = data.homepageContent;
   const prefix = '';
+  const { secondaryColor, accentColor } = resolveTheme(data);
 
   // Fallback content if AI content not yet generated
   const h1 = content?.hero?.h1 || `${data.primaryKeyword} in ${data.city}, ${data.state}`;
@@ -1632,12 +1959,12 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
 
   const whyH2 = content?.whyUsSection?.h2 || `Why ${data.city} Chooses ${data.businessName}`;
   const defaultWhyPoints = data._whyUsPoints || [
-    { icon: '🚨', heading: '24/7 Emergency Response', body: `${data.primaryKeyword} emergencies don't follow business hours. Our ${data.city} team is available around the clock, every day of the year.` },
-    { icon: '🎓', heading: 'Certified Technicians', body: 'Our specialists hold industry certifications and follow best-practice protocols for every job.' },
-    { icon: '🏠', heading: 'Insurance Claim Help', body: 'We work directly with your insurance adjuster and provide thorough documentation to support your claim.' },
-    { icon: '⚡', heading: 'Fast Response', body: `We dispatch quickly — because when you need ${data.primaryKeyword.toLowerCase()}, every minute counts.` },
-    { icon: '🔍', heading: 'Thorough Assessment', body: 'We inspect fully and document everything so you understand exactly what needs to be done and why.' },
-    { icon: '📋', heading: 'Transparent Pricing', body: 'No surprise charges. We provide written estimates and explain every step before work begins.' },
+    { icon: 'alert', heading: '24/7 Emergency Response', body: `${data.primaryKeyword} emergencies don't follow business hours. Our ${data.city} team is available around the clock, every day of the year.` },
+    { icon: 'certified', heading: 'Certified Technicians', body: 'Our specialists hold industry certifications and follow best-practice protocols for every job.' },
+    { icon: 'home', heading: 'Insurance Claim Help', body: 'We work directly with your insurance adjuster and provide thorough documentation to support your claim.' },
+    { icon: 'zap', heading: 'Fast Response', body: `We dispatch quickly — because when you need ${data.primaryKeyword.toLowerCase()}, every minute counts.` },
+    { icon: 'search', heading: 'Thorough Assessment', body: 'We inspect fully and document everything so you understand exactly what needs to be done and why.' },
+    { icon: 'clipboard', heading: 'Transparent Pricing', body: 'No surprise charges. We provide written estimates and explain every step before work begins.' },
   ];
   const whyPoints = content?.whyUsSection?.points || defaultWhyPoints;
 
@@ -1684,7 +2011,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
 
   const whyPointsHTML = whyPoints.map(pt => `
       <div class="why-us-item">
-        <span class="why-us-icon" aria-hidden="true">${iconToEmoji(pt.icon)}</span>
+        <span class="why-us-icon" aria-hidden="true">${iconToSVG(pt.icon, secondaryColor)}</span>
         <div>
           <h3>${pt.heading}</h3>
           <p>${pt.body}</p>
@@ -1711,7 +2038,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   const introParagraphsHTML = introParas.map(p => `<p>${p}</p>`).join('');
 
   const contactSection = data.contactFormEmbed
-    ? `<section class="contact-section" id="contact">
+    ? `<section class="contact-section reveal" id="contact">
         <div class="container">
           <h2>Contact ${data.businessName}</h2>
           <div class="contact-grid">
@@ -1719,20 +2046,20 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
               <h3>Get in Touch</h3>
               <p>For emergencies, call us immediately. For non-urgent inquiries, fill out the form and we'll respond promptly.</p>
               <div class="contact-item">
-                <span class="contact-icon">📞</span>
+                <span class="contact-icon">${iconToSVG('phone', secondaryColor)}</span>
                 <div>
                   <strong>Phone (24/7)</strong><br>
                   <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}">${data.phone}</a>
                 </div>
               </div>
               <div class="contact-item">
-                <span class="contact-icon">📍</span>
+                <span class="contact-icon">${iconToSVG('map-pin', secondaryColor)}</span>
                 <div>
                   <strong>Address</strong><br>
                   ${data.address}, ${data.city}, ${data.state}
                 </div>
               </div>
-              ${data.email ? `<div class="contact-item"><span class="contact-icon">✉</span><div><strong>Email</strong><br><a href="mailto:${data.email}">${data.email}</a></div></div>` : ''}
+              ${data.email ? `<div class="contact-item"><span class="contact-icon">${iconToSVG('file', secondaryColor)}</span><div><strong>Email</strong><br><a href="mailto:${data.email}">${data.email}</a></div></div>` : ''}
             </div>
             <div class="contact-form-embed">
               ${data.contactFormEmbed}
@@ -1753,13 +2080,13 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
         <h1>${h1}</h1>
         <p class="hero-sub">${heroSub}</p>
         <div class="hero-actions">
-          <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+          <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call ${data.phone}</a>
           <a href="#contact" class="btn-secondary">Get Free Estimate</a>
         </div>
         <p class="hero-trust">${(data._trustBadges || ['Licensed', 'Insured', 'Certified']).join(' • ')}</p>
       </div>
       <div class="hero-cta-card" aria-label="Emergency contact">
-        <h3>🚨 ${data._ctaHeadline || `${data.primaryKeyword} Emergency?`}</h3>
+        <h3><span class="cta-icon">${iconToSVG('alert', accentColor)}</span> ${data._ctaHeadline || `${data.primaryKeyword} Emergency?`}</h3>
         <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="hero-cta-phone">${data.phone}</a>
         <p class="hero-cta-divider">or</p>
         <a href="#contact" class="hero-cta-form-btn">Request a Callback</a>
@@ -1768,7 +2095,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   </section>
 
   <!-- ── Intro ─────────────────────────────────────────── -->
-  <section id="about" aria-labelledby="intro-heading">
+  <section id="about" aria-labelledby="intro-heading" class="reveal">
     <div class="container">
       <h2 id="intro-heading">${introH2}</h2>
       ${introParagraphsHTML}
@@ -1776,67 +2103,67 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   </section>
 
   <!-- ── Services ──────────────────────────────────────── -->
-  <section id="services" aria-labelledby="services-heading">
+  <section id="services" aria-labelledby="services-heading" class="reveal">
     <div class="container">
       <h2 id="services-heading">${servH2}</h2>
       <p class="section-intro">${servIntro}</p>
-      <div class="services-grid">
+      <div class="services-grid stagger-children">
         ${servicesCardsHTML}
       </div>
     </div>
   </section>
 
   <!-- ── Why Us ─────────────────────────────────────────── -->
-  <section aria-labelledby="why-heading">
+  <section aria-labelledby="why-heading" class="reveal">
     <div class="container">
       <h2 id="why-heading">${whyH2}</h2>
-      <div class="why-us-grid">
+      <div class="why-us-grid stagger-children">
         ${whyPointsHTML}
       </div>
     </div>
   </section>
 
   <!-- ── Process ───────────────────────────────────────── -->
-  <section aria-labelledby="process-heading">
+  <section aria-labelledby="process-heading" class="reveal">
     <div class="container">
       <h2 id="process-heading">${processH2}</h2>
       <p class="section-intro">Here's exactly what happens when you call ${data.businessName} for ${data.primaryKeyword.toLowerCase()} in ${data.city}.</p>
-      <div class="process-steps">
+      <div class="process-steps stagger-children">
         ${processStepsHTML}
       </div>
     </div>
   </section>
 
   <!-- ── Placeholder Image ─────────────────────────────── -->
-  <section style="padding: 0;" aria-hidden="true">
+  <section style="padding: 0;" aria-hidden="true" class="reveal-scale">
     <div class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
       <img
         src="${data.customImages?.['main-image'] || (data as any)._categoryImages?.['main-image'] || WD_PLACEHOLDER_IMAGES.team}"
         alt="PLACEHOLDER: Replace with a photo of your team or equipment — add descriptive alt text for SEO"
         class="placeholder-img"
         data-placeholder="main-image"
-        style="max-height: 420px; object-fit: cover;"
+        style="max-height: 420px; object-fit: cover; border-radius: 16px;"
         loading="lazy"
         width="1200"
         height="420"
       >
-      <p class="img-caption">📷 Replace this placeholder image with a real photo of your team or work</p>
+      <p class="img-caption">${iconToSVG('camera', '#94a3b8')} Replace this placeholder image with a real photo of your team or work</p>
     </div>
   </section>
 
   <!-- ── Service Areas ─────────────────────────────────── -->
-  <section aria-labelledby="locations-heading">
+  <section aria-labelledby="locations-heading" class="reveal">
     <div class="container">
       <h2 id="locations-heading">${locH2}</h2>
       <p>${locBody}</p>
-      <div class="locations-grid">
+      <div class="locations-grid stagger-children">
         ${locationLinksHTML}
       </div>
     </div>
   </section>
 
   <!-- ── FAQ ───────────────────────────────────────────── -->
-  <section id="faq" aria-labelledby="faq-heading">
+  <section id="faq" aria-labelledby="faq-heading" class="reveal">
     <div class="container">
       <h2 id="faq-heading" class="text-center">${faqH2}</h2>
       <div class="faq-list" role="list">
@@ -1846,7 +2173,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   </section>
 
   <!-- ── SEO Footnote ───────────────────────────────────── -->
-  <section aria-label="About our services">
+  <section aria-label="About our services" class="reveal">
     <div class="container">
       <h2>${seoH2}</h2>
       <p style="color:#475569;">${seoBody}</p>
@@ -1855,11 +2182,11 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
 
   <!-- ── CTA ───────────────────────────────────────────── -->
   <section class="cta-section" aria-labelledby="cta-heading">
-    <div class="container">
+    <div class="container reveal">
       <h2 id="cta-heading">${ctaH2}</h2>
       <p>${ctaBody}</p>
       <div class="cta-actions">
-        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 ${ctaBtn}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> ${ctaBtn}</a>
         <a href="#contact" class="btn-secondary">Send Us a Message</a>
       </div>
     </div>
@@ -1868,7 +2195,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   ${contactSection}
 
   <!-- ── Map ──────────────────────────────────────────── -->
-  <section class="content-section" style="background:#f8fafc;" aria-labelledby="map-heading">
+  <section class="content-section reveal" style="background:#f8fafc;" aria-labelledby="map-heading">
     <div class="container">
       <h2 id="map-heading" style="text-align:center;margin-bottom:1.5rem;">Find Us in ${data.city}</h2>
       ${generateGoogleMap(data)}
@@ -1909,6 +2236,7 @@ export function generateServicePage(
   const citySlug = slugify(data.city);
   const content = data.serviceContent?.[service];
   const prefix = '../';
+  const { secondaryColor, accentColor } = resolveTheme(data);
 
   const h1 = content?.hero?.h1 || `${service} in ${data.city}, ${data.state}`;
   const heroSub = content?.hero?.subheadline || `Professional ${service.toLowerCase()} services for homeowners and businesses in ${data.city}. Fast response, certified technicians.`;
@@ -2048,14 +2376,14 @@ export function generateServicePage(
       <p>${heroSub}</p>
       <div class="trust-badges">${trustBadgesHTML}</div>
       <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
-        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call ${data.phone}</a>
         <a href="../index.html#contact" class="btn-secondary">Get Free Estimate</a>
       </div>
     </div>
   </section>
 
   <!-- ── Overview ───────────────────────────────── -->
-  <section class="content-section" aria-labelledby="overview-heading">
+  <section class="content-section reveal" aria-labelledby="overview-heading">
     <div class="container">
       <h2 id="overview-heading">${overviewH2}</h2>
       ${overviewHTML}
@@ -2063,65 +2391,65 @@ export function generateServicePage(
   </section>
 
   <!-- ── Placeholder Image ─────────────────────── -->
-  <div class="container" style="padding-bottom:2rem;">
+  <div class="container reveal-scale" style="padding-bottom:2rem;">
     <img
       src="${data.customImages?.['service-image-' + slug] || data.customImages?.['service-image'] || (data as any)._categoryImages?.['service-image'] || WD_PLACEHOLDER_IMAGES.equipment}"
       alt="PLACEHOLDER: Replace with a photo showing your ${service.toLowerCase()} work or equipment — use descriptive alt text"
       class="placeholder-img"
       data-placeholder="service-image-${slug}"
-      style="max-height:380px; object-fit:cover;"
+      style="max-height:380px; object-fit:cover; border-radius:16px;"
       loading="lazy"
       width="1200"
       height="380"
     >
-    <p class="img-caption">📷 Replace this with a real photo of your ${service.toLowerCase()} work</p>
+    <p class="img-caption">${iconToSVG('camera', '#94a3b8')} Replace this with a real photo of your ${service.toLowerCase()} work</p>
   </div>
 
   <!-- ── Process ────────────────────────────────── -->
-  <section class="content-section" aria-labelledby="process-heading" style="background:#f8fafc;">
+  <section class="content-section reveal" aria-labelledby="process-heading" style="background:#f8fafc;">
     <div class="container">
       <h2 id="process-heading">${processH2}</h2>
       <p class="section-intro">${processIntro}</p>
-      <div class="process-steps">
+      <div class="process-steps stagger-children">
         ${processStepsHTML}
       </div>
     </div>
   </section>
 
   <!-- ── Benefits ───────────────────────────────── -->
-  <section class="content-section" aria-labelledby="benefits-heading">
+  <section class="content-section reveal" aria-labelledby="benefits-heading">
     <div class="container">
       <h2 id="benefits-heading">${benefitsH2}</h2>
-      <div class="benefits-grid">
+      <div class="benefits-grid stagger-children">
         ${benefitsHTML}
       </div>
     </div>
   </section>
 
   <!-- ── Warning Signs ─────────────────────────── -->
-  <section class="content-section" aria-labelledby="warnings-heading" style="background:#f8fafc;">
+  <section class="content-section reveal" aria-labelledby="warnings-heading" style="background:#f8fafc;">
     <div class="container">
       <h2 id="warnings-heading">${warningsH2}</h2>
       <p class="section-intro">${warningsIntro}</p>
-      <div class="warnings-grid">
+      <div class="warnings-grid stagger-children">
         ${warningsHTML}
       </div>
     </div>
   </section>
 
   <!-- ── Service Areas ─────────────────────────── -->
-  <section class="content-section" aria-labelledby="cluster-heading">
+  <section class="content-section reveal" aria-labelledby="cluster-heading">
     <div class="container">
       <h2 id="cluster-heading">${locationClusterH2}</h2>
       <p>${locationClusterIntro}</p>
-      <div class="locations-grid">
+      <div class="locations-grid stagger-children">
         ${locationCardsHTML}
       </div>
     </div>
   </section>
 
   <!-- ── FAQ ────────────────────────────────────── -->
-  <section class="content-section" id="faq" aria-labelledby="faq-heading" style="background:#f8fafc;">
+  <section class="content-section reveal" id="faq" aria-labelledby="faq-heading" style="background:#f8fafc;">
     <div class="container">
       <h2 id="faq-heading" class="text-center">${faqH2}</h2>
       <div class="faq-list">
@@ -2131,10 +2459,10 @@ export function generateServicePage(
   </section>
 
   <!-- ── Related Services ──────────────────────── -->
-  <section class="content-section" aria-labelledby="related-heading">
+  <section class="content-section reveal" aria-labelledby="related-heading">
     <div class="container">
       <h2 id="related-heading">${crossH2}</h2>
-      <div class="related-grid">
+      <div class="related-grid stagger-children">
         ${crossLinksHTML}
       </div>
     </div>
@@ -2146,7 +2474,7 @@ export function generateServicePage(
       <h2 id="cta-heading">${ctaH2}</h2>
       <p>${ctaBody}</p>
       <div class="cta-actions">
-        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call Now</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call Now</a>
         <a href="../index.html#contact" class="btn-secondary">Send a Message</a>
       </div>
     </div>
@@ -2184,6 +2512,7 @@ export function generateLocationPage(
   const citySlug = slugify(city);
   const content = data.locationContent?.[city];
   const prefix = '../';
+  const { secondaryColor, accentColor } = resolveTheme(data);
 
   const h1 = content?.hero?.h1 || `${data.primaryKeyword} in ${city}, ${data.state}`;
   const heroSub = content?.hero?.subheadline || `${data.businessName} provides fast, professional ${data.primaryKeyword.toLowerCase()} services in ${city}. Call now for a free estimate.`;
@@ -2283,14 +2612,14 @@ export function generateLocationPage(
       <p>${heroSub}</p>
       <div class="trust-badges">${trustBadgesHTML}</div>
       <div style="margin-top:1.5rem; display:flex; gap:1rem; flex-wrap:wrap;">
-        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call ${data.phone}</a>
         <a href="../index.html#contact" class="btn-secondary">Get Free Estimate</a>
       </div>
     </div>
   </section>
 
   <!-- ── Local Intro ────────────────────────────── -->
-  <section class="content-section" aria-labelledby="intro-heading">
+  <section class="content-section reveal" aria-labelledby="intro-heading">
     <div class="container">
       <h2 id="intro-heading">${introH2}</h2>
       ${introParagraphsHTML}
@@ -2298,52 +2627,52 @@ export function generateLocationPage(
   </section>
 
   <!-- ── Placeholder Image ─────────────────────── -->
-  <div class="container" style="padding-bottom:2rem;">
+  <div class="container reveal-scale" style="padding-bottom:2rem;">
     <img
       src="${data.customImages?.['location-image-' + citySlug] || data.customImages?.['location-image'] || (data as any)._categoryImages?.['location-image'] || WD_PLACEHOLDER_IMAGES.drying}"
       alt="PLACEHOLDER: Replace with a photo of your ${city} team or a recent project — add specific alt text"
       class="placeholder-img"
       data-placeholder="location-image-${citySlug}"
-      style="max-height:360px; object-fit:cover;"
+      style="max-height:360px; object-fit:cover; border-radius:16px;"
       loading="lazy"
       width="1200"
       height="360"
     >
-    <p class="img-caption">📷 Replace this with a real photo from your ${city} work</p>
+    <p class="img-caption">${iconToSVG('camera', '#94a3b8')} Replace this with a real photo from your ${city} work</p>
   </div>
 
   <!-- ── Services in City ───────────────────────── -->
-  <section class="content-section" style="background:#f8fafc;" aria-labelledby="serv-city-heading">
+  <section class="content-section reveal" style="background:#f8fafc;" aria-labelledby="serv-city-heading">
     <div class="container">
       <h2 id="serv-city-heading">${servCityH2}</h2>
       <p class="section-intro">${servCityIntro}</p>
-      <div class="services-grid">
+      <div class="services-grid stagger-children">
         ${serviceCardsHTML}
       </div>
     </div>
   </section>
 
   <!-- ── Why Local ──────────────────────────────── -->
-  <section class="content-section" aria-labelledby="why-local-heading">
+  <section class="content-section reveal" aria-labelledby="why-local-heading">
     <div class="container">
       <h2 id="why-local-heading">${whyLocalH2}</h2>
-      <div class="benefits-grid">
+      <div class="benefits-grid stagger-children">
         ${whyLocalHTML}
       </div>
     </div>
   </section>
 
   <!-- ── Areas Covered ─────────────────────────── -->
-  <section class="content-section" style="background:#f8fafc;" aria-labelledby="areas-heading">
+  <section class="content-section reveal" style="background:#f8fafc;" aria-labelledby="areas-heading">
     <div class="container">
       <h2 id="areas-heading">${areasH2}</h2>
       <p style="color:#475569;">${areasBody}</p>
-      ${nearbyLocationsHTML ? `<div class="locations-grid" style="margin-top:1.5rem;">${nearbyLocationsHTML}</div>` : ''}
+      ${nearbyLocationsHTML ? `<div class="locations-grid stagger-children" style="margin-top:1.5rem;">${nearbyLocationsHTML}</div>` : ''}
     </div>
   </section>
 
   <!-- ── FAQ ────────────────────────────────────── -->
-  <section class="content-section" id="faq" aria-labelledby="faq-heading">
+  <section class="content-section reveal" id="faq" aria-labelledby="faq-heading">
     <div class="container">
       <h2 id="faq-heading" class="text-center">${faqH2}</h2>
       <div class="faq-list">
@@ -2353,7 +2682,7 @@ export function generateLocationPage(
   </section>
 
   <!-- ── Map ─────────────────────────────────────── -->
-  <section class="content-section" style="background:#f8fafc;" aria-labelledby="map-heading">
+  <section class="content-section reveal" style="background:#f8fafc;" aria-labelledby="map-heading">
     <div class="container">
       <h2 id="map-heading" style="text-align:center;margin-bottom:1.5rem;">${data.primaryKeyword} in ${city} — Our Service Area</h2>
       ${generateGoogleMap(data, city)}
@@ -2366,7 +2695,7 @@ export function generateLocationPage(
       <h2 id="cta-heading">${ctaH2}</h2>
       <p>${ctaBody}</p>
       <div class="cta-actions">
-        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call Now</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call Now</a>
         <a href="../index.html#contact" class="btn-secondary">Send a Message</a>
       </div>
     </div>
@@ -2398,6 +2727,7 @@ export function generateLocationPage(
 
 export function generateAboutPage(data: WDBusinessData, domain: string): string {
   const theme = resolveTheme(data);
+  const { secondaryColor, accentColor } = theme;
   const canonicalUrl = `https://${domain}.netlify.app/about.html`;
   const yearsText = data.yearsInBusiness ? `With ${data.yearsInBusiness} years of experience` : 'With years of experience';
 
@@ -2444,7 +2774,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
           width="600"
           height="420"
         >
-        <p class="img-caption">📷 Replace with a real photo of your team</p>
+        <p class="img-caption">${iconToSVG('camera', '#94a3b8')} Replace with a real photo of your team</p>
       </div>
     </div>
   </section>
@@ -2455,28 +2785,28 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
       <p style="color:#475569;max-width:760px;">${teamText}</p>
       <div class="why-us-grid" style="margin-top:2rem;">
         <div class="why-us-item">
-          <span class="why-us-icon">🎓</span>
+          <span class="why-us-icon">${iconToSVG('certified', secondaryColor)}</span>
           <div>
             <h3>Licensed &amp; Trained Technicians</h3>
             <p>All field technicians hold proper licenses and certifications for ${data.primaryKeyword.toLowerCase()} work in ${data.state}.</p>
           </div>
         </div>
         <div class="why-us-item">
-          <span class="why-us-icon">📋</span>
+          <span class="why-us-icon">${iconToSVG('clipboard', secondaryColor)}</span>
           <div>
             <h3>Licensed &amp; Insured</h3>
             <p>Fully licensed to operate in ${data.state} and carrying comprehensive liability insurance on every project.${data.licenseNumber ? ` License: ${data.licenseNumber}.` : ''}</p>
           </div>
         </div>
         <div class="why-us-item">
-          <span class="why-us-icon">🏆</span>
+          <span class="why-us-icon">${iconToSVG('trophy', secondaryColor)}</span>
           <div>
             <h3>${yearsText}</h3>
             <p>Hundreds of ${data.city} jobs completed. Our experience means fewer surprises and better outcomes for every customer.</p>
           </div>
         </div>
         <div class="why-us-item">
-          <span class="why-us-icon">🤝</span>
+          <span class="why-us-icon">${iconToSVG('users', secondaryColor)}</span>
           <div>
             <h3>Insurance Claim Experts</h3>
             <p>We work directly with adjusters from all major carriers, providing complete documentation that supports your claim from day one.</p>
@@ -2526,7 +2856,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
       <h2 id="cta-heading">Ready to Work With a Team You Can Trust?</h2>
       <p>Call ${data.businessName} for immediate help or to schedule a free assessment.</p>
       <div class="cta-actions">
-        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call ${data.phone}</a>
         <a href="contact.html" class="btn-secondary">Contact Us</a>
       </div>
     </div>
@@ -2551,6 +2881,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
 
 export function generateContactPage(data: WDBusinessData, domain: string): string {
   const theme = resolveTheme(data);
+  const { secondaryColor, accentColor } = theme;
   const canonicalUrl = `https://${domain}.netlify.app/contact.html`;
 
   const formSection = data.contactFormEmbed
@@ -2579,7 +2910,7 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
   <!-- Emergency Banner -->
   <div style="background:#dc2626;color:#fff;padding:1.25rem 0;text-align:center;">
     <div class="container">
-      <strong>🚨 ${data._emergencyBadge || data.primaryKeyword + ' Emergency'}?</strong> Don't wait — call us now:
+      <strong>${iconToSVG('alert', accentColor)} ${data._emergencyBadge || data.primaryKeyword + ' Emergency'}?</strong> Don't wait — call us now:
       <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" style="color:#fff;font-size:1.2rem;font-weight:800;margin-left:.75rem;">${data.phone}</a>
     </div>
   </div>
@@ -2592,7 +2923,7 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
           <p style="color:#475569;">We respond promptly to all inquiries. For emergencies, please call — do not wait for an email response.</p>
 
           <div class="contact-item" style="margin-top:1.5rem;">
-            <span class="contact-icon">📞</span>
+            <span class="contact-icon">${iconToSVG('phone', secondaryColor)}</span>
             <div>
               <strong>Phone (24/7 Emergency)</strong><br>
               <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" style="font-size:1.2rem;font-weight:700;">${data.phone}</a>
@@ -2600,7 +2931,7 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
           </div>
 
           ${data.email ? `<div class="contact-item">
-            <span class="contact-icon">✉</span>
+            <span class="contact-icon">${iconToSVG('file', secondaryColor)}</span>
             <div>
               <strong>Email</strong><br>
               <a href="mailto:${data.email}">${data.email}</a>
@@ -2608,7 +2939,7 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
           </div>` : ''}
 
           <div class="contact-item">
-            <span class="contact-icon">📍</span>
+            <span class="contact-icon">${iconToSVG('map-pin', secondaryColor)}</span>
             <div>
               <strong>Address</strong><br>
               ${data.address}<br>
@@ -2617,7 +2948,7 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
           </div>
 
           <div class="contact-item">
-            <span class="contact-icon">🕐</span>
+            <span class="contact-icon">${iconToSVG('clock', secondaryColor)}</span>
             <div>
               <strong>Hours</strong><br>
               Emergency Response: 24/7, 365 days<br>
@@ -2626,7 +2957,7 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
           </div>
 
           ${data.licenseNumber ? `<div class="contact-item">
-            <span class="contact-icon">📋</span>
+            <span class="contact-icon">${iconToSVG('clipboard', secondaryColor)}</span>
             <div>
               <strong>License</strong><br>
               ${data.licenseNumber}
@@ -2679,7 +3010,7 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
       <h2 id="cta-heading">Water Damage Cannot Wait</h2>
       <p>Every hour increases the risk of mold and structural damage. Call now for immediate response.</p>
       <div class="cta-actions">
-        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call ${data.phone}</a>
       </div>
     </div>
   </section>
@@ -2810,7 +3141,7 @@ export function generateFAQPage(data: WDBusinessData, domain: string): string {
       <h2 id="cta-heading">Still Have Questions? Call Us Directly</h2>
       <p>Our team is available 24/7 to answer any questions and dispatch help when you need it.</p>
       <div class="cta-actions">
-        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call ${data.phone}</a>
         <a href="contact.html" class="btn-secondary">Send a Message</a>
       </div>
     </div>
@@ -2834,12 +3165,12 @@ export function generateFAQPage(data: WDBusinessData, domain: string): string {
 // ─── CALCULATOR PAGES ───────────────────────────────────────────────────────
 
 const CALCULATORS = [
-  { slug: 'cost-estimator',      title: 'Cost Estimator',         icon: '💰', desc: 'Estimate water damage restoration costs based on area size, water category, and severity of damage.' },
-  { slug: 'drying-time',         title: 'Drying Time',            icon: '⏱',  desc: 'Calculate how many days structural drying will take based on material type, humidity, and area size.' },
-  { slug: 'mold-risk',           title: 'Mold Risk Assessment',   icon: '🦠', desc: 'Assess the risk of mold growth based on time since damage, humidity levels, and temperature.' },
-  { slug: 'insurance-estimator', title: 'Insurance Estimator',    icon: '📄', desc: 'Estimate your expected insurance claim payout based on damage type, total cost, and deductible.' },
-  { slug: 'dehumidifier-sizing', title: 'Dehumidifier Sizing',    icon: '💧', desc: 'Find the right dehumidifier capacity (pints/day) for your water-damaged space.' },
-  { slug: 'restore-vs-replace',  title: 'Restore vs Replace',     icon: '🔨', desc: 'Determine whether damaged flooring, drywall, or other materials should be restored or replaced.' },
+  { slug: 'cost-estimator',      title: 'Cost Estimator',         icon: 'dollar', desc: 'Estimate water damage restoration costs based on area size, water category, and severity of damage.' },
+  { slug: 'drying-time',         title: 'Drying Time',            icon: 'clock',  desc: 'Calculate how many days structural drying will take based on material type, humidity, and area size.' },
+  { slug: 'mold-risk',           title: 'Mold Risk Assessment',   icon: 'mold', desc: 'Assess the risk of mold growth based on time since damage, humidity levels, and temperature.' },
+  { slug: 'insurance-estimator', title: 'Insurance Estimator',    icon: 'insurance', desc: 'Estimate your expected insurance claim payout based on damage type, total cost, and deductible.' },
+  { slug: 'dehumidifier-sizing', title: 'Dehumidifier Sizing',    icon: 'water', desc: 'Find the right dehumidifier capacity (pints/day) for your water-damaged space.' },
+  { slug: 'restore-vs-replace',  title: 'Restore vs Replace',     icon: 'hammer', desc: 'Determine whether damaged flooring, drywall, or other materials should be restored or replaced.' },
 ];
 
 export function generateCalculatorPage(data: WDBusinessData, domain: string): string {
@@ -2882,7 +3213,7 @@ export function generateCalculatorPage(data: WDBusinessData, domain: string): st
     <div class="container" style="text-align:center;">
       <h2>Need an Accurate Assessment?</h2>
       <p style="color:#475569;max-width:600px;margin:0 auto 1.5rem;">Calculators provide estimates only. For a precise assessment and written estimate, contact ${data.businessName}. Free on-site evaluations in ${data.city}.</p>
-      <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+      <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call ${data.phone}</a>
     </div>
   </section>
 
@@ -3238,7 +3569,7 @@ function generateSingleCalculatorPage(data: WDBusinessData, calcIndex: number, d
 
   <section class="page-hero" role="banner">
     <div class="container">
-      <div style="font-size:3rem;margin-bottom:.5rem;">${calc.icon}</div>
+      <div style="margin-bottom:.75rem;color:#fff;opacity:.85;">${iconToSVG(calc.icon, '#fff')}</div>
       <h1>${calc.title} Calculator</h1>
       <p>${calc.desc}</p>
     </div>
@@ -3256,7 +3587,7 @@ function generateSingleCalculatorPage(data: WDBusinessData, calcIndex: number, d
         <h2>How This Calculator Works</h2>
         ${infoParagraphs}
         <div style="margin-top:1.5rem;padding:1rem 1.25rem;background:#f0f9ff;border:1px solid #bae6fd;border-radius:8px;">
-          <p style="font-size:.85rem;color:#0c4a6e;margin:0;">⚠️ This calculator provides estimates only. For an accurate, free on-site assessment, call <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" style="color:${theme.primaryColor};font-weight:700;">${data.phone}</a>.</p>
+          <p style="font-size:.85rem;color:#0c4a6e;margin:0;">This calculator provides estimates only. For an accurate, free on-site assessment, call <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" style="color:${theme.primaryColor};font-weight:700;">${data.phone}</a>.</p>
         </div>
       </div>
     </div>
@@ -3275,7 +3606,7 @@ function generateSingleCalculatorPage(data: WDBusinessData, calcIndex: number, d
     <div class="container" style="text-align:center;">
       <h2>Get a Free On-Site Assessment</h2>
       <p>For an accurate estimate tailored to your property, call ${data.businessName}.</p>
-      <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary" style="margin-top:1rem;display:inline-block;">📞 Call ${data.phone}</a>
+      <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary" style="margin-top:1rem;display:inline-block;"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call ${data.phone}</a>
     </div>
   </section>
 
@@ -3540,7 +3871,7 @@ document.addEventListener('DOMContentLoaded', () => {
   <section class="content-section">
     <div class="container">
       <h2>Before &amp; After Comparisons</h2>
-      <p class="section-intro">Drag the slider to compare before and after restoration. 📷 <em>Replace placeholder images with real project photos in the editor.</em></p>
+      <p class="section-intro">Drag the slider to compare before and after restoration. <em>Replace placeholder images with real project photos in the editor.</em></p>
       <div class="ba-grid">
         ${beforeAfterHTML}
       </div>
@@ -3550,7 +3881,7 @@ document.addEventListener('DOMContentLoaded', () => {
   <section class="content-section" style="background:#f8fafc;">
     <div class="container">
       <h2>Project Photos</h2>
-      <p class="section-intro">Photos from recent water damage restoration projects in ${data.city}. 📷 <em>Replace placeholder images with real photos in the editor.</em></p>
+      <p class="section-intro">Photos from recent water damage restoration projects in ${data.city}. <em>Replace placeholder images with real photos in the editor.</em></p>
       <div class="gallery-grid">
         ${normalGridHTML}
       </div>
@@ -3562,7 +3893,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <h2 id="cta-heading">Need Water Damage Restoration in ${data.city}?</h2>
       <p>Our certified team is ready to respond 24/7. Call now or request a free assessment.</p>
       <div class="cta-actions">
-        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call ${data.phone}</a>
         <a href="contact.html" class="btn-secondary">Get Free Estimate</a>
       </div>
     </div>
@@ -3697,7 +4028,7 @@ export function generateBlogArchivePage(data: WDBusinessData, domain: string): s
       <h2 id="cta-heading">Water Damage Emergency in ${data.city}?</h2>
       <p>Don't rely on articles when you need real help. Call us for immediate response, 24/7.</p>
       <div class="cta-actions">
-        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary">📞 Call ${data.phone}</a>
+        <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call ${data.phone}</a>
         <a href="contact.html" class="btn-secondary">Get Free Estimate</a>
       </div>
     </div>
