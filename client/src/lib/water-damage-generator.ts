@@ -446,7 +446,7 @@ function generateNav(data: WDBusinessData, currentPath: string = ''): string {
           <li><a href="${prefix}gallery.html">Gallery</a></li>
           <li><a href="${prefix}faq.html">FAQ</a></li>
           <li><a href="${prefix}calculator.html">Calculators</a></li>
-          <li><a href="${prefix}blog.html">Blog</a></li>
+          ${data.blogPosts && data.blogPosts.length > 0 ? `<li><a href="${prefix}blog.html">Blog</a></li>` : ''}
           <li><a href="${prefix}contact.html">Contact</a></li>
         </ul>
       </nav>
@@ -3462,22 +3462,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // ─── BLOG ARCHIVE PAGE ─────────────────────────────────────────────────────
 
+// ─── DEFAULT BLOG POSTS (used when no AI posts are generated) ──────────────
+
+function getDefaultBlogPosts(): WDBlogPost[] {
+  const today = new Date().toISOString().split('T')[0];
+  return [
+    { slug: 'what-to-do-after-water-damage', title: 'What to Do Immediately After Water Damage in Your Home', excerpt: 'The first 24 hours after water damage are critical. Learn the steps to take to protect your property and support your insurance claim before help arrives.', content: '<h2>Act Fast — The First 24 Hours Matter Most</h2><p>When water damage strikes your home, every minute counts. The actions you take in the first 24 hours can mean the difference between a quick recovery and months of costly repairs. Water moves fast — it seeps into walls, floors, and furniture, and mold can begin growing within 24-48 hours.</p><h2>Step 1: Ensure Safety First</h2><p>Before doing anything else, make sure your family is safe. Turn off electricity to affected areas if you can do so safely. Avoid standing water that could be contaminated or electrically charged. Wear protective footwear and gloves if you must enter the area.</p><h2>Step 2: Stop the Water Source</h2><p>If the damage is from a burst pipe or appliance failure, shut off the water supply immediately. Know where your main water shutoff valve is located before emergencies happen. If the water is from outside flooding, focus on protecting yourself and wait for the water to recede.</p><h2>Step 3: Document Everything</h2><p>Take photos and videos of all damage before moving or cleaning anything. This documentation is critical for your insurance claim. Make a detailed list of damaged items, including their approximate value and age. Keep all receipts for emergency expenses.</p><h2>Step 4: Call a Professional Restoration Company</h2><p>Contact a certified water damage restoration company as soon as possible. Professional teams have industrial-grade equipment that can extract water and dry your home far more effectively than household fans and dehumidifiers. Look for IICRC-certified professionals who offer 24/7 emergency response.</p><h2>Step 5: Begin Basic Mitigation</h2><p>While waiting for professionals, you can take some basic steps: remove standing water with a wet/dry vacuum if available, move furniture away from wet areas, place aluminum foil under furniture legs to prevent staining, and open windows for ventilation if weather permits.</p>', date: today, category: 'Emergency Tips', featuredImage: WD_PLACEHOLDER_IMAGES.flooding, featuredImageAlt: 'Water damage in a home requiring immediate action' },
+    { slug: 'signs-of-hidden-water-damage', title: '7 Signs of Hidden Water Damage You Should Never Ignore', excerpt: 'Water damage is not always visible. Discover the warning signs that moisture is lurking behind your walls, under your floors, or above your ceilings.', content: '<h2>Why Hidden Water Damage Is So Dangerous</h2><p>The most destructive water damage is often the kind you cannot see. Behind walls, under floors, and above ceilings, water can silently destroy your home\'s structure while creating the perfect conditions for mold growth. By the time visible signs appear, significant damage may have already occurred.</p><h2>1. Musty or Earthy Odors</h2><p>A persistent musty smell is one of the earliest indicators of hidden moisture. If you notice an earthy or damp smell that does not go away with ventilation, there may be water trapped behind walls or under flooring. This odor often indicates mold is already growing.</p><h2>2. Unexplained Stains on Walls or Ceilings</h2><p>Water stains appear as yellowish-brown discoloration, often with irregular edges. They may appear on ceilings below bathrooms, around windows, or along baseboards. Even small stains can indicate a larger problem hidden behind the surface.</p><h2>3. Peeling or Bubbling Paint and Wallpaper</h2><p>When moisture gets behind paint or wallpaper, it causes the adhesion to fail. Look for bubbles, cracks, or areas where paint is flaking away. This is a clear sign that water is present within the wall itself.</p><h2>4. Warped or Buckled Flooring</h2><p>Hardwood floors that buckle, tile that becomes loose, or laminate that swells at the seams all indicate moisture underneath. Check for soft spots in the floor that feel spongy when you walk on them.</p><h2>5. Increased Water Bills</h2><p>A sudden spike in your water bill without a change in usage patterns could indicate a hidden leak. Even small leaks in pipes within walls or under the foundation can waste thousands of gallons and cause extensive damage over time.</p><h2>6. Visible Mold Growth</h2><p>Any visible mold — even small patches — usually indicates a much larger moisture problem. Mold on walls, in corners, or around windows means there is enough sustained moisture for colonies to thrive. Professional testing can determine the extent of the problem.</p><h2>7. Sounds of Running Water</h2><p>If you hear water running when no fixtures are in use, you may have a hidden leak. Listen carefully near walls, especially around bathrooms and kitchens. A hissing or dripping sound behind walls requires immediate professional investigation.</p>', date: today, category: 'Home Maintenance', featuredImage: WD_PLACEHOLDER_IMAGES.equipment, featuredImageAlt: 'Moisture detection equipment for finding hidden water damage' },
+    { slug: 'water-damage-insurance-claims', title: 'How to File a Water Damage Insurance Claim Successfully', excerpt: 'A step-by-step guide to navigating the insurance claims process for water damage — what to document, what to say, and how to avoid common mistakes.', content: '<h2>Understanding Your Insurance Coverage</h2><p>Before a water damage event occurs, it is essential to understand what your homeowner\'s insurance covers. Most standard policies cover "sudden and accidental" water damage — like a burst pipe or appliance overflow. However, they typically do not cover damage from flooding, gradual leaks, or lack of maintenance.</p><h2>Step 1: Mitigate Further Damage</h2><p>Your insurance policy requires you to take reasonable steps to prevent additional damage. This includes shutting off the water source, removing standing water, and starting the drying process. Keep all receipts for mitigation expenses — your insurance should reimburse these.</p><h2>Step 2: Document Everything Thoroughly</h2><p>Take extensive photos and videos before cleanup begins. Document every room, every item, and every surface affected by water. Create a detailed inventory of damaged personal property with descriptions, approximate values, and purchase dates. This documentation is the foundation of your claim.</p><h2>Step 3: Contact Your Insurance Company Promptly</h2><p>File your claim as soon as possible. Most policies require prompt notification of damage. Have your policy number ready and provide a clear description of what happened. Ask for a claim number and the name of your assigned adjuster.</p><h2>Step 4: Get Professional Estimates</h2><p>Obtain estimates from licensed restoration companies before the adjuster visits. Having professional documentation of the damage scope and estimated repair costs strengthens your claim. A reputable restoration company can also work directly with your insurance company.</p><h2>Common Mistakes to Avoid</h2><p>Do not throw away damaged items before the adjuster sees them. Do not make permanent repairs before approval. Do not accept the first settlement offer without reviewing it carefully — you can negotiate. Keep copies of all correspondence with your insurance company.</p>', date: today, category: 'Insurance', featuredImage: WD_PLACEHOLDER_IMAGES.team, featuredImageAlt: 'Insurance claim discussion for water damage' },
+    { slug: 'mold-after-water-damage', title: 'How to Prevent Mold After Water Damage', excerpt: 'Mold can begin growing within 24 hours of water intrusion. Learn what conditions mold needs and the steps professionals take to prevent it from taking hold.', content: '<h2>The Timeline of Mold Growth</h2><p>Mold spores are everywhere — in the air, on surfaces, and in dust. They only need three things to grow: moisture, organic material (like wood, drywall, or carpet), and time. After water damage, mold can begin colonizing surfaces within 24 to 48 hours. Within a week, it can spread throughout wall cavities and HVAC systems.</p><h2>Why Professional Drying Is Critical</h2><p>Consumer-grade fans and dehumidifiers simply cannot achieve the drying rates required to prevent mold. Professional restoration companies use industrial air movers, commercial dehumidifiers, and moisture monitoring equipment to dry structures to safe levels quickly. They also have moisture meters to verify that hidden areas — inside walls, under floors — are completely dry.</p><h2>The Professional Mold Prevention Process</h2><p>Professional restoration begins with water extraction using truck-mounted or portable extractors. Next, technicians set up a strategic drying system with air movers and dehumidifiers, calibrated based on the size of the affected area and types of materials involved. They monitor moisture levels daily, adjusting equipment as needed until all materials reach acceptable moisture content.</p><h2>What You Can Do Immediately</h2><p>While waiting for professionals, increase air circulation by opening windows (if weather permits) and running fans. Remove wet materials that can be safely handled — area rugs, clothing, and removable items. Lift furniture off wet carpet using foil or blocks. Do not turn on the HVAC system if ductwork may be contaminated.</p><h2>When Mold Is Already Present</h2><p>If you see or smell mold, do not disturb it. Attempting DIY mold removal can release millions of spores into the air, potentially spreading contamination throughout your home. Professional mold remediation involves containment, air filtration, safe removal, and post-remediation verification to ensure the problem is fully resolved.</p>', date: today, category: 'Mold Prevention', featuredImage: WD_PLACEHOLDER_IMAGES.mold, featuredImageAlt: 'Professional mold inspection after water damage' },
+    { slug: 'water-damage-categories-explained', title: 'Water Damage Categories 1, 2, and 3: What They Mean for Your Restoration', excerpt: 'Not all water damage is the same. Understanding the category of water involved determines the cleanup protocol, safety requirements, and restoration approach.', content: '<h2>Why Water Category Matters</h2><p>The Institute of Inspection Cleaning and Restoration Certification (IICRC) classifies water damage into three categories based on the level of contamination. This classification determines the safety precautions, cleanup methods, and restoration procedures required. Using the wrong approach for the water category can put your family\'s health at risk.</p><h2>Category 1: Clean Water</h2><p>Category 1 water originates from a sanitary source and poses no substantial health risk. Common sources include broken water supply lines, tub or sink overflows with no contaminants, appliance malfunctions involving water supply lines, and rainwater entry. While Category 1 water starts clean, it can deteriorate to Category 2 or 3 if left untreated for too long (typically 48-72 hours) or if it contacts contaminated surfaces.</p><h2>Category 2: Gray Water</h2><p>Category 2 water contains significant contamination that could cause illness if ingested or exposed to skin. Sources include dishwasher or washing machine overflows, toilet overflows with urine but no feces, sump pump failures, and aquarium or waterbed leaks. Gray water requires additional safety precautions including personal protective equipment and antimicrobial treatments during cleanup.</p><h2>Category 3: Black Water</h2><p>Category 3 water is grossly contaminated and contains pathogenic agents that can cause severe illness or death. Sources include sewage backup, flooding from rivers or streams, toilet overflow with feces, and stagnant water that has begun to support microbial growth. Black water restoration requires specialized equipment, full personal protective gear, and often involves removal and disposal of contaminated porous materials.</p><h2>How Professionals Handle Each Category</h2><p>Certified restoration professionals begin every job by assessing the water category. This determines the scope of work, safety protocols, and whether materials can be salvaged or must be removed. Category 1 damage may allow materials to be dried in place, while Category 3 often requires complete removal of affected porous materials like drywall, carpet, and padding.</p>', date: today, category: 'Education', featuredImage: WD_PLACEHOLDER_IMAGES.drying, featuredImageAlt: 'Water damage assessment and categorization' },
+    { slug: 'diy-vs-professional-water-damage', title: 'DIY vs. Professional Water Damage Restoration: What You Need to Know', excerpt: 'Consumer fans and dehumidifiers cannot achieve the drying rates required by IICRC standards. Learn why professional equipment and certification matter.', content: '<h2>The DIY Temptation</h2><p>When water damage occurs, it is tempting to handle cleanup yourself to save money. For very minor incidents — a small spill quickly cleaned up — DIY may be sufficient. However, for any water damage that has affected walls, flooring, or has been present for more than a few hours, professional restoration is strongly recommended.</p><h2>Why Consumer Equipment Falls Short</h2><p>A household fan moves approximately 1,000 cubic feet of air per minute. A professional air mover moves 2,500+ CFM with focused, directional airflow designed to pull moisture from building materials. Similarly, a consumer dehumidifier removes 30-50 pints per day, while commercial units remove 100-250 pints daily. This difference means DIY drying takes dramatically longer — often too long to prevent mold growth.</p><h2>The Hidden Damage You Cannot See</h2><p>Water follows gravity and wicks through porous materials. What appears to be a small area of damage on the surface often extends much further behind walls and under floors. Professional technicians use thermal imaging cameras and penetrating moisture meters to map the full extent of water migration — areas that look dry on the surface may retain dangerous moisture levels inside.</p><h2>When DIY Is Acceptable</h2><p>Minor water incidents that are caught immediately, affect only non-porous surfaces, involve clean water (Category 1), and cover a small area may be handled without professional help. Clean up immediately, dry thoroughly, and monitor for any signs of mold in the following weeks.</p><h2>When to Call Professionals</h2><p>Call a professional restoration company when water has affected drywall, carpet, or wood flooring; when the source is contaminated water; when damage has been present for more than 24 hours; when you notice any musty odors; or when the affected area is larger than roughly 10 square feet. The cost of professional restoration is almost always less than the cost of dealing with mold, structural damage, or health problems from inadequate drying.</p>', date: today, category: 'Education', featuredImage: WD_PLACEHOLDER_IMAGES.hero, featuredImageAlt: 'Professional restoration equipment vs DIY tools' },
+  ];
+}
+
 export function generateBlogArchivePage(data: WDBusinessData, domain: string): string {
   const theme = resolveTheme(data);
   const canonicalUrl = `https://${domain}.netlify.app/blog.html`;
 
   const posts = data.blogPosts || [];
 
-  const defaultPosts: WDBlogPost[] = [
-    { slug: 'what-to-do-after-water-damage', title: 'What to Do Immediately After Water Damage in Your Home', excerpt: 'The first 24 hours after water damage are critical. Learn the steps to take to protect your property and support your insurance claim before help arrives.', date: new Date().toISOString().split('T')[0], category: 'Emergency Tips', featuredImage: WD_PLACEHOLDER_IMAGES.flooding, featuredImageAlt: 'PLACEHOLDER: Water damage in a home' },
-    { slug: 'signs-of-hidden-water-damage', title: '7 Signs of Hidden Water Damage You Should Never Ignore', excerpt: 'Water damage is not always visible. Discover the warning signs that moisture is lurking behind your walls, under your floors, or above your ceilings.', date: new Date().toISOString().split('T')[0], category: 'Home Maintenance', featuredImage: WD_PLACEHOLDER_IMAGES.equipment, featuredImageAlt: 'PLACEHOLDER: Moisture detection equipment' },
-    { slug: 'water-damage-insurance-claims', title: 'How to File a Water Damage Insurance Claim Successfully', excerpt: 'A step-by-step guide to navigating the insurance claims process for water damage — what to document, what to say, and how to avoid common mistakes.', date: new Date().toISOString().split('T')[0], category: 'Insurance', featuredImage: WD_PLACEHOLDER_IMAGES.team, featuredImageAlt: 'PLACEHOLDER: Insurance claim discussion' },
-    { slug: 'mold-after-water-damage', title: 'How to Prevent Mold After Water Damage', excerpt: 'Mold can begin growing within 24 hours of water intrusion. Learn what conditions mold needs and the steps professionals take to prevent it from taking hold.', date: new Date().toISOString().split('T')[0], category: 'Mold Prevention', featuredImage: WD_PLACEHOLDER_IMAGES.mold, featuredImageAlt: 'PLACEHOLDER: Mold inspection' },
-    { slug: 'water-damage-categories-explained', title: 'Water Damage Categories 1, 2, and 3: What They Mean for Your Restoration', excerpt: 'Not all water damage is the same. Understanding the category of water involved determines the cleanup protocol, safety requirements, and restoration approach.', date: new Date().toISOString().split('T')[0], category: 'Education', featuredImage: WD_PLACEHOLDER_IMAGES.drying, featuredImageAlt: 'PLACEHOLDER: Water damage assessment' },
-    { slug: 'diy-vs-professional-water-damage', title: 'DIY vs. Professional Water Damage Restoration: What You Need to Know', excerpt: 'Consumer fans and dehumidifiers cannot achieve the drying rates required by IICRC standards. Learn why professional equipment and certification matter.', date: new Date().toISOString().split('T')[0], category: 'Education', featuredImage: WD_PLACEHOLDER_IMAGES.hero, featuredImageAlt: 'PLACEHOLDER: Professional restoration equipment' },
-  ];
-
-  const displayPosts = posts.length > 0 ? posts : defaultPosts;
+  const displayPosts = posts.length > 0 ? posts : getDefaultBlogPosts();
 
   const postsHTML = displayPosts.map(post => `
     <article class="blog-card">
@@ -3572,6 +3577,121 @@ export function generateBlogArchivePage(data: WDBusinessData, domain: string): s
   <style>
     ${generateCSS(fullTheme)}
     ${blogCSS}
+  </style>
+</head>
+<body>
+  ${body}
+  <script>${generateJS()}</script>
+</body>
+</html>`;
+}
+
+// ─── INDIVIDUAL BLOG POST PAGE ─────────────────────────────────────────────
+
+export function generateBlogPostPage(data: WDBusinessData, post: WDBlogPost, domain: string): string {
+  const theme = resolveTheme(data);
+  const canonicalUrl = `https://${domain}.netlify.app/blog/${post.slug}.html`;
+  const fullTheme = resolveTheme(data);
+  const fontUrl = FONT_URLS[fullTheme.fontFamily];
+  const fontLink = fontUrl
+    ? `<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="${fontUrl}" rel="stylesheet">`
+    : '';
+
+  // Format content — if markdown, do simple conversion
+  const formatContent = (content: string): string => {
+    return content
+      .replace(/^#### (.*$)/gim, '<h4>$1</h4>')
+      .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+      .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.*?)\*/g, '<em>$1</em>')
+      .replace(/^\* (.*$)/gim, '<li>$1</li>')
+      .replace(/(<li>.*<\/li>)/s, '<ul style="padding-left:1.5rem;margin:1rem 0;">$1</ul>')
+      .replace(/\n\n/g, '</p><p>')
+      .replace(/^(?!<[hulo])(.*)/gm, (match) => match.trim() ? `<p>${match}</p>` : '')
+      .replace(/<p><\/p>/g, '');
+  };
+
+  const articleContent = post.content ? formatContent(post.content) : `<p>${post.excerpt}</p>`;
+
+  const body = `
+  ${generateNav(data, 'blog/' + post.slug)}
+
+  <div class="breadcrumb container">
+    <a href="../index.html">Home</a>
+    <span>›</span>
+    <a href="../blog.html">Blog</a>
+    <span>›</span>
+    <span aria-current="page">${post.title}</span>
+  </div>
+
+  <article class="content-section" style="padding-top:2rem;">
+    <div class="container" style="max-width:800px;">
+      ${post.featuredImage ? `<img src="${post.featuredImage}" alt="${post.featuredImageAlt || post.title}" style="width:100%;height:360px;object-fit:cover;border-radius:12px;margin-bottom:2rem;" loading="lazy">` : ''}
+      ${post.category ? `<span style="display:inline-block;background:${theme.secondaryColor}22;color:${theme.secondaryColor};font-size:.75rem;font-weight:700;padding:.25rem .6rem;border-radius:4px;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.04em;">${post.category}</span>` : ''}
+      <h1 style="font-size:2rem;color:${theme.primaryColor};margin-bottom:1rem;line-height:1.3;">${post.title}</h1>
+      <div style="display:flex;gap:1.5rem;color:#64748b;font-size:.875rem;margin-bottom:2rem;flex-wrap:wrap;">
+        <span><i class="fas fa-calendar" style="margin-right:.4rem;"></i>${new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+        <span><i class="fas fa-user" style="margin-right:.4rem;"></i>${data.businessName}</span>
+      </div>
+      <div class="blog-post-content" style="font-size:1.05rem;line-height:1.8;color:#334155;">
+        ${articleContent}
+      </div>
+
+      <div style="margin-top:3rem;padding:2rem;background:linear-gradient(135deg,${theme.primaryColor},${theme.secondaryColor});border-radius:12px;text-align:center;">
+        <h3 style="color:#fff;font-size:1.5rem;margin-bottom:1rem;">Need Professional Help?</h3>
+        <p style="color:rgba(255,255,255,.9);margin-bottom:1.5rem;">Contact ${data.businessName} for expert ${data.primaryKeyword?.toLowerCase() || 'water damage restoration'} services in ${data.city}.</p>
+        <a href="tel:${data.phone}" style="display:inline-flex;align-items:center;gap:.5rem;background:#fff;color:${theme.primaryColor};padding:.75rem 2rem;border-radius:8px;text-decoration:none;font-weight:700;font-size:1rem;">
+          <i class="fas fa-phone"></i> Call ${data.phone}
+        </a>
+      </div>
+    </div>
+  </article>
+
+  ${generateFooter(data, 'blog/' + post.slug)}`;
+
+  const schemas = [generateLocalBusinessSchema(data, `${domain}.netlify.app`)]
+    .map(s => `<script type="application/ld+json">\n${s}\n</script>`)
+    .join('\n  ');
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${post.title} | ${data.businessName} Blog</title>
+  <meta name="description" content="${post.excerpt}">
+  <link rel="canonical" href="${canonicalUrl}">
+  ${fontLink}
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="${post.title}">
+  <meta property="og:description" content="${post.excerpt}">
+  ${post.featuredImage ? `<meta property="og:image" content="${post.featuredImage}">` : ''}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": "${post.title.replace(/"/g, '\\"')}",
+    "description": "${post.excerpt.replace(/"/g, '\\"')}",
+    ${post.featuredImage ? `"image": "${post.featuredImage}",` : ''}
+    "datePublished": "${post.date}",
+    "author": {"@type": "Organization", "name": "${data.businessName}"},
+    "publisher": {"@type": "Organization", "name": "${data.businessName}"}
+  }
+  </script>
+  ${schemas}
+  <style>
+    ${generateCSS(fullTheme)}
+    .blog-post-content h2 { font-size: 1.5rem; color: ${theme.primaryColor}; margin: 2rem 0 1rem; font-weight: 700; }
+    .blog-post-content h3 { font-size: 1.25rem; color: ${theme.primaryColor}; margin: 1.5rem 0 .75rem; font-weight: 600; }
+    .blog-post-content h4 { font-size: 1.1rem; color: #1e293b; margin: 1.25rem 0 .5rem; font-weight: 600; }
+    .blog-post-content ul, .blog-post-content ol { padding-left: 1.5rem; margin: 1rem 0; }
+    .blog-post-content li { margin-bottom: .5rem; }
+    .blog-post-content p { margin-bottom: 1.25rem; }
   </style>
 </head>
 <body>
@@ -3760,7 +3880,11 @@ export function generateSitemap(data: WDBusinessData, domain: string): string {
   const base = `https://${domain}.netlify.app`;
   const today = new Date().toISOString().split('T')[0];
 
-  const staticPages = ['about', 'contact', 'faq', 'calculator', 'blog', 'gallery', 'privacy', 'terms']
+  const hasBlog = data.blogPosts && data.blogPosts.length > 0;
+  const staticPagesList = ['about', 'contact', 'faq', 'calculator', 'gallery', 'privacy', 'terms'];
+  if (hasBlog) staticPagesList.push('blog');
+
+  const staticPages = staticPagesList
     .map(page => `  <url>
     <loc>${base}/${page}.html</loc>
     <lastmod>${today}</lastmod>
@@ -3787,6 +3911,15 @@ export function generateSitemap(data: WDBusinessData, domain: string): string {
   </url>`)
     .join('\n');
 
+  const blogPostUrls = (data.blogPosts || [])
+    .map(post => `  <url>
+    <loc>${base}/blog/${slugify(post.slug || post.title)}.html</loc>
+    <lastmod>${post.date || today}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>`)
+    .join('\n');
+
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
@@ -3798,18 +3931,183 @@ export function generateSitemap(data: WDBusinessData, domain: string): string {
 ${staticPages}
 ${serviceUrls}
 ${locationUrls}
+${blogPostUrls}
 </urlset>`;
 }
 
 // ─── ROBOTS.TXT ────────────────────────────────────────────────────────────
 
-export function generateRobots(domain: string): string {
+export function generateRobots(data: WDBusinessData, domain: string): string {
+  const base = `https://${domain}.netlify.app`;
   return `User-agent: *
 Allow: /
 Disallow: /admin/
 Disallow: /private/
 
-Sitemap: https://${domain}.netlify.app/sitemap.xml`;
+Sitemap: ${base}/sitemap.xml
+Sitemap: ${base}/sitemap.html
+
+# LLM access
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /`;
+}
+
+// ─── LLMS.TXT ──────────────────────────────────────────────────────────────
+
+export function generateLLMsTxt(data: WDBusinessData, domain: string): string {
+  const base = `https://${domain}.netlify.app`;
+  const hasBlog = data.blogPosts && data.blogPosts.length > 0;
+
+  const servicesList = data.services.map(s => `- [${s}](${base}/services/${slugify(s)}-${slugify(data.city)}.html)`).join('\n');
+  const areasList = data.serviceAreas.map(a => `- [${a}](${base}/locations/${slugify(a)}.html)`).join('\n');
+  const blogList = hasBlog
+    ? data.blogPosts!.map(p => `- [${p.title}](${base}/blog/${slugify(p.slug || p.title)}.html)`).join('\n')
+    : '';
+
+  return `# ${data.businessName}
+
+> ${data._metaDescription || `Professional ${data.services[0] || 'restoration'} services in ${data.city}, ${data.state}. Available 24/7 for emergency response.`}
+
+## Contact
+- Phone: ${data.phone}
+${data.email ? `- Email: ${data.email}` : ''}
+- Address: ${data.address}, ${data.city}, ${data.state}
+
+## Pages
+- [Home](${base}/)
+- [About](${base}/about.html)
+- [Contact](${base}/contact.html)
+- [FAQ](${base}/faq.html)
+- [Gallery](${base}/gallery.html)
+- [Cost Calculator](${base}/calculator.html)
+${hasBlog ? `- [Blog](${base}/blog.html)` : ''}
+
+## Services
+${servicesList}
+
+## Service Areas
+${areasList}
+${hasBlog ? `\n## Blog Posts\n${blogList}` : ''}
+
+## Sitemap
+- [XML Sitemap](${base}/sitemap.xml)
+- [HTML Sitemap](${base}/sitemap.html)
+`;
+}
+
+// ─── HTML SITEMAP ──────────────────────────────────────────────────────────
+
+export function generateHTMLSitemap(data: WDBusinessData, domain: string): string {
+  const theme = resolveTheme(data);
+  const base = `https://${domain}.netlify.app`;
+  const hasBlog = data.blogPosts && data.blogPosts.length > 0;
+  const fullTheme = resolveTheme(data);
+  const fontUrl = FONT_URLS[fullTheme.fontFamily];
+  const fontLink = fontUrl
+    ? `<link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="${fontUrl}" rel="stylesheet">`
+    : '';
+
+  const serviceLinks = data.services.map(s =>
+    `<li><a href="services/${slugify(s)}-${slugify(data.city)}.html">${s} — ${data.city}</a></li>`
+  ).join('\n            ');
+
+  const locationLinks = data.serviceAreas.map(a =>
+    `<li><a href="locations/${slugify(a)}.html">${a}</a></li>`
+  ).join('\n            ');
+
+  const blogLinks = hasBlog
+    ? data.blogPosts!.map(p =>
+        `<li><a href="blog/${slugify(p.slug || p.title)}.html">${p.title}</a></li>`
+      ).join('\n            ')
+    : '';
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sitemap — ${data.businessName}</title>
+  <meta name="description" content="Complete sitemap for ${data.businessName}. Browse all pages, services, locations${hasBlog ? ', and blog posts' : ''}.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="${base}/sitemap.html">
+  ${fontLink}
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:${theme.fontFamily},sans-serif;background:#f8fafc;color:#1e293b;line-height:1.7}
+    .container{max-width:900px;margin:0 auto;padding:2rem 1.5rem}
+    h1{color:${theme.primaryColor};font-size:2rem;margin-bottom:.5rem}
+    .subtitle{color:#64748b;margin-bottom:2.5rem}
+    .sitemap-section{margin-bottom:2.5rem;background:#fff;border-radius:12px;padding:1.5rem 2rem;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+    .sitemap-section h2{color:${theme.primaryColor};font-size:1.25rem;margin-bottom:1rem;padding-bottom:.5rem;border-bottom:2px solid ${theme.primaryColor}22}
+    .sitemap-section ul{list-style:none;columns:2;column-gap:2rem}
+    .sitemap-section li{padding:.35rem 0;break-inside:avoid}
+    .sitemap-section a{color:#334155;text-decoration:none;transition:color .2s}
+    .sitemap-section a:hover{color:${theme.secondaryColor};text-decoration:underline}
+    @media(max-width:640px){.sitemap-section ul{columns:1}}
+  </style>
+</head>
+<body>
+  ${generateNav(data)}
+  <div class="container">
+    <h1>Sitemap</h1>
+    <p class="subtitle">All pages on ${data.businessName}</p>
+
+    <div class="sitemap-section">
+      <h2>Main Pages</h2>
+      <ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="gallery.html">Gallery</a></li>
+        <li><a href="calculator.html">Cost Calculator</a></li>
+        ${hasBlog ? '<li><a href="blog.html">Blog</a></li>' : ''}
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Service</a></li>
+      </ul>
+    </div>
+
+    <div class="sitemap-section">
+      <h2>Services</h2>
+      <ul>
+            ${serviceLinks}
+      </ul>
+    </div>
+
+    <div class="sitemap-section">
+      <h2>Service Areas</h2>
+      <ul>
+            ${locationLinks}
+      </ul>
+    </div>
+
+    ${hasBlog ? `<div class="sitemap-section">
+      <h2>Blog Posts</h2>
+      <ul>
+            ${blogLinks}
+      </ul>
+    </div>` : ''}
+  </div>
+  ${generateFooter(data)}
+</body>
+</html>`;
 }
 
 // ─── MAIN EXPORT: Generate All Files ──────────────────────────────────────
@@ -3831,7 +4129,15 @@ export function generateWaterDamageWebsite(
   files['faq.html']        = generateFAQPage(data, domain);
   files['calculator.html'] = generateCalculatorPage(data, domain);
   files['gallery.html']    = generateGalleryPage(data, domain);
-  files['blog.html']       = generateBlogArchivePage(data, domain);
+  // Blog pages — only generate if user has blog posts
+  if (data.blogPosts && data.blogPosts.length > 0) {
+    files['blog.html'] = generateBlogArchivePage(data, domain);
+    for (const post of data.blogPosts) {
+      const filename = `blog/${slugify(post.slug || post.title)}.html`;
+      files[filename] = generateBlogPostPage(data, post, domain);
+    }
+  }
+
   files['privacy.html']    = generatePrivacyPage(data, domain);
   files['terms.html']      = generateTermsPage(data, domain);
 
@@ -3880,8 +4186,10 @@ export function generateWaterDamageWebsite(
   }
 
   // SEO files
-  files['sitemap.xml'] = generateSitemap(data, domain);
-  files['robots.txt']  = generateRobots(domain);
+  files['sitemap.xml']      = generateSitemap(data, domain);
+  files['sitemap.html']     = generateHTMLSitemap(data, domain);
+  files['robots.txt']       = generateRobots(data, domain);
+  files['llms.txt']         = generateLLMsTxt(data, domain);
 
   // Netlify headers for performance + indexing
   files['_headers'] = `/*
@@ -3900,7 +4208,15 @@ export function generateWaterDamageWebsite(
 
 /robots.txt
   Content-Type: text/plain; charset=utf-8
-  Cache-Control: public, max-age=86400`;
+  Cache-Control: public, max-age=86400
+
+/llms.txt
+  Content-Type: text/plain; charset=utf-8
+  Cache-Control: public, max-age=86400
+
+/sitemap.html
+  Cache-Control: public, max-age=3600
+  X-Robots-Tag: index, follow`;
 
   return files;
 }

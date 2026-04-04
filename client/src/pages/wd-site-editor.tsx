@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowLeft, Save, Rocket, Image as ImageIcon, RefreshCw,
   Loader2, ExternalLink, CheckCircle2, ChevronDown, ChevronUp,
-  Globe, Phone, MapPin, FileText, Layers, Edit3, Sparkles, Wand2
+  Globe, Phone, MapPin, FileText, Layers, Edit3, Sparkles, Wand2, Trash2
 } from "lucide-react";
 import { generateLocalServiceWebsite } from "../lib/local-service-engine";
 import { getCategoryConfig } from "../lib/local-service-categories";
@@ -83,6 +83,8 @@ interface WDSiteData {
   whatsappNumber?: string;
   // Gallery images: before/after pairs + normal gallery photos
   galleryImages?: Array<{src: string; alt: string; type: 'before' | 'after' | 'normal'; pairId?: string; caption?: string}>;
+  // Blog posts
+  blogPosts?: Array<{id: string; title: string; slug: string; excerpt: string; content: string; featuredImage?: string; featuredImageAlt?: string; metaTitle?: string; metaDescription?: string; category?: string; tags?: string[]; keywords?: string; isAiGenerated?: boolean}>;
   // Deployment
   netlifyUrl?: string;
   netlifyApiKey?: string;
@@ -194,6 +196,8 @@ function siteDataToWDData(data: WDSiteData): Record<string, any> {
     _aiFaqs: (data as any)._aiFaqs,
     _aiSeoBody: (data as any)._aiSeoBody,
     _aiProcessSteps: (data as any)._aiProcessSteps,
+    blogPosts: data.blogPosts || [],
+    generateBlog: (data.blogPosts && data.blogPosts.length > 0) ? true : false,
   } as any;
 }
 
@@ -202,6 +206,283 @@ function siteDataToWDData(data: WDSiteData): Record<string, any> {
 function stripDeploymentFields(data: WDSiteData) {
   const { netlifyUrl: _a, deploymentStatus: _b, netlifyApiKey: _c, ...rest } = data as any;
   return rest;
+}
+
+// ─── Blog Writer Section ────────────────────────────────────────────────────
+
+interface BlogWriterSectionProps {
+  siteData: WDSiteData;
+  onPostsChange: (posts: WDSiteData['blogPosts']) => void;
+}
+
+function BlogWriterSection({ siteData, onPostsChange }: BlogWriterSectionProps) {
+  const [keywords, setKeywords] = useState('');
+  const [wordCount, setWordCount] = useState(1500);
+  const [aiProvider, setAiProvider] = useState<AIProvider>(siteData.contentAiProvider || 'openai');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [currentKeyword, setCurrentKeyword] = useState('');
+  const [progress, setProgress] = useState({ current: 0, total: 0 });
+  const [errors, setErrors] = useState<string[]>([]);
+  const [expandedPost, setExpandedPost] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const posts = siteData.blogPosts || [];
+  const keywordLines = keywords.split('\n').map(k => k.trim()).filter(k => k.length > 0);
+
+  async function generateBlogs() {
+    if (keywordLines.length === 0) {
+      toast({ title: "No keywords", description: "Add at least one keyword (one per line).", variant: "destructive" });
+      return;
+    }
+    if (keywordLines.length > 30) {
+      toast({ title: "Too many keywords", description: "Maximum 30 keywords allowed at a time.", variant: "destructive" });
+      return;
+    }
+
+    setIsGenerating(true);
+    setErrors([]);
+    setProgress({ current: 0, total: keywordLines.length });
+
+    const newPosts: NonNullable<WDSiteData['blogPosts']> = [...posts];
+
+    for (let i = 0; i < keywordLines.length; i++) {
+      const keyword = keywordLines[i];
+      setCurrentKeyword(keyword);
+      setProgress({ current: i + 1, total: keywordLines.length });
+
+      try {
+        const res = await fetch('/api/ai/blog-post', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            businessName: siteData.businessName,
+            category: siteData.primaryKeyword,
+            location: `${siteData.city}, ${siteData.state}`,
+            services: siteData.services?.join(', ') || '',
+            serviceAreas: siteData.serviceAreas?.join(', ') || '',
+            keyword,
+            wordCount,
+            useImages: true,
+            aiProvider,
+          }),
+        });
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.message || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        if (data.success && data.blogPost) {
+          newPosts.push({
+            ...data.blogPost,
+            id: data.blogPost.id || `blog-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+            isAiGenerated: true,
+            date: new Date().toISOString().split('T')[0],
+          });
+          // Update in real-time so user sees progress
+          onPostsChange([...newPosts]);
+        } else {
+          throw new Error(data.message || 'Unknown error');
+        }
+      } catch (err) {
+        const msg = `"${keyword}": ${err instanceof Error ? err.message : String(err)}`;
+        setErrors(prev => [...prev, msg]);
+      }
+    }
+
+    setIsGenerating(false);
+    setCurrentKeyword('');
+    setKeywords(''); // Clear input after generation
+    toast({
+      title: "Blog generation complete",
+      description: `Generated ${newPosts.length - posts.length} of ${keywordLines.length} posts.`,
+    });
+  }
+
+  function removePost(id: string) {
+    onPostsChange(posts.filter(p => p.id !== id));
+  }
+
+  function removeAllPosts() {
+    onPostsChange([]);
+  }
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="font-semibold text-sm text-gray-300">Blog Writer</h3>
+        {posts.length > 0 && (
+          <span className="text-xs bg-[#AADD00]/20 text-[#AADD00] px-2 py-0.5 rounded-full font-medium">
+            {posts.length} post{posts.length !== 1 ? 's' : ''}
+          </span>
+        )}
+      </div>
+      <p className="text-xs text-gray-500">
+        Enter keywords line by line. Each keyword generates a separate blog post with its own AI call (no token limit issues).
+      </p>
+
+      {/* Keyword Input */}
+      <div className="space-y-2">
+        <Label className="text-xs text-gray-400">Keywords (one per line)</Label>
+        <textarea
+          className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-sm text-gray-200 placeholder-gray-500 focus:border-[#AADD00] focus:ring-1 focus:ring-[#AADD00] transition resize-none"
+          rows={6}
+          placeholder={`water damage restoration tips\nmold prevention guide\nflood cleanup process\nemergency water removal\nhow to dry water damage`}
+          value={keywords}
+          onChange={e => setKeywords(e.target.value)}
+          disabled={isGenerating}
+        />
+        <div className="flex items-center justify-between text-xs text-gray-500">
+          <span>{keywordLines.length} keyword{keywordLines.length !== 1 ? 's' : ''} entered</span>
+          <span>Max 30 per batch</span>
+        </div>
+      </div>
+
+      {/* Settings Row */}
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-1">
+          <Label className="text-xs text-gray-400">Word Count</Label>
+          <select
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-sm text-gray-200"
+            value={wordCount}
+            onChange={e => setWordCount(Number(e.target.value))}
+            disabled={isGenerating}
+          >
+            <option value={500}>Short (500w)</option>
+            <option value={800}>Medium (800w)</option>
+            <option value={1200}>Long (1200w)</option>
+            <option value={1500}>Extended (1500w)</option>
+            <option value={2000}>Full (2000w)</option>
+          </select>
+        </div>
+        <div className="space-y-1">
+          <Label className="text-xs text-gray-400">AI Provider</Label>
+          <select
+            className="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-sm text-gray-200"
+            value={aiProvider}
+            onChange={e => setAiProvider(e.target.value as AIProvider)}
+            disabled={isGenerating}
+          >
+            <option value="openai">OpenAI</option>
+            <option value="gemini">Gemini</option>
+            <option value="openrouter">OpenRouter</option>
+          </select>
+        </div>
+      </div>
+
+      {/* Generate Button */}
+      <Button
+        onClick={generateBlogs}
+        disabled={isGenerating || keywordLines.length === 0}
+        className="w-full bg-[#AADD00] hover:bg-[#99CC00] text-gray-900 font-semibold"
+      >
+        {isGenerating ? (
+          <span className="flex items-center gap-2">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            Writing post {progress.current}/{progress.total}...
+          </span>
+        ) : (
+          <span className="flex items-center gap-2">
+            <Wand2 className="w-4 h-4" />
+            Generate {keywordLines.length || ''} Blog Post{keywordLines.length !== 1 ? 's' : ''}
+          </span>
+        )}
+      </Button>
+
+      {/* Progress */}
+      {isGenerating && (
+        <div className="space-y-2">
+          <div className="w-full bg-gray-800 rounded-full h-2">
+            <div
+              className="bg-[#AADD00] h-2 rounded-full transition-all duration-500"
+              style={{ width: `${(progress.current / progress.total) * 100}%` }}
+            />
+          </div>
+          <p className="text-xs text-gray-400 flex items-center gap-2">
+            <Loader2 className="w-3 h-3 animate-spin" />
+            Writing: "{currentKeyword}"
+          </p>
+        </div>
+      )}
+
+      {/* Errors */}
+      {errors.length > 0 && (
+        <div className="bg-red-900/30 border border-red-800 rounded-lg p-3 space-y-1">
+          <p className="text-xs font-medium text-red-400">Failed ({errors.length}):</p>
+          {errors.map((err, i) => (
+            <p key={i} className="text-xs text-red-300">{err}</p>
+          ))}
+        </div>
+      )}
+
+      {/* Generated Posts List */}
+      {posts.length > 0 && (
+        <div className="space-y-2 border-t border-gray-800 pt-4">
+          <div className="flex items-center justify-between mb-2">
+            <h4 className="text-xs font-medium text-gray-400 uppercase tracking-wider">Generated Posts</h4>
+            <button
+              onClick={removeAllPosts}
+              className="text-xs text-red-400 hover:text-red-300 transition-colors"
+              disabled={isGenerating}
+            >
+              Remove All
+            </button>
+          </div>
+          <div className="space-y-2 max-h-96 overflow-y-auto pr-1">
+            {posts.map((post, idx) => (
+              <div key={post.id} className="bg-gray-800/70 border border-gray-700 rounded-lg overflow-hidden">
+                <div
+                  className="flex items-center justify-between p-3 cursor-pointer hover:bg-gray-800 transition-colors"
+                  onClick={() => setExpandedPost(expandedPost === post.id ? null : post.id)}
+                >
+                  <div className="flex-1 min-w-0 mr-2">
+                    <p className="text-sm text-gray-200 font-medium truncate">{post.title}</p>
+                    <p className="text-xs text-gray-500 truncate mt-0.5">{post.keywords || post.category}</p>
+                  </div>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className="text-xs text-gray-500">#{idx + 1}</span>
+                    <button
+                      onClick={e => { e.stopPropagation(); removePost(post.id); }}
+                      className="text-gray-500 hover:text-red-400 transition-colors p-1"
+                      title="Remove post"
+                    >
+                      <Trash2 className="w-3 h-3" />
+                    </button>
+                    {expandedPost === post.id ? <ChevronUp className="w-3 h-3 text-gray-500" /> : <ChevronDown className="w-3 h-3 text-gray-500" />}
+                  </div>
+                </div>
+                {expandedPost === post.id && (
+                  <div className="border-t border-gray-700 p-3 space-y-2">
+                    {post.featuredImage && (
+                      <img src={post.featuredImage} alt={post.featuredImageAlt || ''} className="w-full h-32 object-cover rounded-md" />
+                    )}
+                    <p className="text-xs text-gray-400">{post.excerpt}</p>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {post.tags?.map((tag, ti) => (
+                        <span key={ti} className="text-[10px] bg-gray-700 text-gray-300 px-1.5 py-0.5 rounded">{tag}</span>
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-gray-600 mt-1">{post.content?.length || 0} chars • {post.metaTitle}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Info Note */}
+      <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-3 mt-4">
+        <p className="text-xs text-gray-500 leading-relaxed">
+          <Sparkles className="w-3 h-3 inline mr-1 text-[#AADD00]" />
+          Each keyword triggers a separate AI API call with full 1500-2000 word generation. This avoids token limit errors.
+          After generating, click <strong className="text-gray-400">Regenerate</strong> to rebuild the website with your blog posts included.
+        </p>
+      </div>
+    </div>
+  );
 }
 
 // ─── Main Component ────────────────────────────────────────────────────────
@@ -340,6 +621,7 @@ export default function WDSiteEditor() {
         floatingCTA: bd.floatingCTA || "call",
         whatsappNumber: bd.whatsappNumber || "",
         galleryImages: Array.isArray(bd.galleryImages) ? bd.galleryImages : [],
+        blogPosts: Array.isArray(bd.blogPosts) ? bd.blogPosts : [],
         logoUrl: bd.logoUrl,
         faviconUrl: bd.faviconUrl,
         customHeadCode: bd.customHeadCode || "",
@@ -994,6 +1276,9 @@ export default function WDSiteEditor() {
               </TabsTrigger>
               <TabsTrigger value="images" className="flex-1 rounded-none text-xs py-3 data-[state=active]:bg-gray-800">
                 <ImageIcon className="w-3 h-3 mr-1" />Images
+              </TabsTrigger>
+              <TabsTrigger value="blog" className="flex-1 rounded-none text-xs py-3 data-[state=active]:bg-gray-800">
+                <Edit3 className="w-3 h-3 mr-1" />Blog
               </TabsTrigger>
               <TabsTrigger value="deploy" className="flex-1 rounded-none text-xs py-3 data-[state=active]:bg-gray-800">
                 <Rocket className="w-3 h-3 mr-1" />Deploy
@@ -1678,6 +1963,14 @@ export default function WDSiteEditor() {
                   ))}
                 </div>
               </div>
+            </TabsContent>
+
+            {/* ── Blog Writer Tab ─────────────────────────────────────── */}
+            <TabsContent value="blog" className="p-4 space-y-4 mt-0">
+              <BlogWriterSection
+                siteData={siteData!}
+                onPostsChange={(posts) => setSiteData(prev => prev ? { ...prev, blogPosts: posts } : prev)}
+              />
             </TabsContent>
 
             {/* ── Deploy Tab ──────────────────────────────────────────── */}

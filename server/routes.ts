@@ -6422,6 +6422,7 @@ Generated on: ${new Date().toISOString()}`;
         aboutContent: aboutContent || undefined,
         teamDescription: teamDescription || undefined,
         galleryImages: Array.isArray(galleryImages) && galleryImages.length > 0 ? galleryImages : undefined,
+        blogPosts: Array.isArray(req.body.blogPosts) && req.body.blogPosts.length > 0 ? req.body.blogPosts : undefined,
       };
 
       // Generate all HTML files
@@ -6615,10 +6616,12 @@ Generated on: ${new Date().toISOString()}`;
       const files = genLS(categoryId, bd, domain);
 
       // Apply any visual editor overrides saved in customFiles
+      // Skip SEO pages (sitemap.html) — always use freshly generated versions
+      const seoProtectedFiles = new Set(['sitemap.html']);
       const storedCustomFiles = website.customFiles as Record<string, string> | null;
       if (storedCustomFiles && typeof storedCustomFiles === 'object') {
         for (const [filename, content] of Object.entries(storedCustomFiles)) {
-          if (typeof content === 'string' && filename.endsWith('.html')) {
+          if (typeof content === 'string' && filename.endsWith('.html') && !seoProtectedFiles.has(filename)) {
             (files as any)[filename] = content;
           }
         }
@@ -6642,6 +6645,22 @@ Generated on: ${new Date().toISOString()}`;
             );
           }
           (files as any)[filename] = updated;
+        }
+      }
+
+      // Fix domain references in ALL files — customFiles may have been generated
+      // with a different domain (urlSlug) than the actual deploy domain (siteName).
+      // This ensures canonical URLs, JSON-LD schemas, breadcrumbs, etc. are correct.
+      const correctBase = `https://${domain}.netlify.app`;
+      for (const [filename, content] of Object.entries(files)) {
+        if (typeof content !== 'string') continue;
+        // Replace any https://ANYTHING.netlify.app with the correct deploy domain
+        const fixed = (content as string).replace(
+          /https:\/\/[a-z0-9][-a-z0-9]*\.netlify\.app/gi,
+          correctBase
+        );
+        if (fixed !== content) {
+          (files as any)[filename] = fixed;
         }
       }
 

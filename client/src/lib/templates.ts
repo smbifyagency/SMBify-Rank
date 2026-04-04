@@ -42,7 +42,7 @@ export const templates: Template[] = [
   {
     id: "legal-professional-navy",
     name: "Legal Pro",
-    gradient: "bg-gradient-to-br from-slate-700 to-slate-800",
+    gradient: "bg-gradient-to-br from-blue-800 to-indigo-900",
     lightBg: "bg-slate-50",
     darkText: "text-slate-900",
     mediumText: "text-slate-700",
@@ -50,9 +50,9 @@ export const templates: Template[] = [
     nicheCategory: "Law Firm",
     targetIndustries: ["Legal Services", "Attorney", "Law Office", "Legal Consultation"],
     colors: {
-      primary: "#334155",
-      secondary: "#1e293b",
-      accent: "#64748b",
+      primary: "#1e40af",
+      secondary: "#312e81",
+      accent: "#60a5fa",
       background: "#ffffff",
       text: "#1f2937"
     }
@@ -151,8 +151,8 @@ export const templates: Template[] = [
     targetIndustries: ["Healthcare", "Medical Services", "Dental", "Clinic", "Hospital"],
     colors: {
       primary: "#0d9488",
-      secondary: "#0891b2",
-      accent: "#5eead4",
+      secondary: "#0e7490",
+      accent: "#2dd4bf",
       background: "#ffffff",
       text: "#1f2937"
     }
@@ -182,7 +182,7 @@ export const templates: Template[] = [
   {
     id: "automotive-gray",
     name: "Auto Pro",
-    gradient: "bg-gradient-to-br from-gray-600 to-slate-700",
+    gradient: "bg-gradient-to-br from-red-600 to-gray-800",
     lightBg: "bg-gray-50",
     darkText: "text-gray-900",
     mediumText: "text-gray-700",
@@ -190,9 +190,9 @@ export const templates: Template[] = [
     nicheCategory: "Automotive",
     targetIndustries: ["Auto Repair", "Car Dealership", "Auto Parts", "Car Wash"],
     colors: {
-      primary: "#374151",
+      primary: "#dc2626",
       secondary: "#1f2937",
-      accent: "#6b7280",
+      accent: "#f87171",
       background: "#ffffff",
       text: "#1f2937"
     }
@@ -212,7 +212,7 @@ export const templates: Template[] = [
     colors: {
       primary: "#0891b2",
       secondary: "#2563eb",
-      accent: "#67e8f9",
+      accent: "#22d3ee",
       background: "#ffffff",
       text: "#1f2937"
     }
@@ -232,7 +232,7 @@ export const templates: Template[] = [
     colors: {
       primary: "#6366f1",
       secondary: "#7c3aed",
-      accent: "#a5b4fc",
+      accent: "#818cf8",
       background: "#ffffff",
       text: "#1f2937"
     }
@@ -342,7 +342,7 @@ export const templates: Template[] = [
   {
     id: "automotive-steel",
     name: "Auto Service Pro",
-    gradient: "bg-gradient-to-br from-gray-600 to-slate-700",
+    gradient: "bg-gradient-to-br from-orange-600 to-slate-800",
     lightBg: "bg-gray-50",
     darkText: "text-gray-900",
     mediumText: "text-gray-700",
@@ -350,9 +350,9 @@ export const templates: Template[] = [
     nicheCategory: "Auto Repair",
     targetIndustries: ["Auto Repair", "Car Service", "Automotive", "Towing", "Car Wash"],
     colors: {
-      primary: "#4b5563",
-      secondary: "#374151",
-      accent: "#9ca3af",
+      primary: "#ea580c",
+      secondary: "#1e293b",
+      accent: "#fb923c",
       background: "#ffffff",
       text: "#1f2937"
     }
@@ -392,7 +392,7 @@ export const templates: Template[] = [
     colors: {
       primary: "#0891b2",
       secondary: "#0e7490",
-      accent: "#67e8f9",
+      accent: "#22d3ee",
       background: "#ffffff",
       text: "#1f2937"
     }

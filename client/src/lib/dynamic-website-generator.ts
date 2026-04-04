@@ -1052,50 +1052,24 @@ function generateSEOMetaTags(data: BusinessData, pageTitle?: string, pageDescrip
   }
 
   // Enhanced robots directives for better indexing
-  const robotsContent = pageType === 'blog-post' ?
-    'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1' :
-    'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+  const robotsContent = 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 
   return `
     <!-- Critical SEO Meta Tags for Indexing -->
     <meta name="robots" content="${robotsContent}">
     <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
-    <meta name="bingbot" content="index, follow">
-    <meta name="yandex" content="index, follow">
-    <meta name="msnbot" content="index, follow">
-    <meta name="slurp" content="index, follow">
     ${canonicalUrl ? `<link rel="canonical" href="${canonicalUrl}">` : ''}
     
-    <!-- Google Search Console Verification (replace with actual verification code) -->
-    <!-- <meta name="google-site-verification" content="YOUR_VERIFICATION_CODE_HERE"> -->
-    
-    <!-- Additional SEO enhancements -->
+    <!-- Mobile & App Optimization -->
     <meta name="format-detection" content="telephone=yes">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
     
-    <!-- Enhanced Meta Tags -->
-    <meta name="language" content="en-US">
-    <meta name="distribution" content="global">
-    <meta name="rating" content="general">
-    <meta name="revisit-after" content="3 days">
+    <!-- Language & Author -->
     <meta http-equiv="Content-Language" content="en">
     <meta name="keywords" content="${keywords}">
     <meta name="author" content="${data.businessName}">
-    <meta name="copyright" content="${data.businessName}">
-    <meta name="publisher" content="${data.businessName}">
-    <meta name="subject" content="${data.category} services in ${data.heroLocation}">
-    <meta name="classification" content="business">
-    <meta name="category" content="Local Business">
-    <meta name="coverage" content="Worldwide">
-    <meta name="target" content="all">
-    <meta name="HandheldFriendly" content="True">
-    <meta name="MobileOptimized" content="320">
-    
-    <!-- Google Search Console Verification Ready -->
-    <!-- Users can add: <meta name="google-site-verification" content="VERIFICATION_CODE"> -->
     
     <!-- Enhanced Open Graph / Social Media -->
     <meta property="og:type" content="business.business">
@@ -1126,50 +1100,11 @@ function generateSEOMetaTags(data: BusinessData, pageTitle?: string, pageDescrip
     <!-- Local Business & Geographic Info -->
     <meta name="geo.region" content="US">
     <meta name="geo.placename" content="${data.heroLocation}">
-    <meta name="geo.country" content="United States">
-    <meta name="ICBM" content="0.000000, 0.000000">
-    <meta name="DC.title" content="${title}">
-    <meta name="DC.subject" content="${data.category}">
-    <meta name="DC.description" content="${description}">
-    <meta name="DC.creator" content="${data.businessName}">
-    <meta name="DC.publisher" content="${data.businessName}">
-    <meta name="DC.format" content="text/html">
-    <meta name="DC.language" content="en">
-    
-    <!-- Business Directory & Schema Tags -->
-    <meta name="business-name" content="${data.businessName}">
-    <meta name="business-category" content="${data.category}">
-    <meta name="business-phone" content="${data.phone}">
-    <meta name="business-address" content="${data.address}">
-    <meta name="service-areas" content="${data.serviceAreas}">
-    <meta name="locality" content="${data.heroLocation}">
-    <meta name="region" content="US">
-    
-    <!-- Mobile & App Optimization -->
-    <meta name="format-detection" content="telephone=${data.phone}">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="${data.businessName}">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-touch-fullscreen" content="yes">
     
     <!-- Theme & Branding -->
-    <meta name="theme-color" content="#3B82F6">
-    <meta name="msapplication-TileColor" content="#3B82F6">
+    <meta name="theme-color" content="${template.colors.primary}">
+    <meta name="msapplication-TileColor" content="${template.colors.primary}">
     <meta name="application-name" content="${data.businessName}">
-    <meta name="msapplication-tooltip" content="${description}">
-    <meta name="msapplication-starturl" content="/">
-    <meta name="msapplication-navbutton-color" content="#3B82F6">
-    
-    <!-- Additional Indexing Signals -->
-    <meta name="page-topic" content="${data.category}">
-    <meta name="page-type" content="${pageType}">
-    <meta name="audience" content="customers seeking ${data.category.toLowerCase()} services">
-    <meta name="content-language" content="en">
-    <meta name="document-classification" content="business">
-    <meta name="document-distribution" content="global">
-    <meta name="document-rating" content="general">
-    <meta name="document-state" content="dynamic">
   `;
 }
 
@@ -2484,20 +2419,18 @@ function generateRobotsTxt(domain?: string): string {
   return `User-agent: *
 Allow: /
 
-# Allow all search engines to index the site
-# This is essential for SEO and business visibility
-
 # Sitemap location
 Sitemap: ${baseUrl}/sitemap.xml
-
-# Common crawl delay (optional)
-Crawl-delay: 1
 
 # Block access to any admin or private directories if they exist
 Disallow: /admin/
 Disallow: /private/
 Disallow: /_netlify/
-Disallow: /.well-known/`;
+Disallow: /.well-known/
+
+# Allow critical resources for rendering
+Allow: /styles.css
+Allow: /script.js`;
 }
 
 // Generate sitemap.xml file with all website pages
@@ -2894,9 +2827,89 @@ function generateCustomBlogPost(businessData: BusinessData, template: Template, 
 </html>`;
 }
 
+function generateFillerBlogTopics(businessData: BusinessData): Array<{title: string; excerpt: string; keywords: string; slug: string}> {
+  const service = businessData.heroService;
+  const location = businessData.heroLocation;
+  const category = businessData.category;
+  const business = businessData.businessName;
+  const areas = businessData.serviceAreas ? businessData.serviceAreas.split(',').map(a => a.trim()) : [location];
+  const services = businessData.additionalServices ? businessData.additionalServices.split(',').map(s => s.trim()) : [service];
+
+  const topics: Array<{title: string; excerpt: string; keywords: string; slug: string}> = [
+    { title: `Top 10 ${service} Tips Every Homeowner in ${location} Should Know`, excerpt: `Discover essential ${service.toLowerCase()} tips that can save you time and money. Our ${location} experts share their professional insights and practical advice for homeowners.`, keywords: `${service}, ${location}, tips, homeowner guide`, slug: `top-10-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-tips-${location.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` },
+    { title: `How to Choose the Best ${category} Company in ${location}`, excerpt: `Finding a reliable ${category.toLowerCase()} company can be challenging. Learn what to look for, questions to ask, and red flags to avoid when hiring ${category.toLowerCase()} professionals.`, keywords: `${category}, ${location}, hiring guide, best company`, slug: `how-to-choose-best-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-company-${location.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` },
+    { title: `${service} Cost Guide ${new Date().getFullYear()}: What to Expect in ${location}`, excerpt: `Wondering how much ${service.toLowerCase()} costs? Our comprehensive pricing guide covers average costs, factors that affect pricing, and tips to get the best value in ${location}.`, keywords: `${service} cost, pricing guide, ${location}, estimates`, slug: `${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-cost-guide-${new Date().getFullYear()}` },
+    { title: `5 Warning Signs You Need Professional ${service} Services`, excerpt: `Don't ignore these critical warning signs that indicate you need professional ${service.toLowerCase()} services. Early detection can prevent costly repairs and ensure your safety.`, keywords: `${service}, warning signs, professional services, prevention`, slug: `5-warning-signs-need-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-services` },
+    { title: `The Complete ${service} Maintenance Checklist for ${location} Residents`, excerpt: `Keep your property in top condition with our seasonal ${service.toLowerCase()} maintenance checklist. Designed specifically for ${location} climate and conditions.`, keywords: `${service} maintenance, checklist, ${location}, seasonal care`, slug: `${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-maintenance-checklist-${location.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` },
+    { title: `Why ${location} Trusts ${business} for ${category} Services`, excerpt: `Learn about our commitment to quality, customer satisfaction, and community values that make ${business} the preferred ${category.toLowerCase()} provider in ${location}.`, keywords: `${business}, ${category}, ${location}, trusted provider`, slug: `why-${location.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-trusts-${business.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` },
+    { title: `DIY vs Professional ${service}: When to Call the Experts`, excerpt: `Some ${service.toLowerCase()} tasks are perfect for DIY, while others require professional expertise. Learn where to draw the line and when to call in the pros.`, keywords: `DIY vs professional, ${service}, expert advice, home improvement`, slug: `diy-vs-professional-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` },
+    { title: `Seasonal ${category} Tips for ${location} Properties`, excerpt: `Each season brings unique ${category.toLowerCase()} challenges for ${location} property owners. Get ahead with our expert seasonal preparation and maintenance tips.`, keywords: `seasonal tips, ${category}, ${location}, property maintenance`, slug: `seasonal-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-tips-${location.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` },
+    { title: `The Ultimate Guide to ${service} Safety in ${location}`, excerpt: `Safety should always come first. This comprehensive guide covers essential ${service.toLowerCase()} safety practices, regulations, and best practices for ${location} residents.`, keywords: `${service} safety, guide, ${location}, regulations`, slug: `ultimate-guide-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-safety` },
+    { title: `${category} Industry Trends in ${new Date().getFullYear()}: What's New`, excerpt: `Stay informed about the latest ${category.toLowerCase()} industry trends, new technologies, and innovations that are transforming how services are delivered in ${location}.`, keywords: `${category} trends, ${new Date().getFullYear()}, innovation, technology`, slug: `${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-industry-trends-${new Date().getFullYear()}` },
+    { title: `How ${business} Delivers Excellence in ${service}`, excerpt: `Behind every great ${service.toLowerCase()} job is a team of dedicated professionals. Discover our process, quality standards, and commitment to delivering exceptional results.`, keywords: `${business}, excellence, ${service}, quality standards`, slug: `how-${business.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-delivers-excellence` },
+    { title: `Common ${service} Mistakes and How to Avoid Them`, excerpt: `Even well-intentioned ${service.toLowerCase()} projects can go wrong. Learn about the most common mistakes and how our professional team helps you avoid costly errors.`, keywords: `${service} mistakes, avoid errors, professional tips`, slug: `common-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-mistakes-avoid` },
+    { title: `Energy Efficiency Tips: How ${service} Can Save You Money`, excerpt: `Discover how professional ${service.toLowerCase()} services can improve your property's energy efficiency, reduce utility bills, and increase comfort in your ${location} home.`, keywords: `energy efficiency, ${service}, save money, utility bills`, slug: `energy-efficiency-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-save-money` },
+    { title: `${service} Emergency? Here's What to Do First`, excerpt: `When a ${service.toLowerCase()} emergency strikes, knowing what to do can prevent further damage. Follow these essential first steps while you wait for professional help.`, keywords: `${service} emergency, first steps, damage prevention`, slug: `${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-emergency-what-to-do` },
+    { title: `Customer Spotlight: ${service} Success Stories from ${location}`, excerpt: `Read real success stories from our satisfied customers in ${location}. See how our ${service.toLowerCase()} solutions transformed their properties and exceeded expectations.`, keywords: `customer stories, ${service}, ${location}, testimonials`, slug: `customer-spotlight-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${location.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` },
+    { title: `The Environmental Impact of Modern ${category} Practices`, excerpt: `Learn how modern ${category.toLowerCase()} practices are becoming more environmentally friendly. Discover green solutions and sustainable approaches we use at ${business}.`, keywords: `environmental impact, ${category}, green solutions, sustainable`, slug: `environmental-impact-modern-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` },
+    { title: `Preparing Your ${location} Home for ${service}: A Step-by-Step Guide`, excerpt: `Proper preparation ensures the best results for your ${service.toLowerCase()} project. Follow our detailed step-by-step guide to get your home ready for professional service.`, keywords: `preparation guide, ${service}, step-by-step, ${location}`, slug: `preparing-home-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-guide` },
+    { title: `${service} Innovations That Are Changing the Industry`, excerpt: `Technology is revolutionizing ${service.toLowerCase()} services. Explore the latest innovations, tools, and techniques that deliver better results faster and more efficiently.`, keywords: `${service} innovations, technology, industry changes`, slug: `${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-innovations-changing-industry` },
+    { title: `How to Budget for ${service} Projects in ${location}`, excerpt: `Smart budgeting ensures your ${service.toLowerCase()} project stays on track. Learn about cost factors, financing options, and money-saving tips for ${location} homeowners.`, keywords: `budget, ${service} projects, ${location}, financing`, slug: `budget-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-projects-${location.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` },
+    { title: `What Makes a Licensed ${category} Professional Different?`, excerpt: `Not all ${category.toLowerCase()} providers are created equal. Learn why choosing licensed, insured professionals matters and how it protects your investment and property.`, keywords: `licensed professional, ${category}, insurance, certification`, slug: `licensed-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-professional-difference` },
+    { title: `${service} FAQ: Your Top Questions Answered by Experts`, excerpt: `Our ${service.toLowerCase()} experts answer the most frequently asked questions from ${location} customers. Get clear, honest answers to help you make informed decisions.`, keywords: `${service} FAQ, questions answered, expert advice`, slug: `${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-faq-questions-answered` },
+    { title: `Before and After: Amazing ${service} Transformations in ${location}`, excerpt: `See stunning before-and-after transformations from our ${service.toLowerCase()} projects in ${location}. These real examples showcase the quality of work you can expect.`, keywords: `before after, ${service}, transformations, ${location}`, slug: `before-after-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-transformations` },
+    { title: `${location} Building Codes and ${service}: What You Need to Know`, excerpt: `Understanding local building codes is essential for any ${service.toLowerCase()} project in ${location}. Learn about permits, regulations, and compliance requirements.`, keywords: `building codes, ${service}, ${location}, permits, regulations`, slug: `${location.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-building-codes-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` },
+    { title: `The Benefits of Regular ${service} Inspections`, excerpt: `Regular inspections can catch small problems before they become expensive repairs. Learn how scheduled ${service.toLowerCase()} inspections protect your property and wallet.`, keywords: `${service} inspections, preventive maintenance, benefits`, slug: `benefits-regular-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-inspections` },
+    { title: `How Weather Affects ${service} in ${location}`, excerpt: `${location}'s climate presents unique challenges for ${service.toLowerCase()}. Understand how seasonal weather patterns impact your property and what preventive measures to take.`, keywords: `weather effects, ${service}, ${location}, climate challenges`, slug: `weather-affects-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${location.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` },
+    { title: `Choosing Quality Materials for Your ${service} Project`, excerpt: `Material quality directly impacts the longevity and performance of your ${service.toLowerCase()} project. Learn how ${business} selects premium materials for lasting results.`, keywords: `quality materials, ${service}, project durability`, slug: `choosing-quality-materials-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` },
+    { title: `${business}'s Commitment to ${location} Community`, excerpt: `As a locally owned ${category.toLowerCase()} business, ${business} is deeply committed to the ${location} community. Discover our local partnerships, events, and community involvement.`, keywords: `${business}, community, ${location}, local business`, slug: `${business.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-commitment-${location.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-community` },
+    { title: `Insurance and ${service}: Protecting Your Investment`, excerpt: `Understanding how insurance relates to ${service.toLowerCase()} projects can save you thousands. Learn about coverage options, claim processes, and how to work with insurance providers.`, keywords: `insurance, ${service}, coverage, claims, investment protection`, slug: `insurance-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-protecting-investment` },
+    { title: `The Future of ${category}: Technology and Trends for ${new Date().getFullYear() + 1}`, excerpt: `What does the future hold for the ${category.toLowerCase()} industry? Explore emerging technologies, sustainability trends, and innovations coming to ${location}.`, keywords: `future, ${category}, technology trends, ${new Date().getFullYear() + 1}`, slug: `future-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-technology-trends` },
+    { title: `Why Preventive ${service} Saves You Money Long-Term`, excerpt: `Investing in preventive ${service.toLowerCase()} today can save you significant money on emergency repairs tomorrow. Learn the math behind proactive maintenance and care.`, keywords: `preventive ${service}, cost savings, long-term investment`, slug: `preventive-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-saves-money` },
+    { title: `Hiring ${category} Professionals: Red Flags to Watch For`, excerpt: `Protect yourself from unqualified contractors. Learn the warning signs of unprofessional ${category.toLowerCase()} providers and how to verify credentials before hiring.`, keywords: `hiring tips, ${category} professionals, red flags, verification`, slug: `hiring-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-professionals-red-flags` },
+    { title: `Expert ${service} Solutions for Commercial Properties in ${location}`, excerpt: `Commercial properties have unique ${service.toLowerCase()} needs. Discover our specialized commercial services, maintenance programs, and business-friendly scheduling in ${location}.`, keywords: `commercial ${service}, ${location}, business properties, maintenance`, slug: `expert-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-commercial-properties` },
+    { title: `Understanding ${service} Warranties and Guarantees`, excerpt: `A strong warranty shows confidence in workmanship. Learn about ${business}'s satisfaction guarantee, warranty coverage, and what to expect from professional ${service.toLowerCase()} warranties.`, keywords: `${service} warranty, guarantee, workmanship, satisfaction`, slug: `understanding-${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-warranties-guarantees` },
+    { title: `${service} for New Homeowners: Essential First Steps`, excerpt: `Just bought a home in ${location}? Here's your essential ${service.toLowerCase()} guide covering inspections, maintenance schedules, and important upgrades for new homeowners.`, keywords: `new homeowner, ${service}, first steps, ${location} guide`, slug: `${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-new-homeowners-first-steps` },
+    { title: `How ${business} Maintains the Highest ${category} Standards`, excerpt: `Quality is non-negotiable at ${business}. Explore our rigorous training, certification processes, quality control measures, and commitment to industry-leading standards.`, keywords: `${business}, quality standards, ${category}, certifications`, slug: `${business.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-highest-${category.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-standards` },
+  ];
+
+  // Add service-specific topics
+  services.slice(0, 5).forEach((svc, i) => {
+    if (svc.toLowerCase() !== service.toLowerCase()) {
+      topics.push({
+        title: `Complete Guide to ${svc} Services in ${location}`,
+        excerpt: `Everything you need to know about professional ${svc.toLowerCase()} services. From understanding the process to choosing the right provider in ${location}, we cover it all.`,
+        keywords: `${svc}, ${location}, guide, professional services`,
+        slug: `complete-guide-${svc.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-services-${location.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+      });
+    }
+  });
+
+  // Add area-specific topics
+  areas.slice(0, 5).forEach((area, i) => {
+    if (area.toLowerCase() !== location.toLowerCase()) {
+      topics.push({
+        title: `${service} Services in ${area}: Local Expert Guide`,
+        excerpt: `Looking for reliable ${service.toLowerCase()} services in ${area}? ${business} provides expert ${category.toLowerCase()} solutions serving ${area} and surrounding communities.`,
+        keywords: `${service}, ${area}, local services, expert guide`,
+        slug: `${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-services-${area.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+      });
+    }
+  });
+
+  return topics;
+}
+
 function generateBlogArchivePage(businessData: BusinessData, template: Template, domain?: string, siteSettings?: SiteSetting[]): string {
   // Blog archive page with actual blog posts or static content
   const blogPosts = businessData.blogPosts || [];
+
+  // Generate filler blog topics to ensure at least 30 posts on archive
+  const fillerTopics = generateFillerBlogTopics(businessData);
+  const existingSlugs = new Set(blogPosts.map((p: any) => p.slug || p.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')));
+  const fillerPosts = fillerTopics.filter(t => !existingSlugs.has(t.slug));
+  const neededFillers = Math.max(0, 30 - blogPosts.length);
+  const displayFillers = fillerPosts.slice(0, neededFillers);
 
   // Generate optimized meta data for blog page
   const optimizedTitle = `Expert ${businessData.category} Blog & Tips | ${businessData.businessName} | ${businessData.heroLocation}`;
@@ -2929,18 +2942,32 @@ function generateBlogArchivePage(businessData: BusinessData, template: Template,
   
   <main>
     <!-- Blog Header -->
-    <section class="blog-header" style="background: linear-gradient(135deg, ${template.colors.primary}15, ${template.colors.secondary}15); padding: 4rem 0 2rem;">
-      <div class="container">
-        <h1 style="color: ${template.colors.primary}; font-size: 3rem; margin-bottom: 1rem;">Expert ${businessData.category} Tips & Insights</h1>
-        <p style="font-size: 1.25rem; color: #666; max-width: 600px;">
-          Discover insights, tips, and industry expertise from our team of professionals. 
-          Stay informed with the latest trends and best practices in ${businessData.heroService}.
-        </p>
+    <section class="blog-header" style="background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); position: relative; overflow: hidden; padding: 5rem 0 3rem;">
+      <!-- Floating gradient orbs -->
+      <div style="position: absolute; top: -60px; right: -60px; width: 250px; height: 250px; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%); border-radius: 50%; animation: float 6s ease-in-out infinite; z-index: 1;"></div>
+      <div style="position: absolute; bottom: -40px; left: -40px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite reverse; z-index: 1;"></div>
+      <div style="position: absolute; top: 50%; left: 60%; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%; animation: float 7s ease-in-out infinite 1s; z-index: 1;"></div>
+      <div class="container" style="position: relative; z-index: 2;">
+        <div style="max-width: 700px;">
+          <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.25); padding: 0.5rem 1.25rem; border-radius: 50px; margin-bottom: 1.5rem; color: white; font-size: 0.875rem; font-weight: 600;">
+            <i class="fas fa-blog"></i> Expert Articles & Insights
+          </div>
+          <h1 style="color: white; font-size: clamp(2.5rem, 5vw, 3.5rem); margin-bottom: 1rem; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">Expert ${businessData.category} Tips & Insights</h1>
+          <p style="font-size: 1.25rem; color: rgba(255,255,255,0.9); max-width: 600px; line-height: 1.7;">
+            Discover insights, tips, and industry expertise from our team of professionals. 
+            Stay informed with the latest trends and best practices in ${businessData.heroService}.
+          </p>
+          <div style="display: flex; gap: 1.5rem; margin-top: 2rem; flex-wrap: wrap;">
+            <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 0.75rem 1.25rem; border-radius: 12px; color: white; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-newspaper"></i> ${blogPosts.length + displayFillers.length}+ Articles</div>
+            <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 0.75rem 1.25rem; border-radius: 12px; color: white; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-lightbulb"></i> Expert Tips</div>
+            <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 0.75rem 1.25rem; border-radius: 12px; color: white; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-sync-alt"></i> Updated Regularly</div>
+          </div>
+        </div>
       </div>
     </section>
 
     <!-- Blog Posts -->
-    <section class="blog-posts" style="padding: 4rem 0;">
+    <section class="blog-posts" style="padding: 4rem 0; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);">
       <div class="container">
         <div class="blog-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem;">
           
@@ -2949,25 +2976,45 @@ function generateBlogArchivePage(businessData: BusinessData, template: Template,
     const keywords = typeof post.keywords === 'string' ? post.keywords :
       (Array.isArray(post.keywords) ? post.keywords.slice(0, 3).join(', ') : 'SEO, Business');
     return `
-              <article class="blog-card" style="background: white; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; transition: all 0.3s ease; border: 1px solid #e2e8f0;">
-                ${post.featuredImage ? `<div class="blog-card-image" style="height: 200px; background-image: url('${post.featuredImage}'); background-size: cover; background-position: center; border-radius: 12px 12px 0 0;"></div>` : ''}
+              <article class="blog-card" style="background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); overflow: hidden; transition: all 0.4s cubic-bezier(0.4,0,0.2,1); border: 1px solid rgba(255,255,255,0.6);" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.08)';">
+                ${post.featuredImage ? `<div class="blog-card-image" style="height: 200px; background-image: url('${post.featuredImage}'); background-size: cover; background-position: center; position: relative;"><div style="position: absolute; bottom: 0; left: 0; right: 0; height: 60px; background: linear-gradient(transparent, rgba(0,0,0,0.3));"></div></div>` : `<div style="height: 8px; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); border-radius: 16px 16px 0 0;"></div>`}
                 <div class="blog-card-content" style="padding: 2rem;">
-                  <a href="blog-${slug}.html" class="blog-title" style="text-decoration: none; display: block; font-size: 1.5rem; font-weight: 600; margin-bottom: 1rem; color: #1a202c; line-height: 1.3;">
+                  <a href="blog-${slug}.html" class="blog-title" style="text-decoration: none; display: block; font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; color: #1a202c; line-height: 1.3; transition: color 0.3s;" onmouseover="this.style.color='${template.colors.primary}'" onmouseout="this.style.color='#1a202c'">
                     ${post.title}
                   </a>
-                  <p class="blog-excerpt" style="color: #64748b; margin-bottom: 1.5rem; line-height: 1.6; font-size: 0.95rem;">${post.excerpt}</p>
+                  <p class="blog-excerpt" style="color: #64748b; margin-bottom: 1.5rem; line-height: 1.7; font-size: 0.95rem;">${post.excerpt}</p>
                   <div class="blog-meta" style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem;">
-                    <div class="blog-keywords" style="color: #64748b; font-size: 0.8rem;">
-                      <strong style="color: #374151;">Keywords:</strong> ${keywords}
+                    <div class="blog-keywords" style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                      ${(typeof keywords === 'string' ? keywords.split(',') : [keywords]).slice(0, 3).map((kw: string) => `<span style="background: ${template.colors.primary}12; color: ${template.colors.primary}; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 500;">${(kw || '').trim()}</span>`).join('')}
                     </div>
-                    <a href="blog-${slug}.html" class="read-more" style="color: ${template.colors.primary}; text-decoration: none; font-weight: 500; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; border: 1px solid ${template.colors.primary}; border-radius: 6px; transition: all 0.2s; width: fit-content;">
+                    <a href="blog-${slug}.html" class="read-more" style="color: white; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; border-radius: 8px; transition: all 0.3s; width: fit-content; font-size: 0.875rem; box-shadow: 0 4px 12px ${template.colors.primary}33;" onmouseover="this.style.transform='translateX(4px)'; this.style.boxShadow='0 6px 20px ${template.colors.primary}55';" onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='0 4px 12px ${template.colors.primary}33';">
                       Read Full Article <i class="fas fa-arrow-right"></i>
                     </a>
                   </div>
                 </div>
               </article>
             `;
-  }).join('') : `
+  }).join('') : ''}${displayFillers.map((filler) => `
+              <article class="blog-card" style="background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.08); overflow: hidden; transition: all 0.4s cubic-bezier(0.4,0,0.2,1); border: 1px solid rgba(255,255,255,0.6);" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 40px rgba(0,0,0,0.12)';" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 32px rgba(0,0,0,0.08)';">
+                <div style="height: 8px; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); border-radius: 16px 16px 0 0;"></div>
+                <div class="blog-card-content" style="padding: 2rem;">
+                  <div class="blog-title" style="display: block; font-size: 1.4rem; font-weight: 700; margin-bottom: 1rem; color: #1a202c; line-height: 1.3;">
+                    ${filler.title}
+                  </div>
+                  <p class="blog-excerpt" style="color: #64748b; margin-bottom: 1.5rem; line-height: 1.7; font-size: 0.95rem;">${filler.excerpt}</p>
+                  <div class="blog-meta" style="display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.875rem;">
+                    <div class="blog-keywords" style="display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                      ${filler.keywords.split(',').slice(0, 3).map(kw => `<span style="background: ${template.colors.primary}12; color: ${template.colors.primary}; padding: 0.2rem 0.6rem; border-radius: 20px; font-size: 0.75rem; font-weight: 500;">${kw.trim()}</span>`).join('')}
+                    </div>
+                    <a href="index.html#contact" class="read-more" style="color: white; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.25rem; border-radius: 8px; transition: all 0.3s; width: fit-content; font-size: 0.875rem; box-shadow: 0 4px 12px ${template.colors.primary}33;">
+                      Coming Soon <i class="fas fa-clock"></i>
+                    </a>
+                  </div>
+                </div>
+              </article>
+          `).join('')}
+
+          ${blogPosts.length === 0 && displayFillers.length === 0 ? `
           <!-- Empty state - no blog posts -->
           <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;">
             <div style="max-width: 500px; margin: 0 auto;">
@@ -2979,7 +3026,7 @@ function generateBlogArchivePage(businessData: BusinessData, template: Template,
               </p>
             </div>
           </div>
-          `}
+          ` : ''}
 
         </div>
       </div>
@@ -3157,15 +3204,21 @@ function generateBlogPostPageFromData(businessData: BusinessData, template: Temp
   <main>
     <!-- Blog Post Header -->
     <article class="blog-post">
-      <header class="blog-header" style="background: linear-gradient(135deg, ${template.colors.primary}15, ${template.colors.secondary}15); padding: 4rem 0 2rem;">
-        <div class="container">
+      <header class="blog-header" style="background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); position: relative; overflow: hidden; padding: 5rem 0 3rem;">
+        <!-- Floating gradient orbs -->
+        <div style="position: absolute; top: -50px; right: -50px; width: 220px; height: 220px; background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%); border-radius: 50%; animation: float 6s ease-in-out infinite; z-index: 1;"></div>
+        <div style="position: absolute; bottom: -30px; left: -30px; width: 180px; height: 180px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite reverse; z-index: 1;"></div>
+        <div class="container" style="position: relative; z-index: 2;">
           <div style="max-width: 800px; margin: 0 auto; text-align: center;">
-            <h1 style="color: ${template.colors.primary}; font-size: 3rem; margin-bottom: 1rem; line-height: 1.2;">${post.title}</h1>
-            <p style="font-size: 1.25rem; color: #666; margin-bottom: 2rem;">${post.excerpt}</p>
-            <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; font-size: 0.9rem; color: #888;">
-              <div><i class="fas fa-calendar"></i> ${new Date().toLocaleDateString()}</div>
-              <div><i class="fas fa-user"></i> ${post.authorName || businessData.businessName}</div>
-              <div><i class="fas fa-tag"></i> ${post.category || businessData.category}</div>
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255,255,255,0.15); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.25); padding: 0.5rem 1.25rem; border-radius: 50px; margin-bottom: 1.5rem; color: white; font-size: 0.875rem; font-weight: 600;">
+              <i class="fas fa-bookmark"></i> ${post.category || businessData.category}
+            </div>
+            <h1 style="color: white; font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 1.5rem; line-height: 1.2; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">${post.title}</h1>
+            <p style="font-size: 1.25rem; color: rgba(255,255,255,0.9); margin-bottom: 2rem; line-height: 1.7;">${post.excerpt}</p>
+            <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
+              <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 0.6rem 1.25rem; border-radius: 10px; color: white; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-calendar"></i> ${new Date().toLocaleDateString()}</div>
+              <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 0.6rem 1.25rem; border-radius: 10px; color: white; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-user"></i> ${post.authorName || businessData.businessName}</div>
+              <div style="background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); padding: 0.6rem 1.25rem; border-radius: 10px; color: white; font-size: 0.875rem; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-tag"></i> ${post.category || businessData.category}</div>
             </div>
           </div>
         </div>
@@ -3176,27 +3229,27 @@ function generateBlogPostPageFromData(businessData: BusinessData, template: Temp
       <section style="padding: 2rem 0;">
         <div class="container">
           <div style="max-width: 800px; margin: 0 auto;">
-            <img src="${post.featuredImage}" alt="${post.featuredImageAlt || post.title}" style="width: 100%; height: 400px; object-fit: cover; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.1);">
+            <img src="${post.featuredImage}" alt="${post.featuredImageAlt || post.title}" style="width: 100%; height: 400px; object-fit: cover; border-radius: 16px; box-shadow: 0 12px 40px rgba(0,0,0,0.12);">
           </div>
         </div>
       </section>
       ` : ''}
 
       <!-- Blog Content -->
-      <section class="blog-content" style="padding: 2rem 0 4rem;">
+      <section class="blog-content" style="padding: 3rem 0 4rem; background: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);">
         <div class="container">
           <div style="max-width: 800px; margin: 0 auto;">
-            <div class="blog-text" style="font-size: 1.1rem; line-height: 1.8; color: #333;">
+            <div class="blog-text" style="font-size: 1.1rem; line-height: 1.8; color: #333; background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.6); border-radius: 20px; padding: 3rem; box-shadow: 0 8px 32px rgba(0,0,0,0.06);">
               ${formatMarkdownContent(post.content)}
             </div>
             
             <!-- Tags -->
             ${post.tags && post.tags.length > 0 ? `
-            <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid #e2e8f0;">
-              <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: ${template.colors.primary};">Tags:</h3>
+            <div style="margin-top: 2rem; padding: 2rem; background: rgba(255,255,255,0.7); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.6); border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05);">
+              <h3 style="font-size: 1.1rem; margin-bottom: 1rem; color: ${template.colors.primary}; font-weight: 600;">Tags:</h3>
               <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                 ${post.tags.map((tag: string) => `
-                  <span style="background: ${template.colors.primary}15; color: ${template.colors.primary}; padding: 0.25rem 0.75rem; border-radius: 20px; font-size: 0.85rem;">${tag}</span>
+                  <span style="background: linear-gradient(135deg, ${template.colors.primary}18, ${template.colors.secondary}18); color: ${template.colors.primary}; padding: 0.35rem 1rem; border-radius: 25px; font-size: 0.85rem; font-weight: 500; border: 1px solid ${template.colors.primary}20; transition: all 0.3s;">${tag}</span>
                 `).join('')}
               </div>
             </div>
@@ -3729,19 +3782,23 @@ function generateMainHTML(data: BusinessData, template: Template, domain?: strin
     ${generateBreadcrumbNavigation(data, 'home')}
 
     <!-- Hero Section -->
-    <section class="hero" style="background: linear-gradient(135deg, ${template.colors.primary} 0%, ${template.colors.secondary} 100%); position: relative; overflow: hidden;">
+    <section class="hero" style="background: linear-gradient(135deg, ${template.colors.primary} 0%, ${template.colors.secondary} 50%, ${template.colors.primary}DD 100%); background-size: 200% 200%; animation: gradientShift 12s ease infinite; position: relative; overflow: hidden;">
         <div class="hero-overlay"></div>
         
-        <!-- Hero Background Pattern -->
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.1; z-index: 1;">
-            <div style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.1%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%222%22/%3E%3C/g%3E%3C/svg%3E'); background-size: 60px 60px; width: 100%; height: 100%;"></div>
+        <!-- Hero Background Pattern - Mesh gradient -->
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.08; z-index: 1;">
+            <div style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.15%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%222%22/%3E%3C/g%3E%3C/svg%3E'); background-size: 60px 60px; width: 100%; height: 100%;"></div>
         </div>
+        
+        <!-- Floating gradient orbs -->
+        <div style="position: absolute; top: 10%; right: 15%; width: 300px; height: 300px; background: radial-gradient(circle, ${template.colors.accent}30 0%, transparent 70%); border-radius: 50%; z-index: 1; animation: float 8s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: 10%; left: 10%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border-radius: 50%; z-index: 1; animation: float 10s ease-in-out infinite reverse;"></div>
         
         <div class="container" style="position: relative; z-index: 2;">
             <!-- Available Badge -->
-            <div style="text-align: center; margin-bottom: 2rem;">
-                <span style="display: inline-block; background: rgba(255, 255, 255, 0.2); color: white; padding: 0.5rem 1.5rem; border-radius: 25px; font-size: 0.9rem; font-weight: 500; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.3);">
-                    AVAILABLE 24/7
+            <div style="text-align: center; margin-bottom: 2rem; animation: fadeInDown 0.6s ease-out;">
+                <span style="display: inline-block; background: rgba(255, 255, 255, 0.15); color: white; padding: 0.6rem 1.8rem; border-radius: 50px; font-size: 0.9rem; font-weight: 600; backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.25); letter-spacing: 1px; box-shadow: 0 4px 16px rgba(0,0,0,0.1);">
+                    <i class="fas fa-clock" style="margin-right: 0.5rem;"></i> AVAILABLE 24/7
                 </span>
             </div>
             
@@ -3773,7 +3830,7 @@ function generateMainHTML(data: BusinessData, template: Template, domain?: strin
                 </div>
                 
                 <!-- Right Side - Stats Card -->
-                <div class="hero-stats-card" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 20px; padding: 2rem; text-align: center;">
+                <div class="hero-stats-card" style="background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.25); border-radius: 24px; padding: 2rem; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.2);">
                     <!-- Star Rating -->
                     <div style="margin-bottom: 2rem;">
                         <div class="hero-rating-stars" style="display: flex !important; justify-content: center; gap: 0.25rem; margin-bottom: 0.5rem; flex-direction: row !important; align-items: center !important;">
@@ -3803,7 +3860,7 @@ function generateMainHTML(data: BusinessData, template: Template, domain?: strin
                     </div>
                     
                     <!-- Get Free Estimate Box -->
-                    <div style="background: rgba(255, 255, 255, 0.1); border-radius: 12px; padding: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.2);">
+                    <div style="background: rgba(255, 255, 255, 0.12); border-radius: 16px; padding: 1.5rem; border: 1px solid rgba(255, 255, 255, 0.2); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);">
                         <h3 style="color: white; margin-bottom: 0.5rem; font-size: 1.1rem; font-weight: 600;">Get Free Estimate</h3>
                         <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 1rem; font-size: 0.9rem;">Professional service with transparent pricing</p>
                         <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\\D/g, '')}" style="display: block; background: white; color: ${template.colors.primary}; padding: 1rem; border-radius: 8px; text-decoration: none; font-weight: 600; text-align: center; transition: all 0.3s ease; box-shadow: 0 2px 10px rgba(0,0,0,0.1);"
@@ -3822,8 +3879,8 @@ function generateMainHTML(data: BusinessData, template: Template, domain?: strin
             <h2 class="section-title">Why Choose ${data.businessName}?</h2>
             <div class="features-grid" style="display: grid; grid-template-columns: ${getFeaturesGridColumns()}; gap: ${WEBSITE_LAYOUT_CONFIG.featuresGap}; margin-top: 3rem;">
                 ${features.slice(0, 4).map((feature, index) => `
-                <div class="feature-card" style="background: white; padding: 2.5rem 2rem; border-radius: 15px; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; border: 1px solid #e5e7eb; position: relative; overflow: hidden; height: 100%;">
-                    <div class="feature-icon" style="width: 70px; height: 70px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; box-shadow: 0 8px 20px ${template.colors.primary}4D;">
+                <div class="feature-card" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); padding: 2.5rem 2rem; border-radius: 20px; text-align: center; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid rgba(255, 255, 255, 0.5); position: relative; overflow: hidden; height: 100%;">
+                    <div class="feature-icon" style="width: 70px; height: 70px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: white; box-shadow: 0 8px 25px ${template.colors.primary}40; transition: all 0.4s ease;">
                         <i class="${defaultIcons[index % defaultIcons.length]}"></i>
                     </div>
                     <h3 class="feature-title" style="font-size: 1.3rem; font-weight: 600; margin-bottom: 1rem; color: #1a202c; line-height: 1.3;">${feature}</h3>
@@ -3835,7 +3892,8 @@ function generateMainHTML(data: BusinessData, template: Template, domain?: strin
     </section>
 
     <!-- Professional Service Excellence Section -->
-    <section class="excellence" style="background: linear-gradient(135deg, #f8faff 0%, #e3f2fd 100%); padding: 5rem 0;">
+    <section class="excellence" style="background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #eef2ff 100%); padding: 5rem 0; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, ${template.colors.primary}10 0%, transparent 70%); border-radius: 50%;"></div>
         <div class="container">
             <div class="section-header" style="text-align: center; margin-bottom: 4rem;">
                 <h2 style="font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem;">Our Service Excellence</h2>
@@ -3844,28 +3902,28 @@ function generateMainHTML(data: BusinessData, template: Template, domain?: strin
                 </p>
             </div>
             <div class="excellence-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
-                <div class="excellence-item" style="background: white; border-radius: 20px; padding: 2.5rem 2rem; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center; border: 1px solid #e5e7eb;" 
-                     onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 35px rgba(0, 0, 0, 0.15)'"
-                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(0, 0, 0, 0.1)'">
-                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); border-radius: 20px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;">
+                <div class="excellence-item" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-radius: 24px; padding: 2.5rem 2rem; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; border: 1px solid rgba(255, 255, 255, 0.5);" 
+                     onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 48px rgba(0, 0, 0, 0.12)'"
+                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 24px rgba(0, 0, 0, 0.06)'">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); border-radius: 22px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px ${template.colors.primary}40;">
                         <i class="fas fa-users" style="font-size: 2rem; color: white;"></i>
                     </div>
                     <h3 style="font-weight: 600; margin-bottom: 1rem; color: #1a202c;">Professional Team</h3>
                     <p style="color: #6b7280; line-height: 1.6; margin: 0;">Expert ${data.category.toLowerCase()} professionals with years of experience and proven expertise</p>
                 </div>
-                <div class="excellence-item" style="background: white; border-radius: 20px; padding: 2.5rem 2rem; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center; border: 1px solid #e5e7eb;" 
-                     onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 35px rgba(0, 0, 0, 0.15)'"
-                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(0, 0, 0, 0.1)'">
-                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); border-radius: 20px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;">
+                <div class="excellence-item" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-radius: 24px; padding: 2.5rem 2rem; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; border: 1px solid rgba(255, 255, 255, 0.5);" 
+                     onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 48px rgba(0, 0, 0, 0.12)'"
+                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 24px rgba(0, 0, 0, 0.06)'">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); border-radius: 22px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px ${template.colors.primary}40;">
                         <i class="fas fa-tools" style="font-size: 2rem; color: white;"></i>
                     </div>
                     <h3 style="font-weight: 600; margin-bottom: 1rem; color: #1a202c;">Modern Equipment</h3>
                     <p style="color: #6b7280; line-height: 1.6; margin: 0;">State-of-the-art tools and equipment for efficient, professional ${data.category.toLowerCase()} services</p>
                 </div>
-                <div class="excellence-item" style="background: white; border-radius: 20px; padding: 2.5rem 2rem; box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); transition: all 0.3s ease; text-align: center; border: 1px solid #e5e7eb;" 
-                     onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 15px 35px rgba(0, 0, 0, 0.15)'"
-                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 25px rgba(0, 0, 0, 0.1)'">
-                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); border-radius: 20px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center;">
+                <div class="excellence-item" style="background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); border-radius: 24px; padding: 2.5rem 2rem; box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; border: 1px solid rgba(255, 255, 255, 0.5);" 
+                     onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 20px 48px rgba(0, 0, 0, 0.12)'"
+                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 4px 24px rgba(0, 0, 0, 0.06)'">
+                    <div style="width: 80px; height: 80px; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); border-radius: 22px; margin: 0 auto 1.5rem; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 25px ${template.colors.primary}40;">
                         <i class="fas fa-medal" style="font-size: 2rem; color: white;"></i>
                     </div>
                     <h3 style="font-weight: 600; margin-bottom: 1rem; color: #1a202c;">Quality Commitment</h3>
@@ -3882,7 +3940,8 @@ ${data.phone}
     </section>
 
     <!-- About Section -->
-    <section class="about" id="about" style="padding: 1rem 0; background: linear-gradient(135deg, #f8faff 0%, #e8f4f8 100%);">
+    <section class="about" id="about" style="padding: 1rem 0; background: linear-gradient(135deg, #f0f4ff 0%, #e8f0fe 50%, #eef2ff 100%); position: relative; overflow: hidden;">
+        <div style="position: absolute; bottom: -80px; left: -80px; width: 250px; height: 250px; background: radial-gradient(circle, ${template.colors.primary}08 0%, transparent 70%); border-radius: 50%;"></div>
         <div class="container">
             <div class="section-header" style="text-align: center; margin-bottom: 1rem;">
                 <h2 style="font-size: 2.5rem; font-weight: 700; background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary}); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem;">About ${data.businessName}</h2>
@@ -4058,8 +4117,8 @@ ${data.phone}
                 </div>
             </div>
         </div>
-        <div style="position: absolute; top: -50%; right: -20%; width: 300px; height: 300px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; z-index: 1;"></div>
-        <div style="position: absolute; bottom: -30%; left: -10%; width: 200px; height: 200px; background: rgba(255, 255, 255, 0.08); border-radius: 50%; z-index: 1;"></div>
+        <div style="position: absolute; top: -50%; right: -20%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%); border-radius: 50%; z-index: 1; animation: float 10s ease-in-out infinite;"></div>
+        <div style="position: absolute; bottom: -30%; left: -10%; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255, 255, 255, 0.08) 0%, transparent 60%); border-radius: 50%; z-index: 1; animation: float 12s ease-in-out infinite reverse;"></div>
     </section>
     
     <!-- SEO Internal Links Section -->
@@ -4505,17 +4564,20 @@ function generateLocationHTML(data: BusinessData, template: Template, locationNa
     ${generateBreadcrumbNavigation(data, 'location', locationName)}
 
     <!-- Hero Section -->
-    <section class="hero" style="background: linear-gradient(135deg, ${template.colors.primary} 0%, ${template.colors.secondary} 100%); position: relative; overflow: hidden; padding: 5rem 1rem; text-align: center; min-height: 80vh; display: flex; align-items: center;">
-        <div class="hero-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.1); z-index: 1;"></div>
+    <section class="hero" style="background: linear-gradient(135deg, ${template.colors.primary} 0%, ${template.colors.secondary} 50%, ${template.colors.primary}DD 100%); background-size: 200% 200%; position: relative; overflow: hidden; padding: 5rem 1rem; text-align: center; min-height: 80vh; display: flex; align-items: center;">
+        <div class="hero-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.06); z-index: 1;"></div>
+        
+        <!-- Floating orbs -->
+        <div style="position: absolute; top: 15%; right: 10%; width: 200px; height: 200px; background: radial-gradient(circle, ${template.colors.accent}20 0%, transparent 70%); border-radius: 50%; z-index: 1; animation: float 9s ease-in-out infinite;"></div>
         
         <!-- Hero Background Pattern -->
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.1; z-index: 1;">
-            <div style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.1%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%222%22/%3E%3C/g%3E%3C/svg%3E'); background-size: 60px 60px; width: 100%; height: 100%;"></div>
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.06; z-index: 1;">
+            <div style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.15%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%222%22/%3E%3C/g%3E%3C/svg%3E'); background-size: 60px 60px; width: 100%; height: 100%;"></div>
         </div>
         
         <div class="container" style="position: relative; z-index: 2; width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 1rem;">
             <div class="hero-content" style="max-width: 800px; margin: 0 auto;">
-                <div class="hero-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.75rem 1.5rem; border-radius: 50px; margin-bottom: 2rem; color: white; font-size: 0.875rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
+                <div class="hero-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.25); padding: 0.75rem 1.5rem; border-radius: 50px; margin-bottom: 2rem; color: white; font-size: 0.875rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
                     <i class="fas fa-star" style="color: #fbbf24;"></i>
                     <span>${data.yearsInBusiness}+ Years Experience</span>
                 </div>
@@ -4528,7 +4590,7 @@ function generateLocationHTML(data: BusinessData, template: Template, locationNa
                 <p class="hero-description" style="font-size: clamp(1.125rem, 2.5vw, 1.375rem); color: rgba(255, 255, 255, 0.95); margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); text-align: center;">${locationContent.heroDescription}</p>
                 
                 <div class="hero-features" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 3rem; max-width: 900px; margin-left: auto; margin-right: auto;">
-                    <div class="hero-feature" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 1rem 1.5rem; border-radius: 12px; color: white; font-size: 0.9rem; font-weight: 500; text-align: center;">
+                    <div class="hero-feature" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 1rem 1.5rem; border-radius: 16px; color: white; font-size: 0.9rem; font-weight: 500; text-align: center;">
                         <i class="fas fa-shield-alt" style="color: #10b981; font-size: 1.2rem;"></i>
                         <span>Trusted & Verified</span>
                     </div>
@@ -4939,41 +5001,45 @@ function generateServiceHTML(data: BusinessData, template: Template, serviceName
     <section class="hero" style="background: linear-gradient(135deg, ${template.colors.primary} 0%, ${template.colors.secondary} 100%); position: relative; overflow: hidden; padding: 5rem 1rem; text-align: center; min-height: 80vh; display: flex; align-items: center;">
         <div class="hero-overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.1); z-index: 1;"></div>
         
+        <!-- Animated Floating Gradient Orbs -->
+        <div style="position: absolute; top: -80px; right: -80px; width: 350px; height: 350px; background: radial-gradient(circle, rgba(255,255,255,0.18) 0%, transparent 70%); border-radius: 50%; animation: float 6s ease-in-out infinite; z-index: 1;"></div>
+        <div style="position: absolute; bottom: -60px; left: -60px; width: 280px; height: 280px; background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%); border-radius: 50%; animation: float 8s ease-in-out infinite reverse; z-index: 1;"></div>
+        <div style="position: absolute; top: 40%; left: 10%; width: 200px; height: 200px; background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%); border-radius: 50%; animation: float 7s ease-in-out infinite 2s; z-index: 1;"></div>
+        <div style="position: absolute; top: 20%; right: 20%; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%); border-radius: 50%; animation: float 9s ease-in-out infinite 1s; z-index: 1;"></div>
+        
         <!-- Hero Background Pattern -->
-        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.1; z-index: 1;">
-            <div style="background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.1%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%222%22/%3E%3C/g%3E%3C/svg%3E'); background-size: 60px 60px; width: 100%; height: 100%;"></div>
-        </div>
+        <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.06; z-index: 1; background-image: url('data:image/svg+xml;charset=utf-8,%3Csvg width=%2260%22 height=%2260%22 viewBox=%220 0 60 60%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cg fill=%22none%22 fill-rule=%22evenodd%22%3E%3Cg fill=%22%23ffffff%22 fill-opacity=%220.1%22%3E%3Ccircle cx=%2230%22 cy=%2230%22 r=%222%22/%3E%3C/g%3E%3C/svg%3E'); background-size: 60px 60px;"></div>
         
         <div class="container" style="position: relative; z-index: 2; width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 1rem;">
             <div class="hero-content" style="max-width: 800px; margin: 0 auto;">
-                <div class="hero-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 0.75rem 1.5rem; border-radius: 50px; margin-bottom: 2rem; color: white; font-size: 0.875rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);">
+                <div class="hero-badge" style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.25); padding: 0.75rem 1.5rem; border-radius: 50px; margin-bottom: 2rem; color: white; font-size: 0.875rem; font-weight: 600; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); animation: fadeInDown 0.6s ease-out;">
                     <i class="fas fa-star" style="color: #fbbf24;"></i>
                     <span>${data.yearsInBusiness}+ Years Experience</span>
                 </div>
                 
-                <h1 class="hero-title" style="font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; color: white; margin-bottom: 1.5rem; line-height: 1.1; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); text-align: center;">
+                <h1 class="hero-title" style="font-size: clamp(2.5rem, 6vw, 4.5rem); font-weight: 700; color: white; margin-bottom: 1.5rem; line-height: 1.1; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); text-align: center; animation: fadeInUp 0.8s ease-out;">
                     <span class="hero-service" style="display: block;">${serviceName} Services</span>
                     <span class="hero-location" style="display: block; background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.8)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">in ${data.heroLocation}</span>
                 </h1>
                 
-                <p class="hero-description" style="font-size: clamp(1.125rem, 2.5vw, 1.375rem); color: rgba(255, 255, 255, 0.95); margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); text-align: center;">${serviceContent.serviceDescription}</p>
+                <p class="hero-description" style="font-size: clamp(1.125rem, 2.5vw, 1.375rem); color: rgba(255, 255, 255, 0.95); margin-bottom: 3rem; max-width: 700px; margin-left: auto; margin-right: auto; line-height: 1.6; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); text-align: center; animation: fadeInUp 1s ease-out;">${serviceContent.serviceDescription}</p>
                 
                 <div class="hero-features" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 3rem; max-width: 900px; margin-left: auto; margin-right: auto;">
-                    <div class="hero-feature" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 1rem 1.5rem; border-radius: 12px; color: white; font-size: 0.9rem; font-weight: 500; text-align: center;">
+                    <div class="hero-feature" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 1rem 1.5rem; border-radius: 14px; color: white; font-size: 0.9rem; font-weight: 500; text-align: center; transition: all 0.3s ease; animation: fadeInUp 1.1s ease-out;" onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';" onmouseout="this.style.background='rgba(255,255,255,0.12)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
                         <i class="fas fa-shield-alt" style="color: #10b981; font-size: 1.2rem;"></i>
                         <span>Trusted & Verified</span>
                     </div>
-                    <div class="hero-feature" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 1rem 1.5rem; border-radius: 12px; color: white; font-size: 0.9rem; font-weight: 500; text-align: center;">
+                    <div class="hero-feature" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 1rem 1.5rem; border-radius: 14px; color: white; font-size: 0.9rem; font-weight: 500; text-align: center; transition: all 0.3s ease; animation: fadeInUp 1.2s ease-out;" onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';" onmouseout="this.style.background='rgba(255,255,255,0.12)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
                         <i class="fas fa-clock" style="color: #f59e0b; font-size: 1.2rem;"></i>
                         <span>24/7 Emergency Service</span>
                     </div>
-                    <div class="hero-feature" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 1rem 1.5rem; border-radius: 12px; color: white; font-size: 0.9rem; font-weight: 500; text-align: center;">
+                    <div class="hero-feature" style="display: flex; align-items: center; justify-content: center; gap: 0.75rem; background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); padding: 1rem 1.5rem; border-radius: 14px; color: white; font-size: 0.9rem; font-weight: 500; text-align: center; transition: all 0.3s ease; animation: fadeInUp 1.3s ease-out;" onmouseover="this.style.background='rgba(255,255,255,0.2)'; this.style.transform='translateY(-4px)'; this.style.boxShadow='0 8px 25px rgba(0,0,0,0.15)';" onmouseout="this.style.background='rgba(255,255,255,0.12)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
                         <i class="fas fa-thumbs-up" style="color: #3b82f6; font-size: 1.2rem;"></i>
                         <span>Professional Service Commitment</span>
                     </div>
                 </div>
                 
-                <div class="hero-cta" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; align-items: center;">
+                <div class="hero-cta" style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; align-items: center; animation: fadeInUp 1.4s ease-out;">
                     ${generateCtaButtons(data, template)}
                 </div>
             </div>
@@ -5321,6 +5387,77 @@ body {
     line-height: 1.6;
     color: #333;
     background-color: #ffffff;
+    overflow-x: hidden;
+}
+
+/* === ANIMATION KEYFRAMES === */
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInDown {
+    from { opacity: 0; transform: translateY(-30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInLeft {
+    from { opacity: 0; transform: translateX(-40px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeInRight {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 15px ${template.colors.primary}40; }
+    50% { box-shadow: 0 0 30px ${template.colors.primary}60, 0 0 60px ${template.colors.primary}20; }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+@keyframes countUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInBounce {
+    0% { opacity: 0; transform: translateY(30px); }
+    60% { transform: translateY(-5px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Scroll-triggered animation classes */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .container {
@@ -5331,14 +5468,17 @@ body {
 
 /* Header and Navigation */
 .header {
-    background: white;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border-bottom: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 1px 30px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
     height: 80px;
     overflow: visible;
+    transition: all 0.3s ease;
 }
 
 .nav {
@@ -5610,6 +5750,7 @@ body {
     color: white;
     overflow: hidden;
     padding: 2rem 0;
+    animation: fadeInDown 0.8s ease-out;
 }
 
 .hero-overlay {
@@ -5618,7 +5759,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, #1e3a8a, #1e40af);
+    background: linear-gradient(135deg, ${template.colors.primary}E6, ${template.colors.secondary}CC);
     z-index: 1;
 }
 
@@ -5629,7 +5770,20 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(45deg, rgba(0, 0, 0, 0.3), transparent);
+    background: linear-gradient(45deg, rgba(0, 0, 0, 0.2), transparent 70%);
+    z-index: 1;
+}
+
+.hero-overlay::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 70%, ${template.colors.accent}20 0%, transparent 40%),
+                radial-gradient(circle at 70% 30%, ${template.colors.primary}15 0%, transparent 40%);
+    animation: float 15s ease-in-out infinite;
     z-index: 1;
 }
 
@@ -5642,12 +5796,15 @@ body {
 }
 
 .hero-stats-card {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 24px;
     padding: 2rem;
     text-align: center;
+    animation: fadeInRight 1s ease-out 0.3s both;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .hero-title {
@@ -5858,17 +6015,19 @@ body {
     align-items: center;
     gap: 1rem;
     padding: 2rem;
-    background: white;
-    border-radius: 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    border: 1px solid #e5e7eb;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .trust-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    border-color: ${template.colors.accent};
+    transform: translateY(-6px);
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.12), 0 4px 12px ${template.colors.primary}15;
+    border-color: ${template.colors.accent}40;
 }
 
 .trust-icon {
@@ -5901,7 +6060,20 @@ body {
 /* Features Section */
 .features {
     padding: 6rem 0;
-    background: #f8fafc;
+    background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 50%, #f8fafc 100%);
+    position: relative;
+}
+
+.features::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at 20% 50%, ${template.colors.primary}08 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 50%, ${template.colors.secondary}08 0%, transparent 50%);
+    pointer-events: none;
 }
 
 .section-title {
@@ -5914,6 +6086,10 @@ body {
     margin-left: auto;
     margin-right: auto;
     line-height: 1.3;
+    background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary});
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .section-subtitle {
@@ -5932,21 +6108,41 @@ body {
 }
 
 .feature-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     padding: 3rem;
-    border-radius: 15px;
+    border-radius: 20px;
     text-align: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.6);
     position: relative;
     overflow: hidden;
 }
 
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, ${template.colors.primary}, ${template.colors.accent}, ${template.colors.secondary});
+    background-size: 200% 100%;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
 .feature-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    border-color: ${template.colors.accent};
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12), 0 8px 16px ${template.colors.primary}15;
+    border-color: ${template.colors.accent}40;
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+    animation: shimmer 2s linear infinite;
 }
 
 .feature-icon {
@@ -5954,13 +6150,19 @@ body {
     height: 70px;
     margin: 0 auto 1.5rem;
     background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary});
-    border-radius: 15px;
+    border-radius: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.8rem;
     color: white;
-    box-shadow: 0 8px 20px ${template.colors.primary}4D;
+    box-shadow: 0 8px 25px ${template.colors.primary}40;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-card:hover .feature-icon {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 12px 30px ${template.colors.primary}50;
 }
 
 .feature-title {
@@ -6071,22 +6273,47 @@ body {
 /* SEO Sections */
 .seo-sections {
     padding: 6rem 0;
-    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    background: linear-gradient(135deg, #f0f4ff 0%, #e8ecf4 50%, #f0f4ff 100%);
+    position: relative;
+}
+
+.seo-sections::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 10% 20%, ${template.colors.primary}06 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, ${template.colors.secondary}06 0%, transparent 40%);
+    pointer-events: none;
 }
 
 .seo-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 3rem;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
 }
 
 .seo-section {
-    background: white;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
     padding: 2.5rem;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
     position: relative;
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.seo-section:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    border-color: ${template.colors.accent}30;
 }
 
 .seo-section::before {
@@ -6153,8 +6380,9 @@ body {
 /* Testimonials Section */
 .testimonials {
     padding: 100px 0;
-    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 50%, #f0f4ff 100%);
     position: relative;
+    overflow: hidden;
 }
 
 .testimonials::before {
@@ -6165,8 +6393,8 @@ body {
     right: 0;
     bottom: 0;
     background: 
-        radial-gradient(circle at 20% 30%, ${template.colors.primary}0A 0%, transparent 50%),
-        radial-gradient(circle at 80% 70%, ${template.colors.secondary}0A 0%, transparent 50%);
+        radial-gradient(circle at 20% 30%, ${template.colors.primary}0D 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, ${template.colors.secondary}0D 0%, transparent 50%);
     pointer-events: none;
 }
 
@@ -6189,15 +6417,24 @@ body {
 }
 
 .testimonial-content {
-    background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(248,250,252,0.95) 100%);
-    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     padding: 3rem;
-    border-radius: 20px;
-    box-shadow: 0 25px 60px rgba(0,0,0,0.1);
-    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    border: 1px solid rgba(255,255,255,0.6);
     text-align: center;
     position: relative;
-    margin: 2rem;
+    margin: 1rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.testimonial-content:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.12);
+    border-color: ${template.colors.accent}30;
+}
 }
 
 .testimonial-content::before {
@@ -6275,7 +6512,7 @@ body {
 /* FAQ Section */
 .faq {
     padding: 6rem 0;
-    background: white;
+    background: linear-gradient(180deg, #ffffff 0%, #f8faff 100%);
 }
 
 .faq-grid {
@@ -6305,15 +6542,20 @@ body {
 }
 
 .faq-item {
-    margin-bottom: 1.5rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 12px;
+    margin-bottom: 1rem;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+    border-radius: 16px;
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
 }
 
 .faq-item:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    border-color: ${template.colors.accent}40;
+    transform: translateY(-2px);
 }
 
 .faq-question {
@@ -6383,7 +6625,9 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(45deg, rgba(0, 0, 0, 0.1), transparent);
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.05) 50%, rgba(255, 255, 255, 0.05) 75%, transparent 75%);
+    background-size: 60px 60px;
+    animation: gradientShift 20s ease infinite;
     z-index: 1;
 }
 
@@ -6409,16 +6653,19 @@ body {
     align-items: center;
     gap: 1rem;
     padding: 1.5rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .contact-item:hover {
     transform: translateY(-5px);
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
 }
 
 .contact-icon {
@@ -6532,9 +6779,21 @@ body {
 
 /* Footer */
 .footer {
-    background: linear-gradient(135deg, #1a202c, #2d3748);
+    background: linear-gradient(135deg, #0f172a, #1e293b);
     color: white;
     padding: 3rem 0 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, ${template.colors.primary}, ${template.colors.accent}, ${template.colors.secondary});
 }
 
 .footer-content {
@@ -6638,19 +6897,21 @@ body {
 }
 
 .area-card {
-    background: white;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     padding: 2rem 1.5rem;
-    border-radius: 15px;
+    border-radius: 18px;
     text-align: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease;
-    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
 .area-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-    border-color: ${template.colors.accent};
+    transform: translateY(-6px);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+    border-color: ${template.colors.accent}40;
 }
 
 .area-icon {
@@ -6683,6 +6944,8 @@ body {
 .final-cta {
     padding: 6rem 0;
     background: linear-gradient(135deg, ${template.colors.primary}, ${template.colors.secondary});
+    background-size: 200% 200%;
+    animation: gradientShift 8s ease infinite;
     color: white;
     position: relative;
     overflow: hidden;
@@ -6695,7 +6958,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
+    background: linear-gradient(45deg, rgba(255, 255, 255, 0.08), transparent 60%);
     z-index: 1;
 }
 
@@ -6751,6 +7014,7 @@ body {
     font-weight: 600;
     min-width: 60px;
     justify-content: center;
+    animation: pulse-glow 2s ease-in-out infinite;
 }
 
 .floating-phone-btn:hover {
@@ -8534,20 +8798,79 @@ const observerOptions = {
 };
 
 const observer = new IntersectionObserver(function(entries) {
-    entries.forEach(entry => {
+    entries.forEach((entry, index) => {
         if (entry.isIntersecting) {
+            // Stagger animation delay for items in the same section
+            const parent = entry.target.parentElement;
+            const siblings = parent ? Array.from(parent.children) : [];
+            const idx = siblings.indexOf(entry.target);
+            const delay = idx * 0.1;
+            
+            entry.target.style.transitionDelay = delay + 's';
             entry.target.style.opacity = '1';
             entry.target.style.transform = 'translateY(0)';
+            observer.unobserve(entry.target); // Only animate once
         }
     });
 }, observerOptions);
 
-// Observe elements for animation
-document.querySelectorAll('.feature-card, .seo-section').forEach(el => {
+// Observe elements for scroll-triggered animations
+document.querySelectorAll('.feature-card, .seo-section, .excellence-item, .testimonial-card, .trust-item, .area-card, .contact-card, .faq-item, .links-column').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(30px)';
+    el.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+    observer.observe(el);
+});
+
+// Animate section titles
+document.querySelectorAll('.section-title, .section-subtitle, .section-header').forEach(el => {
     el.style.opacity = '0';
     el.style.transform = 'translateY(20px)';
-    el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    el.style.transition = 'opacity 0.7s ease, transform 0.7s ease';
     observer.observe(el);
+});
+
+// Counter animation for stat numbers
+function animateCounter(element, target) {
+    const duration = 2000;
+    const startTime = performance.now();
+    const isDecimal = target % 1 !== 0;
+    
+    function update(currentTime) {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3); // Ease out cubic
+        const current = eased * target;
+        
+        if (isDecimal) {
+            element.textContent = current.toFixed(1);
+        } else if (target >= 1000) {
+            element.textContent = Math.floor(current).toLocaleString() + '+';
+        } else {
+            element.textContent = Math.floor(current) + '+';
+        }
+        
+        if (progress < 1) requestAnimationFrame(update);
+    }
+    requestAnimationFrame(update);
+}
+
+// Observe stat numbers for counter animation
+const statObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const text = entry.target.textContent.replace(/[^0-9.]/g, '');
+            const num = parseFloat(text);
+            if (!isNaN(num) && num > 0) {
+                animateCounter(entry.target, num);
+            }
+            statObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.stat-number').forEach(el => {
+    statObserver.observe(el);
 });`;
 }
 

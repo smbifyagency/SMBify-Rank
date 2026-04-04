@@ -39,23 +39,36 @@ Your content philosophy:
 - Sound like a trusted local expert: warm, confident, practical
 - Follow E-E-A-T: Experience, Expertise, Authoritativeness, Trustworthiness
 - Make H2 and H3 sections independently useful for search intent
-- Avoid filler phrases and generic fluff
+- Avoid filler phrases and generic fluff — every sentence must add value
 - Content must be unique to the provided business context and niche
 - Use second person voice (you/your), active voice, short clear sentences
 - Include internal link placeholders where requested
 - Do NOT invent fake statistics, star ratings, customer counts, or review numbers
 - Do NOT use superlative claims like "#1 in the city" unless the business explicitly states it
-- Each paragraph should be 3-5 sentences of substantive, specific content
-- FAQ answers must be 80-120 words each, detailed and genuinely helpful
+- Each paragraph should be 4-6 sentences of substantive, specific content
+- FAQ answers must be 100-150 words each, detailed and genuinely helpful
+- Include real-world scenarios and examples relevant to the business niche
+- Mention specific neighborhoods, landmarks, or local references where possible
 
-WORD COUNT TARGETS (critical - do not produce less than these):
-- Homepage: minimum 2000 words total across all JSON fields combined
-- Service pages: minimum 2000 words total across all JSON fields combined
-- Location pages: minimum 2000 words total across all JSON fields combined
-- Intro/overview paragraphs: 120-180 words each (not less)
-- Process step bodies: 60-80 words each
-- Benefit/point bodies: 60-80 words each
-- FAQ answers: 80-120 words each
+WORD COUNT TARGETS (CRITICAL — produce AT LEAST these minimums):
+- Homepage: minimum 3000 words total across all JSON fields combined
+- Service pages: minimum 3000 words total across all JSON fields combined
+- Location pages: minimum 2500 words total across all JSON fields combined
+- Intro/overview paragraphs: 150-220 words each (not less than 150)
+- Process step bodies: 80-120 words each
+- Benefit/point bodies: 80-120 words each
+- FAQ answers: 100-150 words each
+- Why-us points: 80-120 words each
+- Service card descriptions: 60-100 words each
+
+CONTENT DEPTH RULES:
+- Always provide at least 6 FAQ items per page (preferably 8-10)
+- Always provide at least 6 why-us/benefit points
+- Always provide at least 4 intro paragraphs
+- Service overview sections need at least 3 paragraphs of 150+ words each
+- Include actionable, practical advice unique to the specific service/location
+- Reference common scenarios customers face in the specific city/area
+- Weave in at least 8 semantic keyword variations naturally throughout the content
 
 Respond only in valid JSON matching the requested schema. No markdown fences.
 `;
@@ -98,10 +111,11 @@ OUTPUT FORMAT (strict JSON)
   "intro": {
     "h2": "Search-worthy H2 that includes the primary service category",
     "paragraphs": [
-      "Para 1: customer pain point",
-      "Para 2: expert solution with keyword and city",
-      "Para 3: experience/certification/community trust",
-      "Para 4: soft CTA with one internal link"
+      "Para 1: customer pain point and empathy (150-220 words)",
+      "Para 2: expert solution with keyword and city (150-220 words)",
+      "Para 3: experience/certification/community trust (150-220 words)",
+      "Para 4: specific process overview and what sets this business apart (150-220 words)",
+      "Para 5: soft CTA with one internal link (100-150 words)"
     ]
   },
   "servicesSection": {
@@ -122,7 +136,7 @@ OUTPUT FORMAT (strict JSON)
       {
         "icon": "emoji or icon name",
         "heading": "Trust point heading",
-        "body": "2 specific evidence-backed sentences"
+        "body": "3-4 specific evidence-backed sentences (80-120 words)"
       }
     ]
   },
@@ -136,10 +150,14 @@ OUTPUT FORMAT (strict JSON)
   "faqSection": {
     "h2": "Frequently Asked Questions - [Primary Service] in [City]",
     "faqs": [
-      { "question": "High-intent buyer question", "answer": "3-5 sentence answer with semantic keyword" },
-      { "question": "Cost/timing question", "answer": "..." },
-      { "question": "Process/qualification question", "answer": "..." },
-      { "question": "Local-specific question", "answer": "..." }
+      { "question": "High-intent buyer question", "answer": "4-6 sentence answer with semantic keyword (100-150 words)" },
+      { "question": "Cost/timing question", "answer": "4-6 sentence detailed answer (100-150 words)" },
+      { "question": "Process/qualification question", "answer": "4-6 sentence answer (100-150 words)" },
+      { "question": "Local-specific question", "answer": "4-6 sentence answer (100-150 words)" },
+      { "question": "Quality/warranty question", "answer": "4-6 sentence answer (100-150 words)" },
+      { "question": "Comparison/alternative question", "answer": "4-6 sentence answer (100-150 words)" },
+      { "question": "Emergency/urgency question", "answer": "4-6 sentence answer (100-150 words)" },
+      { "question": "Preparation/next steps question", "answer": "4-6 sentence answer (100-150 words)" }
     ]
   },
   "finalCTA": {
@@ -158,10 +176,14 @@ OUTPUT FORMAT (strict JSON)
 QUALITY RULES
 - Primary keyword must appear in metaTitle, metaDescription, H1, first 100 intro words, and seoFootnote
 - City name must appear in hero, why-us heading, locations section, FAQ heading, and final CTA heading
-- Include at least 5 internal links across the page
-- Each FAQ answer should include at least one semantic variation
-- Use at least 4 niche keywords naturally across headings and body copy
+- Include at least 8 internal links across the page
+- Each FAQ answer should include at least one semantic variation and be 100-150 words
+- Use at least 8 niche keywords naturally across headings and body copy
 - Do not reuse generic boilerplate lines; make claims specific to this business profile
+- Total page content must be at least 3000 words
+- Include at least 6 why-us points with 80-120 word bodies
+- Include at least 8 FAQ items
+- Service cards should each have 60-100 word descriptions
 `;
 }
 
@@ -209,30 +231,32 @@ OUTPUT FORMAT (strict JSON)
   },
   "overviewSection": {
     "h2": "What Is ${service} and Why It Matters",
-    "body": ["Paragraph 1", "Paragraph 2", "Paragraph 3"]
+    "body": ["Paragraph 1 (150-220 words)", "Paragraph 2 (150-220 words)", "Paragraph 3 (150-220 words)", "Paragraph 4 (150-220 words)"]
   },
   "processSection": {
     "h2": "Our ${service} Process in ${biz.primaryCity}",
     "intro": "One sentence intro",
     "steps": [
-      { "step": 1, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" },
-      { "step": 2, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" },
-      { "step": 3, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" },
-      { "step": 4, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" },
-      { "step": 5, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" },
-      { "step": 6, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" },
-      { "step": 7, "heading": "Step heading", "body": "3-4 sentence explanation (60-80 words)" }
+      { "step": 1, "heading": "Step heading", "body": "3-4 sentence explanation (80-120 words)" },
+      { "step": 2, "heading": "Step heading", "body": "3-4 sentence explanation (80-120 words)" },
+      { "step": 3, "heading": "Step heading", "body": "3-4 sentence explanation (80-120 words)" },
+      { "step": 4, "heading": "Step heading", "body": "3-4 sentence explanation (80-120 words)" },
+      { "step": 5, "heading": "Step heading", "body": "3-4 sentence explanation (80-120 words)" },
+      { "step": 6, "heading": "Step heading", "body": "3-4 sentence explanation (80-120 words)" },
+      { "step": 7, "heading": "Step heading", "body": "3-4 sentence explanation (80-120 words)" }
     ]
   },
   "benefitsSection": {
     "h2": "Benefits of Professional ${service}",
     "points": [
-      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (60-80 words each)" },
-      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (60-80 words each)" },
-      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (60-80 words each)" },
-      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (60-80 words each)" },
-      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (60-80 words each)" },
-      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (60-80 words each)" }
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (80-120 words each)" },
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (80-120 words each)" },
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (80-120 words each)" },
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (80-120 words each)" },
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (80-120 words each)" },
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (80-120 words each)" },
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (80-120 words each)" },
+      { "heading": "Benefit heading", "body": "3-4 sentences specific outcome (80-120 words each)" }
     ]
   },
   "warningSignsSection": {
@@ -257,14 +281,16 @@ OUTPUT FORMAT (strict JSON)
   "faqSection": {
     "h2": "${service} - Frequently Asked Questions",
     "faqs": [
-      { "question": "Cost/pricing question specific to this service", "answer": "80-120 word detailed answer with specific context" },
-      { "question": "How long does it take question", "answer": "80-120 word detailed answer" },
-      { "question": "DIY vs professional question", "answer": "80-120 word detailed answer explaining risks of DIY" },
-      { "question": "Insurance coverage question", "answer": "80-120 word detailed answer" },
-      { "question": "Licensing/certification question", "answer": "80-120 word detailed answer" },
-      { "question": "City-specific local question", "answer": "80-120 word detailed answer mentioning the city" },
-      { "question": "Prevention or follow-up question", "answer": "80-120 word detailed answer" },
-      { "question": "Process/what to expect question", "answer": "80-120 word detailed answer" }
+      { "question": "Cost/pricing question specific to this service", "answer": "100-150 word detailed answer with specific context" },
+      { "question": "How long does it take question", "answer": "100-150 word detailed answer" },
+      { "question": "DIY vs professional question", "answer": "100-150 word detailed answer explaining risks of DIY" },
+      { "question": "Insurance coverage question", "answer": "100-150 word detailed answer" },
+      { "question": "Licensing/certification question", "answer": "100-150 word detailed answer" },
+      { "question": "City-specific local question", "answer": "100-150 word detailed answer mentioning the city" },
+      { "question": "Prevention or follow-up question", "answer": "100-150 word detailed answer" },
+      { "question": "Process/what to expect question", "answer": "100-150 word detailed answer" },
+      { "question": "Quality guarantee question", "answer": "100-150 word detailed answer" },
+      { "question": "Comparison with alternatives question", "answer": "100-150 word detailed answer" }
     ]
   },
   "crossLinkSection": {
@@ -288,6 +314,13 @@ REQUIREMENTS
 - Keep tone practical, buyer-intent focused, and specific
 - Use niche-specific terminology from the keyword list naturally
 - Avoid repeating sentence structures used on other pages
+- Total content must be at least 3000 words across all sections
+- Each overview paragraph must be 150-220 words
+- Each process step body must be 80-120 words
+- Each benefit body must be 80-120 words
+- Each FAQ answer must be 100-150 words
+- Include at least 10 FAQ items
+- Include at least 8 benefit points
 `;
 }
 
@@ -366,12 +399,14 @@ OUTPUT FORMAT (strict JSON)
   "faqSection": {
     "h2": "${biz.type} Services in ${city} - Common Questions",
     "faqs": [
-      { "question": "How fast can you respond to emergencies in ${city}?", "answer": "80-120 word detailed answer with specific response time info" },
-      { "question": "What types of water damage do you handle in ${city}?", "answer": "80-120 word answer covering all damage categories" },
-      { "question": "Does ${biz.name} work with insurance companies in ${city}?", "answer": "80-120 word answer about insurance claim process" },
-      { "question": "How long does restoration take in ${city}?", "answer": "80-120 word answer with realistic timelines" },
-      { "question": "Can I stay in my ${city} home during restoration?", "answer": "80-120 word honest answer about disruption" },
-      { "question": "Do you provide free estimates in ${city}?", "answer": "80-120 word answer about the assessment process" }
+      { "question": "How fast can you respond to emergencies in ${city}?", "answer": "100-150 word detailed answer with specific response time info" },
+      { "question": "What types of water damage do you handle in ${city}?", "answer": "100-150 word answer covering all damage categories" },
+      { "question": "Does ${biz.name} work with insurance companies in ${city}?", "answer": "100-150 word answer about insurance claim process" },
+      { "question": "How long does restoration take in ${city}?", "answer": "100-150 word answer with realistic timelines" },
+      { "question": "Can I stay in my ${city} home during restoration?", "answer": "100-150 word honest answer about disruption" },
+      { "question": "Do you provide free estimates in ${city}?", "answer": "100-150 word answer about the assessment process" },
+      { "question": "What certifications do your ${city} technicians have?", "answer": "100-150 word answer about qualifications" },
+      { "question": "What areas of ${city} do you cover?", "answer": "100-150 word answer about specific neighborhoods and coverage" }
     ]
   },
   "finalCTA": {
@@ -389,6 +424,11 @@ CRITICAL RULES
 - Link to related service pages naturally
 - Integrate niche keywords naturally without keyword stuffing
 - Keep language and examples distinct from other pages for uniqueness
+- Total content must be at least 2500 words across all sections
+- Each localIntro paragraph must be 120-160 words as specified
+- Each FAQ answer must be 100-150 words
+- Include at least 8 FAQ items
+- Reference specific neighborhoods, landmarks, and local details for ${city}
 `;
 }
 
@@ -488,41 +528,56 @@ BUSINESS DETAILS
 
 WRITING RULES
 - Write as if you are the business owner talking to a potential customer in ${biz.primaryCity}
-- Mention ${biz.primaryCity} naturally in at least 2 intro paragraphs
-- Every FAQ answer must be 80-120 words and genuinely helpful
+- Mention ${biz.primaryCity} naturally in at least 3 intro paragraphs
+- Every FAQ answer must be 100-150 words and genuinely helpful
 - Do NOT invent fake statistics, star ratings, or review counts
 - Do NOT use superlatives like "#1 in the city"
 - Sound like a trusted local expert: warm, confident, specific
 - Vary sentence length; avoid repetitive structure
+- Include real-world scenarios customers face
+- Reference local landmarks, neighborhoods, or weather patterns when relevant
 
 OUTPUT FORMAT (strict JSON, no markdown fences):
 {
   "introParas": [
-    "Paragraph 1: 120-180 words. Explain the problem homeowners face, why ${biz.primaryCity} residents trust ${biz.name}, and what makes you different.",
-    "Paragraph 2: 120-180 words. Describe your service process, credentials, and commitment to quality in ${biz.primaryCity}.",
-    "Paragraph 3: 100-150 words. Call to action paragraph mentioning the service areas and why acting fast matters."
+    "Paragraph 1: 150-220 words. Explain the problem homeowners face, why ${biz.primaryCity} residents trust ${biz.name}, and what makes you different. Include specific examples.",
+    "Paragraph 2: 150-220 words. Describe your service process, credentials, and commitment to quality in ${biz.primaryCity}. Mention certifications and experience.",
+    "Paragraph 3: 150-220 words. Detail your expertise with specific service types, tools, and methods used. Explain what customers can expect.",
+    "Paragraph 4: 120-150 words. Call to action paragraph mentioning the service areas and why acting fast matters. Include urgency without being pushy."
   ],
   "faqs": [
-    { "question": "Specific question about ${primaryKeyword} in ${biz.primaryCity}", "answer": "80-120 word detailed answer" },
-    { "question": "Question about pricing or cost", "answer": "80-120 word detailed answer" },
-    { "question": "Question about qualifications or licensing", "answer": "80-120 word detailed answer" },
-    { "question": "Question about response time or availability", "answer": "80-120 word detailed answer" },
-    { "question": "Question about the process or what to expect", "answer": "80-120 word detailed answer" },
-    { "question": "Question about a common problem or concern", "answer": "80-120 word detailed answer" },
-    { "question": "Question about safety or guarantees", "answer": "80-120 word detailed answer" },
-    { "question": "Question about service area coverage", "answer": "80-120 word detailed answer" }
+    { "question": "Specific question about ${primaryKeyword} in ${biz.primaryCity}", "answer": "100-150 word detailed answer" },
+    { "question": "Question about pricing or cost", "answer": "100-150 word detailed answer" },
+    { "question": "Question about qualifications or licensing", "answer": "100-150 word detailed answer" },
+    { "question": "Question about response time or availability", "answer": "100-150 word detailed answer" },
+    { "question": "Question about the process or what to expect", "answer": "100-150 word detailed answer" },
+    { "question": "Question about a common problem or concern", "answer": "100-150 word detailed answer" },
+    { "question": "Question about safety or guarantees", "answer": "100-150 word detailed answer" },
+    { "question": "Question about service area coverage", "answer": "100-150 word detailed answer" },
+    { "question": "Question about maintenance or prevention", "answer": "100-150 word detailed answer" },
+    { "question": "Question about choosing the right provider", "answer": "100-150 word detailed answer" }
   ],
-  "seoBody": "150-200 word paragraph naturally weaving in ${primaryKeyword}, ${biz.primaryCity}, business name, and key services. Reads like expert local content, not keyword stuffing.",
+  "seoBody": "200-300 word paragraph naturally weaving in ${primaryKeyword}, ${biz.primaryCity}, business name, and key services. Reads like expert local content, not keyword stuffing. Include specific benefits and community connection.",
   "processSteps": [
-    { "step": 1, "heading": "Step name", "body": "60-80 word description of what happens at this step" },
-    { "step": 2, "heading": "Step name", "body": "60-80 word description" },
-    { "step": 3, "heading": "Step name", "body": "60-80 word description" },
-    { "step": 4, "heading": "Step name", "body": "60-80 word description" },
-    { "step": 5, "heading": "Step name", "body": "60-80 word description" }
+    { "step": 1, "heading": "Step name", "body": "80-120 word description of what happens at this step" },
+    { "step": 2, "heading": "Step name", "body": "80-120 word description" },
+    { "step": 3, "heading": "Step name", "body": "80-120 word description" },
+    { "step": 4, "heading": "Step name", "body": "80-120 word description" },
+    { "step": 5, "heading": "Step name", "body": "80-120 word description" },
+    { "step": 6, "heading": "Step name", "body": "80-120 word description" },
+    { "step": 7, "heading": "Step name", "body": "80-120 word description" }
+  ],
+  "whyChooseUs": [
+    { "heading": "Trust point heading", "body": "80-120 word unique reason why customers should choose this business" },
+    { "heading": "Trust point heading", "body": "80-120 word unique reason" },
+    { "heading": "Trust point heading", "body": "80-120 word unique reason" },
+    { "heading": "Trust point heading", "body": "80-120 word unique reason" },
+    { "heading": "Trust point heading", "body": "80-120 word unique reason" },
+    { "heading": "Trust point heading", "body": "80-120 word unique reason" }
   ]
 }
 
-Generate all content above as valid JSON. Each introParas item must be a single string paragraph.
+Generate all content above as valid JSON. Each introParas item must be a single string paragraph. Total content must be at least 3000 words.
 `;
 }
 

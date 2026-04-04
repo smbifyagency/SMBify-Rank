@@ -12,6 +12,11 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import WaterDamageTemplatePreview from "@/components/water-damage-template-preview";
 
+type AIProvider = "openai" | "gemini" | "openrouter";
+
+const isAIProvider = (value: unknown): value is AIProvider =>
+    value === "openai" || value === "gemini" || value === "openrouter";
+
 export default function DashboardWebsiteEditor() {
     const [, setLocation] = useLocation();
     const [match, params] = useRoute("/dashboard/websites/:id");
@@ -51,6 +56,7 @@ export default function DashboardWebsiteEditor() {
         heroHeadline: "Austin's Fastest 24/7 Water Damage Restoration",
         heroSubheadline: "On-site in 60 minutes. Direct insurance billing. Family owned and operated.",
         aboutText: "Rapid Dry relies on advanced structural drying techniques and industrial-grade water extractors to save your property before secondary mold damage can occur. We bill your insurance directly, minimizing your out-of-pocket costs.",
+        contentAiProvider: "gemini" as AIProvider,
     });
 
     useEffect(() => {
@@ -169,6 +175,10 @@ export default function DashboardWebsiteEditor() {
     const handleGeneratePages = async () => {
         setIsGenerating(true);
         try {
+            const provider = isAIProvider((formData as any).contentAiProvider)
+                ? ((formData as any).contentAiProvider as AIProvider)
+                : "gemini";
+
             // Map our specialized template data to the shape the master AI generator expects
             const mappedBusinessData = {
                 ...formData,
@@ -177,13 +187,13 @@ export default function DashboardWebsiteEditor() {
                 additionalServices: formData.services.join(', '),
                 additionalLocations: formData.locations.join(', '),
                 category: formData.category || "Restoration",
-                contentAiProvider: "openai"
+                contentAiProvider: provider
             };
 
             const response = await fetch("/api/websites/generate-content", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ businessData: mappedBusinessData, provider: "openai" })
+                body: JSON.stringify({ businessData: mappedBusinessData, provider })
             });
 
             const result = await response.json();
@@ -469,17 +479,34 @@ export default function DashboardWebsiteEditor() {
                                                 Add the explicit services and cities you want pages for. When you click generate, the AI writes unique technical content for *each one* of these individual pages automatically.
                                             </p>
                                         </div>
-                                        <Button
-                                            onClick={handleGeneratePages}
-                                            disabled={isGenerating}
-                                            className="bg-[#AADD00] hover:bg-[#bef000] text-black text-white shadow-lg transition-all"
-                                        >
-                                            {isGenerating ? (
-                                                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Pages...</>
-                                            ) : (
-                                                <><Rocket className="mr-2 h-4 w-4" /> Run AI Generator</>
-                                            )}
-                                        </Button>
+                                        <div className="flex flex-col items-end gap-3">
+                                            <div className="w-full min-w-[220px]">
+                                                <Label className="text-xs uppercase tracking-[0.2em] text-gray-400">AI Provider</Label>
+                                                <select
+                                                    value={isAIProvider((formData as any).contentAiProvider) ? (formData as any).contentAiProvider : "gemini"}
+                                                    onChange={(e) => handleChange("contentAiProvider", e.target.value)}
+                                                    className="mt-2 w-full h-10 px-3 rounded-md bg-[#1a1a2e] border border-white/10 text-white focus:outline-none focus:border-[#AADD00]"
+                                                >
+                                                    <option value="gemini">Google Gemini</option>
+                                                    <option value="openai">OpenAI</option>
+                                                    <option value="openrouter">OpenRouter</option>
+                                                </select>
+                                                <p className="mt-2 text-xs text-gray-400">
+                                                    Uses the saved API key for the selected provider from API Setup.
+                                                </p>
+                                            </div>
+                                            <Button
+                                                onClick={handleGeneratePages}
+                                                disabled={isGenerating}
+                                                className="bg-[#AADD00] hover:bg-[#bef000] text-black text-white shadow-lg transition-all"
+                                            >
+                                                {isGenerating ? (
+                                                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Generating Pages...</>
+                                                ) : (
+                                                    <><Rocket className="mr-2 h-4 w-4" /> Run AI Generator</>
+                                                )}
+                                            </Button>
+                                        </div>
                                     </div>
 
                                     {generatedStats && (
