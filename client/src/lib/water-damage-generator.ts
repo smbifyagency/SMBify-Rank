@@ -4775,9 +4775,9 @@ export function generateWaterDamageWebsite(
     files[`calculators/${CALCULATORS[i].slug}.html`] = generateSingleCalculatorPage(data, i, domain);
   }
   files['gallery.html']    = generateGalleryPage(data, domain);
-  // Blog pages — only generate if user has blog posts
+  // Blog pages — always generate blog.html; individual posts if available
+  files['blog.html'] = generateBlogArchivePage(data, domain);
   if (data.blogPosts && data.blogPosts.length > 0) {
-    files['blog.html'] = generateBlogArchivePage(data, domain);
     for (const post of data.blogPosts) {
       const filename = `blog/${slugify(post.slug || post.title)}.html`;
       files[filename] = generateBlogPostPage(data, post, domain);

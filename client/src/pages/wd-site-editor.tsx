@@ -218,9 +218,10 @@ function stripDeploymentFields(data: WDSiteData) {
 interface BlogWriterSectionProps {
   siteData: WDSiteData;
   onPostsChange: (posts: WDSiteData['blogPosts']) => void;
+  onRebuildPreview?: (data: WDSiteData) => void;
 }
 
-function BlogWriterSection({ siteData, onPostsChange }: BlogWriterSectionProps) {
+function BlogWriterSection({ siteData, onPostsChange, onRebuildPreview }: BlogWriterSectionProps) {
   const [keywords, setKeywords] = useState('');
   const [wordCount, setWordCount] = useState(1500);
   const [aiProvider, setAiProvider] = useState<AIProvider>(siteData.contentAiProvider || 'openai');
@@ -735,8 +736,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-3 mt-4">
         <p className="text-xs text-gray-500 leading-relaxed">
           <Sparkles className="w-3 h-3 inline mr-1 text-[#AADD00]" />
-          Each keyword triggers a separate AI API call with full 1500-2000 word generation. This avoids token limit errors.
-          After generating, click <strong className="text-gray-400">Regenerate</strong> to rebuild the website with your blog posts included.
+          Each keyword triggers a separate AI API call with full 1000-1500 word generation. Blog posts are automatically included in the website preview and deploy.
         </p>
       </div>
 
@@ -831,6 +831,8 @@ export default function WDSiteEditor() {
   const [isUnpublishing, setIsUnpublishing] = useState(false);
   const [isRegenerating, setIsRegenerating] = useState(false);
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
+  const [isAutoGeneratingBlogs, setIsAutoGeneratingBlogs] = useState(false);
+  const [autoBlogProgress, setAutoBlogProgress] = useState({ current: 0, total: 0 });
   const [activeTab, setActiveTab] = useState("business");
   const [previewPage, setPreviewPage] = useState("index.html");
   const [generatedFiles, setGeneratedFiles] = useState<Record<string, string>>({});
@@ -1107,10 +1109,107 @@ export default function WDSiteEditor() {
       setSiteData(next);
       rebuildPreview(next);
       toast({ title: "AI content generated!", description: "Preview updated with unique content." });
+
+      // Auto-generate 5 blog posts if none exist yet
+      if (!next.blogPosts || next.blogPosts.length === 0) {
+        autoGenerateBlogPosts(next);
+      }
     } catch (err) {
       toast({ title: "Generation failed", description: String(err), variant: "destructive" });
     } finally {
       setIsGeneratingAI(false);
+    }
+  }
+
+  // ── Auto-generate blog posts (triggered after AI content) ─────────
+
+  async function autoGenerateBlogPosts(currentData: WDSiteData) {
+    // Build 5 keywords from services + city
+    const services = currentData.services || [];
+    const city = currentData.city || '';
+    const keyword = currentData.primaryKeyword || '';
+    const areas = currentData.serviceAreas || [];
+
+    const blogKeywords: string[] = [];
+    // Service + city combinations
+    for (const svc of services.slice(0, 3)) {
+      blogKeywords.push(`${svc} in ${city}`);
+    }
+    // Add a tips article
+    if (keyword) blogKeywords.push(`${keyword} tips for homeowners in ${city}`);
+    // Add a location-based article
+    if (areas.length > 0) blogKeywords.push(`how to choose a ${keyword.toLowerCase()} company in ${city}`);
+
+    // Ensure exactly 5
+    while (blogKeywords.length < 5 && keyword) {
+      const extras = [
+        `cost of ${keyword.toLowerCase()} in ${city}`,
+        `signs you need ${keyword.toLowerCase()}`,
+        `${keyword.toLowerCase()} FAQs answered by experts`,
+        `emergency ${keyword.toLowerCase()} guide for ${city}`,
+        `${keyword.toLowerCase()} vs DIY - what ${city} homeowners should know`,
+      ];
+      for (const ex of extras) {
+        if (blogKeywords.length >= 5) break;
+        if (!blogKeywords.includes(ex)) blogKeywords.push(ex);
+      }
+    }
+
+    const finalKeywords = blogKeywords.slice(0, 5);
+    if (finalKeywords.length === 0) return;
+
+    setIsAutoGeneratingBlogs(true);
+    setAutoBlogProgress({ current: 0, total: finalKeywords.length });
+
+    const newPosts: NonNullable<WDSiteData['blogPosts']> = [];
+
+    for (let i = 0; i < finalKeywords.length; i++) {
+      setAutoBlogProgress({ current: i + 1, total: finalKeywords.length });
+
+      try {
+        const res = await fetch('/api/ai/blog-post', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            businessName: currentData.businessName,
+            category: currentData.primaryKeyword,
+            location: `${currentData.city}, ${currentData.state}`,
+            services: currentData.services?.join(', ') || '',
+            serviceAreas: currentData.serviceAreas?.join(', ') || '',
+            keyword: finalKeywords[i],
+            wordCount: 1200,
+            useImages: true,
+            aiProvider,
+          }),
+        });
+
+        if (!res.ok) continue;
+
+        const data = await res.json();
+        if (data.success && data.blogPost) {
+          newPosts.push({
+            ...data.blogPost,
+            id: data.blogPost.id || `blog-${Date.now()}-${Math.random().toString(36).substr(2, 6)}`,
+            isAiGenerated: true,
+            date: new Date().toISOString().split('T')[0],
+          });
+          // Update in real-time
+          setSiteData(prev => {
+            if (!prev) return prev;
+            const updated = { ...prev, blogPosts: [...newPosts] };
+            rebuildPreview(updated);
+            return updated;
+          });
+        }
+      } catch {
+        // Skip failed posts silently
+      }
+    }
+
+    setIsAutoGeneratingBlogs(false);
+    if (newPosts.length > 0) {
+      toast({ title: `${newPosts.length} blog posts generated!`, description: "Blog page and individual posts are now in your website." });
     }
   }
 
@@ -1920,6 +2019,35 @@ export default function WDSiteEditor() {
                     )}
                   </div>
                 )}
+
+                {/* Auto blog generation progress */}
+                {isAutoGeneratingBlogs && (
+                  <div className="rounded-lg bg-amber-950/30 border border-amber-800/50 p-3 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin text-amber-400" />
+                      <span className="text-xs text-amber-400 font-medium">
+                        Auto-generating blog posts... ({autoBlogProgress.current}/{autoBlogProgress.total})
+                      </span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-1.5">
+                      <div
+                        className="bg-amber-500 h-1.5 rounded-full transition-all duration-500"
+                        style={{ width: `${autoBlogProgress.total > 0 ? (autoBlogProgress.current / autoBlogProgress.total) * 100 : 0}%` }}
+                      />
+                    </div>
+                    <p className="text-[10px] text-gray-500">5 SEO blog posts (1000-1500 words each) are being written by AI...</p>
+                  </div>
+                )}
+
+                {/* Blog posts count badge */}
+                {siteData.blogPosts && siteData.blogPosts.length > 0 && !isAutoGeneratingBlogs && (
+                  <div className="flex items-center gap-2">
+                    <span className="inline-flex items-center gap-1 text-xs text-amber-400 bg-amber-950/40 border border-amber-800 rounded px-2 py-0.5">
+                      <CheckCircle2 className="w-3 h-3" /> Blog Posts ({siteData.blogPosts.length})
+                    </span>
+                    <span className="text-[10px] text-gray-600">View in Blog tab</span>
+                  </div>
+                )}
               </div>
 
               {/* Homepage Hero */}
@@ -2483,7 +2611,16 @@ export default function WDSiteEditor() {
             <TabsContent value="blog" className="p-4 space-y-4 mt-0">
               <BlogWriterSection
                 siteData={siteData!}
-                onPostsChange={(posts) => setSiteData(prev => prev ? { ...prev, blogPosts: posts } : prev)}
+                onPostsChange={(posts) => {
+                  setSiteData(prev => {
+                    if (!prev) return prev;
+                    const next = { ...prev, blogPosts: posts };
+                    // Auto-rebuild preview so blog pages appear instantly
+                    setTimeout(() => rebuildPreview(next), 0);
+                    return next;
+                  });
+                }}
+                onRebuildPreview={rebuildPreview}
               />
             </TabsContent>
 
@@ -2674,6 +2811,14 @@ export default function WDSiteEditor() {
                   {siteData.serviceAreas.map(l => {
                     const slug = `locations/${l.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
                     return <option key={l} value={slug}>{l}</option>;
+                  })}
+                </optgroup>
+              )}
+              {(Array.isArray(siteData.blogPosts) && siteData.blogPosts.length > 0) && (
+                <optgroup label="Blog Posts">
+                  {siteData.blogPosts.map(p => {
+                    const slug = `blog/${(p.slug || p.title).toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
+                    return <option key={p.id} value={slug}>{p.title}</option>;
                   })}
                 </optgroup>
               )}
