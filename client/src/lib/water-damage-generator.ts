@@ -400,8 +400,11 @@ function iconToSVG(icon: string, color: string = 'currentColor'): string {
     'warning':      s('<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
     'emergency':    s('<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'),
     'map-pin':      s('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'),
+    'mappin':       s('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'),
     'map':          s('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'),
     'location':     s('<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>'),
+    'mail':         s('<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>'),
+    'email':        s('<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>'),
     'dollar':       s('<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>'),
     'money':        s('<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>'),
     'price':        s('<line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>'),
@@ -550,6 +553,9 @@ function generateNav(data: WDBusinessData, currentPath: string = ''): string {
 
 function generateFooter(data: WDBusinessData, currentPath: string = ''): string {
   const prefix = currentPath.includes('/') ? '../' : '';
+  const theme = resolveTheme(data);
+  const accentColor = theme.accentColor || '#dc2626';
+  const secondaryColor = theme.secondaryColor || '#0ea5e9';
   const serviceLinks = data.services
     .slice(0, 5)
     .map(s => `<li><a href="${prefix}services/${slugify(s)}-${slugify(data.city)}.html">${s}</a></li>`)
@@ -562,27 +568,54 @@ function generateFooter(data: WDBusinessData, currentPath: string = ''): string 
 
   const brandBlock = data.logoUrl
     ? `<img src="${data.logoUrl}" alt="${data.logoAlt || data.businessName + ' logo'}" class="footer-logo" width="140" height="42" loading="lazy">
-        <p style="margin-top:0.75rem;">${data.address}</p>`
-    : `<p class="footer-biz-name">${data.businessName}</p>
-        <p>${data.address}</p>`;
+        <p style="margin-top:0.75rem;">${data.businessName}</p>`
+    : `<p class="footer-biz-name">${data.businessName}</p>`;
+
+  // Social media SVG icons
+  const socialSVGs: Record<string, string> = {
+    facebook: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
+    instagram: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`,
+    google: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>`,
+    yelp: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.16 12.594l-4.995 1.433c-.96.276-1.74-.8-1.176-1.63l2.936-4.313c.258-.38.784-.456 1.14-.166l3.032 2.47c.496.404.368 1.12-.122 1.41l-.815.476v.32zM16.758 17.12l-1.383-5.023c-.267-.97 1.035-1.572 1.57-.726l2.787 4.406c.244.386.08.916-.35 1.1l-3.66 1.558c-.596.254-1.184-.32-.964-.915v-.4zM11.08 20.73c-.06.44-.512.706-.926.546l-3.524-1.36c-.31-.12-.48-.44-.39-.764l1.385-5.024c.268-.97 1.632-.59 1.642.458l.054 5.464c0 .23-.08.45-.24.62v.06zM6.876 12.47L11.4 10.1c.876-.46.404-1.776-.57-1.585L5.83 9.484c-.446.088-.74.52-.624.958l.988 3.724c.162.61.87.74 1.2.198l.482-.794v-.1zM10.12 2.64v5.32c0 1.008-1.45 1.21-1.748.244L6.086 2.01c-.136-.44.092-.92.504-1.082l3.508-1.38c.574-.226 1.156.27 1.07.87l-.05.22v2z"/></svg>`,
+    x: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`
+  };
+
+  const socialLinksHTML = (() => {
+    const pairs: Array<{url: string; key: string; label: string}> = [];
+    if (data.facebookUrl) pairs.push({ url: data.facebookUrl, key: 'facebook', label: 'Facebook' });
+    if (data.instagramUrl) pairs.push({ url: data.instagramUrl, key: 'instagram', label: 'Instagram' });
+    if (data.googleUrl) pairs.push({ url: data.googleUrl, key: 'google', label: 'Google' });
+    if (data.yelpUrl) pairs.push({ url: data.yelpUrl, key: 'yelp', label: 'Yelp' });
+    if (data.twitterUrl) pairs.push({ url: data.twitterUrl, key: 'x', label: 'X' });
+    if (pairs.length === 0) return '';
+    return `<div class="footer-social">${pairs.map(p =>
+      `<a href="${p.url}" target="_blank" rel="noopener noreferrer" aria-label="${p.label}">${socialSVGs[p.key] || ''}</a>`
+    ).join('')}</div>`;
+  })();
 
   return `
+  <!-- ── Pre-Footer CTA Banner ────────────────────────── -->
+  <div class="prefooter-cta">
+    <div class="prefooter-inner">
+      <h3>Need Professional ${data.primaryKeyword} Help Today?</h3>
+      <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="prefooter-btn"><span class="btn-icon">${iconToSVG('phone', accentColor)}</span> Get Your Free Estimate</a>
+    </div>
+  </div>
+
   <footer class="site-footer" role="contentinfo">
     <div class="footer-inner">
       <div class="footer-brand">
         ${brandBlock}
-        <p>${data.city}, ${data.state}</p>
-        <p><a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}">${data.phone}</a></p>
-        ${data.email ? `<p><a href="mailto:${data.email}">${data.email}</a></p>` : ''}
-        ${generateSocialLinks(data)}
-        <div style="margin-top:1rem;">
-          <a href="${prefix}about.html" style="color:#94a3b8;font-size:.85rem;margin-right:.75rem;">About</a>
-          <a href="${prefix}faq.html" style="color:#94a3b8;font-size:.85rem;margin-right:.75rem;">FAQ</a>
-          <a href="${prefix}gallery.html" style="color:#94a3b8;font-size:.85rem;margin-right:.75rem;">Gallery</a>
-          <a href="${prefix}calculator.html" style="color:#94a3b8;font-size:.85rem;margin-right:.75rem;">Calculators</a>
-          <a href="${prefix}contact.html" style="color:#94a3b8;font-size:.85rem;margin-right:.75rem;">Contact</a>
-          <a href="${prefix}privacy.html" style="color:#94a3b8;font-size:.85rem;margin-right:.75rem;">Privacy Policy</a>
-          <a href="${prefix}terms.html" style="color:#94a3b8;font-size:.85rem;">Terms of Service</a>
+        <p class="footer-brand-desc">${data.businessName} provides professional ${data.primaryKeyword.toLowerCase()} services in ${data.city}, ${data.state} and surrounding areas.</p>
+        ${socialLinksHTML}
+        <div style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.35rem 0.75rem;">
+          <a href="${prefix}about.html" style="color:#94a3b8;font-size:.85rem;">About</a>
+          <a href="${prefix}faq.html" style="color:#94a3b8;font-size:.85rem;">FAQ</a>
+          <a href="${prefix}gallery.html" style="color:#94a3b8;font-size:.85rem;">Gallery</a>
+          <a href="${prefix}calculator.html" style="color:#94a3b8;font-size:.85rem;">Calculators</a>
+          <a href="${prefix}contact.html" style="color:#94a3b8;font-size:.85rem;">Contact</a>
+          <a href="${prefix}privacy.html" style="color:#94a3b8;font-size:.85rem;">Privacy</a>
+          <a href="${prefix}terms.html" style="color:#94a3b8;font-size:.85rem;">Terms</a>
         </div>
       </div>
 
@@ -597,21 +630,37 @@ function generateFooter(data: WDBusinessData, currentPath: string = ''): string 
       </div>
 
       <div class="footer-contact">
-        <h3>Contact Information</h3>
-        <div itemscope itemtype="https://schema.org/LocalBusiness" style="font-size:.9rem;">
-          <p itemprop="name" style="font-weight:700;margin-bottom:.5rem;">${data.businessName}</p>
-          <div itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
-            <p><span itemprop="streetAddress">${data.address}</span></p>
-            <p><span itemprop="addressLocality">${data.city}</span>, <span itemprop="addressRegion">${data.state}</span></p>
+        <h3>Contact Us</h3>
+        <div class="footer-contact-item">
+          <span class="footer-contact-icon">${iconToSVG('phone', secondaryColor)}</span>
+          <div>
+            <div class="footer-contact-label">Phone</div>
+            <div class="footer-contact-value"><a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="footer-phone">${data.phone}</a></div>
           </div>
-          <p style="margin-top:.5rem;">
-            <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="footer-phone" itemprop="telephone">${data.phone}</a>
-          </p>
-          ${data.email ? `<p><a href="mailto:${data.email}" style="color:#94a3b8;text-decoration:none;" itemprop="email">${data.email}</a></p>` : ''}
         </div>
-        <p style="margin-top:.75rem;font-size:.85rem;color:#94a3b8;">${data._footerEmergencyText || 'Available 24/7 for emergencies.'}</p>
+        ${data.email ? `
+        <div class="footer-contact-item">
+          <span class="footer-contact-icon">${iconToSVG('mail', secondaryColor)}</span>
+          <div>
+            <div class="footer-contact-label">Email</div>
+            <div class="footer-contact-value"><a href="mailto:${data.email}">${data.email}</a></div>
+          </div>
+        </div>` : ''}
+        <div class="footer-contact-item">
+          <span class="footer-contact-icon">${iconToSVG('mapPin', secondaryColor)}</span>
+          <div>
+            <div class="footer-contact-label">Address</div>
+            <div class="footer-contact-value">${data.address}<br>${data.city}, ${data.state}</div>
+          </div>
+        </div>
+        <div class="footer-contact-item">
+          <span class="footer-contact-icon">${iconToSVG('clock', secondaryColor)}</span>
+          <div>
+            <div class="footer-contact-label">Hours</div>
+            <div class="footer-contact-value">${data._footerEmergencyText || 'Available 24/7'}</div>
+          </div>
+        </div>
         ${data.licenseNumber ? `<p style="font-size:.8rem;color:#64748b;margin-top:.5rem;">License: ${data.licenseNumber}</p>` : ''}
-        ${data.insuranceInfo ? `<p style="font-size:.8rem;color:#64748b;">${data.insuranceInfo}</p>` : ''}
       </div>
     </div>
 
@@ -1261,6 +1310,49 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 
 .hero-cta-form-btn:hover { background: ${darkenHex(primaryColor, 0.7)}; text-decoration: none; }
 
+/* ── Credential Bar (below hero) ────────────────── */
+.credential-bar {
+  background: #fff;
+  border-bottom: 1px solid rgba(226,232,240,0.5);
+  padding: 1rem 0;
+  position: relative;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.credential-bar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+.credential-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+.credential-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, ${primaryColor}15, ${secondaryColor}15);
+  color: ${secondaryColor};
+  flex-shrink: 0;
+}
+.credential-icon svg { width: 18px; height: 18px; }
+@media (max-width: 768px) { .credential-bar-inner { gap: 1rem; } .credential-item { font-size: 0.78rem; } }
+@media (max-width: 480px) { .credential-item span:not(.credential-icon) { display: none; } }
+
 /* ── Services Grid ─────────────────────────────── */
 .services-grid {
   display: grid;
@@ -1299,6 +1391,28 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 
 .service-card:hover::before { opacity: 1; }
 
+.service-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, ${primaryColor}12, ${secondaryColor}15);
+  color: ${secondaryColor};
+  margin-bottom: 1rem;
+  transition: all .35s;
+}
+
+.service-card:hover .service-card-icon {
+  background: linear-gradient(135deg, ${primaryColor}, ${secondaryColor});
+  color: #fff;
+  transform: scale(1.08);
+  box-shadow: 0 6px 16px ${secondaryColor}30;
+}
+
+.service-card-icon svg { width: 28px; height: 28px; }
+
 .service-card h3 {
   margin-bottom: 0.75rem;
   color: ${primaryColor};
@@ -1331,34 +1445,52 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   gap: 1.25rem;
   align-items: flex-start;
   background: #fff;
-  padding: 1.5rem;
+  padding: 1.75rem;
   border-radius: 14px;
   border: 1px solid rgba(226,232,240,0.6);
   transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.why-us-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, ${secondaryColor}, ${primaryColor});
+  opacity: 0;
+  transition: opacity .3s;
 }
 
 .why-us-item:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,.06);
-  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0,0,0,.08);
+  transform: translateY(-3px);
   border-color: ${secondaryColor}30;
 }
+
+.why-us-item:hover::after { opacity: 1; }
 
 .why-us-icon {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, ${primaryColor}12, ${secondaryColor}12);
-  color: ${secondaryColor};
-  transition: all .3s;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, ${primaryColor}, ${darkenHex(primaryColor, 0.7)});
+  color: #fff;
+  box-shadow: 0 4px 12px ${primaryColor}30;
+  transition: all .35s;
 }
 
 .why-us-item:hover .why-us-icon {
-  background: linear-gradient(135deg, ${primaryColor}22, ${secondaryColor}22);
-  transform: scale(1.05);
+  background: linear-gradient(135deg, ${secondaryColor}, ${primaryColor});
+  transform: scale(1.08) rotate(-3deg);
+  box-shadow: 0 6px 18px ${secondaryColor}35;
 }
 
 .why-us-icon svg { width: 26px; height: 26px; }
@@ -1370,43 +1502,76 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 .process-steps {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 1.5rem;
+  gap: 2rem;
   margin-top: 2rem;
   counter-reset: step-counter;
+  position: relative;
+}
+
+.process-steps::before {
+  content: '';
+  position: absolute;
+  top: 28px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, ${secondaryColor}20, ${secondaryColor}60, ${secondaryColor}20);
+  border-radius: 2px;
 }
 
 .process-step {
   background: #fff;
   border: 1px solid rgba(226,232,240,0.6);
   border-radius: 14px;
-  padding: 2rem 1.5rem 1.5rem;
+  padding: 2.5rem 1.5rem 1.5rem;
   position: relative;
   counter-increment: step-counter;
   transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
 }
 
 .process-step:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,.06);
-  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0,0,0,.08);
+  transform: translateY(-4px);
 }
 
 .process-step::before {
   content: counter(step-counter);
   position: absolute;
-  top: -16px;
+  top: -18px;
   left: 1.5rem;
   background: linear-gradient(135deg, ${secondaryColor}, ${primaryColor});
   color: #fff;
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 0.85rem;
-  box-shadow: 0 4px 12px ${secondaryColor}40;
+  font-size: 0.9rem;
+  box-shadow: 0 4px 14px ${secondaryColor}40;
+  border: 3px solid #fff;
 }
+
+.process-step::after {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: calc(1.5rem + 18px);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid ${secondaryColor}40;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity .3s;
+}
+
+.process-step:hover::after { opacity: 1; }
+
+@media (max-width: 768px) { .process-steps::before { display: none; } }
 
 .process-step h3 { margin-top: 0.5rem; margin-bottom: 0.5rem; font-size: 1rem; }
 .process-step p { color: #475569; font-size: 0.9rem; margin: 0; }
@@ -1529,6 +1694,150 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 .cta-section p { color: #cbd5e1; max-width: 600px; margin: 0 auto 2rem; }
 
 .cta-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+/* ── Testimonials ──────────────────────────────── */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.testimonial-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid rgba(226,232,240,0.6);
+  position: relative;
+  transition: all .35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+.testimonial-card::before {
+  content: '\\201C';
+  position: absolute;
+  top: 0.75rem;
+  right: 1.25rem;
+  font-size: 5rem;
+  line-height: 1;
+  color: ${secondaryColor}12;
+  font-family: Georgia, serif;
+  pointer-events: none;
+}
+
+.testimonial-card:hover {
+  box-shadow: 0 12px 36px rgba(0,0,0,.08);
+  transform: translateY(-4px);
+  border-color: ${secondaryColor}30;
+}
+
+.testimonial-stars {
+  color: #f59e0b;
+  font-size: 1.1rem;
+  letter-spacing: 2px;
+  margin-bottom: 0.75rem;
+}
+
+.testimonial-text {
+  color: #374151;
+  font-style: italic;
+  line-height: 1.7;
+  margin-bottom: 1.25rem;
+  position: relative;
+  z-index: 1;
+}
+
+.testimonial-author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-top: 1px solid rgba(226,232,240,0.6);
+  padding-top: 1rem;
+}
+
+.testimonial-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, ${primaryColor}, ${secondaryColor});
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.testimonial-name {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+.testimonial-location {
+  font-size: 0.82rem;
+  color: #64748b;
+}
+
+/* ── Pre-Footer CTA Banner ─────────────────────── */
+.prefooter-cta {
+  background: ${accentColor};
+  color: #fff;
+  padding: 2rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.prefooter-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0,0,0,0.08) 0%, transparent 50%, rgba(0,0,0,0.08) 100%);
+  pointer-events: none;
+}
+
+.prefooter-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+.prefooter-cta h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 0;
+  color: #fff;
+}
+
+.prefooter-cta .prefooter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  color: ${accentColor};
+  padding: 0.75rem 1.75rem;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all .25s;
+  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+}
+
+.prefooter-cta .prefooter-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,.25);
+  text-decoration: none;
+}
 
 /* ── Breadcrumb ────────────────────────────────── */
 .breadcrumb {
@@ -1706,7 +2015,7 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 .site-footer {
   background: ${darkenHex(primaryColor, 0.85)};
   color: #cbd5e1;
-  padding: 4rem 0 2rem;
+  padding: 4.5rem 0 2rem;
   position: relative;
 }
 
@@ -1725,6 +2034,7 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1.5fr;
   gap: 2.5rem;
+  position: relative;
 }
 
 .footer-biz-name {
@@ -1734,25 +2044,73 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   margin-bottom: 0.75rem;
 }
 
-.footer-links h3 {
+.footer-brand p {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.footer-links h3, .footer-contact h3 {
   color: #fff;
   font-size: 0.9rem;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 0.75rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+.footer-links h3::after, .footer-contact h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: ${secondaryColor};
+  border-radius: 1px;
 }
 
 .footer-links li { margin-bottom: 0.4rem; }
-.footer-links a { color: #94a3b8; font-size: 0.9rem; }
-.footer-links a:hover { color: #fff; text-decoration: none; }
+.footer-links a { color: #94a3b8; font-size: 0.9rem; transition: color .2s, padding-left .2s; }
+.footer-links a:hover { color: #fff; text-decoration: none; padding-left: 4px; }
 
-.footer-contact h3 {
-  color: #fff;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin-bottom: 0.75rem;
+.footer-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
+
+.footer-contact-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.08);
+  color: ${secondaryColor};
+  flex-shrink: 0;
+}
+
+.footer-contact-icon svg { width: 18px; height: 18px; }
+
+.footer-contact-label {
+  font-size: 0.75rem;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.footer-contact-value {
+  color: #e2e8f0;
+  font-size: 0.95rem;
+}
+
+.footer-contact-value a { color: #e2e8f0; text-decoration: none; }
+.footer-contact-value a:hover { color: #fff; }
 
 .footer-phone {
   display: block;
@@ -1761,6 +2119,34 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   font-weight: 800;
   margin-bottom: 0.5rem;
 }
+
+.footer-social {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.footer-social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  color: #94a3b8;
+  transition: all .25s;
+  text-decoration: none;
+}
+
+.footer-social a:hover {
+  background: ${secondaryColor};
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px ${secondaryColor}30;
+}
+
+.footer-social svg { width: 18px; height: 18px; }
 
 .footer-bottom {
   max-width: 1200px;
@@ -1773,6 +2159,7 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   color: #64748b;
   flex-wrap: wrap;
   gap: 0.5rem;
+  position: relative;
 }
 
 /* ── Utility ───────────────────────────────────── */
@@ -2115,6 +2502,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
 
   const servicesCardsHTML = serviceCards.map(card => `
       <article class="service-card" data-placeholder-section="service-${slugify(card.service)}">
+        <div class="service-card-icon" aria-hidden="true">${iconToSVG(card.icon || 'tool', secondaryColor)}</div>
         <h3>${card.h3}</h3>
         <p>${card.description}</p>
         <a href="${prefix}${card.internalLink.slug}" class="service-card-link">${card.internalLink.anchor} →</a>
@@ -2122,7 +2510,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
 
   const whyPointsHTML = whyPoints.map(pt => `
       <div class="why-us-item">
-        <span class="why-us-icon" aria-hidden="true">${iconToSVG(pt.icon, secondaryColor)}</span>
+        <span class="why-us-icon" aria-hidden="true">${iconToSVG(pt.icon, '#fff')}</span>
         <div>
           <h3>${pt.heading}</h3>
           <p>${pt.body}</p>
@@ -2204,6 +2592,32 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
       </div>
     </div>
   </section>
+
+  <!-- ── Credential Bar ───────────────────────────────── -->
+  <div class="credential-bar" role="complementary" aria-label="Credentials">
+    <div class="credential-bar-inner">
+      <div class="credential-item">
+        <span class="credential-icon">${iconToSVG('shield', secondaryColor)}</span>
+        <span>Licensed &amp; Insured</span>
+      </div>
+      <div class="credential-item">
+        <span class="credential-icon">${iconToSVG('star', secondaryColor)}</span>
+        <span>5-Star Rated</span>
+      </div>
+      <div class="credential-item">
+        <span class="credential-icon">${iconToSVG('clock', secondaryColor)}</span>
+        <span>${data._emergencyBadge || '24/7 Available'}</span>
+      </div>
+      <div class="credential-item">
+        <span class="credential-icon">${iconToSVG('check', secondaryColor)}</span>
+        <span>Certified Experts</span>
+      </div>
+      <div class="credential-item">
+        <span class="credential-icon">${iconToSVG('award', secondaryColor)}</span>
+        <span>Satisfaction Guaranteed</span>
+      </div>
+    </div>
+  </div>
 
   <!-- ── Intro ─────────────────────────────────────────── -->
   <section id="about" aria-labelledby="intro-heading" class="reveal">
@@ -2300,13 +2714,19 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   <section aria-labelledby="testimonials-heading" class="reveal">
     <div class="container">
       <h2 id="testimonials-heading" class="text-center">What Our Customers Say</h2>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:2rem;">
+      <p class="section-intro" style="text-align:center;margin:0 auto 0.5rem;">Real feedback from homeowners who trusted ${data.businessName} for their ${data.primaryKeyword.toLowerCase()} needs.</p>
+      <div class="testimonials-grid stagger-children">
         ${testimonials.map((t: any) => `
-        <div style="background:${secondaryColor || '#f8fafc'};border-radius:12px;padding:1.5rem;border:1px solid rgba(0,0,0,0.06);">
-          <div style="color:#f59e0b;font-size:1.1rem;letter-spacing:2px;">${stars(t.rating || 5)}</div>
-          <p style="color:#334155;margin:0.75rem 0;font-style:italic;line-height:1.6;">"${t.text}"</p>
-          <p style="font-weight:600;color:#1e293b;margin:0;">— ${t.name}</p>
-          <p style="font-size:0.85rem;color:#64748b;margin:0.1rem 0 0;">${t.location || ''}</p>
+        <div class="testimonial-card reveal">
+          <div class="testimonial-stars">${stars(t.rating || 5)}</div>
+          <p class="testimonial-text">"${t.text}"</p>
+          <div class="testimonial-author">
+            <div class="testimonial-avatar">${(t.name || 'A').charAt(0).toUpperCase()}</div>
+            <div>
+              <div class="testimonial-name">${t.name}</div>
+              ${t.location ? `<div class="testimonial-location">${t.location}</div>` : ''}
+            </div>
+          </div>
         </div>`).join('')}
       </div>
     </div>
@@ -2710,6 +3130,7 @@ export function generateLocationPage(
 
   const serviceCardsHTML = serviceCards.map(card => `
     <article class="service-card">
+      <div class="service-card-icon" aria-hidden="true">${iconToSVG(card.icon || 'tool', secondaryColor)}</div>
       <h3>${card.h3}</h3>
       <p>${card.description}</p>
       <a href="${card.internalLink.slug}" class="service-card-link">${card.internalLink.anchor} →</a>
