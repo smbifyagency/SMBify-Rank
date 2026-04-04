@@ -134,6 +134,14 @@ export class SupabaseUsersStorage {
         return (data || []).map(toCamel);
     }
 
+    // Lightweight listing — excludes password hash to reduce payload
+    async listUsersLight() {
+        const { data } = await getClient().from("app_users")
+            .select("id, email, first_name, last_name, role, is_active, website_limit, websites_created, created_at, last_login_at")
+            .order("created_at", { ascending: false });
+        return (data || []).map(toCamel);
+    }
+
     async updateUserPassword(id: string, password: string) {
         return this.updateUser(id, { password });
     }
@@ -157,11 +165,6 @@ export class SupabaseUsersStorage {
             .eq("user_id", userId);
 
         const currentCount = count ?? 0;
-
-        // Auto-correct old DB values if they're too high
-        if ((user.websiteLimit ?? 0) > 3 && user.role === "user") {
-            this.updateUser(userId, { websiteLimit: 3 }).catch(() => { });
-        }
 
         return { canCreate: currentCount < limit, remaining: Math.max(limit - currentCount, 0), limit };
     }
@@ -337,6 +340,14 @@ export class SupabaseWebsitesStorage {
 
     async listWebsites() {
         const { data } = await getClient().from("app_websites").select("*").order("created_at", { ascending: false });
+        return (data || []).map(websiteFromDB);
+    }
+
+    // Lightweight listing — returns only metadata, no heavy JSONB blobs
+    async listWebsitesLight() {
+        const { data } = await getClient().from("app_websites")
+            .select("id, name, template, status, user_id, custom_domain, netlify_site_id, netlify_url, created_at, updated_at")
+            .order("created_at", { ascending: false });
         return (data || []).map(websiteFromDB);
     }
 
@@ -791,6 +802,7 @@ export const supabaseStorage = {
     updateUser: (id: string, updates: any) => users.updateUser(id, updates),
     deleteUser: (id: string) => users.deleteUser(id),
     listUsers: () => users.listUsers(),
+    listUsersLight: () => users.listUsersLight(),
     updateUserPassword: (id: string, pw: string) => users.updateUserPassword(id, pw),
     checkWebsiteLimit: (userId: string) => users.checkWebsiteLimit(userId),
     incrementWebsiteCount: (userId: string) => users.incrementWebsiteCount(userId),
@@ -802,6 +814,7 @@ export const supabaseStorage = {
     createWebsite: (w: any) => websites.createWebsite(w),
     getWebsite: (id: string) => websites.getWebsite(id),
     listWebsites: () => websites.listWebsites(),
+    listWebsitesLight: () => websites.listWebsitesLight(),
     listUserWebsites: (userId: string) => websites.listUserWebsites(userId),
     updateWebsite: (id: string, updates: any) => websites.updateWebsite(id, updates),
     deleteWebsite: (id: string) => websites.deleteWebsite(id),

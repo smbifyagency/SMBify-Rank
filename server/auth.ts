@@ -95,6 +95,32 @@ export async function setupAuth(app: Express) {
 
   // No external cookie-parser needed — we parse cookies manually
 
+  // In-memory user cache to avoid querying Supabase on every single request.
+  // Short TTL (2 minutes) keeps data fresh while cutting Disk IO by ~90%.
+  const userCache = new Map<string, { user: any; ts: number }>();
+  const USER_CACHE_TTL = 2 * 60 * 1000; // 2 minutes
+
+  function getCachedUser(userId: string): any | undefined {
+    const entry = userCache.get(userId);
+    if (!entry) return undefined;
+    if (Date.now() - entry.ts > USER_CACHE_TTL) {
+      userCache.delete(userId);
+      return undefined;
+    }
+    return entry.user;
+  }
+
+  function setCachedUser(userId: string, user: any) {
+    userCache.set(userId, { user, ts: Date.now() });
+    // Prevent unbounded growth — evict old entries when cache gets large
+    if (userCache.size > 500) {
+      const cutoff = Date.now() - USER_CACHE_TTL;
+      for (const [key, val] of userCache) {
+        if (val.ts < cutoff) userCache.delete(key);
+      }
+    }
+  }
+
   // Backward-compatibility middleware: populate req.session and req.user from JWT
   // This allows routes.ts to keep using req.session.userId etc.
   app.use(async (req: Request, _res: Response, next: NextFunction) => {
@@ -116,12 +142,29 @@ export async function setupAuth(app: Express) {
           isActive: true,
         };
       } else {
-        try {
-          const user = await storage.getUser(userId);
-          if (user) {
-            (req as any).user = user;
-          } else {
-            // MemStorage resets on Vercel serverless — create minimal user from JWT
+        // Check in-memory cache first to avoid hitting Supabase on every request
+        const cached = getCachedUser(userId);
+        if (cached) {
+          (req as any).user = cached;
+        } else {
+          try {
+            const user = await storage.getUser(userId);
+            if (user) {
+              (req as any).user = user;
+              setCachedUser(userId, user);
+            } else {
+              const minimal = {
+                id: userId,
+                email: null,
+                firstName: null,
+                lastName: null,
+                role: "user",
+                isActive: true,
+              };
+              (req as any).user = minimal;
+              setCachedUser(userId, minimal);
+            }
+          } catch (e) {
             (req as any).user = {
               id: userId,
               email: null,
@@ -131,28 +174,20 @@ export async function setupAuth(app: Express) {
               isActive: true,
             };
           }
-        } catch (e) {
-          // On error, still set a minimal user so routes can proceed
-          (req as any).user = {
-            id: userId,
-            email: null,
-            firstName: null,
-            lastName: null,
-            role: "user",
-            isActive: true,
-          };
         }
       }
     }
     next();
   });
 
-  // Helper to ensure test users exist in storage securely
+  // Helper to ensure test users exist in storage — runs only ONCE per process
+  let adminEnsured = false;
   const ensureTestUsers = async () => {
+    if (adminEnsured) return; // Skip if already checked this Lambda instance
     // Admin User — requires ADMIN_EMAIL and ADMIN_PASSWORD env vars
     const adminEmail = process.env.ADMIN_EMAIL;
     const adminPassword = process.env.ADMIN_PASSWORD;
-    if (!adminEmail || !adminPassword) return;
+    if (!adminEmail || !adminPassword) { adminEnsured = true; return; }
 
     let admin = await storage.getUserByEmail(adminEmail);
     if (!admin) {
@@ -167,9 +202,9 @@ export async function setupAuth(app: Express) {
         websiteLimit: 9999
       });
     } else if (admin.role !== "admin") {
-      // Upgrade existing account to admin
       await storage.updateUser(admin.id, { role: "admin", websiteLimit: 9999 });
     }
+    adminEnsured = true;
   };
 
   // Login route

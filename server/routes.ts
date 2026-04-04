@@ -2006,8 +2006,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/admin/metrics', isAdmin, async (req, res) => {
     try {
-      const users = await storage.listUsers();
-      const websites = await storage.listWebsites();
+      // Use lightweight queries — no need for full JSONB blobs or password hashes
+      const users = await ((storage as any).listUsersLight?.() ?? storage.listUsers());
+      const websites = await ((storage as any).listWebsitesLight?.() ?? storage.listWebsites());
 
       const metrics = {
         totalUsers: users.length,
@@ -2029,10 +2030,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/admin/logs', isAdmin, async (req, res) => {
     try {
-      // Mock logs for now since we don't have a dedicated logs table
-      // In a real implementation, we'd query a generation_logs table or combine websites/blogPosts
-      const websites = await storage.listWebsites();
-      const users = await storage.listUsers();
+      // Use lightweight queries — only need id, userId, createdAt for logs
+      const websites = await ((storage as any).listWebsitesLight?.() ?? storage.listWebsites());
+      const users = await ((storage as any).listUsersLight?.() ?? storage.listUsers());
       const userMap = new Map(users.map((u: any) => [u.id, u.email]));
 
       const logs = websites.map((w: any, index: number) => ({
@@ -2141,9 +2141,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/users', isAdmin, async (req, res) => {
     try {
+      // Use lightweight queries — just need user metadata + website counts
       const [users, allWebsites] = await Promise.all([
-        storage.listUsers(),
-        storage.listWebsites(),
+        (storage as any).listUsersLight?.() ?? storage.listUsers(),
+        (storage as any).listWebsitesLight?.() ?? storage.listWebsites(),
       ]);
       // Count actual websites per user
       const countMap: Record<string, number> = {};
