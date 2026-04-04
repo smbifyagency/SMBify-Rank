@@ -224,10 +224,62 @@ function BlogWriterSection({ siteData, onPostsChange }: BlogWriterSectionProps) 
   const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [errors, setErrors] = useState<string[]>([]);
   const [expandedPost, setExpandedPost] = useState<string | null>(null);
+  const [showSuggestions, setShowSuggestions] = useState(false);
   const { toast } = useToast();
 
   const posts = siteData.blogPosts || [];
   const keywordLines = keywords.split('\n').map(k => k.trim()).filter(k => k.length > 0);
+
+  // Generate 30+ SEO keyword suggestions based on business info
+  const suggestedKeywords = (() => {
+    const biz = siteData.businessName || 'business';
+    const city = siteData.city || 'your city';
+    const state = siteData.state || '';
+    const loc = state ? `${city}, ${state}` : city;
+    const keyword = siteData.primaryKeyword || 'services';
+    const services = siteData.services || [];
+    const areas = siteData.serviceAreas || [];
+
+    const suggestions: string[] = [];
+
+    // Service-based keywords
+    services.slice(0, 8).forEach(s => {
+      suggestions.push(`${s} in ${loc}`);
+      suggestions.push(`best ${s.toLowerCase()} tips`);
+      suggestions.push(`how to choose ${s.toLowerCase()} company`);
+    });
+
+    // Location-based keywords
+    areas.slice(0, 5).forEach(a => {
+      suggestions.push(`${keyword} in ${a}`);
+      suggestions.push(`best ${keyword.toLowerCase()} company in ${a}`);
+    });
+
+    // General SEO keywords
+    suggestions.push(
+      `${keyword} cost guide ${new Date().getFullYear()}`,
+      `how much does ${keyword.toLowerCase()} cost`,
+      `${keyword} vs DIY - when to call a pro`,
+      `signs you need ${keyword.toLowerCase()}`,
+      `${keyword.toLowerCase()} checklist for homeowners`,
+      `top 10 ${keyword.toLowerCase()} mistakes to avoid`,
+      `${keyword.toLowerCase()} insurance claims guide`,
+      `emergency ${keyword.toLowerCase()} what to do first`,
+      `${keyword.toLowerCase()} maintenance tips`,
+      `how to find the best ${keyword.toLowerCase()} company`,
+      `${keyword.toLowerCase()} before and after guide`,
+      `seasonal ${keyword.toLowerCase()} tips for ${loc}`,
+      `commercial vs residential ${keyword.toLowerCase()}`,
+      `${keyword.toLowerCase()} FAQs answered`,
+      `why ${keyword.toLowerCase()} is important for your home`,
+      `${keyword.toLowerCase()} safety tips`,
+      `how long does ${keyword.toLowerCase()} take`,
+      `${keyword.toLowerCase()} warranties explained`,
+    );
+
+    // Dedupe and return
+    return [...new Set(suggestions)].slice(0, 35);
+  })();
 
   async function generateBlogs() {
     if (keywordLines.length === 0) {
@@ -341,6 +393,59 @@ function BlogWriterSection({ siteData, onPostsChange }: BlogWriterSectionProps) 
           <span>{keywordLines.length} keyword{keywordLines.length !== 1 ? 's' : ''} entered</span>
           <span>Max 30 per batch</span>
         </div>
+
+        {/* Suggested Keywords */}
+        <button
+          type="button"
+          onClick={() => setShowSuggestions(!showSuggestions)}
+          className="text-xs text-[#AADD00] hover:text-[#bef000] flex items-center gap-1"
+        >
+          <Sparkles className="w-3 h-3" />
+          {showSuggestions ? 'Hide' : 'Show'} suggested keywords ({suggestedKeywords.length})
+        </button>
+
+        {showSuggestions && (
+          <div className="rounded-lg border border-gray-700 bg-gray-800/50 p-3 space-y-2 max-h-60 overflow-y-auto">
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-gray-400 font-medium">Click to add keywords</p>
+              <button
+                type="button"
+                onClick={() => {
+                  const remaining = suggestedKeywords.filter(s => !keywordLines.includes(s));
+                  const toAdd = remaining.slice(0, 30 - keywordLines.length);
+                  if (toAdd.length === 0) return;
+                  setKeywords(prev => (prev.trim() ? prev.trim() + '\n' : '') + toAdd.join('\n'));
+                  toast({ title: `Added ${toAdd.length} keywords` });
+                }}
+                className="text-xs text-[#AADD00] hover:underline"
+              >
+                Add all
+              </button>
+            </div>
+            <div className="flex flex-wrap gap-1.5">
+              {suggestedKeywords.map((s, i) => {
+                const isAdded = keywordLines.includes(s);
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    disabled={isAdded}
+                    onClick={() => {
+                      if (keywordLines.length >= 30) {
+                        toast({ title: "Max 30 keywords", variant: "destructive" });
+                        return;
+                      }
+                      setKeywords(prev => (prev.trim() ? prev.trim() + '\n' : '') + s);
+                    }}
+                    className={`text-xs px-2 py-1 rounded-full border transition ${isAdded ? 'border-green-800 bg-green-950/40 text-green-500 cursor-default' : 'border-gray-600 bg-gray-900 text-gray-300 hover:border-[#AADD00] hover:text-[#AADD00]'}`}
+                  >
+                    {isAdded ? '✓ ' : '+ '}{s}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Settings Row */}
@@ -1667,32 +1772,114 @@ export default function WDSiteEditor() {
                 </ContentSection>
               )}
 
-              {/* Local-service AI content summary */}
+              {/* Local-service AI content — editable */}
               {!siteData.homepageContent && ((siteData as any)._aiIntroParas || (siteData as any)._aiFaqs || (siteData as any)._aiSeoBody || (siteData as any)._aiProcessSteps) && (
-                <div className="rounded-lg border border-green-800 bg-green-950/40 p-4 space-y-2">
-                  <p className="text-xs font-semibold text-green-400 flex items-center gap-1">
-                    <CheckCircle2 className="w-3.5 h-3.5" /> AI content generated
-                  </p>
+                <div className="space-y-4">
+                  {/* Intro Paragraphs */}
                   {(siteData as any)._aiIntroParas && (
-                    <div className="text-xs text-gray-400 space-y-1">
-                      <p className="text-gray-500 font-medium">Intro paragraphs:</p>
+                    <div className="rounded-lg border border-gray-700 p-3 space-y-2">
+                      <p className="text-xs font-semibold text-green-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Intro Paragraphs ({((siteData as any)._aiIntroParas as string[]).length})
+                      </p>
                       {((siteData as any)._aiIntroParas as string[]).map((p: string, i: number) => (
-                        <p key={i} className="line-clamp-2 text-gray-400">{p}</p>
+                        <Textarea
+                          key={i}
+                          value={p}
+                          onChange={e => {
+                            const updated = [...(siteData as any)._aiIntroParas];
+                            updated[i] = e.target.value;
+                            setSiteData({ ...siteData, _aiIntroParas: updated } as any);
+                          }}
+                          className="bg-gray-800 border-gray-700 text-white text-xs"
+                          rows={3}
+                        />
                       ))}
                     </div>
                   )}
+
+                  {/* Process Steps */}
+                  {(siteData as any)._aiProcessSteps && (
+                    <div className="rounded-lg border border-gray-700 p-3 space-y-2">
+                      <p className="text-xs font-semibold text-green-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Process Steps ({((siteData as any)._aiProcessSteps as any[]).length})
+                      </p>
+                      {((siteData as any)._aiProcessSteps as any[]).map((step: any, i: number) => (
+                        <div key={i} className="flex gap-2 items-start">
+                          <span className="text-xs text-[#AADD00] font-bold mt-2 w-4 flex-shrink-0">{i + 1}.</span>
+                          <div className="flex-1 space-y-1">
+                            <Input
+                              value={step.title || step.step || ''}
+                              onChange={e => {
+                                const updated = [...(siteData as any)._aiProcessSteps];
+                                updated[i] = { ...updated[i], title: e.target.value, step: e.target.value };
+                                setSiteData({ ...siteData, _aiProcessSteps: updated } as any);
+                              }}
+                              className="bg-gray-800 border-gray-700 text-white text-xs h-8"
+                              placeholder="Step title"
+                            />
+                            <Input
+                              value={step.description || step.desc || ''}
+                              onChange={e => {
+                                const updated = [...(siteData as any)._aiProcessSteps];
+                                updated[i] = { ...updated[i], description: e.target.value, desc: e.target.value };
+                                setSiteData({ ...siteData, _aiProcessSteps: updated } as any);
+                              }}
+                              className="bg-gray-800 border-gray-700 text-white text-xs h-8"
+                              placeholder="Description"
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* FAQs */}
                   {(siteData as any)._aiFaqs && (
-                    <div className="text-xs text-gray-400 space-y-1 border-t border-gray-700 pt-2">
-                      <p className="text-gray-500 font-medium">FAQs ({((siteData as any)._aiFaqs as any[]).length}):</p>
-                      {((siteData as any)._aiFaqs as any[]).slice(0, 3).map((faq: any, i: number) => (
-                        <p key={i} className="truncate">Q: {faq.question}</p>
+                    <div className="rounded-lg border border-gray-700 p-3 space-y-2">
+                      <p className="text-xs font-semibold text-green-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> FAQs ({((siteData as any)._aiFaqs as any[]).length})
+                      </p>
+                      {((siteData as any)._aiFaqs as any[]).map((faq: any, i: number) => (
+                        <div key={i} className="space-y-1 border-b border-gray-800 pb-2 last:border-0">
+                          <Input
+                            value={faq.question || ''}
+                            onChange={e => {
+                              const updated = [...(siteData as any)._aiFaqs];
+                              updated[i] = { ...updated[i], question: e.target.value };
+                              setSiteData({ ...siteData, _aiFaqs: updated } as any);
+                            }}
+                            className="bg-gray-800 border-gray-700 text-white text-xs h-8"
+                            placeholder="Question"
+                          />
+                          <Textarea
+                            value={faq.answer || ''}
+                            onChange={e => {
+                              const updated = [...(siteData as any)._aiFaqs];
+                              updated[i] = { ...updated[i], answer: e.target.value };
+                              setSiteData({ ...siteData, _aiFaqs: updated } as any);
+                            }}
+                            className="bg-gray-800 border-gray-700 text-white text-xs"
+                            rows={2}
+                          />
+                        </div>
                       ))}
-                      {((siteData as any)._aiFaqs as any[]).length > 3 && (
-                        <p className="text-gray-600">+ {((siteData as any)._aiFaqs as any[]).length - 3} more</p>
-                      )}
                     </div>
                   )}
-                  <p className="text-xs text-gray-600 pt-1">Click the "Regenerate" button above to refresh AI content.</p>
+
+                  {/* SEO Body */}
+                  {(siteData as any)._aiSeoBody && (
+                    <div className="rounded-lg border border-gray-700 p-3 space-y-2">
+                      <p className="text-xs font-semibold text-green-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> SEO Body Text
+                      </p>
+                      <Textarea
+                        value={(siteData as any)._aiSeoBody}
+                        onChange={e => setSiteData({ ...siteData, _aiSeoBody: e.target.value } as any)}
+                        className="bg-gray-800 border-gray-700 text-white text-xs"
+                        rows={6}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
