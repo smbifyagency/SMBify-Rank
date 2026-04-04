@@ -197,6 +197,10 @@ function siteDataToWDData(data: WDSiteData): Record<string, any> {
     _aiFaqs: (data as any)._aiFaqs,
     _aiSeoBody: (data as any)._aiSeoBody,
     _aiProcessSteps: (data as any)._aiProcessSteps,
+    _aiWhyChooseUs: (data as any)._aiWhyChooseUs,
+    _aiAboutContent: (data as any)._aiAboutContent,
+    _aiTestimonials: (data as any)._aiTestimonials,
+    _aiServiceDescs: (data as any)._aiServiceDescs,
     blogPosts: data.blogPosts || [],
     generateBlog: (data.blogPosts && data.blogPosts.length > 0) ? true : false,
   } as any;
@@ -957,6 +961,10 @@ export default function WDSiteEditor() {
         _aiFaqs: bd._aiFaqs,
         _aiSeoBody: bd._aiSeoBody,
         _aiProcessSteps: bd._aiProcessSteps,
+        _aiWhyChooseUs: bd._aiWhyChooseUs,
+        _aiAboutContent: bd._aiAboutContent,
+        _aiTestimonials: bd._aiTestimonials,
+        _aiServiceDescs: bd._aiServiceDescs,
         netlifyUrl: data.netlifyUrl,
         deploymentStatus: data.netlifyDeploymentStatus,
       } as any;
@@ -1091,6 +1099,10 @@ export default function WDSiteEditor() {
         _aiFaqs: content.faqs,
         _aiSeoBody: content.seoBody,
         _aiProcessSteps: content.processSteps,
+        _aiWhyChooseUs: content.whyChooseUs,
+        _aiAboutContent: content.aboutContent,
+        _aiTestimonials: content.testimonials,
+        _aiServiceDescs: content.serviceDescriptions,
       } as any;
       setSiteData(next);
       rebuildPreview(next);
@@ -1857,7 +1869,7 @@ export default function WDSiteEditor() {
                   </Button>
                 </div>
                 <p className="text-xs text-gray-500">
-                  Generate unique, SEO-optimized content — intro paragraphs, FAQs, process steps, and SEO body.
+                  Generate unique, SEO-optimized content — intro paragraphs, FAQs, process steps, SEO body, why choose us, about page, testimonials, and service descriptions.
                 </p>
 
                 {/* AI Provider selector + Generate button */}
@@ -1894,7 +1906,7 @@ export default function WDSiteEditor() {
                 )}
 
                 {/* Status badges */}
-                {((siteData as any)._aiIntroParas || (siteData as any)._aiFaqs || (siteData as any)._aiSeoBody || (siteData as any)._aiProcessSteps) && (
+                {((siteData as any)._aiIntroParas || (siteData as any)._aiFaqs || (siteData as any)._aiSeoBody || (siteData as any)._aiProcessSteps || (siteData as any)._aiWhyChooseUs || (siteData as any)._aiAboutContent || (siteData as any)._aiTestimonials || (siteData as any)._aiServiceDescs) && (
                   <div className="flex flex-wrap gap-2 pt-1">
                     {(siteData as any)._aiIntroParas && (
                       <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-950/40 border border-green-800 rounded px-2 py-0.5">
@@ -1914,6 +1926,26 @@ export default function WDSiteEditor() {
                     {(siteData as any)._aiSeoBody && (
                       <span className="inline-flex items-center gap-1 text-xs text-green-400 bg-green-950/40 border border-green-800 rounded px-2 py-0.5">
                         <CheckCircle2 className="w-3 h-3" /> SEO body
+                      </span>
+                    )}
+                    {(siteData as any)._aiWhyChooseUs && (
+                      <span className="inline-flex items-center gap-1 text-xs text-blue-400 bg-blue-950/40 border border-blue-800 rounded px-2 py-0.5">
+                        <CheckCircle2 className="w-3 h-3" /> Why Us ({((siteData as any)._aiWhyChooseUs as any[]).length})
+                      </span>
+                    )}
+                    {(siteData as any)._aiAboutContent && (
+                      <span className="inline-flex items-center gap-1 text-xs text-blue-400 bg-blue-950/40 border border-blue-800 rounded px-2 py-0.5">
+                        <CheckCircle2 className="w-3 h-3" /> About
+                      </span>
+                    )}
+                    {(siteData as any)._aiTestimonials && (
+                      <span className="inline-flex items-center gap-1 text-xs text-purple-400 bg-purple-950/40 border border-purple-800 rounded px-2 py-0.5">
+                        <CheckCircle2 className="w-3 h-3" /> Reviews ({((siteData as any)._aiTestimonials as any[]).length})
+                      </span>
+                    )}
+                    {(siteData as any)._aiServiceDescs && (
+                      <span className="inline-flex items-center gap-1 text-xs text-purple-400 bg-purple-950/40 border border-purple-800 rounded px-2 py-0.5">
+                        <CheckCircle2 className="w-3 h-3" /> Services ({Object.keys((siteData as any)._aiServiceDescs).length})
                       </span>
                     )}
                   </div>
@@ -2097,6 +2129,122 @@ export default function WDSiteEditor() {
                         className="bg-gray-800 border-gray-700 text-white text-xs"
                         rows={6}
                       />
+                    </div>
+                  )}
+
+                  {/* Why Choose Us */}
+                  {(siteData as any)._aiWhyChooseUs && (
+                    <div className="rounded-lg border border-blue-900/50 p-3 space-y-2">
+                      <p className="text-xs font-semibold text-blue-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Why Choose Us ({((siteData as any)._aiWhyChooseUs as any[]).length})
+                      </p>
+                      {((siteData as any)._aiWhyChooseUs as any[]).map((item: any, i: number) => (
+                        <div key={i} className="space-y-1 border-b border-gray-800 pb-2 last:border-0">
+                          <Input
+                            value={item.heading || ''}
+                            onChange={e => {
+                              const updated = [...(siteData as any)._aiWhyChooseUs];
+                              updated[i] = { ...updated[i], heading: e.target.value };
+                              setSiteData({ ...siteData, _aiWhyChooseUs: updated } as any);
+                            }}
+                            className="bg-gray-800 border-gray-700 text-white text-xs h-8"
+                            placeholder="Heading"
+                          />
+                          <Textarea
+                            value={item.body || ''}
+                            onChange={e => {
+                              const updated = [...(siteData as any)._aiWhyChooseUs];
+                              updated[i] = { ...updated[i], body: e.target.value };
+                              setSiteData({ ...siteData, _aiWhyChooseUs: updated } as any);
+                            }}
+                            className="bg-gray-800 border-gray-700 text-white text-xs"
+                            rows={2}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* About Content */}
+                  {(siteData as any)._aiAboutContent && (
+                    <div className="rounded-lg border border-blue-900/50 p-3 space-y-2">
+                      <p className="text-xs font-semibold text-blue-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> About Us Content
+                      </p>
+                      <Textarea
+                        value={(siteData as any)._aiAboutContent}
+                        onChange={e => setSiteData({ ...siteData, _aiAboutContent: e.target.value } as any)}
+                        className="bg-gray-800 border-gray-700 text-white text-xs"
+                        rows={6}
+                      />
+                    </div>
+                  )}
+
+                  {/* Testimonials */}
+                  {(siteData as any)._aiTestimonials && (
+                    <div className="rounded-lg border border-purple-900/50 p-3 space-y-2">
+                      <p className="text-xs font-semibold text-purple-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Customer Reviews ({((siteData as any)._aiTestimonials as any[]).length})
+                      </p>
+                      {((siteData as any)._aiTestimonials as any[]).map((review: any, i: number) => (
+                        <div key={i} className="space-y-1 border-b border-gray-800 pb-2 last:border-0">
+                          <div className="flex gap-2">
+                            <Input
+                              value={review.name || ''}
+                              onChange={e => {
+                                const updated = [...(siteData as any)._aiTestimonials];
+                                updated[i] = { ...updated[i], name: e.target.value };
+                                setSiteData({ ...siteData, _aiTestimonials: updated } as any);
+                              }}
+                              className="bg-gray-800 border-gray-700 text-white text-xs h-8 flex-1"
+                              placeholder="Name"
+                            />
+                            <Input
+                              value={review.location || ''}
+                              onChange={e => {
+                                const updated = [...(siteData as any)._aiTestimonials];
+                                updated[i] = { ...updated[i], location: e.target.value };
+                                setSiteData({ ...siteData, _aiTestimonials: updated } as any);
+                              }}
+                              className="bg-gray-800 border-gray-700 text-white text-xs h-8 w-28"
+                              placeholder="Location"
+                            />
+                          </div>
+                          <Textarea
+                            value={review.text || ''}
+                            onChange={e => {
+                              const updated = [...(siteData as any)._aiTestimonials];
+                              updated[i] = { ...updated[i], text: e.target.value };
+                              setSiteData({ ...siteData, _aiTestimonials: updated } as any);
+                            }}
+                            className="bg-gray-800 border-gray-700 text-white text-xs"
+                            rows={2}
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Service Descriptions */}
+                  {(siteData as any)._aiServiceDescs && (
+                    <div className="rounded-lg border border-purple-900/50 p-3 space-y-2">
+                      <p className="text-xs font-semibold text-purple-400 flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Service Descriptions ({Object.keys((siteData as any)._aiServiceDescs).length})
+                      </p>
+                      {Object.entries((siteData as any)._aiServiceDescs).map(([svc, desc]: [string, any], i: number) => (
+                        <div key={i} className="space-y-1 border-b border-gray-800 pb-2 last:border-0">
+                          <Label className="text-xs text-gray-400">{svc}</Label>
+                          <Textarea
+                            value={desc || ''}
+                            onChange={e => {
+                              const updated = { ...(siteData as any)._aiServiceDescs, [svc]: e.target.value };
+                              setSiteData({ ...siteData, _aiServiceDescs: updated } as any);
+                            }}
+                            className="bg-gray-800 border-gray-700 text-white text-xs"
+                            rows={3}
+                          />
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>

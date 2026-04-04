@@ -2067,7 +2067,15 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
     { icon: 'search', heading: 'Thorough Assessment', body: 'We inspect fully and document everything so you understand exactly what needs to be done and why.' },
     { icon: 'clipboard', heading: 'Transparent Pricing', body: 'No surprise charges. We provide written estimates and explain every step before work begins.' },
   ];
-  const whyPoints = content?.whyUsSection?.points || defaultWhyPoints;
+  // AI-generated why-choose-us overrides category defaults
+  const aiWhyUs = (data as any)._aiWhyChooseUs;
+  const whyPoints = content?.whyUsSection?.points || (Array.isArray(aiWhyUs) && aiWhyUs.length > 0
+    ? aiWhyUs.map((pt: any, i: number) => ({
+        icon: ['alert','certified','home','zap','search','clipboard'][i] || 'check',
+        heading: pt.heading,
+        body: pt.body,
+      }))
+    : defaultWhyPoints);
 
   const processH2 = content?.processSection?.h2 || data._processH2 || `Our ${data.primaryKeyword} Process in ${data.city}`;
   const processSteps = content?.processSection?.steps || data._processSteps || [
@@ -2281,6 +2289,28 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
     </div>
   </section>
 
+  ${(() => {
+    const testimonials = (data as any)._aiTestimonials;
+    if (!Array.isArray(testimonials) || testimonials.length === 0) return '';
+    const stars = (n: number) => '★'.repeat(n) + '☆'.repeat(5 - n);
+    return `
+  <!-- ── Testimonials ──────────────────────────────────── -->
+  <section aria-labelledby="testimonials-heading" class="reveal">
+    <div class="container">
+      <h2 id="testimonials-heading" class="text-center">What Our Customers Say</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-top:2rem;">
+        ${testimonials.map((t: any) => `
+        <div style="background:${secondaryColor || '#f8fafc'};border-radius:12px;padding:1.5rem;border:1px solid rgba(0,0,0,0.06);">
+          <div style="color:#f59e0b;font-size:1.1rem;letter-spacing:2px;">${stars(t.rating || 5)}</div>
+          <p style="color:#334155;margin:0.75rem 0;font-style:italic;line-height:1.6;">"${t.text}"</p>
+          <p style="font-weight:600;color:#1e293b;margin:0;">— ${t.name}</p>
+          <p style="font-size:0.85rem;color:#64748b;margin:0.1rem 0 0;">${t.location || ''}</p>
+        </div>`).join('')}
+      </div>
+    </div>
+  </section>`;
+  })()}
+
   <!-- ── CTA ───────────────────────────────────────────── -->
   <section class="cta-section" aria-labelledby="cta-heading">
     <div class="container reveal">
@@ -2347,11 +2377,17 @@ export function generateServicePage(
   const trustBadges = content?.hero?.trustBadges || data._trustBadges || ['Licensed & Insured', '24/7 Available', 'Free Estimates', 'Upfront Pricing'];
 
   const overviewH2 = content?.overviewSection?.h2 || `Professional ${service} in ${data.city} — What to Expect`;
-  const overviewParas = content?.overviewSection?.body || [
+  // Use AI-generated service description if available for this service
+  const aiServiceDesc = (data as any)._aiServiceDescs?.[service];
+  const overviewParas = content?.overviewSection?.body || (aiServiceDesc ? [
+    aiServiceDesc,
+    `Our ${data.city} technicians diagnose the full scope of the problem before any work begins, giving you a clear picture and an honest written estimate. We address root causes, not just visible symptoms, so the problem doesn't come back.`,
+    `${data.businessName} has built its reputation throughout ${data.city} on transparent pricing, quality workmanship, and results that last. When you need ${service.toLowerCase()} done right, one call is all it takes.`,
+  ] : [
     `${service} in ${data.city} requires licensed professionals with the right tools, training, and local experience. Whether it's an emergency or a planned project, ${data.businessName} responds fast and handles the job completely — protecting your property and your investment.`,
     `Our ${data.city} technicians diagnose the full scope of the problem before any work begins, giving you a clear picture and an honest written estimate. We address root causes, not just visible symptoms, so the problem doesn't come back.`,
     `${data.businessName} has built its reputation throughout ${data.city} on transparent pricing, quality workmanship, and results that last. When you need ${service.toLowerCase()} done right, one call is all it takes.`,
-  ];
+  ]);
 
   const processH2 = content?.processSection?.h2 || `Our ${service} Process in ${data.city}`;
   const processIntro = content?.processSection?.intro || `Every ${service.toLowerCase()} project follows a systematic process to ensure thorough results.`;
@@ -2837,7 +2873,7 @@ export function generateAboutPage(data: WDBusinessData, domain: string): string 
   const canonicalUrl = `https://${domain}.netlify.app/about.html`;
   const yearsText = data.yearsInBusiness ? `With ${data.yearsInBusiness} years of experience` : 'With years of experience';
 
-  const aboutText = data.aboutContent ||
+  const aboutText = (data as any)._aiAboutContent || data.aboutContent ||
     `${data.businessName} was founded to give homeowners and businesses in ${data.city} a ${data.primaryKeyword.toLowerCase()} company they could genuinely trust. Too many property owners have been let down by contractors who cut corners, gave vague estimates, or disappeared after collecting payment.
 
 We built this company differently. Every technician we hire is properly licensed and trained before they set foot on a customer's property. Every project is documented thoroughly so you always know exactly what was done and why.

@@ -1038,8 +1038,15 @@ async function generateLocalServiceAIContent(
     if (Array.isArray(result.faqs) && result.faqs.length > 0) out.faqs = result.faqs;
     if (typeof result.seoBody === 'string' && result.seoBody.trim()) out.seoBody = result.seoBody;
     if (Array.isArray(result.processSteps) && result.processSteps.length > 0) out.processSteps = result.processSteps;
+    if (Array.isArray(result.whyChooseUs) && result.whyChooseUs.length > 0) out.whyChooseUs = result.whyChooseUs;
+    if (typeof result.aboutContent === 'string' && result.aboutContent.trim()) out.aboutContent = result.aboutContent;
+    if (Array.isArray(result.testimonials) && result.testimonials.length > 0) out.testimonials = result.testimonials;
+    if (result.serviceDescriptions && typeof result.serviceDescriptions === 'object') {
+      const { _instructions, ...descs } = result.serviceDescriptions;
+      if (Object.keys(descs).length > 0) out.serviceDescriptions = descs;
+    }
 
-    console.log(`AI content generated: introParas=${out.introParas?.length ?? 0}, faqs=${out.faqs?.length ?? 0}`);
+    console.log(`AI content generated: introParas=${out.introParas?.length ?? 0}, faqs=${out.faqs?.length ?? 0}, whyChooseUs=${out.whyChooseUs?.length ?? 0}, testimonials=${out.testimonials?.length ?? 0}, serviceDescs=${out.serviceDescriptions ? Object.keys(out.serviceDescriptions).length : 0}`);
     return out;
   } catch (err) {
     console.error('Local service AI content generation failed, using template fallback:', err);
@@ -6550,10 +6557,14 @@ Generated on: ${new Date().toISOString()}`;
       const updatedBd = {
         ...bd,
         contentAiProvider: aiContent.providerUsed ?? bd.contentAiProvider,
-        _aiIntroParas:   aiContent.introParas   ?? bd._aiIntroParas,
-        _aiFaqs:         aiContent.faqs         ?? bd._aiFaqs,
-        _aiSeoBody:      aiContent.seoBody       ?? bd._aiSeoBody,
-        _aiProcessSteps: aiContent.processSteps  ?? bd._aiProcessSteps,
+        _aiIntroParas:       aiContent.introParas       ?? bd._aiIntroParas,
+        _aiFaqs:             aiContent.faqs             ?? bd._aiFaqs,
+        _aiSeoBody:          aiContent.seoBody           ?? bd._aiSeoBody,
+        _aiProcessSteps:     aiContent.processSteps      ?? bd._aiProcessSteps,
+        _aiWhyChooseUs:      aiContent.whyChooseUs       ?? bd._aiWhyChooseUs,
+        _aiAboutContent:     aiContent.aboutContent      ?? bd._aiAboutContent,
+        _aiTestimonials:     aiContent.testimonials      ?? bd._aiTestimonials,
+        _aiServiceDescs:     aiContent.serviceDescriptions ?? bd._aiServiceDescs,
       };
 
       await storage.updateWebsite(id, { businessData: updatedBd });

@@ -574,10 +574,22 @@ OUTPUT FORMAT (strict JSON, no markdown fences):
     { "heading": "Trust point heading", "body": "80-120 word unique reason" },
     { "heading": "Trust point heading", "body": "80-120 word unique reason" },
     { "heading": "Trust point heading", "body": "80-120 word unique reason" }
-  ]
+  ],
+  "aboutContent": "250-350 word about us section. Write as the business owner describing the company history, mission, values, and commitment to ${biz.primaryCity} residents. Mention years of experience, certifications, team size, and what drives the business. Sound authentic and personal.",
+  "testimonials": [
+    { "name": "First Last", "location": "${biz.primaryCity}", "rating": 5, "text": "60-100 word realistic customer review mentioning specific service received and why they recommend ${biz.name}" },
+    { "name": "First Last", "location": "Nearby city", "rating": 5, "text": "60-100 word realistic customer review" },
+    { "name": "First Last", "location": "${biz.primaryCity}", "rating": 5, "text": "60-100 word realistic customer review" },
+    { "name": "First Last", "location": "Nearby city", "rating": 4, "text": "60-100 word realistic customer review" },
+    { "name": "First Last", "location": "${biz.primaryCity}", "rating": 5, "text": "60-100 word realistic customer review" }
+  ],
+  "serviceDescriptions": {
+    "_instructions": "For each service listed below, write a 100-150 word description that explains what the service includes, when homeowners need it, and why ${biz.name} excels at it. Use the exact service names as keys.",
+    ${formatList(biz.services).split(', ').slice(0, 8).map(s => `"${s.trim()}": "100-150 word service description"`).join(',\n    ')}
+  }
 }
 
-Generate all content above as valid JSON. Each introParas item must be a single string paragraph. Total content must be at least 3000 words.
+Generate all content above as valid JSON. Each introParas item must be a single string paragraph. Total content must be at least 4000 words.
 `;
 }
 
