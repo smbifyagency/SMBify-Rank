@@ -363,6 +363,14 @@ function buildServiceSlug(service: string, city: string): string {
   return `services/${slugify(service)}-${slugify(city)}.html`;
 }
 
+/**
+ * Strip trailing "Services"/"services" from a keyword to avoid double-word bugs.
+ * E.g. "Plumbing Services" → "Plumbing" so `${kw} Services` won't produce "Plumbing Services Services".
+ */
+function kwBase(keyword: string): string {
+  return keyword.replace(/\s+services$/i, '').trim();
+}
+
 // ─── Icon name → emoji (AI returns names like "shield", "clock") ────────────
 /** Generate a professional inline SVG icon. Falls back to a checkmark. */
 function iconToSVG(icon: string, color: string = 'currentColor'): string {
@@ -602,7 +610,7 @@ function generateFooter(data: WDBusinessData, currentPath: string = ''): string 
     <div class="footer-inner">
       <div class="footer-brand">
         ${brandBlock}
-        <p class="footer-brand-desc">${data.businessName} provides professional ${data.primaryKeyword.toLowerCase()} services in ${data.city}, ${data.state} and surrounding areas.</p>
+        <p class="footer-brand-desc">${data.businessName} provides professional ${kwBase(data.primaryKeyword).toLowerCase()} services in ${data.city}, ${data.state} and surrounding areas.</p>
         ${socialLinksHTML}
         <div style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:0.35rem 0.75rem;">
           <a href="${prefix}about.html" style="color:#94a3b8;font-size:.85rem;">About</a>
@@ -675,7 +683,7 @@ function generateLocalBusinessSchema(data: WDBusinessData, domain: string): stri
     "@type": "LocalBusiness",
     "@id": `https://${domain}/#organization`,
     "name": data.businessName,
-    "description": data._schemaDescription || `Professional water damage restoration services in ${data.city}, ${data.state}. 24/7 emergency response for water extraction, structural drying, mold remediation, and more.`,
+    "description": data._schemaDescription || `Professional ${kwBase(data.primaryKeyword || 'restoration').toLowerCase()} services in ${data.city}, ${data.state}. 24/7 emergency response. Call ${data.phone}.`,
     "telephone": data.phone,
     "email": data.email || undefined,
     "address": {
@@ -693,7 +701,7 @@ function generateLocalBusinessSchema(data: WDBusinessData, domain: string): stri
     "openingHours": "Mo-Su 00:00-24:00",
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
-      "name": data._schemaOfferCatalogName || "Water Damage Restoration Services",
+      "name": data._schemaOfferCatalogName || `${kwBase(data.primaryKeyword || 'Professional')} Services`,
       "itemListElement": data.services.map(service => ({
         "@type": "Offer",
         "itemOffered": {
@@ -779,7 +787,7 @@ function generateServiceSchema(data: WDBusinessData, domain: string): string {
   const schema = {
     "@context": "https://schema.org",
     "@type": "Service",
-    "serviceType": data.primaryKeyword || "Water Damage Restoration",
+    "serviceType": data.primaryKeyword || "Professional Services",
     "provider": {
       "@type": "LocalBusiness",
       "name": data.businessName,
@@ -1820,65 +1828,6 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   color: #64748b;
 }
 
-/* ── Pre-Footer CTA Banner ─────────────────────── */
-.prefooter-cta {
-  background: ${accentColor};
-  color: #fff;
-  padding: 2rem 0;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-
-.prefooter-cta::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, rgba(0,0,0,0.08) 0%, transparent 50%, rgba(0,0,0,0.08) 100%);
-  pointer-events: none;
-}
-
-.prefooter-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-  position: relative;
-  z-index: 1;
-}
-
-.prefooter-cta h3 {
-  font-size: 1.3rem;
-  font-weight: 800;
-  margin: 0;
-  color: #fff;
-}
-
-.prefooter-cta .prefooter-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: #fff;
-  color: ${accentColor};
-  padding: 0.75rem 1.75rem;
-  border-radius: 50px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  text-decoration: none;
-  transition: all .25s;
-  box-shadow: 0 4px 12px rgba(0,0,0,.15);
-}
-
-.prefooter-cta .prefooter-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0,0,0,.25);
-  text-decoration: none;
-}
-
 /* ── Breadcrumb ────────────────────────────────── */
 .breadcrumb {
   padding: 0.75rem 0;
@@ -2475,21 +2424,21 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   // Fallback content if AI content not yet generated
   const h1 = content?.hero?.h1 || `${data.primaryKeyword} in ${data.city}, ${data.state}`;
   const heroSub = content?.hero?.subheadline || data._heroSubheading || `Trusted ${data.primaryKeyword.toLowerCase()} specialists serving ${data.city} and surrounding areas. We respond fast to protect your property.`;
-  const introH2 = content?.intro?.h2 || data._introH2 || `${data.primaryKeyword} Services in ${data.city}`;
+  const introH2 = content?.intro?.h2 || data._introH2 || `${kwBase(data.primaryKeyword)} Services in ${data.city}`;
   const introParas = content?.intro?.paragraphs || data._introParas || [
-    `When water damage strikes your ${data.city} home or business, every minute matters. Moisture moves fast — soaking into walls, floors, and building materials before you even realize the full extent of the damage. ${data.businessName} provides rapid-response water damage restoration to limit destruction and get your property back to normal.`,
+    `When a ${data.primaryKeyword.toLowerCase()} emergency hits your ${data.city} home or business, every minute matters. Damage spreads fast — affecting walls, floors, and structural materials before you realize the full scope. ${data.businessName} provides rapid-response ${data.primaryKeyword.toLowerCase()} to limit destruction and get your property back to normal.`,
     `Our certified technicians arrive equipped with industrial-grade water extraction equipment, structural drying systems, and moisture detection tools. We handle everything from the initial assessment to the final walkthrough, keeping you informed at every step.`,
     `${data.businessName} has built a reputation throughout ${data.city} for honest assessments, thorough work, and professional service. We work directly with most insurance companies and can help you document the damage for your claim from day one.`,
   ];
 
-  const servH2 = content?.servicesSection?.h2 || data._servicesH2 || `Our ${data.primaryKeyword} Services in ${data.city}`;
-  const servIntro = content?.servicesSection?.intro || data._servicesIntro || `We offer a full range of professional ${data.primaryKeyword.toLowerCase()} services to homeowners and businesses throughout ${data.city}.`;
+  const servH2 = content?.servicesSection?.h2 || data._servicesH2 || `Our ${kwBase(data.primaryKeyword)} Services in ${data.city}`;
+  const servIntro = content?.servicesSection?.intro || data._servicesIntro || `We offer a full range of professional ${kwBase(data.primaryKeyword).toLowerCase()} services to homeowners and businesses throughout ${data.city}.`;
   const serviceCards = content?.servicesSection?.cards?.length
     ? content.servicesSection.cards
     : data.services.map(s => ({
         service: s,
         h3: s,
-        description: `Professional ${s.toLowerCase()} services for ${data.city} properties. Contact us for a free assessment.`,
+        description: `Professional ${kwBase(s).toLowerCase()} services for ${data.city} properties. Contact us for a free assessment.`,
         internalLink: { anchor: `Learn about ${s}`, slug: `services/${slugify(s)}-${slugify(data.city)}.html` },
       }));
 
@@ -2524,7 +2473,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   ];
 
   const locH2 = content?.locationsSection?.h2 || `Serving ${data.city} and Surrounding Communities`;
-  const locBody = content?.locationsSection?.body || data._locationsBody || `${data.businessName} provides professional ${data.primaryKeyword.toLowerCase()} services across ${data.city} and the surrounding region. Our crews are strategically positioned to reach most areas quickly. Whether you are in the heart of ${data.city} or a neighboring suburb, we are your local ${data.primaryKeyword.toLowerCase()} team.`;
+  const locBody = content?.locationsSection?.body || data._locationsBody || `${data.businessName} provides professional ${kwBase(data.primaryKeyword).toLowerCase()} services across ${data.city} and the surrounding region. Our crews are strategically positioned to reach most areas quickly. Whether you are in the heart of ${data.city} or a neighboring suburb, we are your local ${data.primaryKeyword.toLowerCase()} team.`;
 
   const locationLinks = content?.locationsSection?.locationLinks?.length
     ? content.locationsSection.locationLinks
@@ -2544,7 +2493,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
   const ctaBtn = content?.finalCTA?.ctaButton || data._ctaButton || 'Call for Emergency Help';
 
   const seoH2 = content?.seoFootnote?.h2 || `${data.primaryKeyword} - ${data.city}, ${data.state}`;
-  const seoBody = content?.seoFootnote?.body || data._seoBody || `${data.businessName} is ${data.city}'s trusted ${data.primaryKeyword.toLowerCase()} company. We provide comprehensive ${data.primaryKeyword.toLowerCase()} services to homeowners and businesses throughout ${data.city} and the surrounding region. Our licensed, insured team delivers fast, professional results on every job.`;
+  const seoBody = content?.seoFootnote?.body || data._seoBody || `${data.businessName} is ${data.city}'s trusted ${data.primaryKeyword.toLowerCase()} company. We provide full-service ${kwBase(data.primaryKeyword).toLowerCase()} solutions to homeowners and businesses throughout ${data.city} and the surrounding region. Our licensed, insured team delivers fast, professional results on every job.`;
 
   const servicesCardsHTML = serviceCards.map(card => `
       <article class="service-card" data-placeholder-section="service-${slugify(card.service)}">
@@ -2807,7 +2756,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
 
   return htmlShell({
     metaTitle: content?.metaTitle || `${data.primaryKeyword} in ${data.city} | ${data.businessName}`,
-    metaDescription: content?.metaDescription || `${data.businessName} provides professional ${data.primaryKeyword.toLowerCase()} services in ${data.city}, ${data.state}. Available 24/7 for emergencies. Call ${data.phone}.`,
+    metaDescription: content?.metaDescription || `${data.businessName} provides professional ${kwBase(data.primaryKeyword).toLowerCase()} services in ${data.city}, ${data.state}. Available 24/7 for emergencies. Call ${data.phone}.`,
     canonicalUrl,
     theme: resolveTheme(data),
     schemaBlocks: [
@@ -2841,7 +2790,7 @@ export function generateServicePage(
   const { secondaryColor, accentColor } = resolveTheme(data);
 
   const h1 = content?.hero?.h1 || `${service} in ${data.city}, ${data.state}`;
-  const heroSub = content?.hero?.subheadline || `Professional ${service.toLowerCase()} services for homeowners and businesses in ${data.city}. Fast response, certified technicians.`;
+  const heroSub = content?.hero?.subheadline || `Professional ${kwBase(service).toLowerCase()} services for homeowners and businesses in ${data.city}. Fast response, certified technicians.`;
   const trustBadges = content?.hero?.trustBadges || data._trustBadges || ['Licensed & Insured', '24/7 Available', 'Free Estimates', 'Upfront Pricing'];
 
   const overviewH2 = content?.overviewSection?.h2 || `Professional ${service} in ${data.city} — What to Expect`;
@@ -2908,7 +2857,7 @@ export function generateServicePage(
     { question: `Are you licensed and insured for ${service.toLowerCase()} in ${data.state}?`, answer: `Yes. ${data.businessName} is fully licensed and insured. All work is performed by qualified professionals following applicable codes and industry standards.` },
   ];
 
-  const crossH2 = content?.crossLinkSection?.h2 || `Related ${data.primaryKeyword} Services`;
+  const crossH2 = content?.crossLinkSection?.h2 || `Related ${kwBase(data.primaryKeyword)} Services`;
   const crossLinks = content?.crossLinkSection?.links?.length
     ? content.crossLinkSection.links
     : data.services
@@ -3124,7 +3073,7 @@ export function generateLocationPage(
   const { secondaryColor, accentColor } = resolveTheme(data);
 
   const h1 = content?.hero?.h1 || `${data.primaryKeyword} in ${city}, ${data.state}`;
-  const heroSub = content?.hero?.subheadline || `${data.businessName} provides fast, professional ${data.primaryKeyword.toLowerCase()} services in ${city}. Call now for a free estimate.`;
+  const heroSub = content?.hero?.subheadline || `${data.businessName} provides fast, professional ${kwBase(data.primaryKeyword).toLowerCase()} services in ${city}. Call now for a free estimate.`;
   const trustBadges = content?.hero?.trustBadges || data._trustBadges || ['Licensed & Insured', 'Free Estimates', 'Upfront Pricing', '24/7 Available'];
 
   const introH2 = content?.localIntroSection?.h2 || `${data.businessName} — ${data.primaryKeyword} Experts in ${city}`;
@@ -3134,8 +3083,8 @@ export function generateLocationPage(
     `${data.businessName} works with all major insurance providers when applicable and can guide you through the process from start to finish. We document everything to support your claim and keep you informed every step of the way.`,
   ];
 
-  const servCityH2 = content?.servicesInCitySection?.h2 || `Our ${data.primaryKeyword} Services in ${city}`;
-  const servCityIntro = content?.servicesInCitySection?.intro || `${data.businessName} provides a full range of professional ${data.primaryKeyword.toLowerCase()} services to homeowners and businesses throughout ${city} and surrounding areas.`;
+  const servCityH2 = content?.servicesInCitySection?.h2 || `Our ${kwBase(data.primaryKeyword)} Services in ${city}`;
+  const servCityIntro = content?.servicesInCitySection?.intro || `${data.businessName} provides a full range of professional ${kwBase(data.primaryKeyword).toLowerCase()} services to homeowners and businesses throughout ${city} and surrounding areas.`;
   const serviceCards = content?.servicesInCitySection?.serviceCards?.length
     ? content.servicesInCitySection.serviceCards
     : data.services.map(s => ({
@@ -3570,7 +3519,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
           <span class="why-us-icon">${iconToSVG('clipboard', secondaryColor)}</span>
           <div>
             <h3>Licensed &amp; Insured</h3>
-            <p>Fully licensed to operate in ${data.state} and carrying comprehensive liability insurance on every project.${data.licenseNumber ? ` License: ${data.licenseNumber}.` : ''}</p>
+            <p>Fully licensed to operate in ${data.state} and carrying full liability insurance on every project.${data.licenseNumber ? ` License: ${data.licenseNumber}.` : ''}</p>
           </div>
         </div>
         <div class="why-us-item">
@@ -3598,7 +3547,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
       <div class="benefits-grid" style="margin-top:1.5rem;">
         <div class="benefit-item">
           <h3>State Licensed &amp; Insured</h3>
-          <p>Fully licensed to operate in ${data.state} with comprehensive liability and workers' compensation insurance on every project.${data.licenseNumber ? ` License #${data.licenseNumber}.` : ''}</p>
+          <p>Fully licensed to operate in ${data.state} with full liability and workers' compensation insurance on every project.${data.licenseNumber ? ` License #${data.licenseNumber}.` : ''}</p>
         </div>
         <div class="benefit-item">
           <h3>Industry Certified</h3>
@@ -3619,7 +3568,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
   <section class="content-section" style="background:#f8fafc;">
     <div class="container">
       <h2>Service Area: ${data.city} and Surrounding Communities</h2>
-      <p style="color:#475569;">We provide ${data.primaryKeyword.toLowerCase()} services throughout ${data.city}, ${data.state} and the surrounding region. Our crews are positioned for fast response across our full service area.</p>
+      <p style="color:#475569;">We provide ${kwBase(data.primaryKeyword).toLowerCase()} services throughout ${data.city}, ${data.state} and the surrounding region. Our crews are positioned for fast response across our full service area.</p>
       <div class="locations-grid" style="margin-top:1.5rem;">
         ${data.serviceAreas.map(l => `<a href="locations/${slugify(l)}.html" class="location-link">${l}</a>`).join('')}
       </div>
@@ -3782,8 +3731,8 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
 
   <section class="cta-section" aria-labelledby="cta-heading">
     <div class="container">
-      <h2 id="cta-heading">Water Damage Cannot Wait</h2>
-      <p>Every hour increases the risk of mold and structural damage. Call now for immediate response.</p>
+      <h2 id="cta-heading">${data.primaryKeyword} Cannot Wait</h2>
+      <p>Every hour of delay increases risk. Call now for immediate response.</p>
       <div class="cta-actions">
         <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call ${data.phone}</a>
       </div>
@@ -3793,8 +3742,8 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
   ${generateFooter(data)}`;
 
   return htmlShell({
-    metaTitle: `Contact ${data.businessName} | Water Damage Restoration ${data.city}`,
-    metaDescription: `Contact ${data.businessName} for water damage restoration in ${data.city}, ${data.state}. Available 24/7 for emergencies. Call ${data.phone} or use our contact form.`,
+    metaTitle: `Contact ${data.businessName} | ${data.primaryKeyword} ${data.city}`,
+    metaDescription: `Contact ${data.businessName} for ${data.primaryKeyword.toLowerCase()} in ${data.city}, ${data.state}. Available 24/7 for emergencies. Call ${data.phone} or use our contact form.`,
     canonicalUrl,
     theme,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
@@ -3869,8 +3818,8 @@ export function generateFAQPage(data: WDBusinessData, domain: string): string {
   ];
 
   const categories = content?.categories || defaultCategories;
-  const h1 = content?.h1 || `Water Damage Restoration — Frequently Asked Questions`;
-  const intro = content?.intro || `Everything you need to know about water damage restoration, the claims process, mold prevention, and what to expect when you call ${data.businessName} in ${data.city}.`;
+  const h1 = content?.h1 || `${data.primaryKeyword} — Frequently Asked Questions`;
+  const intro = content?.intro || `Everything you need to know about ${data.primaryKeyword.toLowerCase()}, the service process, and what to expect when you call ${data.businessName} in ${data.city}.`;
 
   // Build all FAQs flat list for schema
   const allFaqs = categories.flatMap(cat => cat.faqs);
@@ -3925,8 +3874,8 @@ export function generateFAQPage(data: WDBusinessData, domain: string): string {
   ${generateFooter(data)}`;
 
   return htmlShell({
-    metaTitle: content?.metaTitle || `Water Damage FAQ | ${data.businessName} — ${data.city}`,
-    metaDescription: content?.metaDescription || `Common questions about water damage restoration answered by ${data.businessName} in ${data.city}, ${data.state}. Emergency response, insurance, mold prevention and more.`,
+    metaTitle: content?.metaTitle || `${data.primaryKeyword} FAQ | ${data.businessName} — ${data.city}`,
+    metaDescription: content?.metaDescription || `Common questions about ${data.primaryKeyword.toLowerCase()} answered by ${data.businessName} in ${data.city}, ${data.state}. Get expert answers and call for help.`,
     canonicalUrl,
     theme,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
@@ -4505,7 +4454,7 @@ export function generateGalleryPage(data: WDBusinessData, domain: string): strin
 
   // Default placeholder before/after pairs if none provided
   const defaultPairs = [
-    { before: { src: WD_PLACEHOLDER_IMAGES.flooding, alt: 'PLACEHOLDER: Before — water damaged room', type: 'before' as const, pairId: 'p1', caption: 'Before: Water damage from burst pipe' }, after: { src: WD_PLACEHOLDER_IMAGES.drying, alt: 'PLACEHOLDER: After — restored room', type: 'after' as const, pairId: 'p1', caption: 'After: Fully restored' } },
+    { before: { src: WD_PLACEHOLDER_IMAGES.flooding, alt: 'PLACEHOLDER: Before — damaged area', type: 'before' as const, pairId: 'p1', caption: 'Before: Damage discovered' }, after: { src: WD_PLACEHOLDER_IMAGES.drying, alt: 'PLACEHOLDER: After — restored room', type: 'after' as const, pairId: 'p1', caption: 'After: Fully restored' } },
     { before: { src: WD_PLACEHOLDER_IMAGES.mold, alt: 'PLACEHOLDER: Before — mold damage', type: 'before' as const, pairId: 'p2', caption: 'Before: Mold remediation project' }, after: { src: WD_PLACEHOLDER_IMAGES.team, alt: 'PLACEHOLDER: After — mold removed', type: 'after' as const, pairId: 'p2', caption: 'After: Mold removed, area treated' } },
     { before: { src: WD_PLACEHOLDER_IMAGES.equipment, alt: 'PLACEHOLDER: Before — flooded basement', type: 'before' as const, pairId: 'p3', caption: 'Before: Flooded basement' }, after: { src: WD_PLACEHOLDER_IMAGES.hero, alt: 'PLACEHOLDER: After — dry basement', type: 'after' as const, pairId: 'p3', caption: 'After: Dried and restored' } },
   ];
@@ -4640,8 +4589,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   <section class="page-hero" role="banner">
     <div class="container">
-      <h1>Water Damage Restoration Gallery</h1>
-      <p>Real before-and-after photos from water damage restoration projects in ${data.city} and surrounding areas. Replace placeholder images with your own work photos in the editor.</p>
+      <h1>${data.primaryKeyword} Gallery</h1>
+      <p>Real before-and-after photos from ${data.primaryKeyword.toLowerCase()} projects in ${data.city} and surrounding areas. Replace placeholder images with your own work photos in the editor.</p>
     </div>
   </section>
 
@@ -4658,7 +4607,7 @@ document.addEventListener('DOMContentLoaded', () => {
   <section class="content-section" style="background:#f8fafc;">
     <div class="container">
       <h2>Project Photos</h2>
-      <p class="section-intro">Photos from recent water damage restoration projects in ${data.city}. <em>Replace placeholder images with real photos in the editor.</em></p>
+      <p class="section-intro">Photos from recent ${data.primaryKeyword.toLowerCase()} projects in ${data.city}. <em>Replace placeholder images with real photos in the editor.</em></p>
       <div class="gallery-grid">
         ${normalGridHTML}
       </div>
@@ -4667,7 +4616,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   <section class="cta-section" aria-labelledby="cta-heading">
     <div class="container">
-      <h2 id="cta-heading">Need Water Damage Restoration in ${data.city}?</h2>
+      <h2 id="cta-heading">Need ${data.primaryKeyword} in ${data.city}?</h2>
       <p>Our certified team is ready to respond 24/7. Call now or request a free assessment.</p>
       <div class="cta-actions">
         <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="btn-primary"><span class="btn-icon">${iconToSVG('phone', '#fff')}</span> Call ${data.phone}</a>
@@ -4692,8 +4641,8 @@ document.addEventListener('DOMContentLoaded', () => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Water Damage Restoration Gallery | ${data.businessName} — ${data.city}</title>
-  <meta name="description" content="Before and after water damage restoration photos from ${data.businessName} in ${data.city}, ${data.state}. See our work restoring homes and businesses from water damage, flooding, and mold.">
+  <title>${data.primaryKeyword} Gallery | ${data.businessName} — ${data.city}</title>
+  <meta name="description" content="Before and after ${data.primaryKeyword.toLowerCase()} photos from ${data.businessName} in ${data.city}, ${data.state}. See our work and results.">
   <link rel="canonical" href="${canonicalUrl}">
   ${fontLink}
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
@@ -4902,7 +4851,7 @@ export function generateBlogPostPage(data: WDBusinessData, post: WDBlogPost, dom
 
       <div style="margin-top:3rem;padding:2rem;background:linear-gradient(135deg,${theme.primaryColor},${theme.secondaryColor});border-radius:12px;text-align:center;">
         <h3 style="color:#fff;font-size:1.5rem;margin-bottom:1rem;">Need Professional Help?</h3>
-        <p style="color:rgba(255,255,255,.9);margin-bottom:1.5rem;">Contact ${data.businessName} for expert ${data.primaryKeyword?.toLowerCase() || 'water damage restoration'} services in ${data.city}.</p>
+        <p style="color:rgba(255,255,255,.9);margin-bottom:1.5rem;">Contact ${data.businessName} for expert ${kwBase(data.primaryKeyword || 'restoration').toLowerCase()} services in ${data.city}.</p>
         <a href="tel:${data.phone}" style="display:inline-flex;align-items:center;gap:.5rem;background:#fff;color:${theme.primaryColor};padding:.75rem 2rem;border-radius:8px;text-decoration:none;font-weight:700;font-size:1rem;">
           <i class="fas fa-phone"></i> Call ${data.phone}
         </a>
@@ -5000,7 +4949,7 @@ export function generatePrivacyPage(data: WDBusinessData, domain: string): strin
       <p style="color:#475569;">We use your information to:</p>
       <ul style="color:#475569;padding-left:1.5rem;margin-bottom:1rem;list-style:disc;">
         <li style="margin-bottom:.5rem;">Respond to service inquiries and dispatch emergency response crews</li>
-        <li style="margin-bottom:.5rem;">Provide water damage restoration and related services</li>
+        <li style="margin-bottom:.5rem;">Provide ${data.primaryKeyword.toLowerCase()} and related services</li>
         <li style="margin-bottom:.5rem;">Communicate about your project and follow up after completion</li>
         <li style="margin-bottom:.5rem;">Improve our website and customer experience</li>
         <li style="margin-bottom:.5rem;">Comply with legal and insurance documentation requirements</li>
@@ -5046,7 +4995,7 @@ export function generatePrivacyPage(data: WDBusinessData, domain: string): strin
 
   return htmlShell({
     metaTitle: `Privacy Policy | ${data.businessName}`,
-    metaDescription: `Privacy Policy for ${data.businessName} — water damage restoration services in ${data.city}, ${data.state}.`,
+    metaDescription: `Privacy Policy for ${data.businessName} — ${data.primaryKeyword.toLowerCase()} in ${data.city}, ${data.state}.`,
     canonicalUrl,
     theme,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
@@ -5078,10 +5027,10 @@ export function generateTermsPage(data: WDBusinessData, domain: string): string 
   <section class="content-section">
     <div class="container" style="max-width:800px;">
 
-      <p style="color:#475569;">These Terms of Service govern your use of the ${data.businessName} website and your engagement with our water damage restoration services. By using this website or engaging our services, you agree to these terms.</p>
+      <p style="color:#475569;">These Terms of Service govern your use of the ${data.businessName} website and your engagement with our ${kwBase(data.primaryKeyword).toLowerCase()} services. By using this website or engaging our services, you agree to these terms.</p>
 
       <h2 style="margin-top:2rem;">Services</h2>
-      <p style="color:#475569;">${data.businessName} provides water damage restoration, structural drying, mold remediation, and related property restoration services in ${data.city}, ${data.state} and surrounding areas. All services are performed by licensed and insured technicians following IICRC industry standards.</p>
+      <p style="color:#475569;">${data.businessName} provides ${data.primaryKeyword.toLowerCase()} and related professional services in ${data.city}, ${data.state} and surrounding areas. All services are performed by licensed and insured technicians following industry standards.</p>
 
       <h2>Estimates and Scope of Work</h2>
       <p style="color:#475569;">Written estimates are provided prior to work commencement. Estimates are based on visible and measurable conditions at the time of assessment. Hidden or concealed damage discovered during the restoration process may require a revised scope of work and updated pricing. We will notify you before proceeding with any work beyond the original estimate.</p>
@@ -5096,7 +5045,7 @@ export function generateTermsPage(data: WDBusinessData, domain: string): string 
       <p style="color:#475569;">Payment is due upon completion of each phase of work unless otherwise agreed in writing. For insurance claims, we may accept assignment of benefits with your authorization. Interest may accrue on overdue balances. We reserve the right to place a lien on the property for unpaid services in accordance with applicable state law.</p>
 
       <h2>Liability</h2>
-      <p style="color:#475569;">${data.businessName} carries comprehensive general liability insurance. Our liability for services rendered is limited to the value of the services provided. We are not responsible for pre-existing conditions, hidden defects, or damage that was not accessible or visible at the time of our assessment. We are not liable for indirect, incidental, or consequential damages.</p>
+      <p style="color:#475569;">${data.businessName} carries general liability insurance. Our liability for services rendered is limited to the value of the services provided. We are not responsible for pre-existing conditions, hidden defects, or damage that was not accessible or visible at the time of our assessment. We are not liable for indirect, incidental, or consequential damages.</p>
 
       <h2>Warranty</h2>
       <p style="color:#475569;">We warrant that services will be performed in a professional and workmanlike manner in accordance with IICRC standards. Written warranties on specific restoration work will be provided separately when applicable. This warranty does not cover damage from subsequent water events, acts of nature, or conditions outside our control.</p>
@@ -5126,7 +5075,7 @@ export function generateTermsPage(data: WDBusinessData, domain: string): string 
 
   return htmlShell({
     metaTitle: `Terms of Service | ${data.businessName}`,
-    metaDescription: `Terms of Service for ${data.businessName} — water damage restoration services in ${data.city}, ${data.state}.`,
+    metaDescription: `Terms of Service for ${data.businessName} — ${data.primaryKeyword.toLowerCase()} in ${data.city}, ${data.state}.`,
     canonicalUrl,
     theme,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
