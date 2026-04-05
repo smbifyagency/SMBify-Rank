@@ -118,7 +118,7 @@ export default function FeaturesPage() {
     const [, setLocation] = useLocation();
 
     return (
-        <>
+        <div className="min-h-screen bg-white">
             {/* Hero */}
             <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
                 <div className="absolute inset-0">
@@ -128,15 +128,15 @@ export default function FeaturesPage() {
                 <div className="relative max-w-4xl mx-auto text-center">
                     <div className="inline-flex items-center gap-2 bg-[#7C3AED]/10 border border-[#7C3AED]/20 rounded-full px-4 py-2 mb-8 backdrop-blur-sm">
                         <Zap className="h-4 w-4 text-[#7C3AED]" />
-                        <span className="text-sm text-gray-300">Everything you need to build & rank</span>
+                        <span className="text-sm text-gray-600">Everything you need to build & rank</span>
                     </div>
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-gray-900">
                         Powerful Features for{" "}
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7C3AED] to-[#F59E0B]">
                             Local SEO
                         </span>
                     </h1>
-                    <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed mb-10">
+                    <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed mb-10">
                         From AI content generation to one-click deployment — every tool your
                         local business website needs, built right in.
                     </p>
@@ -144,7 +144,7 @@ export default function FeaturesPage() {
                         <Button
                             size="lg"
                             onClick={() => setLocation("/dashboard/websites")}
-                            className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold text-base px-8 py-6 rounded-xl shadow-lg shadow-[#7C3AED]/25"
+                            className="bg-[#7C3AED] hover:bg-[#9333EA] text-white font-bold text-base px-8 py-6 rounded-xl shadow-lg shadow-[#7C3AED]/25"
                         >
                             Try It Free <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
@@ -152,7 +152,7 @@ export default function FeaturesPage() {
                             size="lg"
                             variant="outline"
                             onClick={() => setLocation("/pricing")}
-                            className="text-base px-8 py-6 rounded-xl border-white/20 text-white hover:bg-white/5 bg-transparent"
+                            className="text-base px-8 py-6 rounded-xl border-gray-300 text-gray-900 hover:bg-gray-50 bg-transparent"
                         >
                             View Pricing
                         </Button>
@@ -162,13 +162,13 @@ export default function FeaturesPage() {
 
             {/* Feature Groups */}
             {featureGroups.map((group, groupIdx) => (
-                <section key={group.title} className={`py-20 px-4 sm:px-6 lg:px-8 ${groupIdx % 2 !== 0 ? "bg-[#7C3AED]/[0.02]" : ""}`}>
+                <section key={group.title} className={`py-20 px-4 sm:px-6 lg:px-8 ${groupIdx % 2 !== 0 ? "bg-gray-50" : ""}`}>
                     <div className="max-w-6xl mx-auto">
                         <div className="text-center mb-14">
                             <p className="text-[#7C3AED] font-semibold text-sm uppercase tracking-wider mb-3">
                                 {group.subtitle}
                             </p>
-                            <h2 className="text-3xl sm:text-4xl font-bold">{group.title}</h2>
+                            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">{group.title}</h2>
                         </div>
                         <div className="grid md:grid-cols-3 gap-6">
                             {group.features.map((feature) => {
@@ -176,13 +176,13 @@ export default function FeaturesPage() {
                                 return (
                                     <div
                                         key={feature.title}
-                                        className="rounded-2xl border border-[#7C3AED]/15 bg-gradient-to-b from-[#7C3AED]/10 to-[#7C3AED]/3 p-6 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-[#7C3AED]/10 hover:border-[#7C3AED]/30"
+                                        className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6 transition-all hover:-translate-y-1 hover:shadow-lg hover:border-purple-200"
                                     >
                                         <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-4 bg-[#7C3AED]/10 text-[#7C3AED]">
                                             <Icon className="h-6 w-6" />
                                         </div>
-                                        <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
-                                        <p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
+                                        <p className="text-gray-600 text-sm leading-relaxed">{feature.description}</p>
                                     </div>
                                 );
                             })}
@@ -195,14 +195,14 @@ export default function FeaturesPage() {
             <section className="py-24 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center mb-14">
-                        <h2 className="text-3xl font-bold mb-4">Why SiteGenie vs. Traditional Web Dev?</h2>
-                        <p className="text-gray-400">See how we compare to hiring a developer or using WordPress.</p>
+                        <h2 className="text-3xl font-bold mb-4 text-gray-900">Why SiteGenie vs. Traditional Web Dev?</h2>
+                        <p className="text-gray-600">See how we compare to hiring a developer or using WordPress.</p>
                     </div>
-                    <div className="rounded-2xl border border-[#7C3AED]/15 overflow-hidden">
-                        <div className="grid grid-cols-3 bg-[#7C3AED]/5">
-                            <div className="p-4 font-semibold text-gray-400 text-sm"></div>
+                    <div className="rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
+                        <div className="grid grid-cols-3 bg-gray-50">
+                            <div className="p-4 font-semibold text-gray-500 text-sm"></div>
                             <div className="p-4 text-center font-semibold text-[#7C3AED] text-sm">SiteGenie</div>
-                            <div className="p-4 text-center font-semibold text-gray-400 text-sm">Traditional</div>
+                            <div className="p-4 text-center font-semibold text-gray-500 text-sm">Traditional</div>
                         </div>
                         {[
                             ["Time to launch", "5 minutes", "2-8 weeks"],
@@ -213,8 +213,8 @@ export default function FeaturesPage() {
                             ["Blog engine", "Included", "Plugin setup"],
                             ["Maintenance", "Zero", "Ongoing"],
                         ].map(([label, SiteGenie, traditional], i) => (
-                            <div key={label} className={`grid grid-cols-3 ${i % 2 === 0 ? "bg-white/[0.02]" : ""}`}>
-                                <div className="p-4 text-sm text-gray-300 font-medium">{label}</div>
+                            <div key={label} className={`grid grid-cols-3 ${i % 2 === 0 ? "bg-gray-50" : ""}`}>
+                                <div className="p-4 text-sm text-gray-700 font-medium">{label}</div>
                                 <div className="p-4 text-center text-sm text-[#7C3AED] flex items-center justify-center gap-1">
                                     <CheckCircle className="h-3.5 w-3.5" /> {SiteGenie}
                                 </div>
@@ -228,20 +228,20 @@ export default function FeaturesPage() {
             {/* CTA */}
             <section className="py-20 px-4 sm:px-6 lg:px-8 mb-10">
                 <div className="max-w-4xl mx-auto text-center">
-                    <h2 className="text-3xl sm:text-4xl font-bold mb-4">Ready to Build?</h2>
-                    <p className="text-gray-400 max-w-xl mx-auto mb-8">
+                    <h2 className="text-3xl sm:text-4xl font-bold mb-4 text-gray-900">Ready to Build?</h2>
+                    <p className="text-gray-600 max-w-xl mx-auto mb-8">
                         Start creating SEO-optimized websites in minutes. Completely free to start.
                     </p>
                     <Button
                         size="lg"
                         onClick={() => setLocation("/dashboard/websites")}
-                        className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold text-base px-10 py-6 rounded-xl shadow-lg shadow-[#7C3AED]/25"
+                        className="bg-[#7C3AED] hover:bg-[#9333EA] text-white font-bold text-base px-10 py-6 rounded-xl shadow-lg shadow-[#7C3AED]/25"
                     >
                         <Sparkles className="mr-2 h-5 w-5" />
                         Start Building — It's Free
                     </Button>
                 </div>
             </section>
-        </>
+        </div>
     );
 }

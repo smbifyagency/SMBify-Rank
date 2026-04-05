@@ -37,7 +37,6 @@ export function SharedFooter() {
                                 { href: "/features", label: "Features" },
                                 { href: "/pricing", label: "Pricing" },
                                 { href: "/demo", label: "Demo" },
-                                { href: "/blog", label: "Blog" },
                                 { href: "/dashboard/websites", label: "Website Builder" },
                                 { href: "/affiliates", label: "Affiliates" },
                             ].map((link) => (

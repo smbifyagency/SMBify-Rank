@@ -120,8 +120,8 @@ export default function PrivacyPage() {
               <h2 className="text-xl font-semibold mb-4 text-white">12. Contact Us</h2>
               <p className="text-gray-400">
                 If you have questions or concerns about this Privacy Policy or our data practices, please contact us at{" "}
-                <a href="mailto:info@SiteGenielocal.com" className="text-[#7C3AED] hover:text-[#9333EA] transition-colors font-medium">
-                  info@SiteGenielocal.com
+                <a href="mailto:info@sitegenie.app" className="text-[#7C3AED] hover:text-[#9333EA] transition-colors font-medium">
+                  info@sitegenie.app
                 </a>
               </p>
             </div>

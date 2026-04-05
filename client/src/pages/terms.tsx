@@ -110,8 +110,8 @@ export default function TermsPage() {
               <h2 className="text-xl font-semibold mb-4 text-white">10. Contact Information</h2>
               <p className="text-gray-400">
                 For questions about these Terms and Conditions, please contact us at{" "}
-                <a href="mailto:info@SiteGenielocal.com" className="text-[#7C3AED] hover:text-[#9333EA] transition-colors font-medium">
-                  info@SiteGenielocal.com
+                <a href="mailto:info@sitegenie.app" className="text-[#7C3AED] hover:text-[#9333EA] transition-colors font-medium">
+                  info@sitegenie.app
                 </a>
               </p>
             </div>

@@ -102,7 +102,7 @@ export default function PricingPage() {
     const [openFaq, setOpenFaq] = useState<number | null>(null);
 
     return (
-        <>
+        <div className="min-h-screen bg-white">
             {/* Hero */}
             <section className="relative pt-32 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
                 <div className="absolute inset-0">
@@ -110,13 +110,13 @@ export default function PricingPage() {
                     <div className="absolute bottom-1/4 right-1/3 w-96 h-96 bg-[#7C3AED]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
                 </div>
                 <div className="relative max-w-4xl mx-auto text-center">
-                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
+                    <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-gray-900">
                         Simple, Transparent{" "}
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7C3AED] to-[#F59E0B]">
                             Pricing
                         </span>
                     </h1>
-                    <p className="text-xl text-gray-400 max-w-2xl mx-auto leading-relaxed">
+                    <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
                         No hidden fees. No per-site charges. Choose the plan that fits your needs
                         and scale as you grow.
                     </p>
@@ -133,31 +133,31 @@ export default function PricingPage() {
                                 key={plan.name}
                                 className={`relative rounded-2xl border p-8 transition-all hover:-translate-y-1 ${plan.popular
                                         ? "border-[#7C3AED]/40 bg-gradient-to-b from-[#7C3AED]/10 to-transparent shadow-lg shadow-[#7C3AED]/10"
-                                        : "border-white/10 bg-white/[0.02]"
+                                        : "border-gray-200 bg-white shadow-sm"
                                     }`}
                             >
                                 {plan.popular && (
-                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#7C3AED] text-black text-xs font-bold px-4 py-1 rounded-full">
+                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#7C3AED] text-white text-xs font-bold px-4 py-1 rounded-full">
                                         Most Popular
                                     </div>
                                 )}
                                 <div className="mb-6">
-                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${plan.popular ? "bg-[#7C3AED]/10 text-[#7C3AED]" : "bg-gray-500/10 text-gray-400"
+                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${plan.popular ? "bg-[#7C3AED]/10 text-[#7C3AED]" : "bg-gray-100 text-gray-500"
                                         }`}>
                                         <Icon className="w-6 h-6" />
                                     </div>
-                                    <h3 className="text-2xl font-bold text-white">{plan.name}</h3>
-                                    <p className="text-sm text-gray-400 mt-1">{plan.description}</p>
+                                    <h3 className="text-2xl font-bold text-gray-900">{plan.name}</h3>
+                                    <p className="text-sm text-gray-600 mt-1">{plan.description}</p>
                                 </div>
                                 <div className="mb-6">
-                                    <span className="text-5xl font-bold text-white">{plan.price}</span>
-                                    <span className="text-gray-400 ml-1">{plan.period}</span>
+                                    <span className="text-5xl font-bold text-gray-900">{plan.price}</span>
+                                    <span className="text-gray-500 ml-1">{plan.period}</span>
                                 </div>
                                 <Button
                                     onClick={() => setLocation(plan.name === "Agency" ? "/contact" : "/signup")}
                                     className={`w-full mb-8 py-6 text-base font-semibold rounded-xl ${plan.popular
-                                            ? "bg-[#7C3AED] hover:bg-[#9333EA] text-black shadow-lg shadow-[#7C3AED]/25"
-                                            : "bg-white/10 hover:bg-white/15 text-white"
+                                            ? "bg-[#7C3AED] hover:bg-[#9333EA] text-white shadow-lg shadow-[#7C3AED]/25"
+                                            : "bg-gray-100 hover:bg-gray-200 text-gray-900"
                                         }`}
                                 >
                                     {plan.cta}
@@ -170,7 +170,7 @@ export default function PricingPage() {
                                             ) : (
                                                 <X className="h-4 w-4 text-gray-600 flex-shrink-0" />
                                             )}
-                                            <span className={feature.included ? "text-gray-300" : "text-gray-600"}>
+                                            <span className={feature.included ? "text-gray-700" : "text-gray-400"}>
                                                 {feature.name}
                                             </span>
                                         </div>
@@ -186,24 +186,24 @@ export default function PricingPage() {
             <section className="py-24 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-3xl mx-auto">
                     <div className="text-center mb-12">
-                        <h2 className="text-3xl font-bold mb-4">Frequently Asked Questions</h2>
-                        <p className="text-gray-400">Everything you need to know about our pricing and plans.</p>
+                        <h2 className="text-3xl font-bold mb-4 text-gray-900">Frequently Asked Questions</h2>
+                        <p className="text-gray-600">Everything you need to know about our pricing and plans.</p>
                     </div>
                     <div className="space-y-3">
                         {faqs.map((faq, i) => (
                             <div
                                 key={i}
-                                className="rounded-xl border border-white/10 bg-white/[0.02] overflow-hidden"
+                                className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden"
                             >
                                 <button
                                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
                                     className="w-full flex items-center justify-between p-5 text-left"
                                 >
-                                    <span className="font-medium text-white">{faq.question}</span>
+                                    <span className="font-medium text-gray-900">{faq.question}</span>
                                     <HelpCircle className={`h-5 w-5 text-gray-400 transition-transform ${openFaq === i ? "rotate-45" : ""}`} />
                                 </button>
                                 {openFaq === i && (
-                                    <div className="px-5 pb-5 text-gray-400 text-sm leading-relaxed">
+                                    <div className="px-5 pb-5 text-gray-600 text-sm leading-relaxed">
                                         {faq.answer}
                                     </div>
                                 )}
@@ -215,20 +215,20 @@ export default function PricingPage() {
 
             {/* CTA */}
             <section className="py-20 px-4 sm:px-6 lg:px-8">
-                <div className="max-w-4xl mx-auto text-center rounded-2xl border border-white/10 bg-white/[0.02] p-12">
-                    <h2 className="text-3xl font-bold mb-4">Ready to Get Started?</h2>
-                    <p className="text-gray-400 mb-8 max-w-xl mx-auto">
+                <div className="max-w-4xl mx-auto text-center rounded-2xl border border-gray-200 bg-gray-50 p-12">
+                    <h2 className="text-3xl font-bold mb-4 text-gray-900">Ready to Get Started?</h2>
+                    <p className="text-gray-600 mb-8 max-w-xl mx-auto">
                         Start building professional websites for your clients today. No credit card required.
                     </p>
                     <Button
                         size="lg"
                         onClick={() => setLocation("/signup")}
-                        className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold text-base px-10 py-6 rounded-xl shadow-lg shadow-[#7C3AED]/25"
+                        className="bg-[#7C3AED] hover:bg-[#9333EA] text-white font-bold text-base px-10 py-6 rounded-xl shadow-lg shadow-[#7C3AED]/25"
                     >
                         Start Building Free
                     </Button>
                 </div>
             </section>
-        </>
+        </div>
     );
 }
