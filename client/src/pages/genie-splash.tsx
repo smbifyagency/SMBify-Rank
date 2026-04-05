@@ -72,7 +72,8 @@ export default function GenieSplash() {
   const lastPos = useRef<{ x: number; y: number } | null>(null);
   const trailId = useRef(0);
   const lampRef = useRef<HTMLDivElement>(null);
-  const THRESHOLD = 100; // rub distance threshold
+  const pointerDown = useRef(false);
+  const THRESHOLD = 500; // rub distance threshold — requires sustained rubbing
 
   // Clean up old trails
   useEffect(() => {
@@ -82,7 +83,8 @@ export default function GenieSplash() {
   }, [rubTrails]);
 
   const handleRubMove = useCallback((clientX: number, clientY: number) => {
-    if (!lampRef.current || entered) return;
+    // MUST be pressing/clicking to rub — no accidental hover triggers
+    if (!lampRef.current || entered || !pointerDown.current) return;
 
     const rect = lampRef.current.getBoundingClientRect();
     const x = clientX - rect.left;
@@ -96,9 +98,9 @@ export default function GenieSplash() {
       const dy = clientY - lastPos.current.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
 
-      if (dist > 3) {
+      if (dist > 4) {
         setRubProgress(prev => {
-          const next = Math.min(prev + dist * 0.35, THRESHOLD);
+          const next = Math.min(prev + dist * 0.18, THRESHOLD);
           setLampGlow(next / THRESHOLD);
           if (next >= THRESHOLD && !entered) {
             triggerEntry();
@@ -116,8 +118,8 @@ export default function GenieSplash() {
     setIsRubbing(true);
   }, [entered]);
 
-  const handlePointerDown = () => { setIsRubbing(true); lastPos.current = null; };
-  const handlePointerUp = () => { setIsRubbing(false); lastPos.current = null; };
+  const handlePointerDown = () => { pointerDown.current = true; setIsRubbing(true); lastPos.current = null; };
+  const handlePointerUp = () => { pointerDown.current = false; setIsRubbing(false); lastPos.current = null; };
   const handleMouseMove = (e: React.MouseEvent) => handleRubMove(e.clientX, e.clientY);
   const handleTouchMove = (e: React.TouchEvent) => {
     const t = e.touches[0];
