@@ -80,15 +80,50 @@ export default function Landing() {
                   <span className="w-3 h-3 rounded-full bg-green-500" />
                   <span className="ml-3 flex-1 px-3 py-1.5 rounded-md bg-gray-100 text-xs text-gray-500">https://sitegenie.app</span>
                 </div>
-                {/* Live generated website preview */}
-                <div className="relative bg-white" style={{ height: "340px" }}>
-                  <iframe
-                    src="https://water-damage-restoration-austin-tx.netlify.app"
-                    title="SiteGenie AI Website Builder — Real generated website"
-                    className="w-full h-full border-0"
-                    loading="eager"
-                    sandbox="allow-scripts allow-same-origin"
-                  />
+                {/* Dashboard-style preview mockup */}
+                <div className="p-5 space-y-4">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-[#7C3AED]/10 flex items-center justify-center"><Bot className="h-5 w-5 text-purple-700" /></div>
+                    <div>
+                      <div className="h-3 bg-gray-300 rounded-full w-40 mb-1.5" />
+                      <div className="h-2 bg-gray-200 rounded-full w-28" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="h-20 rounded-xl bg-purple-50 border border-purple-100 p-3">
+                      <div className="h-2 bg-purple-200 rounded w-3/4 mb-2" />
+                      <div className="h-2 bg-gray-200 rounded w-full mb-1.5" />
+                      <div className="h-2 bg-gray-200 rounded w-2/3" />
+                    </div>
+                    <div className="h-20 rounded-xl bg-amber-50 border border-amber-100 p-3">
+                      <div className="h-2 bg-amber-200 rounded w-3/4 mb-2" />
+                      <div className="h-2 bg-gray-200 rounded w-full mb-1.5" />
+                      <div className="h-2 bg-gray-200 rounded w-2/3" />
+                    </div>
+                    <div className="h-20 rounded-xl bg-green-50 border border-green-100 p-3">
+                      <div className="h-2 bg-green-200 rounded w-3/4 mb-2" />
+                      <div className="h-2 bg-gray-200 rounded w-full mb-1.5" />
+                      <div className="h-2 bg-gray-200 rounded w-2/3" />
+                    </div>
+                    <div className="h-20 rounded-xl bg-blue-50 border border-blue-100 p-3">
+                      <div className="h-2 bg-blue-200 rounded w-3/4 mb-2" />
+                      <div className="h-2 bg-gray-200 rounded w-full mb-1.5" />
+                      <div className="h-2 bg-gray-200 rounded w-2/3" />
+                    </div>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="h-9 rounded-lg bg-gradient-to-r from-[#7C3AED] to-[#9333EA] flex-1 flex items-center justify-center">
+                      <span className="text-xs text-white font-semibold">✨ Generate Website</span>
+                    </div>
+                    <div className="h-9 rounded-lg bg-gray-100 border border-gray-200 w-28 flex items-center justify-center">
+                      <span className="text-xs text-gray-500 font-medium">Preview</span>
+                    </div>
+                  </div>
+                  <div className="h-16 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 border border-gray-200 p-3">
+                    <div className="h-2 bg-gray-300 rounded w-full mb-1.5" />
+                    <div className="h-2 bg-gray-200 rounded w-5/6 mb-1.5" />
+                    <div className="h-2 bg-gray-200 rounded w-3/4" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -175,37 +210,40 @@ export default function Landing() {
             <p className="text-gray-600 max-w-xl mx-auto">From dashboard to deployed site — here's exactly what you get.</p>
           </div>
 
-          {/* Live Generated Website Preview */}
-          <div className="mb-12">
-            <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xl">
+          {/* Live Generated Website — Clickable Card */}
+          <a
+            href="https://water-damage-restoration-austin-tx.netlify.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block mb-12 group"
+          >
+            <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xl transition-all group-hover:shadow-2xl group-hover:border-purple-200 group-hover:-translate-y-1">
               <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
                 <span className="w-3 h-3 rounded-full bg-red-400" />
                 <span className="w-3 h-3 rounded-full bg-yellow-400" />
                 <span className="w-3 h-3 rounded-full bg-green-400" />
                 <span className="ml-3 flex-1 px-3 py-1.5 rounded-md bg-gray-100 text-xs text-gray-500">https://water-damage-restoration-austin-tx.netlify.app</span>
-                <a
-                  href="https://water-damage-restoration-austin-tx.netlify.app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-[#7C3AED] hover:text-[#9333EA] font-medium"
-                >
-                  Visit Live →
-                </a>
+                <span className="text-xs text-[#7C3AED] font-medium group-hover:text-[#9333EA] transition-colors">Visit Live →</span>
               </div>
-              <div className="relative bg-white" style={{ height: "500px" }}>
-                <iframe
-                  src="https://water-damage-restoration-austin-tx.netlify.app"
-                  title="Water Damage Restoration Austin TX — Built with SiteGenie"
-                  className="w-full h-full border-0"
-                  loading="lazy"
-                  sandbox="allow-scripts allow-same-origin"
-                />
+              <div className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 p-10 sm:p-16 text-center">
+                <div className="mb-6">
+                  <Globe className="h-16 w-16 text-[#7C3AED]/40 mx-auto" />
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3">Water Damage Restoration — Austin TX</h3>
+                <p className="text-gray-500 mb-6 max-w-lg mx-auto">A fully SEO-optimized, multi-page website generated by SiteGenie AI in under 5 minutes — now live on Netlify.</p>
+                <div className="flex flex-wrap gap-3 justify-center mb-6">
+                  <span className="px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-medium text-emerald-700">✓ 10+ Pages</span>
+                  <span className="px-3 py-1.5 rounded-full bg-blue-50 border border-blue-200 text-xs font-medium text-blue-700">✓ Schema Markup</span>
+                  <span className="px-3 py-1.5 rounded-full bg-purple-50 border border-purple-200 text-xs font-medium text-purple-700">✓ 2000+ Words/Page</span>
+                  <span className="px-3 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-xs font-medium text-amber-700">✓ Mobile Responsive</span>
+                </div>
+                <div className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#7C3AED] text-white font-semibold text-sm shadow-lg shadow-[#7C3AED]/25 group-hover:bg-[#9333EA] transition-colors">
+                  <Globe className="h-4 w-4" />
+                  View Live Website
+                </div>
               </div>
             </div>
-            <p className="text-center text-sm text-gray-500 mt-3">
-              <span className="font-medium text-gray-900">Water Damage Restoration Austin TX</span> — Generated by SiteGenie AI in under 5 minutes, deployed live on Netlify
-            </p>
-          </div>
+          </a>
 
           {/* Feature Preview Cards */}
           <div className="grid md:grid-cols-2 gap-8">
