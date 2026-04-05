@@ -62,8 +62,8 @@ export default function AboutPage() {
             },
             {
               icon: Globe,
-              title: "270+ Categories",
-              desc: "Choose from professionally designed, mobile-responsive templates specifically crafted for local businesses across 270+ categories.",
+              title: "200+ Categories",
+              desc: "Choose from professionally designed, mobile-responsive templates specifically crafted for local businesses across 200+ categories.",
               color: "violet"
             },
             {

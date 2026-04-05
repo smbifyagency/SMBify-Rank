@@ -18,7 +18,7 @@ const plans = [
             { name: "5 blog posts per site", included: true },
             { name: "Full SEO optimization", included: true },
             { name: "Download as ZIP", included: true },
-            { name: "270+ business categories", included: true },
+            { name: "200+ business categories", included: true },
             { name: "Netlify deployment", included: false },
             { name: "Custom domain support", included: false },
             { name: "Priority support", included: false },

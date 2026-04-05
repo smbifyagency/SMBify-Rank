@@ -66,7 +66,7 @@ export default function Landing() {
 
               <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 mt-12 text-sm text-gray-600">
                 <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-purple-700" />No coding required</div>
-                <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-purple-700" />270+ business categories</div>
+                <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-purple-700" />200+ business categories</div>
                 <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-purple-700" />One-click deployment</div>
               </div>
             </div>
@@ -135,7 +135,7 @@ export default function Landing() {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 {[
                   { value: "15+", label: "Pro Templates" },
-                  { value: "270+", label: "Business Categories" },
+                  { value: "200+", label: "Business Categories" },
                   { value: "2000+", label: "Words / Page" },
                   { value: "$0", label: "Platform Fees" },
                 ].map((s) => (
@@ -184,7 +184,7 @@ export default function Landing() {
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { step: "01", title: "Enter Business Info", desc: "Add your business name, services, locations, and contact details. Pick from 270+ business categories." },
+              { step: "01", title: "Enter Business Info", desc: "Add your business name, services, locations, and contact details. Pick from 200+ business categories." },
               { step: "02", title: "AI Generates Everything", desc: "Homepage, service pages, location pages, blog posts, FAQs, testimonials — 2000+ words of SEO-optimized content per page." },
               { step: "03", title: "Deploy & Rank", desc: "One-click deploy to Netlify with free SSL, global CDN, and custom domain support. Your site goes live instantly." },
             ].map((item, i) => (
@@ -458,62 +458,66 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* ═══════ 270+ BUSINESS CATEGORIES ═══════ */}
+      {/* ═══════ 203 BUSINESS CATEGORIES ═══════ */}
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gray-50" id="templates">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">Business Categories</p>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
-              <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">270+</span> Business Categories Supported
+              <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">203</span> Business Categories Supported
             </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">From plumbers to law firms, restaurants to tech startups — SiteGenie builds SEO-optimized websites for any industry. Here are some popular ones:</p>
+            <p className="text-gray-600 max-w-2xl mx-auto">From plumbers to law firms, HVAC to web designers — SiteGenie builds SEO-optimized websites for every industry. Every single category listed below is available right now.</p>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="flex flex-wrap gap-2.5 justify-center">
             {[
-              { emoji: "🔧", name: "Plumbing" },
-              { emoji: "⚡", name: "Electrician" },
-              { emoji: "❄️", name: "HVAC" },
-              { emoji: "🏠", name: "Roofing" },
-              { emoji: "🚿", name: "Water Damage" },
-              { emoji: "⚖️", name: "Law Firm" },
-              { emoji: "🦷", name: "Dentist" },
-              { emoji: "🏥", name: "Medical Clinic" },
-              { emoji: "🍽️", name: "Restaurant" },
-              { emoji: "💈", name: "Barber Shop" },
-              { emoji: "💅", name: "Beauty Salon" },
-              { emoji: "🧹", name: "Cleaning Service" },
-              { emoji: "🏗️", name: "Construction" },
-              { emoji: "🚗", name: "Auto Repair" },
-              { emoji: "🏡", name: "Real Estate" },
-              { emoji: "💪", name: "Fitness & Gym" },
-              { emoji: "📈", name: "SEO Agency" },
-              { emoji: "💻", name: "IT Services" },
-              { emoji: "📸", name: "Photography" },
-              { emoji: "🎨", name: "Interior Design" },
-              { emoji: "🐾", name: "Pet Grooming" },
-              { emoji: "🌿", name: "Landscaping" },
-              { emoji: "🚚", name: "Moving Company" },
-              { emoji: "🎓", name: "Tutoring" },
-              { emoji: "💰", name: "Accounting" },
-              { emoji: "🔒", name: "Locksmith" },
-              { emoji: "🧱", name: "Masonry" },
-              { emoji: "🪟", name: "Window Cleaning" },
-              { emoji: "🎂", name: "Bakery" },
-              { emoji: "🏋️", name: "Personal Trainer" },
-            ].map((t) => (
-              <div key={t.name} className="rounded-2xl border border-gray-200 bg-white shadow-sm p-5 text-center transition-all hover:-translate-y-1 hover:border-purple-200 hover:shadow-lg">
-                <div className="text-3xl mb-3">{t.emoji}</div>
-                <h4 className="text-sm font-bold text-gray-900">{t.name}</h4>
-              </div>
+              "Bathroom and Kitchen Remodeling", "Insurance", "Roofing Replacement", "Solar Panel Installation", "Towing", "Weight Loss",
+              "AC Companies", "AC Repair", "Air Duct Cleaning", "Appliance Repair", "Artificial Grass", "Asphalt Paving",
+              "Attic Fan", "Attic Insulation", "Awnings", "Backyard Design", "Basement Remodeling", "Basement Waterproofing",
+              "Bathroom Remodeling", "Bathtub Refinishing", "Bed Bug Exterminator", "Boiler Repair", "Brick Pavers", "Cabinet Painting",
+              "Carpet Cleaning", "Ceiling Fan Repair", "Ceiling Repair", "Chimney Sweeping", "Cleaning Services", "Closet Design",
+              "Commercial Painting", "Concrete Countertops", "Concrete Pavers", "Concrete Repair", "Copper Gutters", "Crown Molding",
+              "Custom Closet", "Custom Home Builders", "Deck Builder", "Deck Repair", "Demolition", "Door Repair",
+              "Drain Cleaning", "Driveway Paving", "Dryer Repair", "Dryer Vent Cleaning", "Drywall Repair", "Electrical",
+              "Electrical Repair", "Emergency Plumbing", "Entry Doors", "Epoxy Flooring", "Exterior Doors", "Exterior Painting",
+              "Faux Painting", "Fence Installation", "Fences", "Fireplace Repair", "Foam Roof", "Foundation Repair",
+              "French Doors", "Front Doors", "Fumigation", "Furnace Repair", "Furniture Restoration", "Garage Door Repair",
+              "General Contractors", "Granite Countertops", "Grout Cleaning", "Gutter Cleaning", "Gutters", "Handyman",
+              "Handyman Services", "Hardscape", "Hardwood Floors", "Heat Pump", "Heating Repair", "Home Builders",
+              "Home Energy Audit", "Home Inspection", "Home Security Systems", "House Cleaning Services", "House Painting", "Humidifier",
+              "HVAC", "Insulation", "Interior Designer", "Interior Painting", "Iron Doors", "Jacuzzi Repair",
+              "Junk Removal", "Kitchen Remodeling", "Laminate Countertops", "Laminate Flooring", "Land Surveyor", "Landscaping",
+              "Landscapers", "Lawn Aeration", "Lawn Care", "Lawn Mowing", "Leak Detection", "Locksmith",
+              "Maid Service", "Metal Fabrication", "Metal Roofing", "Mold Removal", "Moving Help", "Moving Services",
+              "Organic Pest Control", "Oriental Rug Cleaning", "Oven Repair", "Painting Contractors", "Patio Covers", "Pea Gravel",
+              "Pest Control", "Plumbing", "Plumbing Repair", "Plumbing Service", "Poison Ivy Removal", "Pool Cleaning",
+              "Pool Installation", "Pool Repair", "Popcorn Ceiling Removal", "Pressure Cleaning", "Quartz Countertops", "Rain Gutters",
+              "Refrigerator Repair", "Retaining Walls", "Roof Cleaning", "Roof Coating", "Roof Inspection", "Roof Repair",
+              "Roof Replacement", "Roof Tiles", "Roofing", "Roofing Contractors", "Rug Cleaning", "Seamless Gutters",
+              "Septic Pumping", "Septic Repair", "Septic Service", "Septic Tank Cleaning", "Shower Doors", "Skylight Repairs",
+              "Sliding Glass Door Repair", "Solar Panels", "Soundproofing", "Spa Repair", "Spray Foam Insulation", "Sprinkler Repair",
+              "Stair Builders", "Stone Pavers", "Sump Pump Installation", "Sunroom", "Tankless Water Heater", "Termite Control",
+              "Termite Inspection", "Tile Installation", "Tree Removal", "Tree Trimming", "Upholstery Cleaning", "Vinyl Siding",
+              "Walk-In Tubs", "Wallpaper Removal", "Washing Machine Repair", "Water Damage", "Water Heater Repair", "Welding",
+              "Window Cleaning", "Window Glass Repair", "Window Installation", "Window Repair", "Window Replacement",
+              "Siding & Exterior Work", "Flooring Installation & Repair", "Smart Home Installation", "Masonry & Brickwork",
+              "Excavation & Demolition", "Structural Engineering & Repair", "Custom Carpentry", "Metal Roofing & Sheet Metal Work",
+              "Fire Damage Restoration", "Mold Remediation", "Hoarding Clean-Up Services", "Med Spa / Aesthetics Clinics",
+              "Hair Salons & Barbers", "Nail Salons", "Massage Therapists", "Personal Trainers / Fitness Coaches",
+              "Dog Grooming", "Dog Training", "Pet Boarding / Pet Sitting", "Mobile Vet Services",
+              "Legal Services", "Financial Advisors & Tax Prep", "Real Estate Agents", "Insurance Agents",
+              "Notary Services", "Wedding & Event Planners", "Local SEO Agency", "SEO Agency", "Marketing Agency", "Website Designer",
+            ].map((cat) => (
+              <span key={cat} className="px-3 py-1.5 rounded-full bg-white border border-gray-200 text-xs font-medium text-gray-700 shadow-sm hover:border-purple-300 hover:text-purple-700 hover:shadow-md transition-all cursor-default">
+                {cat}
+              </span>
             ))}
           </div>
 
           <div className="text-center mt-10">
-            <p className="text-gray-500 text-sm mb-4">And 240+ more categories including: Pest Control, Towing, Pool Service, Tailor, Florist, Pharmacy, Veterinarian, Chiropractor, Insurance, Carpet Cleaning, Tree Service, Garage Door, Fence Company, Concrete, Painting, Pressure Washing, Junk Removal, Appliance Repair...</p>
             <div className="inline-flex items-center gap-2 bg-[#7C3AED]/10 border border-[#7C3AED]/20 rounded-full px-5 py-2.5">
               <Sparkles className="h-4 w-4 text-purple-700" />
-              <span className="text-sm font-semibold text-purple-700">Works for ANY business type</span>
+              <span className="text-sm font-semibold text-purple-700">All 203 categories available — works for ANY business type</span>
             </div>
           </div>
         </div>
@@ -655,7 +659,7 @@ export default function Landing() {
                   ["Local SEO Pages", "✅ Auto-generated", "❌ Manual", "⚠️ Manual"],
                   ["AI Blog Posts (Bulk)", "✅ Bulk generate", "❌ No", "❌ No"],
                   ["One-Click Deploy", "✅ Netlify", "⚠️ Platform-only", "❌ Manual"],
-                  ["270+ Categories", "✅ Yes", "❌ No", "❌ No"],
+                  ["200+ Categories", "✅ Yes", "❌ No", "❌ No"],
                   ["Multi-AI Model", "✅ GPT-4.1, Gemini 2.5", "❌ No", "❌ No"],
                   ["Static HTML (Fast)", "✅ Pure HTML/CSS", "❌ Dynamic", "❌ PHP"],
                   ["Admin Dashboard", "✅ Full suite", "❌ No", "⚠️ Limited"],
@@ -689,7 +693,7 @@ export default function Landing() {
             {[
               { icon: Building2, title: "Marketing Agencies", desc: "Build client websites in minutes. Manage multiple clients from one dashboard. White-label ready." },
               { icon: Briefcase, title: "Local Business Owners", desc: "Plumbers, lawyers, dentists, restaurants — get a website that RANKS on Google without an expensive agency." },
-              { icon: TrendingUp, title: "SEO Freelancers", desc: "Create SEO-optimized websites at scale. 270+ categories with automated local SEO and content." },
+              { icon: TrendingUp, title: "SEO Freelancers", desc: "Create SEO-optimized websites at scale. 200+ categories with automated local SEO and content." },
               { icon: Laptop, title: "Web Designers", desc: "Stop building from scratch. Generate with AI, customize with visual editor, deploy in minutes." },
               { icon: Rocket, title: "Startup Founders", desc: "Launch your business website TODAY. No developer needed. Professional and SEO-ready." },
               { icon: Handshake, title: "White-Label Partners", desc: "Full admin dashboard with user management, roles, limits, and subscriptions. Build your own brand." },
@@ -721,7 +725,7 @@ export default function Landing() {
               "AI Blog System","One-Click Netlify Deploy","Free SSL Certificate","Custom Domain","Drag-&-Drop Editor",
               "Admin Dashboard","30+ AI FAQs","Open Graph Tags","Twitter Cards","Geo-Targeting",
               "Service × Location Pages","Google Maps Embed","Social Media Links","Revenue Tracking","User Role Management",
-              "Personal API Keys","Multi-AI Model","270+ Categories","Download as ZIP","Google Analytics",
+              "Personal API Keys","Multi-AI Model","200+ Categories","Download as ZIP","Google Analytics",
               "Facebook Pixel","Custom Head Code","Unsplash Images",
             ].map(t=>(
               <span key={t} className="px-4 py-2 rounded-full bg-[#7C3AED]/10 border border-[#7C3AED]/20 text-xs sm:text-sm font-medium text-purple-700">📌 {t}</span>
