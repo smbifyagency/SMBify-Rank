@@ -149,6 +149,63 @@ const toSlug = (value: string): string => {
     .replace(/^-|-$/g, "");
 };
 
+const normalizeNetlifySiteName = (value: unknown): string => {
+  if (typeof value !== "string") return "";
+
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9-]/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 63);
+};
+
+const extractNetlifySiteName = (website: any): string => {
+  const explicitSiteName = normalizeNetlifySiteName(website?.netlifySiteId);
+  if (explicitSiteName) return explicitSiteName;
+
+  const siteUrl = stringValue(website?.netlifyUrl);
+  const match = siteUrl.match(/https?:\/\/([^.]+)\.netlify\.app/i);
+  if (match?.[1]) {
+    return normalizeNetlifySiteName(match[1]);
+  }
+
+  return normalizeNetlifySiteName(website?.businessData?.urlSlug);
+};
+
+const getNetlifySiteConflictMessage = (siteName: string): string =>
+  `The Netlify site name "${siteName}.netlify.app" is already in use. Choose a different site name.`;
+
+const getNetlifyErrorMessage = (error: unknown, siteName?: string): string => {
+  const rawMessage = error instanceof Error ? error.message : String(error ?? "");
+  const normalizedMessage = rawMessage.toLowerCase();
+
+  if (
+    siteName &&
+    (
+      normalizedMessage.includes("already") ||
+      normalizedMessage.includes("taken") ||
+      normalizedMessage.includes("in use") ||
+      normalizedMessage.includes("not unique") ||
+      normalizedMessage.includes("duplicate") ||
+      normalizedMessage.includes("422")
+    )
+  ) {
+    return getNetlifySiteConflictMessage(siteName);
+  }
+
+  if (normalizedMessage.includes("401") || normalizedMessage.includes("unauthorized")) {
+    return "Invalid Netlify token. Please reconnect your Netlify account token and try again.";
+  }
+
+  if (normalizedMessage.includes("403") || normalizedMessage.includes("forbidden")) {
+    return "This Netlify token does not have permission to manage sites. Generate a new personal access token and try again.";
+  }
+
+  return rawMessage || "Unable to complete the Netlify request right now.";
+};
+
 const uniqueValues = (items: string[]): string[] => {
   const seen = new Set<string>();
   const result: string[] = [];
@@ -6165,6 +6222,130 @@ Generated on: ${new Date().toISOString()}`;
     }
   });
 
+  app.post("/api/netlify/check-site-availability", isAuthenticated, async (req: any, res) => {
+    try {
+      const userId = req.user.id;
+      const siteName = normalizeNetlifySiteName(req.body?.siteName);
+      const websiteId = stringValue(req.body?.websiteId);
+      let apiKey = stringValue(req.body?.apiKey);
+
+      if (!siteName) {
+        return res.status(400).json({
+          available: false,
+          message: "Enter a valid Netlify site name first."
+        });
+      }
+
+      const currentWebsite = websiteId ? await storage.getWebsite(websiteId) : null;
+      if (currentWebsite && currentWebsite.userId !== userId) {
+        return res.status(404).json({
+          available: false,
+          message: "Website not found."
+        });
+      }
+
+      if (!apiKey || apiKey.includes('•')) {
+        const setting = await storage.getApiSetting(userId, 'netlify');
+        if (setting?.apiKey) {
+          try {
+            apiKey = decrypt(setting.apiKey);
+          } catch {
+            apiKey = setting.apiKey;
+          }
+        }
+      }
+
+      if (!apiKey) {
+        return res.status(400).json({
+          available: false,
+          message: "Netlify API token required. Verify it in the Deploy tab first."
+        });
+      }
+
+      const userWebsites = await storage.listUserWebsites(userId);
+      const conflictingWebsite = userWebsites.find((website) => {
+        if (websiteId && String(website.id) === websiteId) return false;
+        return extractNetlifySiteName(website) === siteName;
+      });
+
+      if (conflictingWebsite) {
+        const conflictName = stringValue((conflictingWebsite.businessData as any)?.businessName || conflictingWebsite.title) || "another website";
+        return res.json({
+          available: false,
+          reusable: false,
+          message: `"${siteName}.netlify.app" is already connected to ${conflictName} in your account.`
+        });
+      }
+
+      const currentWebsiteSiteName = extractNetlifySiteName(currentWebsite);
+      const { NetlifyAPI } = await import('netlify');
+      const netlify = new NetlifyAPI(apiKey);
+
+      let ownedSite: any = null;
+      try {
+        const sites = await netlify.listSites({ name: siteName });
+        if (Array.isArray(sites)) {
+          ownedSite = sites.find((site: any) => site?.name === siteName) || null;
+        }
+      } catch (error) {
+        console.warn("Netlify listSites failed during availability check:", error);
+      }
+
+      if (ownedSite) {
+        if (currentWebsiteSiteName === siteName) {
+          return res.json({
+            available: true,
+            reusable: true,
+            message: `"${siteName}.netlify.app" is your current Netlify site. You can update it.`
+          });
+        }
+
+        return res.json({
+          available: false,
+          reusable: true,
+          message: `"${siteName}.netlify.app" already exists in your Netlify account. Use a different name here to avoid overwriting another site.`
+        });
+      }
+
+      let temporarySiteId: string | null = null;
+      try {
+        const temporarySite = await netlify.createSite({ body: { name: siteName } });
+        temporarySiteId = temporarySite?.id || null;
+      } catch (error) {
+        return res.json({
+          available: false,
+          reusable: false,
+          message: getNetlifyErrorMessage(error, siteName)
+        });
+      } finally {
+        if (temporarySiteId) {
+          try {
+            await fetch(`https://api.netlify.com/api/v1/sites/${temporarySiteId}`, {
+              method: 'DELETE',
+              headers: {
+                Authorization: `Bearer ${apiKey}`,
+              },
+            });
+          } catch (cleanupError) {
+            console.warn("Temporary Netlify site cleanup failed:", cleanupError);
+          }
+        }
+      }
+
+      return res.json({
+        available: true,
+        reusable: false,
+        message: `"${siteName}.netlify.app" is available. You can publish with this name.`
+      });
+    } catch (error) {
+      console.error("Netlify site availability check failed:", error);
+      return res.status(500).json({
+        available: false,
+        message: getNetlifyErrorMessage(error)
+      });
+    }
+  });
+
   // Future API: Add more blog posts to existing website
   app.post("/api/websites/:id/add-blog-posts", async (req, res) => {
     try {
@@ -6780,7 +6961,11 @@ Generated on: ${new Date().toISOString()}`;
       } catch { /* will create */ }
 
       if (!site) {
-        site = await netlify.createSite({ body: { name: domain } });
+        try {
+          site = await netlify.createSite({ body: { name: domain } });
+        } catch (error) {
+          throw new Error(getNetlifyErrorMessage(error, domain));
+        }
       }
 
       // Upload ZIP — no polling so we stay under the 60s limit

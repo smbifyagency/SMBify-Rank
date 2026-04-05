@@ -841,6 +841,7 @@ function generateAggregateRatingSchema(data: WDBusinessData): string {
 }
 
 function generateBlogPostingSchema(data: WDBusinessData, post: { title: string; slug: string; excerpt: string; content?: string; date: string; featuredImage?: string; category?: string; keywords?: string }, domain: string): string {
+  const featuredImage = data.customImages?.[`blog-img-${post.slug}`] || post.featuredImage;
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -861,7 +862,7 @@ function generateBlogPostingSchema(data: WDBusinessData, post: { title: string; 
     "articleSection": post.category || data.primaryKeyword || "Blog",
     "keywords": post.keywords || data.primaryKeyword || ""
   };
-  if (post.featuredImage) schema["image"] = post.featuredImage;
+  if (featuredImage) schema["image"] = featuredImage;
   if (post.content) schema["wordCount"] = post.content.replace(/<[^>]*>/g, '').split(/\s+/).length;
   return JSON.stringify(schema, null, 2);
 }
@@ -4691,10 +4692,13 @@ export function generateBlogArchivePage(data: WDBusinessData, domain: string): s
 
   const displayPosts = posts.length > 0 ? posts : getDefaultBlogPosts();
 
-  const postsHTML = displayPosts.map(post => `
+  const postsHTML = displayPosts.map(post => {
+    const featuredImage = data.customImages?.[`blog-img-${post.slug}`] || post.featuredImage;
+
+    return `
     <article class="blog-card">
-      ${post.featuredImage ? `<a href="blog/${post.slug}.html">
-        <img src="${post.featuredImage}" alt="${post.featuredImageAlt || post.title}" loading="lazy" class="blog-card-img" data-placeholder="blog-img-${post.slug}">
+      ${featuredImage ? `<a href="blog/${post.slug}.html">
+        <img src="${featuredImage}" alt="${post.featuredImageAlt || post.title}" loading="lazy" class="blog-card-img" data-placeholder="blog-img-${post.slug}">
       </a>` : ''}
       <div class="blog-card-body">
         ${post.category ? `<span class="blog-category">${post.category}</span>` : ''}
@@ -4705,7 +4709,8 @@ export function generateBlogArchivePage(data: WDBusinessData, domain: string): s
           <a href="blog/${post.slug}.html" class="service-card-link">Read More →</a>
         </div>
       </div>
-    </article>`).join('');
+    </article>`;
+  }).join('');
 
   const blogCSS = `
 .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 2rem; margin-top: 2rem; }
@@ -4798,6 +4803,7 @@ export function generateBlogArchivePage(data: WDBusinessData, domain: string): s
 export function generateBlogPostPage(data: WDBusinessData, post: WDBlogPost, domain: string): string {
   const theme = resolveTheme(data);
   const canonicalUrl = `https://${domain}.netlify.app/blog/${post.slug}.html`;
+  const featuredImage = data.customImages?.[`blog-img-${post.slug}`] || post.featuredImage;
   const fullTheme = resolveTheme(data);
   const fontUrl = FONT_URLS[fullTheme.fontFamily];
   const fontLink = fontUrl
@@ -4836,7 +4842,7 @@ export function generateBlogPostPage(data: WDBusinessData, post: WDBlogPost, dom
 
   <article class="content-section" style="padding-top:2rem;">
     <div class="container" style="max-width:800px;">
-      ${post.featuredImage ? `<img src="${post.featuredImage}" alt="${post.featuredImageAlt || post.title}" style="width:100%;height:360px;object-fit:cover;border-radius:12px;margin-bottom:2rem;" loading="lazy">` : ''}
+      ${featuredImage ? `<img src="${featuredImage}" alt="${post.featuredImageAlt || post.title}" style="width:100%;height:360px;object-fit:cover;border-radius:12px;margin-bottom:2rem;" loading="lazy" data-placeholder="blog-img-${post.slug}">` : ''}
       ${post.category ? `<span style="display:inline-block;background:${theme.secondaryColor}22;color:${theme.secondaryColor};font-size:.75rem;font-weight:700;padding:.25rem .6rem;border-radius:4px;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.04em;">${post.category}</span>` : ''}
       <h1 style="font-size:2rem;color:${theme.primaryColor};margin-bottom:1rem;line-height:1.3;">${post.title}</h1>
       <div style="display:flex;gap:1.5rem;color:#64748b;font-size:.875rem;margin-bottom:2rem;flex-wrap:wrap;">
@@ -4880,14 +4886,14 @@ export function generateBlogPostPage(data: WDBusinessData, post: WDBlogPost, dom
   <meta property="og:type" content="article">
   <meta property="og:title" content="${post.title}">
   <meta property="og:description" content="${post.excerpt}">
-  ${post.featuredImage ? `<meta property="og:image" content="${post.featuredImage}">` : ''}
+  ${featuredImage ? `<meta property="og:image" content="${featuredImage}">` : ''}
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": "${post.title.replace(/"/g, '\\"')}",
     "description": "${post.excerpt.replace(/"/g, '\\"')}",
-    ${post.featuredImage ? `"image": "${post.featuredImage}",` : ''}
+    ${featuredImage ? `"image": "${featuredImage}",` : ''}
     "datePublished": "${post.date}",
     "author": {"@type": "Organization", "name": "${data.businessName}"},
     "publisher": {"@type": "Organization", "name": "${data.businessName}"}

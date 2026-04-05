@@ -158,7 +158,20 @@ const PREVIEW_CLICK_SCRIPT = `
     var ov=document.createElement('div');
     ov.className='wd-img-overlay';
     ov.innerHTML='<span>📷</span><span>Click to replace</span>';
-    ov.onclick=function(){window.parent.postMessage({type:'wd-img-click',key:key},'*');};
+
+    function triggerUpload(event){
+      if(event){
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      window.parent.postMessage({type:'wd-img-click',key:key},'*');
+    }
+
+    wrap.style.cursor='pointer';
+    img.style.cursor='pointer';
+    wrap.onclick=triggerUpload;
+    img.onclick=triggerUpload;
+    ov.onclick=triggerUpload;
     wrap.appendChild(ov);
   });
   var hero=document.querySelector('.hero');
@@ -879,6 +892,7 @@ export default function WDSiteEditor() {
   const [desiredSlug, setDesiredSlug] = useState("");
   const [slugAvailable, setSlugAvailable] = useState<boolean | null>(null);
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
+  const [slugStatusMessage, setSlugStatusMessage] = useState("");
   const [apiStatus, setApiStatus] = useState<"checking" | "ready" | "none">("checking");
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [previewBlobUrl, setPreviewBlobUrl] = useState<string | null>(null);
@@ -1281,6 +1295,11 @@ export default function WDSiteEditor() {
       return;
     }
 
+    if (slugAvailable !== true) {
+      toast({ title: "Check Site Name First", description: "Run the Netlify site name check before publishing so we can confirm the URL is available.", variant: "destructive" });
+      return;
+    }
+
     // Show animation immediately so user knows the button was clicked
     setIsDeploying(true);
 
@@ -1329,14 +1348,18 @@ export default function WDSiteEditor() {
       });
       if (!res.ok) {
         const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || `Server error ${res.status}`);
+        throw new Error(errData.error || errData.message || `Server error ${res.status}`);
       }
       const data = await res.json();
       const url = data.url || `https://${slug}.netlify.app`;
       setDeployedUrl(url);
       toast({ title: "🚀 Deploying!", description: `Your site will be live at ${url} in ~30 seconds.` });
     } catch (err) {
-      toast({ title: "Deploy Error", description: String(err), variant: "destructive" });
+      toast({
+        title: "Deploy Error",
+        description: err instanceof Error ? err.message : String(err),
+        variant: "destructive"
+      });
     } finally {
       setIsDeploying(false);
     }
@@ -1370,6 +1393,8 @@ export default function WDSiteEditor() {
     if (!netlifyToken.trim()) return;
     setIsVerifyingToken(true);
     setTokenValid(null);
+    setSlugAvailable(null);
+    setSlugStatusMessage("");
     try {
       const res = await fetch("https://api.netlify.com/api/v1/user", {
         headers: { Authorization: `Bearer ${netlifyToken}` }
@@ -1398,43 +1423,55 @@ export default function WDSiteEditor() {
 
   // ── Check domain availability ─────────────────────────────────────────
   async function checkSlugAvailability() {
-    if (!netlifyToken.trim() || !desiredSlug.trim()) return;
+    if (!siteData) return;
+
+    const slug = (desiredSlug || siteData.urlSlug || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9-]/g, "")
+      .trim();
+
+    if (!netlifyToken.trim()) return;
+    if (!slug) {
+      setSlugAvailable(null);
+      setSlugStatusMessage("Enter a site name first.");
+      toast({ title: "Site Name Required", description: "Enter a Netlify site name before checking availability.", variant: "destructive" });
+      return;
+    }
+
     setIsCheckingSlug(true);
     setSlugAvailable(null);
+    setSlugStatusMessage("");
     try {
-      // 1. Check if another website in THIS account already uses this slug
-      const dbRes = await fetch("/api/websites", { credentials: "include" });
-      if (dbRes.ok) {
-        const allSites = await dbRes.json();
-        const conflict = allSites.find((s: any) => {
-          if (String(s.id) === String(websiteId)) return false; // skip current site
-          const siteUrl: string = s.netlifyUrl || s.businessData?.urlSlug || "";
-          const slug = desiredSlug.toLowerCase();
-          return siteUrl.toLowerCase().includes(slug);
-        });
-        if (conflict) {
-          const conflictName = (conflict.businessData as any)?.businessName || conflict.title || "Another site";
-          toast({
-            title: "URL Conflict",
-            description: `"${conflictName}" already uses this URL. Deploying here will overwrite that site. Choose a different name.`,
-            variant: "destructive",
-          });
-          setSlugAvailable(false);
-          return;
-        }
+      setDesiredSlug(slug);
+
+      const res = await fetch("/api/netlify/check-site-availability", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          apiKey: netlifyToken,
+          siteName: slug,
+          websiteId,
+        }),
+      });
+
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        throw new Error(data?.message || data?.error || "Could not verify availability.");
       }
 
-      // 2. Check Netlify API — is this slug free on Netlify?
-      const res = await fetch(`https://api.netlify.com/api/v1/sites?filter=all&name=${desiredSlug}`, {
-        headers: { Authorization: `Bearer ${netlifyToken}` }
-      });
-      if (!res.ok) throw new Error("API error");
-      const sites = await res.json();
-      // If taken but it IS our own previously deployed site (same id in DB), allow it
-      const netTaken = Array.isArray(sites) && sites.some((s: any) => s.name === desiredSlug);
-      setSlugAvailable(!netTaken);
-    } catch {
-      toast({ title: "Check failed", description: "Could not verify availability.", variant: "destructive" });
+      setSlugAvailable(Boolean(data?.available));
+      setSlugStatusMessage(
+        data?.message ||
+        (data?.available
+          ? `"${slug}.netlify.app" is available. You can publish with this name.`
+          : `"${slug}.netlify.app" is not available. Choose a different site name.`)
+      );
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Could not verify availability.";
+      setSlugAvailable(null);
+      setSlugStatusMessage(message);
+      toast({ title: "Check failed", description: message, variant: "destructive" });
     } finally {
       setIsCheckingSlug(false);
     }
@@ -1457,6 +1494,13 @@ export default function WDSiteEditor() {
 
   // Helper to slugify strings the same way as the generator
   const toSlug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const getBlogImageSlugFromKey = (key: string): string | null => {
+    const prefix = 'blog-img-';
+    if (!key.startsWith(prefix)) return null;
+
+    const slug = key.slice(prefix.length).trim();
+    return slug || null;
+  };
 
   /**
    * Incremental page generation — only generate pages that don't already exist.
@@ -1555,8 +1599,23 @@ export default function WDSiteEditor() {
       const dataUrl = e.target?.result as string;
       const current = siteDataRef.current || siteData;
       const updatedImages = { ...(current?.customImages || {}), [key]: dataUrl };
-      setSiteData(prev => prev ? { ...prev, customImages: updatedImages } : prev);
-      if (current) rebuildPreview({ ...current, customImages: updatedImages });
+      const blogSlug = getBlogImageSlugFromKey(key);
+      const nextData = current
+        ? {
+            ...current,
+            customImages: updatedImages,
+            blogPosts: blogSlug
+              ? (current.blogPosts || []).map(post =>
+                  post.slug === blogSlug
+                    ? { ...post, featuredImage: dataUrl }
+                    : post
+                )
+              : current.blogPosts,
+          }
+        : current;
+
+      setSiteData(nextData);
+      if (nextData) rebuildPreview(nextData);
       toast({ title: "Image updated", description: "Preview refreshed. Will be saved automatically." });
     };
     reader.readAsDataURL(file);
@@ -3035,6 +3094,18 @@ export default function WDSiteEditor() {
               <h3 className="font-semibold text-sm text-gray-300">{deployedUrl ? "Update on Netlify" : "Publish to Netlify"}</h3>
               <p className="text-xs text-gray-500">{deployedUrl ? "Push your latest changes to the live site." : "Complete your website first (Business + Content tabs), then publish here."}</p>
 
+              <div className="rounded-lg border border-sky-900/60 bg-sky-950/25 p-4 space-y-3">
+                <p className="text-sm font-semibold text-sky-200">Recommended Deploy Process</p>
+                <ol className="list-decimal space-y-2 pl-4 text-xs text-sky-100/90">
+                  <li>Website final karne ke baad pehle apna Netlify site name find karein aur availability check karein.</li>
+                  <li>Agar URL available ho, usi final URL ko Google Search Console me property ke taur par add karein.</li>
+                  <li>Search Console ka verification meta tag copy karke neeche <strong className="text-sky-100">Custom Head Code</strong> me paste karein.</li>
+                  <li>Google Analytics me isi website ko add karein, zaroori script/snippet Custom Head Code me paste karein, aur GA4 Measurement ID alag se field me enter karein.</li>
+                  <li>Uske baad deploy karein taake ek hi deployment me verification aur analytics dono live ho jayein.</li>
+                </ol>
+                <p className="text-[11px] text-sky-200/80">Custom Head Code me multiple meta, script, aur link tags paste kar sakte hain. Editor side par koi hard length limit apply nahi ki gayi.</p>
+              </div>
+
               {deployedUrl && (
                 <div className="rounded-lg bg-green-900/30 border border-green-800 p-3">
                   <div className="flex items-center justify-between mb-1">
@@ -3063,7 +3134,12 @@ export default function WDSiteEditor() {
                   <Input
                     type="password"
                     value={netlifyToken}
-                    onChange={e => { setNetlifyToken(e.target.value); setTokenValid(null); }}
+                    onChange={e => {
+                      setNetlifyToken(e.target.value);
+                      setTokenValid(null);
+                      setSlugAvailable(null);
+                      setSlugStatusMessage("");
+                    }}
                     className="bg-gray-800 border-gray-700 text-white text-sm flex-1"
                     placeholder="nfp_xxxxxxxxxxxxxxxxxx"
                   />
@@ -3082,7 +3158,11 @@ export default function WDSiteEditor() {
                   <div className="flex items-center gap-0">
                     <Input
                       value={desiredSlug || siteData.urlSlug}
-                      onChange={e => { setDesiredSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "")); setSlugAvailable(null); }}
+                      onChange={e => {
+                        setDesiredSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""));
+                        setSlugAvailable(null);
+                        setSlugStatusMessage("");
+                      }}
                       className="bg-gray-800 border-gray-700 text-white text-sm rounded-r-none border-r-0 flex-1"
                       placeholder={siteData.urlSlug || "rapid-dry-restoration"}
                     />
@@ -3092,8 +3172,11 @@ export default function WDSiteEditor() {
                       {isCheckingSlug ? <Loader2 className="w-3 h-3 animate-spin" /> : slugAvailable === true ? "✓ Free" : slugAvailable === false ? "✗ Taken" : "Check"}
                     </Button>
                   </div>
-                  {slugAvailable === false && <p className="text-xs text-red-400">That name is taken — try a variation like adding your city.</p>}
-                  {slugAvailable === true && <p className="text-xs text-green-400">✓ Available! Click Publish below.</p>}
+                  {slugStatusMessage && (
+                    <p className={`text-xs ${slugAvailable === true ? 'text-green-400' : 'text-red-400'}`}>
+                      {slugStatusMessage}
+                    </p>
+                  )}
                 </div>
               )}
 
@@ -3103,7 +3186,7 @@ export default function WDSiteEditor() {
                   if (desiredSlug) updateField("urlSlug", desiredSlug);
                   deployToNetlify();
                 }}
-                disabled={isDeploying || !netlifyToken || !tokenValid || slugAvailable === false}
+                disabled={isDeploying || !netlifyToken || !tokenValid || slugAvailable !== true}
                 className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
               >
                 {isDeploying ? (
@@ -3124,19 +3207,7 @@ export default function WDSiteEditor() {
                   className="bg-gray-800 border-gray-700 text-white text-sm"
                   placeholder="G-XXXXXXXXXX"
                 />
-                <p className="text-xs text-gray-600">Google Analytics → Admin → Data Streams → your stream → Measurement ID (starts with G-)</p>
-              </div>
-
-              {/* Google Search Console Verification */}
-              <div className="space-y-2">
-                <Label className="text-xs text-gray-400">Google Search Console Verification <span className="text-gray-600">(optional but recommended)</span></Label>
-                <Input
-                  value={(siteData as any).googleVerificationCode || ""}
-                  onChange={e => updateField("googleVerificationCode", e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-white text-sm"
-                  placeholder="e.g. abc123xyz..."
-                />
-                <p className="text-xs text-gray-600">Google Search Console → Add Property → HTML tag → copy only the content= value. Phir redeploy karo aur GSC me sitemap submit karo: yoursite.netlify.app/sitemap.xml</p>
+                <p className="text-xs text-gray-600">Google Analytics → Admin → Data Streams → apna Measurement ID yahan paste karein. Agar Google full site tag/script de to usay Custom Head Code me paste karein.</p>
               </div>
 
               {/* Custom Head Code */}
@@ -3147,11 +3218,12 @@ export default function WDSiteEditor() {
                 <Textarea
                   value={(siteData as any).customHeadCode || ""}
                   onChange={e => updateField("customHeadCode", e.target.value)}
-                  className="bg-gray-800 border-gray-700 text-white text-xs font-mono min-h-[90px] resize-y"
-                  placeholder={`<!-- Paste any <meta>, <script>, or <link> tags here -->\n<!-- Examples: Bing Webmaster, Pinterest, Facebook Pixel, custom fonts -->\n<meta name="msvalidate.01" content="...">\n<meta name="p:domain_verify" content="...">`}
+                  className="bg-gray-800 border-gray-700 text-white text-xs font-mono min-h-[220px] resize-y"
+                  placeholder={`<!-- Paste Google Search Console verification here -->\n<meta name="google-site-verification" content="...">\n\n<!-- Paste Google Analytics / gtag snippet here if needed -->\n<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag('js', new Date());\n  gtag('config', 'G-XXXXXXXXXX');\n</script>\n\n<!-- You can also paste Bing, Pinterest, Meta Pixel, or any other head tags -->`}
                   spellCheck={false}
+                  rows={10}
                 />
-                <p className="text-xs text-gray-600">Yahan koi bhi tag paste kar sakte hain jo website ki har page ki &lt;head&gt; mein inject ho jaaye — Bing, Pinterest, Facebook Pixel, ya koi bhi third-party verification ya script.</p>
+                <p className="text-xs text-gray-600">Yahan Google Search Console meta tag, Google Analytics snippet, Bing/Pinterest verification, Meta Pixel, ya koi bhi third-party &lt;meta&gt;, &lt;script&gt;, ya &lt;link&gt; code paste kar sakte hain. Yeh har page ke &lt;head&gt; me inject hoga.</p>
               </div>
 
               <div className="rounded-lg bg-gray-800/50 border border-gray-700/50 p-3">
@@ -3163,6 +3235,9 @@ export default function WDSiteEditor() {
                     "Service areas listed correctly",
                     "AI content generated (click Regenerate)",
                     "Placeholder images replaced with real photos",
+                    "Netlify site name checked and available",
+                    "Search Console / verification tags pasted in Custom Head Code",
+                    "GA4 ID entered and any analytics script pasted in Custom Head Code",
                   ].map((item, i) => (
                     <li key={i} className="flex items-start gap-2 text-xs text-gray-500">
                       <span className="mt-0.5">□</span> {item}
