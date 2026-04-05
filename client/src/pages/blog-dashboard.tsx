@@ -169,8 +169,8 @@ export default function BlogDashboard() {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-4xl font-bold text-white mb-2">Blog Management</h1>
-            <p className="text-gray-400">
+            <h1 className="text-4xl font-bold text-gray-900 mb-2">Blog Management</h1>
+            <p className="text-gray-600">
               Create, edit, and manage your blog posts
             </p>
           </div>
@@ -184,40 +184,40 @@ export default function BlogDashboard() {
 
         {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-4 mb-8">
-          <Card className="bg-white/[0.02] border-white/10 backdrop-blur-sm">
+          <Card className="bg-white border-gray-200 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">Total Posts</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600">Total Posts</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">{postsData?.total || 0}</div>
+              <div className="text-2xl font-bold text-gray-900">{postsData?.total || 0}</div>
             </CardContent>
           </Card>
-          <Card className="bg-white/[0.02] border-white/10 backdrop-blur-sm">
+          <Card className="bg-white border-gray-200 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">Published</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600">Published</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-gray-900">
                 {postsData?.posts.filter(p => p.status === "published").length || 0}
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-white/[0.02] border-white/10 backdrop-blur-sm">
+          <Card className="bg-white border-gray-200 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">Drafts</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600">Drafts</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-gray-900">
                 {postsData?.posts.filter(p => p.status === "draft").length || 0}
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-white/[0.02] border-white/10 backdrop-blur-sm">
+          <Card className="bg-white border-gray-200 shadow-sm">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-gray-300">Total Views</CardTitle>
+              <CardTitle className="text-sm font-medium text-gray-600">Total Views</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-white">
+              <div className="text-2xl font-bold text-gray-900">
                 {postsData?.posts.reduce((sum, p) => sum + (p.viewCount || 0), 0) || 0}
               </div>
             </CardContent>
@@ -225,7 +225,7 @@ export default function BlogDashboard() {
         </div>
 
         {/* Filters and Actions */}
-        <Card className="mb-6 bg-white/[0.02] border-white/10 backdrop-blur-sm">
+        <Card className="mb-6 bg-white border-gray-200 shadow-sm">
           <CardContent className="pt-6">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="flex gap-4 flex-1">
@@ -235,15 +235,15 @@ export default function BlogDashboard() {
                     placeholder="Search posts..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]"
+                    className="pl-10 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-[#7C3AED]"
                   />
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-32 bg-white/5 border-white/10 text-white">
+                  <SelectTrigger className="w-32 bg-gray-50 border-gray-200 text-gray-900">
                     <Filter className="h-4 w-4 mr-2" />
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-gray-900 border-white/10 text-white">
+                  <SelectContent className="bg-white border-gray-200 text-gray-900">
                     <SelectItem value="all">All Status</SelectItem>
                     <SelectItem value="published">Published</SelectItem>
                     <SelectItem value="draft">Draft</SelectItem>
@@ -270,7 +270,7 @@ export default function BlogDashboard() {
         </Card>
 
         {/* Posts Table */}
-        <Card className="bg-white/[0.02] border-white/10 backdrop-blur-sm">
+        <Card className="bg-white border-gray-200 shadow-sm">
           <CardContent className="p-0">
             {isLoading ? (
               <div className="flex items-center justify-center h-64">
@@ -279,26 +279,26 @@ export default function BlogDashboard() {
             ) : (
               <Table>
                 <TableHeader>
-                  <TableRow className="border-b border-white/10 hover:bg-white/5">
-                    <TableHead className="w-12 text-gray-400">
+                  <TableRow className="border-b border-gray-200 hover:bg-gray-50">
+                    <TableHead className="w-12 text-gray-600">
                       <Checkbox
                         checked={selectedPosts.length === filteredPosts.length && filteredPosts.length > 0}
                         onCheckedChange={handleSelectAll}
                         className="border-gray-500 data-[state=checked]:bg-[#7C3AED] data-[state=checked]:border-[#7C3AED]"
                       />
                     </TableHead>
-                    <TableHead className="text-gray-400">Title</TableHead>
-                    <TableHead className="text-gray-400">Category</TableHead>
-                    <TableHead className="text-gray-400">Status</TableHead>
-                    <TableHead className="text-gray-400">Author</TableHead>
-                    <TableHead className="text-gray-400">Published</TableHead>
-                    <TableHead className="text-gray-400">Views</TableHead>
+                    <TableHead className="text-gray-600">Title</TableHead>
+                    <TableHead className="text-gray-600">Category</TableHead>
+                    <TableHead className="text-gray-600">Status</TableHead>
+                    <TableHead className="text-gray-600">Author</TableHead>
+                    <TableHead className="text-gray-600">Published</TableHead>
+                    <TableHead className="text-gray-600">Views</TableHead>
                     <TableHead className="w-12"></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredPosts.map((post) => (
-                    <TableRow key={post.id} className="border-b border-white/10 hover:bg-white/5 data-[state=selected]:bg-white/5">
+                    <TableRow key={post.id} className="border-b border-gray-200 hover:bg-gray-50 data-[state=selected]:bg-gray-50">
                       <TableCell>
                         <Checkbox
                           checked={selectedPosts.includes(post.id)}
@@ -308,8 +308,8 @@ export default function BlogDashboard() {
                       </TableCell>
                       <TableCell>
                         <div className="space-y-1">
-                          <div className="font-medium text-white">{post.title}</div>
-                          <div className="text-sm text-gray-400 truncate max-w-md">
+                          <div className="font-medium text-gray-900">{post.title}</div>
+                          <div className="text-sm text-gray-500 truncate max-w-md">
                             {post.excerpt}
                           </div>
                           {post.isAiGenerated && (
@@ -319,27 +319,27 @@ export default function BlogDashboard() {
                           )}
                         </div>
                       </TableCell>
-                      <TableCell className="text-gray-300">{post.category || "Uncategorized"}</TableCell>
+                      <TableCell className="text-gray-600">{post.category || "Uncategorized"}</TableCell>
                       <TableCell>{getStatusBadge(post.status)}</TableCell>
-                      <TableCell className="text-gray-300">{post.authorName}</TableCell>
-                      <TableCell className="text-gray-300">{formatDate(post.publishedAt)}</TableCell>
-                      <TableCell className="text-gray-300">{post.viewCount || 0}</TableCell>
+                      <TableCell className="text-gray-600">{post.authorName}</TableCell>
+                      <TableCell className="text-gray-600">{formatDate(post.publishedAt)}</TableCell>
+                      <TableCell className="text-gray-600">{post.viewCount || 0}</TableCell>
                       <TableCell>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white hover:bg-white/10">
+                            <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-900 hover:bg-gray-100">
                               <MoreHorizontal className="h-4 w-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-gray-900 border-white/10 text-white">
+                          <DropdownMenuContent align="end" className="bg-white border-gray-200 text-gray-900">
                             <Link href={`/blog/${post.slug}`}>
-                              <DropdownMenuItem className="cursor-pointer hover:bg-white/10 focus:bg-white/10 focus:text-white">
+                              <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 focus:bg-gray-100">
                                 <Eye className="h-4 w-4 mr-2" />
                                 View
                               </DropdownMenuItem>
                             </Link>
                             <Link href={`/blog-editor/${post.id}`}>
-                              <DropdownMenuItem className="cursor-pointer hover:bg-white/10 focus:bg-white/10 focus:text-white">
+                              <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 focus:bg-gray-100">
                                 <Edit className="h-4 w-4 mr-2" />
                                 Edit
                               </DropdownMenuItem>
@@ -349,14 +349,14 @@ export default function BlogDashboard() {
                                 id: post.id,
                                 status: post.status === "published" ? "draft" : "published"
                               })}
-                              className="cursor-pointer hover:bg-white/10 focus:bg-white/10 focus:text-white"
+                              className="cursor-pointer hover:bg-gray-100 focus:bg-gray-100"
                             >
                               <Calendar className="h-4 w-4 mr-2" />
                               {post.status === "published" ? "Unpublish" : "Publish"}
                             </DropdownMenuItem>
                             <DropdownMenuItem
                               onClick={() => deleteMutation.mutate(post.id)}
-                              className="cursor-pointer text-red-400 hover:bg-red-500/10 hover:text-red-300 focus:bg-red-500/10 focus:text-red-300"
+                              className="cursor-pointer text-red-500 hover:bg-red-50 hover:text-red-600 focus:bg-red-50 focus:text-red-600"
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
                               Delete

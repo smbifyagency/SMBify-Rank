@@ -117,7 +117,7 @@ export default function BlogPost() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent" />
               {post.isAiGenerated && (
-                <Badge className="absolute top-4 right-4 bg-[#7C3AED] hover:bg-[#9333EA] text-black text-white border-0">
+                <Badge className="absolute top-4 right-4 bg-[#7C3AED] hover:bg-[#9333EA] text-white border-0">
                   AI Generated
                 </Badge>
               )}
@@ -126,7 +126,7 @@ export default function BlogPost() {
 
           {/* Article Header */}
           <div className="mb-8">
-            <div className="flex flex-wrap items-center gap-3 mb-4 text-sm text-gray-400">
+            <div className="flex flex-wrap items-center gap-3 mb-4 text-sm text-gray-500">
               {post.category && (
                 <Badge variant="outline" className="text-sm border-gray-200 text-gray-600">
                   {post.category}
@@ -212,7 +212,7 @@ export default function BlogPost() {
                 </div>
                 <div>
                   <CardTitle className="text-lg text-gray-900">{post.authorName}</CardTitle>
-                  <CardDescription className="text-gray-400">Author</CardDescription>
+                  <CardDescription className="text-gray-500">Author</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -233,14 +233,14 @@ export default function BlogPost() {
                           className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
                         />
                         {relatedPost.isAiGenerated && (
-                          <Badge className="absolute top-2 right-2 bg-[#7C3AED] text-black border-0 text-xs">
+                          <Badge className="absolute top-2 right-2 bg-[#7C3AED] text-white border-0 text-xs">
                             AI
                           </Badge>
                         )}
                       </div>
                     )}
                     <CardHeader className="pb-3">
-                      <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
+                      <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
                         {relatedPost.category && (
                           <Badge variant="outline" className="text-xs border-gray-200">
                             {relatedPost.category}
@@ -256,12 +256,12 @@ export default function BlogPost() {
                       <CardTitle className="text-lg group-hover:text-[#7C3AED] text-gray-900 transition-colors line-clamp-2">
                         {relatedPost.title}
                       </CardTitle>
-                      <CardDescription className="line-clamp-2 text-sm text-gray-400">
+                      <CardDescription className="line-clamp-2 text-sm text-gray-500">
                         {relatedPost.excerpt}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="pt-0">
-                      <div className="flex items-center justify-between text-sm text-gray-400 mb-3">
+                      <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
                         <div className="flex items-center gap-1">
                           <User className="h-3 w-3" />
                           {relatedPost.authorName}
@@ -286,10 +286,10 @@ export default function BlogPost() {
 
           {/* Newsletter Signup */}
           <div className="mt-16">
-            <Card className="bg-gradient-to-r from-indigo-600/20 to-violet-600/20 border-[#7C3AED]/25 text-white">
+            <Card className="bg-gradient-to-r from-purple-50 to-purple-100/50 border-purple-200">
               <CardHeader className="text-center">
-                <CardTitle className="text-2xl text-white">Subscribe to Our Newsletter</CardTitle>
-                <CardDescription className="text-gray-300">
+                <CardTitle className="text-2xl text-gray-900">Subscribe to Our Newsletter</CardTitle>
+                <CardDescription className="text-gray-600">
                   Get the latest articles and insights delivered straight to your inbox.
                 </CardDescription>
               </CardHeader>
@@ -298,9 +298,9 @@ export default function BlogPost() {
                   <input
                     type="email"
                     placeholder="Enter your email"
-                    className="flex-1 px-3 py-2 rounded-md bg-white/5 border border-white/10 text-white placeholder:text-gray-400 focus:outline-none focus:border-[#7C3AED]"
+                    className="flex-1 px-3 py-2 rounded-md bg-white border border-gray-200 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#7C3AED]"
                   />
-                  <Button className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold text-white border-0">
+                  <Button className="bg-[#7C3AED] hover:bg-[#9333EA] text-white font-bold border-0">
                     Subscribe
                   </Button>
                 </div>

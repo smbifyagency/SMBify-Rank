@@ -32,7 +32,7 @@ export default function Landing() {
                 <span className="text-sm text-gray-600">AI-Powered Website Builder</span>
               </div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] mb-6">
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] mb-6 text-gray-900">
                 Build. Rank.
                 <span className="block bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">
                   Dominate.
@@ -64,7 +64,7 @@ export default function Landing() {
                 </Button>
               </div>
 
-              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 mt-12 text-sm text-gray-500">
+              <div className="flex flex-wrap items-center justify-center lg:justify-start gap-6 mt-12 text-sm text-gray-600">
                 <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-purple-700" />No coding required</div>
                 <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-purple-700" />270+ business categories</div>
                 <div className="flex items-center gap-2"><CheckCircle className="h-4 w-4 text-purple-700" />One-click deployment</div>
@@ -111,7 +111,7 @@ export default function Landing() {
                 ].map((s) => (
                   <div key={s.label} className="text-center">
                     <div className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent mb-1">{s.value}</div>
-                    <div className="text-gray-500 text-sm">{s.label}</div>
+                    <div className="text-gray-600 text-sm">{s.label}</div>
                   </div>
                 ))}
               </div>
@@ -125,7 +125,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">The Problem</p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Tired of Websites That Don't <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Perform?</span></h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Tired of Websites That Don't <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Perform?</span></h2>
             <p className="text-gray-600 max-w-2xl mx-auto">Most business owners face the same frustrating challenges when trying to get online.</p>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
@@ -149,7 +149,7 @@ export default function Landing() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">How It Works</p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">3 Steps to a <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Ranking Website</span></h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">3 Steps to a <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Ranking Website</span></h2>
             <p className="text-gray-600 max-w-xl mx-auto">From zero to a fully deployed, SEO-optimized website in minutes.</p>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
@@ -176,7 +176,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">Features</p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Everything You Need to <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Build & Rank</span></h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Everything You Need to <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Build & Rank</span></h2>
             <p className="text-gray-600 max-w-2xl mx-auto">A complete platform with AI content, SEO, blog, deployment, and admin tools — all in one.</p>
           </div>
 
@@ -261,7 +261,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">Templates</p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">15+ Professional <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Industry Templates</span></h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">15+ Professional <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Industry Templates</span></h2>
             <p className="text-gray-600 max-w-2xl mx-auto">Beautiful, conversion-focused designs for every business type. Each generates 10+ SEO-optimized pages.</p>
           </div>
 
@@ -297,7 +297,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">SEO Engine</p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Built-In SEO That <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Actually Works</span></h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Built-In SEO That <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Actually Works</span></h2>
             <p className="text-gray-600 max-w-2xl mx-auto">Every website comes loaded with advanced SEO features that most agencies charge thousands extra for.</p>
           </div>
 
@@ -322,7 +322,7 @@ export default function Landing() {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-gray-900 mb-1">{item.title}</h4>
-                  <p className="text-xs text-gray-500 leading-relaxed">{item.desc}</p>
+                  <p className="text-xs text-gray-600 leading-relaxed">{item.desc}</p>
                 </div>
               </div>
             ))}
@@ -334,7 +334,7 @@ export default function Landing() {
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gray-50" id="ai-models">
         <div className="max-w-5xl mx-auto text-center">
           <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">AI Engine</p>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-4">Powered by the World's <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Best AI Models</span></h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Powered by the World's <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Best AI Models</span></h2>
           <p className="text-gray-600 max-w-xl mx-auto mb-12">Choose your preferred model or let the system auto-select. Bring your own API keys or use ours.</p>
 
           <div className="flex flex-wrap gap-5 justify-center mb-10">
@@ -348,7 +348,7 @@ export default function Landing() {
                 <span className="text-2xl">{m.icon}</span>
                 <div className="text-left">
                   <div className="font-bold text-gray-900 text-sm">{m.name}</div>
-                  <div className="text-xs text-gray-500">{m.desc}</div>
+                  <div className="text-xs text-gray-600">{m.desc}</div>
                 </div>
               </div>
             ))}
@@ -367,7 +367,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">What Gets Generated</p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">A Complete Website with <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">10+ Pages</span></h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">A Complete Website with <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">10+ Pages</span></h2>
             <p className="text-gray-600 max-w-2xl mx-auto">Every website comes with all essential pages, fully written and SEO-optimized. No placeholders — real content.</p>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
@@ -407,7 +407,7 @@ export default function Landing() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">Comparison</p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Why SiteGenie <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Wins</span></h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Why SiteGenie <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Wins</span></h2>
             <p className="text-gray-600 max-w-xl mx-auto">See how we stack up against Wix, Squarespace, and WordPress.</p>
           </div>
 
@@ -454,7 +454,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">Who It's For</p>
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Built for <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Growth-Minded</span> Businesses</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Built for <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Growth-Minded</span> Businesses</h2>
             <p className="text-gray-600 max-w-xl mx-auto">Whether you're a solo freelancer or a full agency, SiteGenie scales with you.</p>
           </div>
 
@@ -486,7 +486,7 @@ export default function Landing() {
       <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">Summary</p>
-          <h2 className="text-3xl sm:text-4xl font-bold mb-10">Everything Included <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Out of the Box</span></h2>
+          <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-10">Everything Included <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Out of the Box</span></h2>
 
           <div className="flex flex-wrap gap-3 justify-center">
             {[
