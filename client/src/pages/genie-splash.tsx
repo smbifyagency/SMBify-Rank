@@ -176,12 +176,7 @@ export default function GenieSplash() {
 
       {/* Top-left brand mark */}
       <div className="absolute top-6 left-6 z-10 flex items-center gap-3 opacity-80">
-        <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-purple-700 flex items-center justify-center">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M8 21h8M12 17v4M7 4h10l-1 9H8L7 4z" />
-            <path d="M12 4c0-1.5-1-2-2-2s-2 .5-2 2" opacity="0.7" />
-          </svg>
-        </div>
+        <img src="/favicon.svg" alt="SiteGenie" className="w-8 h-8 rounded-lg" />
         <span className="text-white/60 font-semibold text-sm tracking-wide">SiteGenie</span>
       </div>
 

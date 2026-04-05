@@ -222,9 +222,7 @@ export function Navigation() {
           <div className="flex-shrink-0">
             <Link href="/home">
               <div className="flex items-center gap-2 cursor-pointer group">
-                <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-purple-600 to-purple-800 border border-purple-500/30 flex items-center justify-center shadow-lg group-hover:border-amber-400/40 transition-all">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 21h8M12 17v4M7 4h10l-1 9H8L7 4z" /><path d="M12 4c0-1.5-1-2-2-2s-2 .5-2 2" opacity="0.7" /></svg>
-                </div>
+                <img src="/favicon.svg" alt="SiteGenie" className="h-9 w-9 rounded-lg shadow-lg group-hover:shadow-purple-500/30 transition-all" />
                 <h1 className="text-lg font-bold tracking-tight">
                   <span className="bg-gradient-to-r from-purple-400 to-purple-300 bg-clip-text text-transparent">Site</span><span className="bg-gradient-to-r from-amber-300 to-yellow-300 bg-clip-text text-transparent">Genie</span>
                 </h1>
