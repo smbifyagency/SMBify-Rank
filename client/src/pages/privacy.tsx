@@ -3,10 +3,10 @@ export default function PrivacyPage() {
     <>
       {/* Hero Section */}
       <section className="relative pt-32 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#AADD00]/10 rounded-full blur-3xl" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-[#7C3AED]/10 rounded-full blur-3xl" />
         <div className="relative max-w-4xl mx-auto text-center border-b border-white/10 pb-8">
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-4">
-            Privacy <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#AADD00] to-[#7ec800]">Policy</span>
+            Privacy <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7C3AED] to-[#F59E0B]">Policy</span>
           </h1>
           <p className="text-gray-400 uppercase tracking-wider text-sm font-semibold">
             Last updated: November 12, 2025
@@ -16,12 +16,12 @@ export default function PrivacyPage() {
 
       {/* Content Section */}
       <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto mb-20">
-        <div className="prose prose-invert prose-[#AADD00] max-w-none">
+        <div className="prose prose-invert prose-[#7C3AED] max-w-none">
           <div className="space-y-12">
             <div>
               <h2 className="text-2xl font-semibold mb-4 text-white">1. Introduction</h2>
               <p className="text-gray-400 leading-relaxed">
-                At SMBify AI Static Website Builder ("we," "our," or "us"), we respect your privacy and are committed to protecting your
+                At SiteGenie AI Static Website Builder ("we," "our," or "us"), we respect your privacy and are committed to protecting your
                 personal information. This Privacy Policy explains how we collect, use, and safeguard your information when you use our Service.
               </p>
             </div>
@@ -30,8 +30,8 @@ export default function PrivacyPage() {
               <h2 className="text-2xl font-semibold mb-4 text-white">2. Information We Collect</h2>
 
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-[#AADD00] mb-3">2.1 Information You Provide</h3>
-                <ul className="list-disc pl-6 space-y-2 marker:text-[#AADD00]">
+                <h3 className="text-lg font-semibold text-[#7C3AED] mb-3">2.1 Information You Provide</h3>
+                <ul className="list-disc pl-6 space-y-2 marker:text-[#7C3AED]">
                   <li><span className="text-gray-400">Business information (name, address, phone, email, services)</span></li>
                   <li><span className="text-gray-400">Website content and preferences</span></li>
                   <li><span className="text-gray-400">API keys (stored temporarily and securely per session)</span></li>
@@ -40,8 +40,8 @@ export default function PrivacyPage() {
               </div>
 
               <div>
-                <h3 className="text-lg font-semibold text-[#AADD00] mb-3">2.2 Automatically Collected Information</h3>
-                <ul className="list-disc pl-6 space-y-2 marker:text-[#AADD00]">
+                <h3 className="text-lg font-semibold text-[#7C3AED] mb-3">2.2 Automatically Collected Information</h3>
+                <ul className="list-disc pl-6 space-y-2 marker:text-[#7C3AED]">
                   <li><span className="text-gray-400">Browser type and version</span></li>
                   <li><span className="text-gray-400">Device information</span></li>
                   <li><span className="text-gray-400">IP address</span></li>
@@ -53,7 +53,7 @@ export default function PrivacyPage() {
             <div>
               <h2 className="text-2xl font-semibold mb-4 text-white">3. How We Use Your Information</h2>
               <p className="text-gray-400 leading-relaxed mb-4">We use your information to:</p>
-              <ul className="list-disc pl-6 space-y-2 marker:text-[#AADD00]">
+              <ul className="list-disc pl-6 space-y-2 marker:text-[#7C3AED]">
                 <li><span className="text-gray-400">Generate websites based on your business information</span></li>
                 <li><span className="text-gray-400">Create AI-powered content using your provided API keys</span></li>
                 <li><span className="text-gray-400">Provide customer support and respond to inquiries</span></li>
@@ -63,12 +63,12 @@ export default function PrivacyPage() {
               </ul>
             </div>
 
-            <div className="bg-gradient-to-br from-[#AADD00]/8 to-[#AADD00]/3 border border-[#AADD00]/20 rounded-2xl p-8">
+            <div className="bg-gradient-to-br from-[#7C3AED]/8 to-[#7C3AED]/3 border border-[#7C3AED]/20 rounded-2xl p-8">
               <h2 className="text-2xl font-semibold mb-4 text-white">4. API Key Security</h2>
               <p className="text-gray-300 leading-relaxed font-medium mb-4">
                 Your API keys are critically important to us. We implement the following security measures:
               </p>
-              <ul className="list-disc pl-6 space-y-3 marker:text-[#AADD00]">
+              <ul className="list-disc pl-6 space-y-3 marker:text-[#7C3AED]">
                 <li><span className="text-gray-400"><strong className="text-white font-semibold">Session-Based Storage:</strong> API keys are stored only in your session and never in persistent databases</span></li>
                 <li><span className="text-gray-400"><strong className="text-white font-semibold">Automatic Expiration:</strong> All API keys automatically expire after one hour</span></li>
                 <li><span className="text-gray-400"><strong className="text-white font-semibold">Session Isolation:</strong> Each user's API keys are completely isolated from others</span></li>
@@ -82,7 +82,7 @@ export default function PrivacyPage() {
               <p className="text-gray-400 leading-relaxed mb-4">
                 We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:
               </p>
-              <ul className="list-disc pl-6 space-y-2 marker:text-[#AADD00]">
+              <ul className="list-disc pl-6 space-y-2 marker:text-[#7C3AED]">
                 <li><span className="text-gray-400"><strong className="text-white">Third-Party APIs:</strong> Your API keys are used to make requests to OpenAI, Gemini, Netlify, and Unsplash on your behalf</span></li>
                 <li><span className="text-gray-400"><strong className="text-white">Legal Requirements:</strong> When required by law or to protect our rights</span></li>
                 <li><span className="text-gray-400"><strong className="text-white">Service Providers:</strong> With trusted service providers who assist in operating our Service (under strict confidentiality agreements)</span></li>
@@ -120,8 +120,8 @@ export default function PrivacyPage() {
               <h2 className="text-xl font-semibold mb-4 text-white">12. Contact Us</h2>
               <p className="text-gray-400">
                 If you have questions or concerns about this Privacy Policy or our data practices, please contact us at{" "}
-                <a href="mailto:info@smbifylocal.com" className="text-[#AADD00] hover:text-[#bef000] transition-colors font-medium">
-                  info@smbifylocal.com
+                <a href="mailto:info@SiteGenielocal.com" className="text-[#7C3AED] hover:text-[#9333EA] transition-colors font-medium">
+                  info@SiteGenielocal.com
                 </a>
               </p>
             </div>

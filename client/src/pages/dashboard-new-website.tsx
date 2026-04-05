@@ -184,7 +184,7 @@ export default function DashboardNewWebsite() {
         {/* Progress Bar */}
         <div className="flex gap-1.5 mb-8">
           {STEPS.map((s, i) => (
-            <div key={s} className={`h-1 flex-1 rounded-full transition-all ${i <= step ? "bg-[#AADD00]" : "bg-white/10"}`} />
+            <div key={s} className={`h-1 flex-1 rounded-full transition-all ${i <= step ? "bg-[#7C3AED]" : "bg-white/10"}`} />
           ))}
         </div>
 
@@ -195,10 +195,10 @@ export default function DashboardNewWebsite() {
             <div className="grid grid-cols-2 gap-3">
               {CATEGORIES.map(cat => (
                 <button key={cat.id} onClick={() => pickCategory(cat.id)}
-                  className="flex items-start gap-3 p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-[#AADD00]/50 hover:bg-[#AADD00]/5 transition-all text-left group">
+                  className="flex items-start gap-3 p-4 rounded-xl border border-white/10 bg-white/[0.02] hover:border-[#7C3AED]/50 hover:bg-[#7C3AED]/5 transition-all text-left group">
                   <span className="text-2xl flex-shrink-0">{cat.icon}</span>
                   <div>
-                    <p className="text-white font-semibold text-sm group-hover:text-[#AADD00] transition-colors">{cat.name}</p>
+                    <p className="text-white font-semibold text-sm group-hover:text-[#7C3AED] transition-colors">{cat.name}</p>
                     <p className="text-gray-500 text-xs mt-0.5">{cat.tagline}</p>
                     {cat.isEmergency && (
                       <span className="inline-block mt-1.5 text-[9px] px-1.5 py-0.5 rounded bg-red-900/40 text-red-400 border border-red-800/40">24/7 Emergency</span>
@@ -238,7 +238,7 @@ export default function DashboardNewWebsite() {
               <div className="flex items-center gap-4">
                 <div
                   onClick={() => logoInputRef.current?.click()}
-                  className="w-20 h-20 rounded-xl border-2 border-dashed border-white/20 bg-white/5 hover:border-[#AADD00]/50 hover:bg-[#AADD00]/5 flex items-center justify-center cursor-pointer transition-all flex-shrink-0 overflow-hidden"
+                  className="w-20 h-20 rounded-xl border-2 border-dashed border-white/20 bg-white/5 hover:border-[#7C3AED]/50 hover:bg-[#7C3AED]/5 flex items-center justify-center cursor-pointer transition-all flex-shrink-0 overflow-hidden"
                 >
                   {form.logoUrl
                     ? <img src={form.logoUrl} alt="Logo" className="w-full h-full object-contain p-1" />
@@ -263,7 +263,7 @@ export default function DashboardNewWebsite() {
               <Label className="text-gray-300 text-sm mb-1.5 block">Business Name *</Label>
               <Input value={form.businessName} onChange={e => set("businessName", e.target.value)}
                 placeholder={`e.g., ${selectedCategory?.name === "Plumbing Services" ? "City Pro Plumbing" : "Rapid Dry Restoration"}`}
-                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]/50" />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -273,7 +273,7 @@ export default function DashboardNewWebsite() {
                 </Label>
                 <div className="flex gap-2">
                   <select value={form.countryCode} onChange={e => set("countryCode", e.target.value)}
-                    className="w-[100px] h-[40px] px-2 rounded-md bg-white/5 border border-white/10 text-white text-sm focus:border-[#AADD00]/50 outline-none">
+                    className="w-[100px] h-[40px] px-2 rounded-md bg-white/5 border border-white/10 text-white text-sm focus:border-[#7C3AED]/50 outline-none">
                     <option value="+1" className="bg-gray-900">🇺🇸/🇨🇦 +1</option>
                     <option value="+44" className="bg-gray-900">🇬🇧 +44</option>
                     <option value="+61" className="bg-gray-900">🇦🇺 +61</option>
@@ -283,14 +283,14 @@ export default function DashboardNewWebsite() {
                   </select>
                   <Input value={form.phone} onChange={e => set("phone", e.target.value)}
                     placeholder="(555) 123-4567"
-                    className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                    className="flex-1 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]/50" />
                 </div>
               </div>
               <div>
                 <Label className="text-gray-300 text-sm mb-1.5 block">Email</Label>
                 <Input value={form.email} onChange={e => set("email", e.target.value)}
                   placeholder="info@business.com"
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]/50" />
               </div>
             </div>
 
@@ -300,7 +300,7 @@ export default function DashboardNewWebsite() {
               </Label>
               <Input value={form.address} onChange={e => set("address", e.target.value)}
                 placeholder="123 Main St"
-                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]/50" />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -308,20 +308,20 @@ export default function DashboardNewWebsite() {
                 <Label className="text-gray-300 text-sm mb-1.5 block">City *</Label>
                 <Input value={form.city} onChange={e => set("city", e.target.value)}
                   placeholder="Austin"
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]/50" />
               </div>
               <div>
                 <Label className="text-gray-300 text-sm mb-1.5 block">State *</Label>
                 <Input value={form.state} onChange={e => set("state", e.target.value)}
                   placeholder="TX"
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]/50" />
               </div>
             </div>
 
             <div>
               <Label className="text-gray-300 text-sm mb-1.5 block">Primary Keyword *</Label>
               <Input value={form.primaryKeyword} onChange={e => set("primaryKeyword", e.target.value)}
-                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]/50" />
               <p className="text-xs text-gray-500 mt-1">Auto-filled from your category — change if needed</p>
             </div>
 
@@ -329,7 +329,7 @@ export default function DashboardNewWebsite() {
               <Label className="text-gray-300 text-sm mb-1.5 block">Additional Target Keywords</Label>
               <Input value={form.targetKeywords} onChange={e => set("targetKeywords", e.target.value)}
                 placeholder="e.g., drain cleaning, burst pipe repair, emergency plumber"
-                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]/50" />
               <p className="text-xs text-gray-500 mt-1">Comma-separated. Used for SEO meta tags and content variation.</p>
             </div>
           </div>
@@ -340,14 +340,14 @@ export default function DashboardNewWebsite() {
           <div className="space-y-6">
             <div>
               <Label className="text-gray-300 text-sm mb-3 flex items-center gap-1.5">
-                <Wrench className="h-3.5 w-3.5 text-[#AADD00]" /> Select Services * ({form.services.length} selected)
+                <Wrench className="h-3.5 w-3.5 text-[#7C3AED]" /> Select Services * ({form.services.length} selected)
               </Label>
               <div className="flex flex-wrap gap-2">
                 {(selectedCategory?.defaultServices ?? []).map(s => (
                   <button key={s} onClick={() => toggleService(s)}
                     className={`px-3 py-1.5 rounded-lg text-sm transition-all border ${
                       form.services.includes(s)
-                        ? "bg-[#AADD00]/15 text-[#AADD00] border-[#AADD00]/40"
+                        ? "bg-[#7C3AED]/15 text-[#7C3AED] border-[#7C3AED]/40"
                         : "bg-white/5 text-gray-400 border-white/10 hover:bg-white/10 hover:text-white"
                     }`}>
                     {form.services.includes(s) && <CheckCircle2 className="inline h-3.5 w-3.5 mr-1" />}
@@ -358,13 +358,13 @@ export default function DashboardNewWebsite() {
             </div>
             <div>
               <Label className="text-gray-300 text-sm mb-1.5 block flex items-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5 text-[#AADD00]" /> Service Areas * (one per line)
+                <MapPin className="h-3.5 w-3.5 text-[#7C3AED]" /> Service Areas * (one per line)
               </Label>
               <Textarea value={form.serviceAreas} onChange={e => set("serviceAreas", e.target.value)}
                 placeholder={"Austin, TX\nRound Rock, TX\nCedar Park, TX\nGeorgetown, TX"}
                 rows={5}
-                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50 resize-none" />
-              <p className="text-xs text-gray-500 mt-1">Each city gets its own SEO location page. <strong className="text-[#AADD00]">Format: City, State</strong></p>
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]/50 resize-none" />
+              <p className="text-xs text-gray-500 mt-1">Each city gets its own SEO location page. <strong className="text-[#7C3AED]">Format: City, State</strong></p>
             </div>
           </div>
         )}
@@ -372,14 +372,14 @@ export default function DashboardNewWebsite() {
         {/* ── Step 3: Brand & Colors ────────────────────────────────── */}
         {step === 3 && (
           <div className="space-y-5">
-            <div className="flex items-center gap-3 p-4 rounded-xl bg-[#AADD00]/10 border border-[#AADD00]/20">
-              <Palette className="h-5 w-5 text-[#AADD00] shrink-0" />
+            <div className="flex items-center gap-3 p-4 rounded-xl bg-[#7C3AED]/10 border border-[#7C3AED]/20">
+              <Palette className="h-5 w-5 text-[#7C3AED] shrink-0" />
               <p className="text-sm text-gray-300">Pick your color theme. You can change this anytime in the editor.</p>
             </div>
 
             <div>
               <Label className="text-gray-300 text-sm mb-3 flex items-center gap-1.5">
-                <Palette className="h-3.5 w-3.5 text-[#AADD00]" /> Color Theme
+                <Palette className="h-3.5 w-3.5 text-[#7C3AED]" /> Color Theme
               </Label>
               <div className="grid grid-cols-4 gap-2">
                 {COLOR_PALETTES.map(palette => {
@@ -388,7 +388,7 @@ export default function DashboardNewWebsite() {
                     <button key={palette.name} type="button"
                       onClick={() => { set("primaryColor", palette.primary); set("secondaryColor", palette.secondary); }}
                       className={`rounded-lg overflow-hidden text-left transition-transform hover:scale-105 focus:outline-none ${
-                        isActive ? "ring-2 ring-[#AADD00] ring-offset-1 ring-offset-gray-900 shadow-lg" : "ring-1 ring-white/10"
+                        isActive ? "ring-2 ring-[#7C3AED] ring-offset-1 ring-offset-gray-900 shadow-lg" : "ring-1 ring-white/10"
                       }`}>
                       <div className="flex h-8">
                         <div className="w-3/5" style={{ backgroundColor: palette.primary }} />
@@ -407,7 +407,7 @@ export default function DashboardNewWebsite() {
               <Label className="text-gray-300 text-sm mb-1.5 block">Site URL Slug</Label>
               <Input value={form.urlSlug} onChange={e => set("urlSlug", e.target.value)}
                 placeholder="my-plumbing-company"
-                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]/50" />
+                className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]/50" />
               <p className="text-xs text-gray-500 mt-1">Your Netlify URL will be: yourslug.netlify.app (auto-generated if left blank)</p>
             </div>
 
@@ -445,8 +445,8 @@ export default function DashboardNewWebsite() {
               </div>
             )}
 
-            <div className="p-4 rounded-xl bg-[#AADD00]/10 border border-[#AADD00]/20">
-              <p className="text-sm text-[#AADD00] font-medium mb-1">What gets generated:</p>
+            <div className="p-4 rounded-xl bg-[#7C3AED]/10 border border-[#7C3AED]/20">
+              <p className="text-sm text-[#7C3AED] font-medium mb-1">What gets generated:</p>
               <ul className="text-xs text-gray-300 space-y-1">
                 <li>✓ Homepage + About, Contact, FAQ, Calculator, Gallery pages</li>
                 <li>✓ {form.services.length} Service pages (one per service)</li>
@@ -468,13 +468,13 @@ export default function DashboardNewWebsite() {
           {step < STEPS.length - 1 ? (
             step > 0 && (
               <Button onClick={() => setStep(s => s + 1)} disabled={!canNext()}
-                className="flex-1 bg-[#AADD00] hover:bg-[#bef000] text-black font-semibold disabled:opacity-40">
+                className="flex-1 bg-[#7C3AED] hover:bg-[#9333EA] text-black font-semibold disabled:opacity-40">
                 Next <ChevronRight className="ml-1 h-4 w-4" />
               </Button>
             )
           ) : (
             <Button onClick={handleGenerate} disabled={isGenerating || !canNext()}
-              className="flex-1 bg-[#AADD00] hover:bg-[#bef000] text-black font-bold py-3">
+              className="flex-1 bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold py-3">
               {isGenerating
                 ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Creating Website...</>
                 : <>Create Website <ArrowRight className="ml-1 h-4 w-4" /></>

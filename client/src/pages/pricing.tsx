@@ -8,7 +8,7 @@ const plans = [
         name: "Free",
         price: "$0",
         period: "forever",
-        description: "Perfect for trying out SMBify with your own API keys.",
+        description: "Perfect for trying out SiteGenie with your own API keys.",
         icon: Sparkles,
         color: "gray",
         cta: "Start Free",
@@ -73,7 +73,7 @@ const plans = [
 const faqs = [
     {
         question: "Do I need my own API keys?",
-        answer: "Yes! SMBify uses a BYOK (Bring Your Own Key) model. You provide your OpenAI, Google Gemini, or OpenRouter API keys, and you only pay for the tokens you use. This keeps our platform fees low while giving you full control.",
+        answer: "Yes! SiteGenie uses a BYOK (Bring Your Own Key) model. You provide your OpenAI, Google Gemini, or OpenRouter API keys, and you only pay for the tokens you use. This keeps our platform fees low while giving you full control.",
     },
     {
         question: "Can I cancel anytime?",
@@ -93,7 +93,7 @@ const faqs = [
     },
     {
         question: "What's included in white-label branding?",
-        answer: "White-label lets you remove all SMBify branding from generated websites and the client portal. You can add your own logo, colors, and custom domain for a fully branded experience.",
+        answer: "White-label lets you remove all SiteGenie branding from generated websites and the client portal. You can add your own logo, colors, and custom domain for a fully branded experience.",
     },
 ];
 
@@ -106,13 +106,13 @@ export default function PricingPage() {
             {/* Hero */}
             <section className="relative pt-32 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
                 <div className="absolute inset-0">
-                    <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-[#AADD00]/8 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute bottom-1/4 right-1/3 w-96 h-96 bg-[#AADD00]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+                    <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-[#7C3AED]/8 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute bottom-1/4 right-1/3 w-96 h-96 bg-[#7C3AED]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
                 </div>
                 <div className="relative max-w-4xl mx-auto text-center">
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
                         Simple, Transparent{" "}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#AADD00] to-[#7ec800]">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7C3AED] to-[#F59E0B]">
                             Pricing
                         </span>
                     </h1>
@@ -132,17 +132,17 @@ export default function PricingPage() {
                             <div
                                 key={plan.name}
                                 className={`relative rounded-2xl border p-8 transition-all hover:-translate-y-1 ${plan.popular
-                                        ? "border-[#AADD00]/40 bg-gradient-to-b from-[#AADD00]/10 to-transparent shadow-lg shadow-[#AADD00]/10"
+                                        ? "border-[#7C3AED]/40 bg-gradient-to-b from-[#7C3AED]/10 to-transparent shadow-lg shadow-[#7C3AED]/10"
                                         : "border-white/10 bg-white/[0.02]"
                                     }`}
                             >
                                 {plan.popular && (
-                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#AADD00] text-black text-xs font-bold px-4 py-1 rounded-full">
+                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#7C3AED] text-black text-xs font-bold px-4 py-1 rounded-full">
                                         Most Popular
                                     </div>
                                 )}
                                 <div className="mb-6">
-                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${plan.popular ? "bg-[#AADD00]/10 text-[#AADD00]" : "bg-gray-500/10 text-gray-400"
+                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${plan.popular ? "bg-[#7C3AED]/10 text-[#7C3AED]" : "bg-gray-500/10 text-gray-400"
                                         }`}>
                                         <Icon className="w-6 h-6" />
                                     </div>
@@ -156,7 +156,7 @@ export default function PricingPage() {
                                 <Button
                                     onClick={() => setLocation(plan.name === "Agency" ? "/contact" : "/signup")}
                                     className={`w-full mb-8 py-6 text-base font-semibold rounded-xl ${plan.popular
-                                            ? "bg-[#AADD00] hover:bg-[#bef000] text-black shadow-lg shadow-[#AADD00]/25"
+                                            ? "bg-[#7C3AED] hover:bg-[#9333EA] text-black shadow-lg shadow-[#7C3AED]/25"
                                             : "bg-white/10 hover:bg-white/15 text-white"
                                         }`}
                                 >
@@ -223,7 +223,7 @@ export default function PricingPage() {
                     <Button
                         size="lg"
                         onClick={() => setLocation("/signup")}
-                        className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold text-base px-10 py-6 rounded-xl shadow-lg shadow-[#AADD00]/25"
+                        className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold text-base px-10 py-6 rounded-xl shadow-lg shadow-[#7C3AED]/25"
                     >
                         Start Building Free
                     </Button>

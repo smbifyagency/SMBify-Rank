@@ -17,7 +17,7 @@ export default function ServerErrorPage() {
                     <Button onClick={() => window.location.reload()} variant="outline" className="border-white/20 text-gray-300 hover:bg-white/5 bg-transparent">
                         <RefreshCw className="mr-2 h-4 w-4" /> Try Again
                     </Button>
-                    <Button onClick={() => setLocation("/")} className="bg-gradient-to-r from-[#AADD00] to-[#7ec800]">
+                    <Button onClick={() => setLocation("/")} className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B]">
                         <Home className="mr-2 h-4 w-4" /> Go Home
                     </Button>
                 </div>

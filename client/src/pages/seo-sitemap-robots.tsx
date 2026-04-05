@@ -16,7 +16,7 @@ export default function SeoSitemap() {
                 <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 mb-6">
                     <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                            <FileText className="h-5 w-5 text-[#AADD00]" />
+                            <FileText className="h-5 w-5 text-[#7C3AED]" />
                             <h2 className="text-lg font-semibold text-white">XML Sitemap</h2>
                         </div>
                         <div className="flex gap-2">
@@ -61,9 +61,9 @@ Disallow: /dashboard/
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://austin-plumbing.smbify.site/sitemap.xml`}
+Sitemap: https://austin-plumbing.SiteGenie.site/sitemap.xml`}
                     </pre>
-                    <Button size="sm" className="mt-4 bg-gradient-to-r from-[#AADD00] to-[#7ec800]">Save Changes</Button>
+                    <Button size="sm" className="mt-4 bg-gradient-to-r from-[#7C3AED] to-[#F59E0B]">Save Changes</Button>
                 </div>
             </div>
         </div>

@@ -21,10 +21,10 @@ export default function VerifyEmailPage() {
                 <div className="text-center mb-8">
                     <Link href="/">
                         <div className="inline-flex items-center gap-3 cursor-pointer group mb-6">
-                            <div className="h-12 w-12 rounded-xl bg-[#AADD00] flex items-center justify-center shadow-lg shadow-[#AADD00]/25">
+                            <div className="h-12 w-12 rounded-xl bg-[#7C3AED] flex items-center justify-center shadow-lg shadow-[#7C3AED]/25">
                                 <Globe className="h-6 w-6 text-white" />
                             </div>
-                            <h1 className="text-2xl font-bold text-white">SMBify</h1>
+                            <h1 className="text-2xl font-bold text-white">SiteGenie</h1>
                         </div>
                     </Link>
                     {status === "verifying" && (
@@ -50,8 +50,8 @@ export default function VerifyEmailPage() {
                 <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-sm text-center">
                     {status === "verifying" && (
                         <div className="py-4">
-                            <div className="w-16 h-16 rounded-full bg-[#AADD00]/10 flex items-center justify-center mx-auto">
-                                <Loader2 className="h-8 w-8 text-[#AADD00] animate-spin" />
+                            <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto">
+                                <Loader2 className="h-8 w-8 text-[#7C3AED] animate-spin" />
                             </div>
                         </div>
                     )}
@@ -63,7 +63,7 @@ export default function VerifyEmailPage() {
                             </div>
                             <Button
                                 onClick={() => setLocation("/dashboard")}
-                                className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold py-5 px-8 text-base font-semibold rounded-xl"
+                                className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold py-5 px-8 text-base font-semibold rounded-xl"
                             >
                                 Go to Dashboard
                             </Button>

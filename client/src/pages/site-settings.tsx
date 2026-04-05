@@ -228,7 +228,7 @@ export default function SiteSettings() {
                 placeholder={`Paste your ${setting.displayName} code here...`}
                 defaultValue={setting.code}
                 rows={8}
-                className="font-mono text-sm bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
+                className="font-mono text-sm bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]"
               />
             ) : (
               <div className="bg-white/5 border border-white/10 rounded-md p-4 h-32 flex items-center justify-center">
@@ -246,7 +246,7 @@ export default function SiteSettings() {
           </p>
           <Button
             size="sm"
-            className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold text-white border-0"
+            className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold text-white border-0"
             onClick={() => {
               const textarea = document.getElementById(`code-${setting.id}`) as HTMLTextAreaElement;
               if (textarea) {
@@ -284,16 +284,16 @@ export default function SiteSettings() {
       </div>
 
       {/* Quick Start Guide */}
-      <Card className="mb-8 bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border-[#AADD00]/20">
+      <Card className="mb-8 bg-gradient-to-r from-indigo-500/10 to-violet-500/10 border-[#7C3AED]/20">
         <CardHeader>
           <CardTitle className="text-white flex items-center">
-            <Code className="mr-2 h-6 w-6 text-[#AADD00]" />
+            <Code className="mr-2 h-6 w-6 text-[#7C3AED]" />
             Quick Start Guide
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-gray-300">
           <div className="flex items-start space-x-3">
-            <div className="flex-shrink-0 w-8 h-8 bg-[#AADD00] text-black rounded-full flex items-center justify-center font-bold">
+            <div className="flex-shrink-0 w-8 h-8 bg-[#7C3AED] text-black rounded-full flex items-center justify-center font-bold">
               1
             </div>
             <div>
@@ -304,7 +304,7 @@ export default function SiteSettings() {
             </div>
           </div>
           <div className="flex items-start space-x-3">
-            <div className="flex-shrink-0 w-8 h-8 bg-[#AADD00] text-black rounded-full flex items-center justify-center font-bold">
+            <div className="flex-shrink-0 w-8 h-8 bg-[#7C3AED] text-black rounded-full flex items-center justify-center font-bold">
               2
             </div>
             <div>
@@ -315,7 +315,7 @@ export default function SiteSettings() {
             </div>
           </div>
           <div className="flex items-start space-x-3">
-            <div className="flex-shrink-0 w-8 h-8 bg-[#AADD00] text-black rounded-full flex items-center justify-center font-bold">
+            <div className="flex-shrink-0 w-8 h-8 bg-[#7C3AED] text-black rounded-full flex items-center justify-center font-bold">
               3
             </div>
             <div>
@@ -326,7 +326,7 @@ export default function SiteSettings() {
             </div>
           </div>
           <div className="flex items-start space-x-3">
-            <div className="flex-shrink-0 w-8 h-8 bg-[#AADD00] text-black rounded-full flex items-center justify-center font-bold">
+            <div className="flex-shrink-0 w-8 h-8 bg-[#7C3AED] text-black rounded-full flex items-center justify-center font-bold">
               4
             </div>
             <div>

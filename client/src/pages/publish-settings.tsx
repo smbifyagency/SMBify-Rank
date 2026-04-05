@@ -22,22 +22,22 @@ export default function PublishSettings() {
                     <CheckCircle className="h-8 w-8 text-emerald-400" />
                     <div>
                         <p className="text-white font-semibold">Website is Live</p>
-                        <a href="#" className="text-sm text-emerald-400 flex items-center gap-1">austin-plumbing.smbify.site <ExternalLink className="h-3 w-3" /></a>
+                        <a href="#" className="text-sm text-emerald-400 flex items-center gap-1">austin-plumbing.SiteGenie.site <ExternalLink className="h-3 w-3" /></a>
                     </div>
                 </div>
 
                 {/* Deploy Options */}
                 <div className="space-y-4">
                     <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
-                        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Rocket className="h-5 w-5 text-[#AADD00]" /> Netlify Deploy</h2>
+                        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Rocket className="h-5 w-5 text-[#7C3AED]" /> Netlify Deploy</h2>
                         <p className="text-sm text-gray-400 mb-4">One-click deploy to Netlify with automatic SSL and CDN.</p>
-                        <Button className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold">
+                        <Button className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold">
                             <Rocket className="mr-2 h-4 w-4" /> Deploy to Netlify
                         </Button>
                     </div>
 
                     <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
-                        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Globe className="h-5 w-5 text-[#AADD00]" /> Custom Domain</h2>
+                        <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2"><Globe className="h-5 w-5 text-[#7C3AED]" /> Custom Domain</h2>
                         <p className="text-sm text-gray-400 mb-4">Connect a custom domain to your website.</p>
                         <div className="flex gap-2">
                             <Input placeholder="yourdomain.com" className="bg-white/5 border-white/10 text-white placeholder:text-gray-500" />
@@ -49,7 +49,7 @@ export default function PublishSettings() {
                         <h2 className="text-lg font-semibold text-white mb-4">Embed Code</h2>
                         <p className="text-sm text-gray-400 mb-4">Copy the embed code to add custom tracking scripts.</p>
                         <div className="bg-white/5 border border-white/10 rounded-lg p-4 font-mono text-sm text-gray-300 flex items-center justify-between">
-                            <span>&lt;script src="https://analytics.smbify.site/track.js"&gt;&lt;/script&gt;</span>
+                            <span>&lt;script src="https://analytics.SiteGenie.site/track.js"&gt;&lt;/script&gt;</span>
                             <button className="text-gray-400 hover:text-white ml-2"><Copy className="h-4 w-4" /></button>
                         </div>
                     </div>

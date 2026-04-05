@@ -573,7 +573,7 @@ export function FullPagePreview({
               variant="outline"
               size="sm"
               onClick={() => setShowVisualEditor(true)}
-              className="text-[#AADD00] border-[#AADD00]/20 hover:bg-[#AADD00]/5"
+              className="text-[#7C3AED] border-[#7C3AED]/20 hover:bg-[#7C3AED]/5"
             >
               <Edit3 size={16} className="mr-2" />
               Visual Editor

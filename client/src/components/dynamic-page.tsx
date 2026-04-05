@@ -378,9 +378,9 @@ export function DynamicPage({ businessData, pageType, pageName }: DynamicPagePro
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Back to Home */}
             <div className="lg:col-span-1">
-              <div className="bg-gradient-to-br from-[#AADD00]/5 to-[#7ec800]/3 rounded-xl p-6 border border-[#AADD00]/20">
+              <div className="bg-gradient-to-br from-[#7C3AED]/5 to-[#F59E0B]/3 rounded-xl p-6 border border-[#7C3AED]/20">
                 <div className="text-center mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-r from-[#AADD00] to-[#7ec800] rounded-full flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] rounded-full flex items-center justify-center mx-auto mb-4">
                     <Home className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -392,7 +392,7 @@ export function DynamicPage({ businessData, pageType, pageName }: DynamicPagePro
                 </div>
                 <Link
                   href="/"
-                  className="w-full bg-gradient-to-r from-[#AADD00] to-[#7ec800] text-white px-4 py-3 rounded-lg font-medium hover:from-[#bef000] hover:to-[#AADD00] transition-all duration-300 flex items-center justify-center group"
+                  className="w-full bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] text-white px-4 py-3 rounded-lg font-medium hover:from-[#9333EA] hover:to-[#7C3AED] transition-all duration-300 flex items-center justify-center group"
                 >
                   Visit Homepage
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />

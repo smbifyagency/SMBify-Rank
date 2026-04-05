@@ -220,13 +220,13 @@ export function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0">
-            <Link href="/">
+            <Link href="/home">
               <div className="flex items-center gap-2 cursor-pointer group">
-                <div className="h-9 w-9 rounded-lg bg-black border border-white/10 flex items-center justify-center shadow-lg group-hover:border-[#AADD00]/40 transition-all">
-                  <Globe className="h-4 w-4 text-[#AADD00]" />
+                <div className="h-9 w-9 rounded-lg bg-gradient-to-br from-purple-600 to-purple-800 border border-purple-500/30 flex items-center justify-center shadow-lg group-hover:border-amber-400/40 transition-all">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 21h8M12 17v4M7 4h10l-1 9H8L7 4z" /><path d="M12 4c0-1.5-1-2-2-2s-2 .5-2 2" opacity="0.7" /></svg>
                 </div>
                 <h1 className="text-lg font-bold tracking-tight">
-                  <span className="text-white">SMBify</span><span className="text-[#AADD00]"> Rank</span>
+                  <span className="bg-gradient-to-r from-purple-400 to-purple-300 bg-clip-text text-transparent">Site</span><span className="bg-gradient-to-r from-amber-300 to-yellow-300 bg-clip-text text-transparent">Genie</span>
                 </h1>
               </div>
             </Link>
@@ -249,7 +249,7 @@ export function Navigation() {
                   </Link>
                 )}
                 {isOnDashboard && (
-                  <Link href="/">
+                  <Link href="/home">
                     <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-white/5">
                       <Globe className="h-4 w-4 mr-2" /> Home
                     </Button>
@@ -274,7 +274,7 @@ export function Navigation() {
                   </Button>
                 </Link>
                 <Link href="/signup">
-                  <Button size="sm" className="bg-[#AADD00] hover:bg-[#bef000] text-black font-semibold shadow-lg shadow-[#AADD00]/25">
+                  <Button size="sm" className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-semibold shadow-lg shadow-[#7C3AED]/25">
                     Get Started Free
                   </Button>
                 </Link>
@@ -303,7 +303,7 @@ export function Navigation() {
                 <Link key={item.path} href={item.path}>
                   <button
                     className={`w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors ${location === item.path
-                      ? "bg-[#AADD00]/10 text-[#AADD00]"
+                      ? "bg-[#7C3AED]/10 text-[#7C3AED]"
                       : "text-gray-300 hover:bg-white/5 hover:text-white"
                       }`}
                     onClick={() => setMobileMenuOpen(false)}
@@ -320,13 +320,13 @@ export function Navigation() {
                   {!isOnDashboard && (
                     <Link href="/dashboard">
                       <button onClick={() => setMobileMenuOpen(false)}
-                        className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-[#AADD00] hover:bg-[#AADD00]/10">
+                        className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-[#7C3AED] hover:bg-[#7C3AED]/10">
                         <LayoutDashboard className="h-4 w-4 inline mr-2" /> Dashboard
                       </button>
                     </Link>
                   )}
                   {isOnDashboard && (
-                    <Link href="/">
+                    <Link href="/home">
                       <button onClick={() => setMobileMenuOpen(false)}
                         className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-white/5">
                         <Globe className="h-4 w-4 inline mr-2" /> Home
@@ -350,7 +350,7 @@ export function Navigation() {
                   </Link>
                   <Link href="/signup">
                     <button onClick={() => setMobileMenuOpen(false)}
-                      className="w-full text-center mt-2 px-4 py-3 rounded-xl text-sm font-semibold bg-[#AADD00] hover:bg-[#bef000] text-black">
+                      className="w-full text-center mt-2 px-4 py-3 rounded-xl text-sm font-semibold bg-[#7C3AED] hover:bg-[#9333EA] text-black">
                       Get Started Free
                     </button>
                   </Link>

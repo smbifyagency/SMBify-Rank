@@ -62,13 +62,13 @@ export default function SettingsProfile() {
         <div className="py-10 px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl mx-auto">
                 <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
-                    <User className="h-8 w-8 text-[#AADD00]" /> Profile
+                    <User className="h-8 w-8 text-[#7C3AED]" /> Profile
                 </h1>
                 <p className="text-gray-400 mb-8">Manage your account information.</p>
 
                 <form onSubmit={handleSubmit} className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 space-y-6">
                     <div className="flex items-center gap-6">
-                        <div className="w-20 h-20 rounded-full bg-gradient-to-br bg-[#AADD00] flex items-center justify-center text-white text-2xl font-bold">
+                        <div className="w-20 h-20 rounded-full bg-gradient-to-br bg-[#7C3AED] flex items-center justify-center text-white text-2xl font-bold">
                             {initials}
                         </div>
                         <div>
@@ -83,7 +83,7 @@ export default function SettingsProfile() {
                             <Input
                                 value={formData.firstName}
                                 onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                                className="mt-1.5 bg-white/5 border-white/10 text-white focus:border-[#AADD00]"
+                                className="mt-1.5 bg-white/5 border-white/10 text-white focus:border-[#7C3AED]"
                             />
                         </div>
                         <div>
@@ -91,7 +91,7 @@ export default function SettingsProfile() {
                             <Input
                                 value={formData.lastName}
                                 onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                                className="mt-1.5 bg-white/5 border-white/10 text-white focus:border-[#AADD00]"
+                                className="mt-1.5 bg-white/5 border-white/10 text-white focus:border-[#7C3AED]"
                             />
                         </div>
                     </div>
@@ -109,7 +109,7 @@ export default function SettingsProfile() {
                     <Button
                         type="submit"
                         disabled={updateProfileMutation.isPending}
-                        className="bg-gradient-to-r from-[#AADD00] to-[#7ec800] border-0"
+                        className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] border-0"
                     >
                         {updateProfileMutation.isPending ? (
                             <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</>

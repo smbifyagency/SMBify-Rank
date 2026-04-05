@@ -39,7 +39,7 @@ export default function OnboardingBrand() {
                 <div className="flex items-center justify-between mb-8">
                     {["Business", "Services", "Locations", "Brand", "API", "Generate", "Preview"].map((step, i) => (
                         <div key={step} className="flex items-center">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= 3 ? "bg-gradient-to-r bg-[#AADD00] text-white" : "bg-white/5 text-gray-500 border border-white/10"
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= 3 ? "bg-gradient-to-r bg-[#7C3AED] text-white" : "bg-white/5 text-gray-500 border border-white/10"
                                 }`}>{i + 1}</div>
                             {i < 6 && <div className="w-4 sm:w-8 h-px bg-white/10 mx-1" />}
                         </div>
@@ -71,7 +71,7 @@ export default function OnboardingBrand() {
                                     </div>
                                     <div className="bg-gray-900 px-2 py-2 text-xs text-gray-300 text-center">{template.name}</div>
                                     {selectedTemplate === template.id && (
-                                        <div className="absolute top-2 right-2 w-5 h-5 bg-[#AADD00] rounded-full flex items-center justify-center">
+                                        <div className="absolute top-2 right-2 w-5 h-5 bg-[#7C3AED] rounded-full flex items-center justify-center">
                                             <Check className="h-3 w-3 text-white" />
                                         </div>
                                     )}
@@ -108,7 +108,7 @@ export default function OnboardingBrand() {
                             <ArrowLeft className="mr-2 h-4 w-4" /> Back
                         </Button>
                         <Button onClick={handleNext}
-                            className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold px-8">
+                            className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold px-8">
                             Next: API Setup <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
                     </div>

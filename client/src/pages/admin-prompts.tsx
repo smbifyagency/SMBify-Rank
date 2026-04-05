@@ -91,7 +91,7 @@ export default function AdminPrompts() {
     };
 
     const EditorBlock = () => (
-        <div className="rounded-2xl border border-[#AADD00]/40 bg-[#AADD00]/10 p-5 space-y-4">
+        <div className="rounded-2xl border border-[#7C3AED]/40 bg-[#7C3AED]/10 p-5 space-y-4">
             <h3 className="text-white font-medium">{isCreating ? "Create New Prompt" : "Edit Prompt"}</h3>
             <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -133,7 +133,7 @@ export default function AdminPrompts() {
             </div>
             <div className="flex gap-2 justify-end">
                 <Button variant="outline" onClick={handleCancel} className="text-gray-300 border-white/10"><X className="h-4 w-4 mr-1" /> Cancel</Button>
-                <Button onClick={handleSave} className="bg-gradient-to-r from-[#AADD00] to-[#7ec800] block text-white" disabled={!editForm.name || !editForm.prompt || createMutation.isPending || updateMutation.isPending}>
+                <Button onClick={handleSave} className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] block text-white" disabled={!editForm.name || !editForm.prompt || createMutation.isPending || updateMutation.isPending}>
                     <Save className="h-4 w-4 mr-1 inline-block" /> {isCreating ? "Create" : "Save"}
                 </Button>
             </div>
@@ -146,12 +146,12 @@ export default function AdminPrompts() {
                 <div className="flex items-center justify-between mb-8">
                     <div>
                         <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                            <FileText className="h-8 w-8 text-[#AADD00]" /> Prompt Manager
+                            <FileText className="h-8 w-8 text-[#7C3AED]" /> Prompt Manager
                         </h1>
                         <p className="text-gray-400 mt-1">Manage AI prompt templates for content generation.</p>
                     </div>
                     {!isCreating && (
-                        <Button onClick={handleCreateClick} className="bg-gradient-to-r from-[#AADD00] to-[#7ec800] block text-white">
+                        <Button onClick={handleCreateClick} className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] block text-white">
                             <Plus className="mr-1 h-4 w-4 inline-block" /> New Prompt
                         </Button>
                     )}
@@ -176,7 +176,7 @@ export default function AdminPrompts() {
                                             <p className="text-xs text-gray-400 font-mono mt-1 opacity-60 truncate">{p.name}</p>
                                             <p className="text-sm text-gray-300 mt-2 line-clamp-2">{p.prompt}</p>
                                             <div className="flex gap-3 text-xs text-gray-500 mt-3">
-                                                <span className="px-2 py-0.5 rounded-full bg-[#AADD00]/15 text-[#bef000]">{p.category}</span>
+                                                <span className="px-2 py-0.5 rounded-full bg-[#7C3AED]/15 text-[#9333EA]">{p.category}</span>
                                                 <span>~{p.prompt.length * 2} tokens equivalent</span>
                                                 {p.isDefault && <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">Default Template</span>}
                                             </div>

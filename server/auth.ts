@@ -243,9 +243,9 @@ export async function setupAuth(app: Express) {
       if (userId === "admin") {
         (req as any).user = {
           id: "admin",
-          email: process.env.ADMIN_EMAIL || "admin@smbifylocal.com",
+          email: process.env.ADMIN_EMAIL || "admin@sitegenie.app",
           firstName: "Admin",
-          lastName: "SMBify",
+          lastName: "SiteGenie",
           role: "admin",
           isActive: true,
         };
@@ -303,7 +303,7 @@ export async function setupAuth(app: Express) {
       await storage.createUser({
         email: adminEmail,
         password: hashedAdminPassword,
-        firstName: "SMBify",
+        firstName: "SiteGenie",
         lastName: "Admin",
         role: "admin",
         isActive: true,
@@ -479,7 +479,7 @@ export async function setupAuth(app: Express) {
         try {
           user = await storage.createUser({
             id: userId,
-            email: `user-${userId.substring(0, 8)}@smbify.app`,
+            email: `user-${userId.substring(0, 8)}@sitegenie.app`,
             password: await bcrypt.hash(crypto.randomUUID(), 10),
             firstName: firstName || null,
             lastName: lastName || null,
@@ -520,9 +520,9 @@ export async function setupAuth(app: Express) {
       if (userId === "admin") {
         const adminUser = {
           id: "admin",
-          email: process.env.ADMIN_EMAIL || "admin@smbifylocal.com",
+          email: process.env.ADMIN_EMAIL || "admin@sitegenie.app",
           firstName: "Admin",
-          lastName: "SMBify",
+          lastName: "SiteGenie",
           role: "admin",
           websiteLimit: 999999,
           websitesCreated: 0,
@@ -597,9 +597,9 @@ export const isAuthenticated: RequestHandler = async (req: Request, res: Respons
     if (userId === "admin") {
       (req as any).user = {
         id: "admin",
-        email: process.env.ADMIN_EMAIL || "admin@smbifylocal.com",
+        email: process.env.ADMIN_EMAIL || "admin@sitegenie.app",
         firstName: "Admin",
-        lastName: "SMBify",
+        lastName: "SiteGenie",
         role: "admin",
         isActive: true,
       };
@@ -647,9 +647,9 @@ export const isAdmin: RequestHandler = async (req: Request, res: Response, next:
     if (userId === "admin") {
       (req as any).user = {
         id: "admin",
-        email: process.env.ADMIN_EMAIL || "admin@smbifylocal.com",
+        email: process.env.ADMIN_EMAIL || "admin@sitegenie.app",
         firstName: "Admin",
-        lastName: "SMBify",
+        lastName: "SiteGenie",
         role: "admin",
         isActive: true,
       };
@@ -680,9 +680,9 @@ export const isAIUser: RequestHandler = async (req: Request, res: Response, next
     if (userId === "admin") {
       (req as any).user = {
         id: "admin",
-        email: process.env.ADMIN_EMAIL || "admin@smbifylocal.com",
+        email: process.env.ADMIN_EMAIL || "admin@sitegenie.app",
         firstName: "Admin",
-        lastName: "SMBify",
+        lastName: "SiteGenie",
         role: "admin",
         isActive: true,
       };
@@ -725,7 +725,7 @@ export const allowGuestWebsiteGeneration: RequestHandler = async (req: Request, 
         id: "guest",
         email: "guest@demo.com",
         firstName: "Guest",
-        lastName: "SMBify",
+        lastName: "SiteGenie",
         role: "guest",
         isActive: true,
       };
@@ -735,9 +735,9 @@ export const allowGuestWebsiteGeneration: RequestHandler = async (req: Request, 
     if (userId === "admin") {
       (req as any).user = {
         id: "admin",
-        email: process.env.ADMIN_EMAIL || "admin@smbifylocal.com",
+        email: process.env.ADMIN_EMAIL || "admin@sitegenie.app",
         firstName: "Admin",
-        lastName: "SMBify",
+        lastName: "SiteGenie",
         role: "admin",
         isActive: true,
       };
@@ -751,7 +751,7 @@ export const allowGuestWebsiteGeneration: RequestHandler = async (req: Request, 
         id: "guest",
         email: "guest@demo.com",
         firstName: "Guest",
-        lastName: "SMBify",
+        lastName: "SiteGenie",
         role: "guest",
         isActive: true,
       };

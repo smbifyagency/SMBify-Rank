@@ -51,7 +51,7 @@ const html = `<!doctype html>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>SMBify SaaS HTML Sitemap</title>
+  <title>SiteGenie SaaS HTML Sitemap</title>
   <style>
     :root {
       --bg: #020617;
@@ -156,7 +156,7 @@ const html = `<!doctype html>
 <body>
   <div class="container">
     <section class="card">
-      <h1>SMBify SaaS HTML Sitemap</h1>
+      <h1>SiteGenie SaaS HTML Sitemap</h1>
       <p>This page is generated from <code>client/src/lib/saas-pages.ts</code>.</p>
       <p class="meta">Total pages: ${allSaasPages.length}. Click each link to confirm route availability.</p>
       <p class="generated-at">Generated at: ${new Date().toISOString()}</p>

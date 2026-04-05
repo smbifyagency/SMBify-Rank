@@ -103,7 +103,7 @@ const featureGroups = [
             {
                 icon: Shield,
                 title: "White-Label Branding",
-                description: "Remove SMBify branding completely. Use your own logo, colors, and custom domain for the client portal.",
+                description: "Remove SiteGenie branding completely. Use your own logo, colors, and custom domain for the client portal.",
             },
             {
                 icon: Lock,
@@ -122,17 +122,17 @@ export default function FeaturesPage() {
             {/* Hero */}
             <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
                 <div className="absolute inset-0">
-                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#AADD00]/8 rounded-full blur-3xl animate-pulse" />
-                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#AADD00]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+                    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#7C3AED]/8 rounded-full blur-3xl animate-pulse" />
+                    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#7C3AED]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
                 </div>
                 <div className="relative max-w-4xl mx-auto text-center">
-                    <div className="inline-flex items-center gap-2 bg-[#AADD00]/10 border border-[#AADD00]/20 rounded-full px-4 py-2 mb-8 backdrop-blur-sm">
-                        <Zap className="h-4 w-4 text-[#AADD00]" />
+                    <div className="inline-flex items-center gap-2 bg-[#7C3AED]/10 border border-[#7C3AED]/20 rounded-full px-4 py-2 mb-8 backdrop-blur-sm">
+                        <Zap className="h-4 w-4 text-[#7C3AED]" />
                         <span className="text-sm text-gray-300">Everything you need to build & rank</span>
                     </div>
                     <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
                         Powerful Features for{" "}
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#AADD00] to-[#7ec800]">
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7C3AED] to-[#F59E0B]">
                             Local SEO
                         </span>
                     </h1>
@@ -144,7 +144,7 @@ export default function FeaturesPage() {
                         <Button
                             size="lg"
                             onClick={() => setLocation("/dashboard/websites")}
-                            className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold text-base px-8 py-6 rounded-xl shadow-lg shadow-[#AADD00]/25"
+                            className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold text-base px-8 py-6 rounded-xl shadow-lg shadow-[#7C3AED]/25"
                         >
                             Try It Free <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>
@@ -162,10 +162,10 @@ export default function FeaturesPage() {
 
             {/* Feature Groups */}
             {featureGroups.map((group, groupIdx) => (
-                <section key={group.title} className={`py-20 px-4 sm:px-6 lg:px-8 ${groupIdx % 2 !== 0 ? "bg-[#AADD00]/[0.02]" : ""}`}>
+                <section key={group.title} className={`py-20 px-4 sm:px-6 lg:px-8 ${groupIdx % 2 !== 0 ? "bg-[#7C3AED]/[0.02]" : ""}`}>
                     <div className="max-w-6xl mx-auto">
                         <div className="text-center mb-14">
-                            <p className="text-[#AADD00] font-semibold text-sm uppercase tracking-wider mb-3">
+                            <p className="text-[#7C3AED] font-semibold text-sm uppercase tracking-wider mb-3">
                                 {group.subtitle}
                             </p>
                             <h2 className="text-3xl sm:text-4xl font-bold">{group.title}</h2>
@@ -176,9 +176,9 @@ export default function FeaturesPage() {
                                 return (
                                     <div
                                         key={feature.title}
-                                        className="rounded-2xl border border-[#AADD00]/15 bg-gradient-to-b from-[#AADD00]/10 to-[#AADD00]/3 p-6 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-[#AADD00]/10 hover:border-[#AADD00]/30"
+                                        className="rounded-2xl border border-[#7C3AED]/15 bg-gradient-to-b from-[#7C3AED]/10 to-[#7C3AED]/3 p-6 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-[#7C3AED]/10 hover:border-[#7C3AED]/30"
                                     >
-                                        <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-4 bg-[#AADD00]/10 text-[#AADD00]">
+                                        <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-4 bg-[#7C3AED]/10 text-[#7C3AED]">
                                             <Icon className="h-6 w-6" />
                                         </div>
                                         <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
@@ -195,13 +195,13 @@ export default function FeaturesPage() {
             <section className="py-24 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-4xl mx-auto">
                     <div className="text-center mb-14">
-                        <h2 className="text-3xl font-bold mb-4">Why SMBify vs. Traditional Web Dev?</h2>
+                        <h2 className="text-3xl font-bold mb-4">Why SiteGenie vs. Traditional Web Dev?</h2>
                         <p className="text-gray-400">See how we compare to hiring a developer or using WordPress.</p>
                     </div>
-                    <div className="rounded-2xl border border-[#AADD00]/15 overflow-hidden">
-                        <div className="grid grid-cols-3 bg-[#AADD00]/5">
+                    <div className="rounded-2xl border border-[#7C3AED]/15 overflow-hidden">
+                        <div className="grid grid-cols-3 bg-[#7C3AED]/5">
                             <div className="p-4 font-semibold text-gray-400 text-sm"></div>
-                            <div className="p-4 text-center font-semibold text-[#AADD00] text-sm">SMBify</div>
+                            <div className="p-4 text-center font-semibold text-[#7C3AED] text-sm">SiteGenie</div>
                             <div className="p-4 text-center font-semibold text-gray-400 text-sm">Traditional</div>
                         </div>
                         {[
@@ -212,11 +212,11 @@ export default function FeaturesPage() {
                             ["Schema markup", "Automatic", "Manual coding"],
                             ["Blog engine", "Included", "Plugin setup"],
                             ["Maintenance", "Zero", "Ongoing"],
-                        ].map(([label, smbify, traditional], i) => (
+                        ].map(([label, SiteGenie, traditional], i) => (
                             <div key={label} className={`grid grid-cols-3 ${i % 2 === 0 ? "bg-white/[0.02]" : ""}`}>
                                 <div className="p-4 text-sm text-gray-300 font-medium">{label}</div>
-                                <div className="p-4 text-center text-sm text-[#AADD00] flex items-center justify-center gap-1">
-                                    <CheckCircle className="h-3.5 w-3.5" /> {smbify}
+                                <div className="p-4 text-center text-sm text-[#7C3AED] flex items-center justify-center gap-1">
+                                    <CheckCircle className="h-3.5 w-3.5" /> {SiteGenie}
                                 </div>
                                 <div className="p-4 text-center text-sm text-gray-500">{traditional}</div>
                             </div>
@@ -235,7 +235,7 @@ export default function FeaturesPage() {
                     <Button
                         size="lg"
                         onClick={() => setLocation("/dashboard/websites")}
-                        className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold text-base px-10 py-6 rounded-xl shadow-lg shadow-[#AADD00]/25"
+                        className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold text-base px-10 py-6 rounded-xl shadow-lg shadow-[#7C3AED]/25"
                     >
                         <Sparkles className="mr-2 h-5 w-5" />
                         Start Building — It's Free

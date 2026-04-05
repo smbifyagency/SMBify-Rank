@@ -235,7 +235,7 @@ export default function BlogDashboard() {
                     placeholder="Search posts..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
+                    className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]"
                   />
                 </div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -284,7 +284,7 @@ export default function BlogDashboard() {
                       <Checkbox
                         checked={selectedPosts.length === filteredPosts.length && filteredPosts.length > 0}
                         onCheckedChange={handleSelectAll}
-                        className="border-gray-500 data-[state=checked]:bg-[#AADD00] data-[state=checked]:border-[#AADD00]"
+                        className="border-gray-500 data-[state=checked]:bg-[#7C3AED] data-[state=checked]:border-[#7C3AED]"
                       />
                     </TableHead>
                     <TableHead className="text-gray-400">Title</TableHead>
@@ -303,7 +303,7 @@ export default function BlogDashboard() {
                         <Checkbox
                           checked={selectedPosts.includes(post.id)}
                           onCheckedChange={(checked) => handleSelectPost(post.id, !!checked)}
-                          className="border-gray-500 data-[state=checked]:bg-[#AADD00] data-[state=checked]:border-[#AADD00]"
+                          className="border-gray-500 data-[state=checked]:bg-[#7C3AED] data-[state=checked]:border-[#7C3AED]"
                         />
                       </TableCell>
                       <TableCell>
@@ -313,7 +313,7 @@ export default function BlogDashboard() {
                             {post.excerpt}
                           </div>
                           {post.isAiGenerated && (
-                            <Badge variant="outline" className="text-xs border-[#AADD00]/25 text-[#bef000]">
+                            <Badge variant="outline" className="text-xs border-[#7C3AED]/25 text-[#9333EA]">
                               AI Generated
                             </Badge>
                           )}

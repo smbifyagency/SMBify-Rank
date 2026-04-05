@@ -20,10 +20,10 @@ export default function ForgotPasswordPage() {
                 <div className="text-center mb-8">
                     <Link href="/">
                         <div className="inline-flex items-center gap-3 cursor-pointer group mb-6">
-                            <div className="h-12 w-12 rounded-xl bg-[#AADD00] flex items-center justify-center shadow-lg shadow-[#AADD00]/25">
+                            <div className="h-12 w-12 rounded-xl bg-[#7C3AED] flex items-center justify-center shadow-lg shadow-[#7C3AED]/25">
                                 <Globe className="h-6 w-6 text-white" />
                             </div>
-                            <h1 className="text-2xl font-bold text-white">SMBify</h1>
+                            <h1 className="text-2xl font-bold text-white">SiteGenie</h1>
                         </div>
                     </Link>
                     {!submitted ? (
@@ -43,8 +43,8 @@ export default function ForgotPasswordPage() {
                     {!submitted ? (
                         <>
                             <div className="text-center mb-6">
-                                <div className="w-16 h-16 rounded-full bg-[#AADD00]/10 flex items-center justify-center mx-auto">
-                                    <Mail className="h-8 w-8 text-[#AADD00]" />
+                                <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto">
+                                    <Mail className="h-8 w-8 text-[#7C3AED]" />
                                 </div>
                             </div>
                             <form onSubmit={handleSubmit} className="space-y-5">
@@ -56,12 +56,12 @@ export default function ForgotPasswordPage() {
                                         placeholder="you@company.com"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
+                                        className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]"
                                     />
                                 </div>
                                 <Button
                                     type="submit"
-                                    className="w-full bg-[#AADD00] hover:bg-[#bef000] text-black font-bold py-6 text-base font-semibold rounded-xl"
+                                    className="w-full bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold py-6 text-base font-semibold rounded-xl"
                                 >
                                     Send Reset Link
                                 </Button>
@@ -74,7 +74,7 @@ export default function ForgotPasswordPage() {
                             </div>
                             <p className="text-gray-500 text-sm">
                                 Didn't receive the email?{" "}
-                                <button onClick={() => setSubmitted(false)} className="text-[#AADD00] hover:text-[#bef000]">
+                                <button onClick={() => setSubmitted(false)} className="text-[#7C3AED] hover:text-[#9333EA]">
                                     Click to resend
                                 </button>
                             </p>

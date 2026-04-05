@@ -27,7 +27,7 @@ export default function SaasScaffoldPage({ page }: SaasScaffoldPageProps) {
               </p>
             </div>
             <div className="flex gap-2">
-              <Link href="/dashboard/websites" className="inline-flex items-center rounded-md bg-[#AADD00] hover:bg-[#bef000] text-black font-bold px-4 py-2 text-sm font-semibold text-white">
+              <Link href="/dashboard/websites" className="inline-flex items-center rounded-md bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold px-4 py-2 text-sm font-semibold text-white">
                 Builder
               </Link>
               <Link href="/sitemap" className="inline-flex items-center rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold text-gray-300 hover:bg-white/10 hover:text-white">
@@ -47,7 +47,7 @@ export default function SaasScaffoldPage({ page }: SaasScaffoldPageProps) {
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
           <section className="xl:col-span-1 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-3">
-              <Layers className="h-4 w-4 text-[#AADD00]" />
+              <Layers className="h-4 w-4 text-[#7C3AED]" />
               <h2 className="text-lg font-semibold text-white">Related Pages</h2>
             </div>
             <p className="text-sm text-gray-400 mb-4">
@@ -61,7 +61,7 @@ export default function SaasScaffoldPage({ page }: SaasScaffoldPageProps) {
                 <Link
                   key={sibling.id}
                   href={sibling.href}
-                  className="block rounded-lg border border-white/10 px-3 py-2 text-sm text-gray-300 hover:border-[#AADD00]/40 hover:bg-indigo-500/5 transition-colors hover:text-white"
+                  className="block rounded-lg border border-white/10 px-3 py-2 text-sm text-gray-300 hover:border-[#7C3AED]/40 hover:bg-indigo-500/5 transition-colors hover:text-white"
                 >
                   <div className="font-medium text-white">{sibling.name}</div>
                   <div className="text-xs font-mono text-gray-500 mt-1">{sibling.href}</div>
@@ -72,7 +72,7 @@ export default function SaasScaffoldPage({ page }: SaasScaffoldPageProps) {
 
           <section className="xl:col-span-2 rounded-2xl border border-white/10 bg-white/[0.02] backdrop-blur-sm p-6 shadow-sm">
             <div className="flex items-center gap-2 mb-4">
-              <MapPinned className="h-4 w-4 text-[#AADD00]" />
+              <MapPinned className="h-4 w-4 text-[#7C3AED]" />
               <h2 className="text-lg font-semibold text-white">All SaaS Pages</h2>
             </div>
             <p className="text-sm text-gray-400 mb-5">
@@ -91,8 +91,8 @@ export default function SaasScaffoldPage({ page }: SaasScaffoldPageProps) {
                         key={sectionPage.id}
                         href={sectionPage.href}
                         className={`rounded-lg border px-3 py-2 text-sm transition-colors ${sectionPage.id === page.id
-                            ? "border-[#AADD00]/40 bg-[#AADD00]/10 text-[#bef000]"
-                            : "border-white/10 text-gray-300 hover:border-[#AADD00]/40 hover:bg-indigo-500/5 hover:text-white"
+                            ? "border-[#7C3AED]/40 bg-[#7C3AED]/10 text-[#9333EA]"
+                            : "border-white/10 text-gray-300 hover:border-[#7C3AED]/40 hover:bg-indigo-500/5 hover:text-white"
                           }`}
                       >
                         <div className="font-medium text-white">{sectionPage.name}</div>

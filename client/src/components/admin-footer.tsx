@@ -64,7 +64,7 @@ export function AdminFooter() {
             Admin access to all pages and settings • Logged in as: <span className="text-yellow-400 font-semibold">{(user as any)?.email || 'Administrator'}</span>
           </p>
           <p className="text-white/60 text-xs mt-2">
-            SMBify AI Static Website Builder - Manage users, configure site settings, and monitor all websites
+            SiteGenie AI Static Website Builder - Manage users, configure site settings, and monitor all websites
           </p>
         </div>
       </div>

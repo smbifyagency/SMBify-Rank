@@ -7,13 +7,13 @@ export default function AboutPage() {
       {/* Hero Section */}
       <section className="relative pt-32 pb-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#AADD00]/8 rounded-full blur-3xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#AADD00]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#7C3AED]/8 rounded-full blur-3xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#7C3AED]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
         </div>
 
         <div className="relative max-w-4xl mx-auto text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-6">
-            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#AADD00] to-[#7ec800]">SMBify</span>
+            About <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#7C3AED] to-[#F59E0B]">SiteGenie</span>
           </h1>
           <p className="text-xl text-gray-400 leading-relaxed">
             Empowering local businesses with AI-powered websites. We democratize professional web presence,
@@ -29,7 +29,7 @@ export default function AboutPage() {
             <div>
               <h2 className="text-3xl font-bold mb-4">Our Mission</h2>
               <p className="text-gray-400 leading-relaxed mb-6">
-                SMBify was created to democratize professional web presence for small and medium-sized businesses.
+                SiteGenie was created to democratize professional web presence for small and medium-sized businesses.
                 We believe that every local business deserves a high-quality, SEO-optimized website without the complexity or high costs
                 traditionally associated with web development.
               </p>
@@ -38,8 +38,8 @@ export default function AboutPage() {
                 tailored specifically for local businesses.
               </p>
             </div>
-            <div className="relative h-64 rounded-xl rounded-2xl overflow-hidden bg-gradient-to-br from-[#AADD00]/15 to-[#7ec800]/10 flex items-center justify-center border border-[#AADD00]/20 shadow-lg">
-              <Sparkles className="h-16 w-16 text-[#AADD00]/50" />
+            <div className="relative h-64 rounded-xl rounded-2xl overflow-hidden bg-gradient-to-br from-[#7C3AED]/15 to-[#F59E0B]/10 flex items-center justify-center border border-[#7C3AED]/20 shadow-lg">
+              <Sparkles className="h-16 w-16 text-[#7C3AED]/50" />
             </div>
           </div>
         </div>
@@ -49,7 +49,7 @@ export default function AboutPage() {
       <section className="py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">Why Choose Us?</h2>
-          <p className="text-gray-400 max-w-2xl mx-auto">The features that make SMBify the best choice for your local business website.</p>
+          <p className="text-gray-400 max-w-2xl mx-auto">The features that make SiteGenie the best choice for your local business website.</p>
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -92,7 +92,7 @@ export default function AboutPage() {
             }
           ].map((feature, idx) => {
             const Icon = feature.icon;
-            const iconBgClass = "bg-[#AADD00]/10 text-[#AADD00]";
+            const iconBgClass = "bg-[#7C3AED]/10 text-[#7C3AED]";
 
             return (
               <Card key={idx} className="bg-white/[0.02] border-white/10 hover:border-white/20 transition-all hover:-translate-y-1">
@@ -122,7 +122,7 @@ export default function AboutPage() {
             { step: 4, title: "Download or Deploy", desc: "Download your website as a ZIP file or deploy it directly to Netlify with custom domain support." }
           ].map((item, idx) => (
             <div key={idx} className="flex gap-6 items-start p-6 rounded-2xl border border-white/5 bg-white/[0.01]">
-              <div className="flex-shrink-0 w-10 h-10 bg-[#AADD00]/15 text-[#AADD00] rounded-full flex items-center justify-center font-bold border border-[#AADD00]/25">
+              <div className="flex-shrink-0 w-10 h-10 bg-[#7C3AED]/15 text-[#7C3AED] rounded-full flex items-center justify-center font-bold border border-[#7C3AED]/25">
                 {item.step}
               </div>
               <div>

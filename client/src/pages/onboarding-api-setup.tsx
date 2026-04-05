@@ -29,7 +29,7 @@ export default function OnboardingApiSetup() {
                 <div className="flex items-center justify-between mb-8">
                     {["Business", "Services", "Locations", "Brand", "API", "Generate", "Preview"].map((step, i) => (
                         <div key={step} className="flex items-center">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= 4 ? "bg-gradient-to-r bg-[#AADD00] text-white" : "bg-white/5 text-gray-500 border border-white/10"
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= 4 ? "bg-gradient-to-r bg-[#7C3AED] text-white" : "bg-white/5 text-gray-500 border border-white/10"
                                 }`}>{i + 1}</div>
                             {i < 6 && <div className="w-4 sm:w-8 h-px bg-white/10 mx-1" />}
                         </div>
@@ -54,7 +54,7 @@ export default function OnboardingApiSetup() {
                                     key={provider.id}
                                     onClick={() => setSelectedProvider(provider.id)}
                                     className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all text-left ${selectedProvider === provider.id
-                                            ? "border-[#AADD00]/40 bg-[#AADD00]/10"
+                                            ? "border-[#7C3AED]/40 bg-[#7C3AED]/10"
                                             : "border-white/10 bg-white/[0.02] hover:bg-white/5"
                                         }`}
                                 >
@@ -67,7 +67,7 @@ export default function OnboardingApiSetup() {
                                         target="_blank"
                                         rel="noreferrer"
                                         onClick={(e) => e.stopPropagation()}
-                                        className="text-[#AADD00] hover:text-[#bef000] text-xs flex items-center gap-1"
+                                        className="text-[#7C3AED] hover:text-[#9333EA] text-xs flex items-center gap-1"
                                     >
                                         Get Key <ExternalLink className="h-3 w-3" />
                                     </a>
@@ -117,7 +117,7 @@ export default function OnboardingApiSetup() {
                                 Skip
                             </Button>
                             <Button onClick={handleSaveAndGenerate}
-                                className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold px-8">
+                                className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold px-8">
                                 Save & Generate <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </div>

@@ -15,7 +15,7 @@ export default function MaintenancePage() {
                         <span className="font-medium">Estimated downtime: 30 minutes</span>
                     </div>
                 </div>
-                <p className="text-xs text-gray-500 mt-6">Follow us on Twitter @SMBify for real-time updates.</p>
+                <p className="text-xs text-gray-500 mt-6">Follow us on Twitter @SiteGenie for real-time updates.</p>
             </div>
         </div>
     );

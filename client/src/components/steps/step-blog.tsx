@@ -20,7 +20,7 @@ export function StepBlog({ form }: StepBlogProps) {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
-            <i className="fas fa-blog mr-3 text-[#AADD00]"></i>
+            <i className="fas fa-blog mr-3 text-[#7C3AED]"></i>
             Blog Configuration
           </CardTitle>
           <CardDescription>

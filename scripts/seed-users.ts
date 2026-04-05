@@ -8,7 +8,7 @@ async function run() {
     console.log("Seeding users...");
 
     // 1. Core Admin User
-    const adminEmail = "admin@smbify.com";
+    const adminEmail = "admin@sitegenie.app";
     const existingAdmin = await db.select().from(users).where(eq(users.email, adminEmail));
 
     const adminPassword = process.argv[2] || "AdminPass123!";
@@ -31,7 +31,7 @@ async function run() {
     }
 
     // 2. Normal User
-    const normalEmail = "user@smbify.com";
+    const normalEmail = "user@sitegenie.app";
     const existingNormal = await db.select().from(users).where(eq(users.email, normalEmail));
 
     const normalPassword = process.argv[3] || "UserPass123!";

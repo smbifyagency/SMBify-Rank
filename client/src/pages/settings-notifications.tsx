@@ -40,13 +40,13 @@ export default function SettingsNotifications() {
                             </div>
                             <button
                                 onClick={() => toggle(pref.id)}
-                                className={`w-11 h-6 rounded-full transition-all relative ${pref.enabled ? "bg-[#AADD00]" : "bg-white/10"}`}
+                                className={`w-11 h-6 rounded-full transition-all relative ${pref.enabled ? "bg-[#7C3AED]" : "bg-white/10"}`}
                             >
                                 <div className={`w-5 h-5 rounded-full bg-white absolute top-0.5 transition-all ${pref.enabled ? "left-[22px]" : "left-0.5"}`} />
                             </button>
                         </div>
                     ))}
-                    <Button className="bg-gradient-to-r from-[#AADD00] to-[#7ec800] mt-4"><Save className="mr-2 h-4 w-4" /> Save Preferences</Button>
+                    <Button className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] mt-4"><Save className="mr-2 h-4 w-4" /> Save Preferences</Button>
                 </div>
             </div>
         </div>

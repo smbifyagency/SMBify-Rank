@@ -51,7 +51,7 @@ export default function DashboardHome() {
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-8 gap-4">
                     <div>
                         <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-                            <LayoutDashboard className="h-8 w-8 text-[#AADD00]" />
+                            <LayoutDashboard className="h-8 w-8 text-[#7C3AED]" />
                             Dashboard
                         </h1>
                         <p className="text-gray-400 mt-1">Welcome back! Here's an overview of your projects.</p>
@@ -69,7 +69,7 @@ export default function DashboardHome() {
                             }
                         }}
                         disabled={isCreating}
-                        className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold shadow-lg shadow-[#AADD00]/25"
+                        className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold shadow-lg shadow-[#7C3AED]/25"
                     >
                         {isCreating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Plus className="mr-2 h-4 w-4" />} New Website
                     </Button>
@@ -78,16 +78,16 @@ export default function DashboardHome() {
                 {/* Plan & Limit Banner */}
                 <div className={`mb-8 rounded-2xl border p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${isPaid
                     ? "border-emerald-500/20 bg-emerald-500/5"
-                    : "border-[#AADD00]/20 bg-indigo-500/5"
+                    : "border-[#7C3AED]/20 bg-indigo-500/5"
                     }`}>
                     <div className="flex items-center gap-3">
                         {isPaid ? (
                             <Crown className="h-5 w-5 text-emerald-400" />
                         ) : (
-                            <Sparkles className="h-5 w-5 text-[#AADD00]" />
+                            <Sparkles className="h-5 w-5 text-[#7C3AED]" />
                         )}
                         <div>
-                            <p className={`font-semibold ${isPaid ? "text-emerald-300" : "text-[#bef000]"}`}>
+                            <p className={`font-semibold ${isPaid ? "text-emerald-300" : "text-[#9333EA]"}`}>
                                 {isPaid ? "Pro Plan" : "Free Plan"}
                             </p>
                             <p className="text-sm text-gray-400">
@@ -100,7 +100,7 @@ export default function DashboardHome() {
                     </div>
                     {!isPaid && (
                         <Link href="/pricing">
-                            <Button size="sm" className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold text-white">
+                            <Button size="sm" className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold text-white">
                                 <Sparkles className="mr-1 h-3 w-3" /> Upgrade to Pro — $29/mo
                             </Button>
                         </Link>
@@ -133,7 +133,7 @@ export default function DashboardHome() {
                     <div className="lg:col-span-2 rounded-2xl border border-white/10 bg-white/[0.02] p-6">
                         <div className="flex items-center justify-between mb-5">
                             <h2 className="text-lg font-semibold text-white">Recent Websites</h2>
-                            <Link href="/dashboard/websites" className="text-sm text-[#AADD00] hover:text-[#bef000] flex items-center gap-1">
+                            <Link href="/dashboard/websites" className="text-sm text-[#7C3AED] hover:text-[#9333EA] flex items-center gap-1">
                                 View All <ArrowRight className="h-3 w-3" />
                             </Link>
                         </div>
@@ -155,7 +155,7 @@ export default function DashboardHome() {
                                         } else {
                                             handleCreateWebsite();
                                         }
-                                    }} size="sm" disabled={isCreating} className="bg-gradient-to-r from-[#AADD00] to-[#7ec800]">
+                                    }} size="sm" disabled={isCreating} className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B]">
                                         {isCreating ? <Loader2 className="mr-1 h-3 w-3 animate-spin" /> : <Plus className="mr-1 h-3 w-3" />} Create Website
                                     </Button>
                                 </div>
@@ -170,8 +170,8 @@ export default function DashboardHome() {
                                     <div key={site.id} onClick={() => setLocation(`/dashboard/websites/${site.id}`)}>
                                         <div className="flex items-center justify-between p-4 rounded-xl border border-white/5 hover:border-white/15 hover:bg-white/[0.02] transition-all cursor-pointer">
                                             <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#AADD00]/12 to-[#AADD00]/5 flex items-center justify-center flex-shrink-0">
-                                                    <Globe className="h-5 w-5 text-[#AADD00]" />
+                                                <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#7C3AED]/12 to-[#7C3AED]/5 flex items-center justify-center flex-shrink-0">
+                                                    <Globe className="h-5 w-5 text-[#7C3AED]" />
                                                 </div>
                                                 <div className="overflow-hidden">
                                                     <p className="font-medium text-white truncate">{businessData?.businessName || site.title || "Untitled"}</p>

@@ -478,7 +478,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-sm text-gray-300">Blog Writer</h3>
         {posts.length > 0 && (
-          <span className="text-xs bg-[#AADD00]/20 text-[#AADD00] px-2 py-0.5 rounded-full font-medium">
+          <span className="text-xs bg-[#7C3AED]/20 text-[#7C3AED] px-2 py-0.5 rounded-full font-medium">
             {posts.length} post{posts.length !== 1 ? 's' : ''}
           </span>
         )}
@@ -491,7 +491,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <div className="space-y-2">
         <Label className="text-xs text-gray-400">Keywords (one per line)</Label>
         <textarea
-          className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-sm text-gray-200 placeholder-gray-500 focus:border-[#AADD00] focus:ring-1 focus:ring-[#AADD00] transition resize-none"
+          className="w-full bg-gray-800 border border-gray-700 rounded-lg p-3 text-sm text-gray-200 placeholder-gray-500 focus:border-[#7C3AED] focus:ring-1 focus:ring-[#7C3AED] transition resize-none"
           rows={6}
           placeholder={`water damage restoration tips\nmold prevention guide\nflood cleanup process\nemergency water removal\nhow to dry water damage`}
           value={keywords}
@@ -507,7 +507,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         <button
           type="button"
           onClick={() => setShowSuggestions(!showSuggestions)}
-          className="text-xs text-[#AADD00] hover:text-[#bef000] flex items-center gap-1"
+          className="text-xs text-[#7C3AED] hover:text-[#9333EA] flex items-center gap-1"
         >
           <Sparkles className="w-3 h-3" />
           {showSuggestions ? 'Hide' : 'Show'} suggested keywords ({suggestedKeywords.length})
@@ -526,7 +526,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
                   setKeywords(prev => (prev.trim() ? prev.trim() + '\n' : '') + toAdd.join('\n'));
                   toast({ title: `Added ${toAdd.length} keywords` });
                 }}
-                className="text-xs text-[#AADD00] hover:underline"
+                className="text-xs text-[#7C3AED] hover:underline"
               >
                 Add all
               </button>
@@ -546,7 +546,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
                       }
                       setKeywords(prev => (prev.trim() ? prev.trim() + '\n' : '') + s);
                     }}
-                    className={`text-xs px-2 py-1 rounded-full border transition ${isAdded ? 'border-green-800 bg-green-950/40 text-green-500 cursor-default' : 'border-gray-600 bg-gray-900 text-gray-300 hover:border-[#AADD00] hover:text-[#AADD00]'}`}
+                    className={`text-xs px-2 py-1 rounded-full border transition ${isAdded ? 'border-green-800 bg-green-950/40 text-green-500 cursor-default' : 'border-gray-600 bg-gray-900 text-gray-300 hover:border-[#7C3AED] hover:text-[#7C3AED]'}`}
                   >
                     {isAdded ? '✓ ' : '+ '}{s}
                   </button>
@@ -593,7 +593,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       <Button
         onClick={generateBlogs}
         disabled={isGenerating || keywordLines.length === 0}
-        className="w-full bg-[#AADD00] hover:bg-[#99CC00] text-gray-900 font-semibold"
+        className="w-full bg-[#7C3AED] hover:bg-[#99CC00] text-gray-900 font-semibold"
       >
         {isGenerating ? (
           <span className="flex items-center gap-2">
@@ -613,7 +613,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
         <div className="space-y-2">
           <div className="w-full bg-gray-800 rounded-full h-2">
             <div
-              className="bg-[#AADD00] h-2 rounded-full transition-all duration-500"
+              className="bg-[#7C3AED] h-2 rounded-full transition-all duration-500"
               style={{ width: `${(progress.current / progress.total) * 100}%` }}
             />
           </div>
@@ -678,7 +678,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
                         <span className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Featured Image</span>
                         <button
                           onClick={e => { e.stopPropagation(); startEditImage(post); }}
-                          className="text-xs text-[#AADD00] hover:text-[#bef000] flex items-center gap-1"
+                          className="text-xs text-[#7C3AED] hover:text-[#9333EA] flex items-center gap-1"
                         >
                           <ImagePlus className="w-3 h-3" />
                           {post.featuredImage ? 'Change' : 'Add Image'}
@@ -723,7 +723,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
                             />
                           )}
                           <div className="flex gap-2">
-                            <Button size="sm" className="h-7 text-xs bg-[#AADD00] hover:bg-[#99CC00] text-gray-900" onClick={() => saveImage(post.id)}>
+                            <Button size="sm" className="h-7 text-xs bg-[#7C3AED] hover:bg-[#99CC00] text-gray-900" onClick={() => saveImage(post.id)}>
                               <Save className="w-3 h-3 mr-1" /> Save
                             </Button>
                             <Button size="sm" variant="ghost" className="h-7 text-xs text-gray-400" onClick={() => setEditingImageId(null)}>
@@ -735,7 +735,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
                         <img src={post.featuredImage} alt={post.featuredImageAlt || ''} className="w-full h-32 object-cover rounded-md cursor-pointer hover:opacity-80 transition" onClick={e => { e.stopPropagation(); startEditImage(post); }} />
                       ) : (
                         <div
-                          className="w-full h-24 border-2 border-dashed border-gray-700 rounded-md flex items-center justify-center cursor-pointer hover:border-[#AADD00] transition"
+                          className="w-full h-24 border-2 border-dashed border-gray-700 rounded-md flex items-center justify-center cursor-pointer hover:border-[#7C3AED] transition"
                           onClick={e => { e.stopPropagation(); startEditImage(post); }}
                         >
                           <span className="text-xs text-gray-500">Click to add featured image</span>
@@ -766,7 +766,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
                         </button>
                         <button
                           onClick={e => { e.stopPropagation(); setEditPostId(post.id); }}
-                          className="flex items-center gap-1 text-xs bg-[#AADD00]/20 hover:bg-[#AADD00]/30 text-[#AADD00] px-2 py-1 rounded transition"
+                          className="flex items-center gap-1 text-xs bg-[#7C3AED]/20 hover:bg-[#7C3AED]/30 text-[#7C3AED] px-2 py-1 rounded transition"
                           title="Edit in visual editor"
                         >
                           <PenSquare className="w-3 h-3" /> Edit
@@ -784,7 +784,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
       {/* Info Note */}
       <div className="bg-gray-800/50 border border-gray-700/50 rounded-lg p-3 mt-4">
         <p className="text-xs text-gray-500 leading-relaxed">
-          <Sparkles className="w-3 h-3 inline mr-1 text-[#AADD00]" />
+          <Sparkles className="w-3 h-3 inline mr-1 text-[#7C3AED]" />
           Each keyword triggers a separate AI API call with full 1000-1500 word generation. Blog posts are automatically included in the website preview and deploy.
         </p>
       </div>
@@ -1811,7 +1811,7 @@ export default function WDSiteEditor() {
   if (isLoading) {
     return (
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#030712' }}>
-        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#AADD00' }} />
+        <Loader2 className="w-8 h-8 animate-spin" style={{ color: '#7C3AED' }} />
       </div>
     );
   }
@@ -1882,7 +1882,7 @@ export default function WDSiteEditor() {
               </Button>
             </a>
           )}
-          <Button size="sm" onClick={deployToNetlify} disabled={isDeploying} className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold shadow-md">
+          <Button size="sm" onClick={deployToNetlify} disabled={isDeploying} className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold shadow-md">
             {isDeploying ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Rocket className="w-4 h-4 mr-1" />}
             {isDeploying ? "Deploying..." : deployedUrl ? "Update to Netlify" : "Publish to Netlify"}
           </Button>
@@ -1951,7 +1951,7 @@ export default function WDSiteEditor() {
                             rebuildPreview(next as any);
                           }}
                           className={`rounded overflow-hidden text-left transition-transform hover:scale-105 focus:outline-none ${
-                            isActive ? "ring-2 ring-[#AADD00] ring-offset-1 ring-offset-gray-900" : "ring-1 ring-white/10"
+                            isActive ? "ring-2 ring-[#7C3AED] ring-offset-1 ring-offset-gray-900" : "ring-1 ring-white/10"
                           }`}
                         >
                           <div className="flex h-6">
@@ -1977,7 +1977,7 @@ export default function WDSiteEditor() {
                     <select
                       value={siteData.countryCode || "+1"}
                       onChange={e => updateField("countryCode", e.target.value)}
-                      className="w-[100px] h-[36px] px-2 py-1 rounded-md bg-gray-800 border border-gray-700 text-white text-sm focus:border-[#AADD00]/50 outline-none"
+                      className="w-[100px] h-[36px] px-2 py-1 rounded-md bg-gray-800 border border-gray-700 text-white text-sm focus:border-[#7C3AED]/50 outline-none"
                     >
                       <option value="+1" className="bg-gray-900">🇺🇸/🇨🇦 +1</option>
                       <option value="+44" className="bg-gray-900">🇬🇧 +44</option>
@@ -2018,7 +2018,7 @@ export default function WDSiteEditor() {
                     <Label className="text-xs text-gray-400 flex items-center gap-1">
                       <Layers className="w-3 h-3" /> Services
                     </Label>
-                    <span className="text-[10px] text-[#AADD00] font-mono">{(siteData.services || []).length} services → {(siteData.services || []).length} pages</span>
+                    <span className="text-[10px] text-[#7C3AED] font-mono">{(siteData.services || []).length} services → {(siteData.services || []).length} pages</span>
                   </div>
                   <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                     {(Array.isArray(siteData.services) ? siteData.services : []).map((svc: string, i: number) => (
@@ -2050,7 +2050,7 @@ export default function WDSiteEditor() {
                   <div className="flex gap-1.5 mt-1.5">
                     <button
                       onClick={() => updateField("services", [...(siteData.services || []), ""])}
-                      className="flex-1 flex items-center gap-1 text-xs text-[#AADD00] hover:text-[#c8ff00] transition-colors justify-center py-1.5 border border-dashed border-gray-700 hover:border-[#AADD00]/40 rounded-md"
+                      className="flex-1 flex items-center gap-1 text-xs text-[#7C3AED] hover:text-[#c8ff00] transition-colors justify-center py-1.5 border border-dashed border-gray-700 hover:border-[#7C3AED]/40 rounded-md"
                     >
                       <Plus className="w-3 h-3" /> Add Service
                     </button>
@@ -2061,7 +2061,7 @@ export default function WDSiteEditor() {
                       return (
                         <button
                           onClick={() => generateIncrementalPages('services')}
-                          className="flex items-center gap-1 text-[10px] bg-[#AADD00]/15 text-[#AADD00] hover:bg-[#AADD00]/25 px-2.5 py-1.5 rounded-md transition-colors font-medium whitespace-nowrap"
+                          className="flex items-center gap-1 text-[10px] bg-[#7C3AED]/15 text-[#7C3AED] hover:bg-[#7C3AED]/25 px-2.5 py-1.5 rounded-md transition-colors font-medium whitespace-nowrap"
                           title={`Generate ${newSvcs.length} new service page(s) without full rebuild`}
                         >
                           <Sparkles className="w-3 h-3" /> +{newSvcs.length} New
@@ -2077,7 +2077,7 @@ export default function WDSiteEditor() {
                     <Label className="text-xs text-gray-400 flex items-center gap-1">
                       <MapPin className="w-3 h-3" /> Service Areas (Locations)
                     </Label>
-                    <span className="text-[10px] text-[#AADD00] font-mono">{(siteData.serviceAreas || []).length} cities → {(siteData.serviceAreas || []).length} pages</span>
+                    <span className="text-[10px] text-[#7C3AED] font-mono">{(siteData.serviceAreas || []).length} cities → {(siteData.serviceAreas || []).length} pages</span>
                   </div>
                   <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                     {(Array.isArray(siteData.serviceAreas) ? siteData.serviceAreas : []).map((area: string, i: number) => (
@@ -2109,7 +2109,7 @@ export default function WDSiteEditor() {
                   <div className="flex gap-1.5 mt-1.5">
                     <button
                       onClick={() => updateField("serviceAreas", [...(siteData.serviceAreas || []), ""])}
-                      className="flex-1 flex items-center gap-1 text-xs text-[#AADD00] hover:text-[#c8ff00] transition-colors justify-center py-1.5 border border-dashed border-gray-700 hover:border-[#AADD00]/40 rounded-md"
+                      className="flex-1 flex items-center gap-1 text-xs text-[#7C3AED] hover:text-[#c8ff00] transition-colors justify-center py-1.5 border border-dashed border-gray-700 hover:border-[#7C3AED]/40 rounded-md"
                     >
                       <Plus className="w-3 h-3" /> Add Location
                     </button>
@@ -2119,7 +2119,7 @@ export default function WDSiteEditor() {
                       return (
                         <button
                           onClick={() => generateIncrementalPages('locations')}
-                          className="flex items-center gap-1 text-[10px] bg-[#AADD00]/15 text-[#AADD00] hover:bg-[#AADD00]/25 px-2.5 py-1.5 rounded-md transition-colors font-medium whitespace-nowrap"
+                          className="flex items-center gap-1 text-[10px] bg-[#7C3AED]/15 text-[#7C3AED] hover:bg-[#7C3AED]/25 px-2.5 py-1.5 rounded-md transition-colors font-medium whitespace-nowrap"
                           title={`Generate ${newLocs.length} new location page(s) without full rebuild`}
                         >
                           <Sparkles className="w-3 h-3" /> +{newLocs.length} New
@@ -2144,7 +2144,7 @@ export default function WDSiteEditor() {
                     <button
                       onClick={() => updateField("enableMatrixPages", !(siteData as any).enableMatrixPages)}
                       className={`relative w-10 h-5 rounded-full transition-colors ${
-                        (siteData as any).enableMatrixPages ? 'bg-[#AADD00]' : 'bg-gray-700'
+                        (siteData as any).enableMatrixPages ? 'bg-[#7C3AED]' : 'bg-gray-700'
                       }`}
                     >
                       <span className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-white transition-transform ${
@@ -2160,7 +2160,7 @@ export default function WDSiteEditor() {
                       <div className="bg-gray-800/50 rounded-md p-2 space-y-1">
                         <div className="flex justify-between text-xs">
                           <span className="text-gray-400">{svcCount} services × {locCount} cities</span>
-                          <span className="font-bold text-[#AADD00] font-mono">{matrixCount} pages</span>
+                          <span className="font-bold text-[#7C3AED] font-mono">{matrixCount} pages</span>
                         </div>
                         <div className="text-[10px] text-gray-500 leading-relaxed">
                           Example: <span className="text-gray-400">{siteData.services?.[0] || 'Service'} in {siteData.serviceAreas?.[0] || 'City'}</span>
@@ -2178,7 +2178,7 @@ export default function WDSiteEditor() {
                           return (
                             <button
                               onClick={() => generateIncrementalPages('matrix')}
-                              className="w-full mt-1.5 flex items-center justify-center gap-1 text-[10px] bg-[#AADD00]/15 text-[#AADD00] hover:bg-[#AADD00]/25 px-2.5 py-1.5 rounded-md transition-colors font-medium"
+                              className="w-full mt-1.5 flex items-center justify-center gap-1 text-[10px] bg-[#7C3AED]/15 text-[#7C3AED] hover:bg-[#7C3AED]/25 px-2.5 py-1.5 rounded-md transition-colors font-medium"
                               title={`Generate ${newMatrix.length} new matrix page(s) without full rebuild`}
                             >
                               <Sparkles className="w-3 h-3" /> Generate {newMatrix.length} New Matrix Pages
@@ -2265,7 +2265,7 @@ export default function WDSiteEditor() {
               <div className="rounded-lg border border-gray-700 bg-gray-800/30 p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-sm text-gray-300 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-[#AADD00]" />
+                    <Sparkles className="w-4 h-4 text-[#7C3AED]" />
                     AI Content Generator
                   </h3>
                   <Button variant="outline" size="sm" onClick={regenerateFiles} disabled={isRegenerating} className="border-amber-600 bg-amber-600/10 text-amber-400 hover:bg-amber-600/20 text-xs font-medium">
@@ -2294,7 +2294,7 @@ export default function WDSiteEditor() {
                   <Button
                     onClick={generateAIContent}
                     disabled={isGeneratingAI || apiStatus === "none"}
-                    className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold h-[38px] px-4"
+                    className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold h-[38px] px-4"
                   >
                     {isGeneratingAI ? (
                       <><Loader2 className="w-4 h-4 animate-spin mr-1" />Generating...</>
@@ -2498,7 +2498,7 @@ export default function WDSiteEditor() {
                       <p className="text-[10px] text-gray-500 -mt-1">→ Homepage "Our Process" section + Service pages</p>
                       {((siteData as any)._aiProcessSteps as any[]).map((step: any, i: number) => (
                         <div key={i} className="flex gap-2 items-start">
-                          <span className="text-xs text-[#AADD00] font-bold mt-2 w-4 flex-shrink-0">{i + 1}.</span>
+                          <span className="text-xs text-[#7C3AED] font-bold mt-2 w-4 flex-shrink-0">{i + 1}.</span>
                           <div className="flex-1 space-y-1">
                             <Input
                               value={step.title || step.step || ''}
@@ -2703,7 +2703,7 @@ export default function WDSiteEditor() {
                   <div className="text-center">
                     <Sparkles className="w-7 h-7 text-gray-600 mx-auto mb-1" />
                     <p className="text-sm text-gray-400 font-medium">No AI content generated yet</p>
-                    <p className="text-xs text-gray-600 mt-0.5">Click <strong className="text-[#AADD00]">Generate</strong> to write unique content for all these pages:</p>
+                    <p className="text-xs text-gray-600 mt-0.5">Click <strong className="text-[#7C3AED]">Generate</strong> to write unique content for all these pages:</p>
                   </div>
                   <div className="grid grid-cols-2 gap-1.5 text-[11px]">
                     {[
@@ -2780,7 +2780,7 @@ export default function WDSiteEditor() {
                           ))}
                           <div className="border-t border-gray-700/50 pt-1 mt-1 flex justify-between text-[11px] font-semibold">
                             <span className="text-white">Total Website Content</span>
-                            <span className="text-[#AADD00] font-mono">{totalWords.toLocaleString()} words</span>
+                            <span className="text-[#7C3AED] font-mono">{totalWords.toLocaleString()} words</span>
                           </div>
                         </div>
                         <div className="grid grid-cols-3 gap-2 pt-1">
@@ -3067,7 +3067,7 @@ export default function WDSiteEditor() {
                 return (
                   <button
                     onClick={() => generateIncrementalPages('blog')}
-                    className="w-full flex items-center justify-center gap-1.5 text-xs bg-[#AADD00]/15 text-[#AADD00] hover:bg-[#AADD00]/25 px-3 py-2 rounded-lg transition-colors font-medium border border-[#AADD00]/20"
+                    className="w-full flex items-center justify-center gap-1.5 text-xs bg-[#7C3AED]/15 text-[#7C3AED] hover:bg-[#7C3AED]/25 px-3 py-2 rounded-lg transition-colors font-medium border border-[#7C3AED]/20"
                     title={`Generate ${newBlogPosts.length} new blog page(s) without full rebuild`}
                   >
                     <Sparkles className="w-3.5 h-3.5" /> Generate {newBlogPosts.length} New Blog Post Page{newBlogPosts.length > 1 ? 's' : ''} (incremental)
@@ -3320,7 +3320,7 @@ export default function WDSiteEditor() {
               size="sm"
               onClick={() => setShowVisualEditor(true)}
               disabled={Object.keys(generatedFiles).length === 0}
-              className="ml-auto border-[#AADD00]/60 bg-[#AADD00]/10 text-[#AADD00] hover:bg-[#AADD00]/20 font-medium text-xs h-7 px-2"
+              className="ml-auto border-[#7C3AED]/60 bg-[#7C3AED]/10 text-[#7C3AED] hover:bg-[#7C3AED]/20 font-medium text-xs h-7 px-2"
             >
               <Edit3 className="w-3 h-3 mr-1" /> Visual Editor
             </Button>

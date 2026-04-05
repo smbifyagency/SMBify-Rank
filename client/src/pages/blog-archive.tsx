@@ -93,7 +93,7 @@ export default function BlogArchive() {
       <div className="container mx-auto px-4 py-12">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-[#AADD00] to-[#7ec800] bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">
             Our Blog
           </h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
@@ -109,7 +109,7 @@ export default function BlogArchive() {
               placeholder="Search articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
+              className="pl-10 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]"
             />
           </div>
 
@@ -156,7 +156,7 @@ export default function BlogArchive() {
                             className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                           {post.isAiGenerated && (
-                            <Badge className="absolute top-3 right-3 bg-[#AADD00] hover:bg-[#bef000] text-black text-white border-0">
+                            <Badge className="absolute top-3 right-3 bg-[#7C3AED] hover:bg-[#9333EA] text-black text-white border-0">
                               AI Generated
                             </Badge>
                           )}
@@ -176,7 +176,7 @@ export default function BlogArchive() {
                             </div>
                           )}
                         </div>
-                        <CardTitle className="group-hover:text-[#AADD00] text-white transition-colors line-clamp-2">
+                        <CardTitle className="group-hover:text-[#7C3AED] text-white transition-colors line-clamp-2">
                           {post.title}
                         </CardTitle>
                         <CardDescription className="line-clamp-3 text-gray-400">
@@ -234,7 +234,7 @@ export default function BlogArchive() {
                             className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-300"
                           />
                           {post.isAiGenerated && (
-                            <Badge className="absolute top-2 right-2 bg-[#AADD00] hover:bg-[#bef000] text-black text-white text-xs border-0">
+                            <Badge className="absolute top-2 right-2 bg-[#7C3AED] hover:bg-[#9333EA] text-black text-white text-xs border-0">
                               AI
                             </Badge>
                           )}
@@ -254,7 +254,7 @@ export default function BlogArchive() {
                             </div>
                           )}
                         </div>
-                        <CardTitle className="text-lg group-hover:text-[#AADD00] text-white transition-colors line-clamp-2">
+                        <CardTitle className="text-lg group-hover:text-[#7C3AED] text-white transition-colors line-clamp-2">
                           {post.title}
                         </CardTitle>
                         <CardDescription className="line-clamp-2 text-sm text-gray-400">
@@ -290,7 +290,7 @@ export default function BlogArchive() {
 
         {/* Newsletter Signup */}
         <div className="mt-16 text-center">
-          <Card className="max-w-2xl mx-auto bg-gradient-to-r from-indigo-600/20 to-violet-600/20 border border-[#AADD00]/25">
+          <Card className="max-w-2xl mx-auto bg-gradient-to-r from-indigo-600/20 to-violet-600/20 border border-[#7C3AED]/25">
             <CardHeader>
               <CardTitle className="text-2xl text-white">Stay Updated</CardTitle>
               <CardDescription className="text-gray-300">
@@ -301,9 +301,9 @@ export default function BlogArchive() {
               <div className="flex gap-2">
                 <Input
                   placeholder="Enter your email"
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-400 focus:border-[#AADD00]"
+                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-400 focus:border-[#7C3AED]"
                 />
-                <Button className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold text-white border-0">
+                <Button className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold text-white border-0">
                   Subscribe
                 </Button>
               </div>

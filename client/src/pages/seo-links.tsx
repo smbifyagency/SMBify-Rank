@@ -54,7 +54,7 @@ export default function SeoLinks() {
                                     <td className="p-4 text-center"><Link2 className="h-3.5 w-3.5 text-gray-500 mx-auto" /></td>
                                     <td className="p-4 text-sm text-gray-300">{link.to}</td>
                                     <td className="p-4 text-center">
-                                        <span className={`px-2 py-0.5 rounded-full text-xs ${link.type === "Orphan" ? "bg-red-500/10 text-red-400" : "bg-[#AADD00]/10 text-[#AADD00]"}`}>{link.type}</span>
+                                        <span className={`px-2 py-0.5 rounded-full text-xs ${link.type === "Orphan" ? "bg-red-500/10 text-red-400" : "bg-[#7C3AED]/10 text-[#7C3AED]"}`}>{link.type}</span>
                                     </td>
                                     <td className="p-4 text-center">
                                         {link.status === "ok" ? <CheckCircle className="h-4 w-4 text-emerald-400 mx-auto" /> :

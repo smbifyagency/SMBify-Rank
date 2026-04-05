@@ -30,7 +30,7 @@ export default function SettingsApiKeys() {
                         <button onClick={() => setShowKey(!showKey)} className="text-gray-400 hover:text-white px-2">
                             {showKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
-                        <Button className="bg-gradient-to-r from-[#AADD00] to-[#7ec800]"><Plus className="mr-1 h-4 w-4" /> Add</Button>
+                        <Button className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B]"><Plus className="mr-1 h-4 w-4" /> Add</Button>
                     </div>
                 </div>
 

@@ -61,7 +61,7 @@ export default function Homepage() {
     {
       name: "Sarah Johnson",
       business: "Elite Plumbing Services",
-      content: "SMBify Rank helped me create a professional website that actually brings in customers. The automatic images and content made it so easy!",
+      content: "SiteGenie helped me create a professional website that actually brings in customers. The automatic images and content made it so easy!",
       rating: 5
     },
     {
@@ -87,7 +87,7 @@ export default function Homepage() {
             <div className="flex justify-between items-center h-16">
               <div className="flex-shrink-0">
                 <h1 className="text-xl font-bold text-gray-900">
-                  SMBify Rank
+                  SiteGenie
                 </h1>
               </div>
               <div className="flex items-center space-x-4">
@@ -199,7 +199,7 @@ export default function Homepage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold mb-6">
-              Why Choose SMBify Rank?
+              Why Choose SiteGenie?
             </h2>
             <p className="text-xl opacity-90 max-w-3xl mx-auto">
               Join thousands of local businesses who trust our platform

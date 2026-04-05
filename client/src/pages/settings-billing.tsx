@@ -14,12 +14,12 @@ export default function SettingsBilling() {
                 </h1>
                 <p className="text-gray-400 mb-8">Your plan and subscription details.</p>
 
-                <div className="rounded-2xl border border-[#AADD00]/25 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 p-8 mb-6">
+                <div className="rounded-2xl border border-[#7C3AED]/25 bg-gradient-to-br from-indigo-500/10 to-violet-500/10 p-8 mb-6">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="text-[#bef000] text-sm font-medium">Your Plan</p>
+                            <p className="text-[#9333EA] text-sm font-medium">Your Plan</p>
                             <h2 className="text-3xl font-bold text-white flex items-center gap-3 mt-2">
-                                <Sparkles className="h-7 w-7 text-amber-400" /> SMBify Pro
+                                <Sparkles className="h-7 w-7 text-amber-400" /> SiteGenie Pro
                             </h2>
                             <p className="text-gray-300 text-sm mt-2">All features included. One plan for everyone.</p>
                         </div>

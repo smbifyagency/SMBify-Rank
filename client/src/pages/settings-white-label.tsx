@@ -54,7 +54,7 @@ export default function SettingsWhiteLabel() {
                         </p>
                     </div>
 
-                    <Button className="bg-gradient-to-r from-[#AADD00] to-[#7ec800]"><Save className="mr-2 h-4 w-4" /> Save White Label Settings</Button>
+                    <Button className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B]"><Save className="mr-2 h-4 w-4" /> Save White Label Settings</Button>
                 </div>
             </div>
         </div>

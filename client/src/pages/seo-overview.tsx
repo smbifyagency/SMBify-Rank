@@ -69,7 +69,7 @@ export default function SeoOverview() {
                                     <Link key={tool.label} href={tool.href}>
                                         <div className="flex items-center justify-between p-4 rounded-xl border border-white/5 hover:border-white/15 hover:bg-white/[0.02] transition-all cursor-pointer">
                                             <div className="flex items-center gap-3">
-                                                <Icon className="h-5 w-5 text-[#AADD00]" />
+                                                <Icon className="h-5 w-5 text-[#7C3AED]" />
                                                 <div>
                                                     <p className="text-sm font-medium text-white">{tool.label}</p>
                                                     <p className="text-xs text-gray-500">{tool.desc}</p>

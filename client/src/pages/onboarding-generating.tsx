@@ -126,7 +126,7 @@ export default function OnboardingGenerating() {
                 <div className="flex items-center justify-between mb-8">
                     {["Business", "Services", "Locations", "Brand", "API", "Generate", "Preview"].map((step, i) => (
                         <div key={step} className="flex items-center">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= 5 ? "bg-gradient-to-r bg-[#AADD00] text-white" : "bg-white/5 text-gray-500 border border-white/10"
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i <= 5 ? "bg-gradient-to-r bg-[#7C3AED] text-white" : "bg-white/5 text-gray-500 border border-white/10"
                                 }`}>{i + 1}</div>
                             {i < 6 && <div className="w-4 sm:w-8 h-px bg-white/10 mx-1" />}
                         </div>
@@ -134,13 +134,13 @@ export default function OnboardingGenerating() {
                 </div>
 
                 <div className="text-center mb-10">
-                    <div className="w-20 h-20 rounded-2xl bg-[#AADD00]/10 flex items-center justify-center mx-auto mb-6">
+                    <div className="w-20 h-20 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-6">
                         {hasError ? (
                             <AlertCircle className="h-10 w-10 text-red-400" />
                         ) : isComplete ? (
                             <CheckCircle className="h-10 w-10 text-emerald-400" />
                         ) : (
-                            <Sparkles className="h-10 w-10 text-[#AADD00] animate-pulse" />
+                            <Sparkles className="h-10 w-10 text-[#7C3AED] animate-pulse" />
                         )}
                     </div>
                     <h1 className="text-3xl font-bold text-white mb-2">
@@ -161,11 +161,11 @@ export default function OnboardingGenerating() {
                         <div>
                             <div className="flex justify-between text-sm mb-2">
                                 <span className="text-gray-400">Progress</span>
-                                <span className="text-[#AADD00] font-mono">{progress}%</span>
+                                <span className="text-[#7C3AED] font-mono">{progress}%</span>
                             </div>
                             <div className="w-full h-3 bg-white/5 rounded-full overflow-hidden">
                                 <div
-                                    className="h-full bg-gradient-to-r bg-[#AADD00] rounded-full transition-all duration-300"
+                                    className="h-full bg-gradient-to-r bg-[#7C3AED] rounded-full transition-all duration-300"
                                     style={{ width: `${progress}%` }}
                                 />
                             </div>
@@ -183,18 +183,18 @@ export default function OnboardingGenerating() {
                                     <div
                                         key={step.label}
                                         className={`flex items-center gap-3 p-3 rounded-xl transition-all ${isDone ? "bg-emerald-500/5 border border-emerald-500/20" :
-                                                isCurrent ? "bg-indigo-500/5 border border-[#AADD00]/20" :
+                                                isCurrent ? "bg-indigo-500/5 border border-[#7C3AED]/20" :
                                                     "bg-white/[0.01] border border-white/5"
                                             }`}
                                     >
                                         {isDone ? (
                                             <CheckCircle className="h-5 w-5 text-emerald-400 flex-shrink-0" />
                                         ) : isCurrent ? (
-                                            <Loader2 className="h-5 w-5 text-[#AADD00] animate-spin flex-shrink-0" />
+                                            <Loader2 className="h-5 w-5 text-[#7C3AED] animate-spin flex-shrink-0" />
                                         ) : (
                                             <Icon className="h-5 w-5 text-gray-600 flex-shrink-0" />
                                         )}
-                                        <span className={`text-sm ${isDone ? "text-emerald-300" : isCurrent ? "text-[#bef000]" : "text-gray-500"}`}>
+                                        <span className={`text-sm ${isDone ? "text-emerald-300" : isCurrent ? "text-[#9333EA]" : "text-gray-500"}`}>
                                             {step.label}
                                         </span>
                                     </div>
@@ -206,7 +206,7 @@ export default function OnboardingGenerating() {
                     {isComplete && createdWebsiteId && (
                         <Button
                             onClick={() => setLocation(`/dashboard/websites/${createdWebsiteId}`)}
-                            className="w-full bg-[#AADD00] hover:bg-[#bef000] text-black font-bold py-6 text-base font-semibold rounded-xl shadow-lg shadow-[#AADD00]/25"
+                            className="w-full bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold py-6 text-base font-semibold rounded-xl shadow-lg shadow-[#7C3AED]/25"
                         >
                             <Sparkles className="mr-2 h-5 w-5" />
                             Open Website Editor
@@ -231,7 +231,7 @@ export default function OnboardingGenerating() {
                                     setIsComplete(false);
                                     setRetryKey((k) => k + 1);
                                 }}
-                                className="flex-1 bg-[#AADD00] hover:bg-[#bef000] text-black"
+                                className="flex-1 bg-[#7C3AED] hover:bg-[#9333EA] text-black"
                             >
                                 Try Again
                             </Button>

@@ -31,7 +31,7 @@ export default function DashboardPageEditor() {
                         <Button variant="outline" className="border-white/20 text-gray-300 hover:bg-white/5 bg-transparent">
                             <Eye className="mr-2 h-4 w-4" /> Preview
                         </Button>
-                        <Button className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold">
+                        <Button className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold">
                             <Save className="mr-2 h-4 w-4" /> Save Changes
                         </Button>
                     </div>
@@ -61,7 +61,7 @@ export default function DashboardPageEditor() {
                                         value={content}
                                         onChange={(e) => setContent(e.target.value)}
                                         rows={16}
-                                        className="mt-1.5 w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white text-sm font-mono resize-y focus:outline-none focus:border-[#AADD00]"
+                                        className="mt-1.5 w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white text-sm font-mono resize-y focus:outline-none focus:border-[#7C3AED]"
                                     />
                                 </div>
                             </div>
@@ -83,7 +83,7 @@ export default function DashboardPageEditor() {
                                     <Label className="text-gray-300 text-xs">Meta Description</Label>
                                     <textarea value={metaDesc} onChange={(e) => setMetaDesc(e.target.value)}
                                         rows={3}
-                                        className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white text-sm resize-y focus:outline-none focus:border-[#AADD00]" />
+                                        className="mt-1 w-full bg-white/5 border border-white/10 rounded-lg p-3 text-white text-sm resize-y focus:outline-none focus:border-[#7C3AED]" />
                                     <p className="text-xs text-gray-500 mt-1">{metaDesc.length}/160 characters</p>
                                 </div>
                             </div>
@@ -94,7 +94,7 @@ export default function DashboardPageEditor() {
                             <h3 className="text-sm font-semibold text-white mb-4">Google Preview</h3>
                             <div className="rounded-lg bg-white p-4 text-left">
                                 <p className="text-blue-700 text-base font-medium leading-tight truncate">{metaTitle || "Page Title"}</p>
-                                <p className="text-green-700 text-xs mt-1">austin-plumbing.smbify.site</p>
+                                <p className="text-green-700 text-xs mt-1">austin-plumbing.SiteGenie.site</p>
                                 <p className="text-gray-600 text-xs mt-1 line-clamp-2">{metaDesc || "Meta description..."}</p>
                             </div>
                         </div>

@@ -40,7 +40,7 @@ export default function OnboardingBusiness() {
                 <div className="flex items-center justify-between mb-8">
                     {["Business", "Services", "Locations", "Brand", "API", "Generate", "Preview"].map((step, i) => (
                         <div key={step} className="flex items-center">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? "bg-gradient-to-r bg-[#AADD00] text-white" : "bg-white/5 text-gray-500 border border-white/10"
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${i === 0 ? "bg-gradient-to-r bg-[#7C3AED] text-white" : "bg-white/5 text-gray-500 border border-white/10"
                                 }`}>
                                 {i + 1}
                             </div>
@@ -51,8 +51,8 @@ export default function OnboardingBusiness() {
 
                 {/* Header */}
                 <div className="text-center mb-10">
-                    <div className="w-16 h-16 rounded-2xl bg-[#AADD00]/10 flex items-center justify-center mx-auto mb-4">
-                        <Building2 className="h-8 w-8 text-[#AADD00]" />
+                    <div className="w-16 h-16 rounded-2xl bg-[#7C3AED]/10 flex items-center justify-center mx-auto mb-4">
+                        <Building2 className="h-8 w-8 text-[#7C3AED]" />
                     </div>
                     <h1 className="text-3xl font-bold text-white mb-2">Business Details</h1>
                     <p className="text-gray-400">Tell us about your business so our AI can generate the perfect content.</p>
@@ -82,7 +82,7 @@ export default function OnboardingBusiness() {
                                     key={cat}
                                     onClick={() => setFormData({ ...formData, category: cat })}
                                     className={`px-3 py-1.5 rounded-lg text-sm transition-all ${formData.category === cat
-                                            ? "bg-[#AADD00]/15 text-[#bef000] border border-[#AADD00]/40"
+                                            ? "bg-[#7C3AED]/15 text-[#9333EA] border border-[#7C3AED]/40"
                                             : "bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10"
                                         }`}
                                 >
@@ -99,7 +99,7 @@ export default function OnboardingBusiness() {
                             </Label>
                             <div className="flex gap-2 mt-1.5">
                                 <select 
-                                    className="bg-[#1a1f26] border border-white/10 text-white rounded-md px-3 py-2 w-[100px] outline-none focus:ring-2 focus:ring-[#AADD00]/50"
+                                    className="bg-[#1a1f26] border border-white/10 text-white rounded-md px-3 py-2 w-[100px] outline-none focus:ring-2 focus:ring-[#7C3AED]/50"
                                     value={formData.countryCode}
                                     onChange={(e) => setFormData({ ...formData, countryCode: e.target.value })}
                                 >
@@ -159,7 +159,7 @@ export default function OnboardingBusiness() {
                         </Button>
                         <Button
                             onClick={handleNext}
-                            className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold px-8"
+                            className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold px-8"
                         >
                             Next: Services <ArrowRight className="ml-2 h-4 w-4" />
                         </Button>

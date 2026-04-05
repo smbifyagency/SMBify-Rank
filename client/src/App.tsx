@@ -34,6 +34,7 @@ import { useAuth } from "@/hooks/useAuth";
 
 // Existing Pages
 import Landing from "@/pages/landing";
+import GenieSplash from "@/pages/genie-splash";
 import AuthPage from "@/pages/AuthPage";
 import SiteSettings from "@/pages/site-settings";
 import NotFound from "@/pages/not-found";
@@ -125,7 +126,7 @@ function AuthRoute({ children }: { children: React.ReactNode }) {
   if (isLoading) {
     return (
       <div className="flex-grow flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#AADD00]"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#7C3AED]"></div>
       </div>
     );
   }
@@ -150,7 +151,7 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
   if (isLoading || !isAuthenticated) {
     return (
       <div className="flex-grow flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#AADD00]"></div>
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#7C3AED]"></div>
       </div>
     );
   }
@@ -174,14 +175,19 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 function Router() {
   const [location] = useLocation();
   const isEditorRoute = location.startsWith("/dashboard/wd-editor/");
+  const isSplashRoute = location === "/";
 
   return (
     <div className={isEditorRoute ? "h-screen overflow-hidden bg-[#030712] text-white flex flex-col" : "min-h-screen bg-gray-950 text-white flex flex-col"}>
-      {!isEditorRoute && <Navigation />}
-      <main className={isEditorRoute ? "flex-1 flex flex-col overflow-hidden" : "flex-grow flex flex-col"}>
+      {!isEditorRoute && !isSplashRoute && <Navigation />}
+      <main className={isEditorRoute ? "flex-1 flex flex-col overflow-hidden" : isSplashRoute ? "" : "flex-grow flex flex-col"}>
         <Switch>
-          {/* ==================== PUBLIC PAGES ==================== */}
+          {/* ==================== SPLASH (Genie Lamp) ==================== */}
           <Route path="/">
+            <GenieSplash />
+          </Route>
+          {/* ==================== PUBLIC PAGES ==================== */}
+          <Route path="/home">
             <Landing />
           </Route>
           <Route path="/pricing">
@@ -345,7 +351,7 @@ function Router() {
           <Route component={NotFound} />
         </Switch>
       </main>
-      {!isEditorRoute && <SharedFooter />}
+      {!isEditorRoute && !isSplashRoute && <SharedFooter />}
     </div>
   );
 }

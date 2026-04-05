@@ -22,7 +22,7 @@ export default function SeoSchema() {
                 <p className="text-gray-400 mb-8 ml-8">Manage structured data markup for rich search results.</p>
 
                 <div className="flex justify-end mb-4">
-                    <Button size="sm" className="bg-gradient-to-r from-[#AADD00] to-[#7ec800]">
+                    <Button size="sm" className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B]">
                         <Plus className="mr-1 h-3 w-3" /> Add Schema
                     </Button>
                 </div>
@@ -39,7 +39,7 @@ export default function SeoSchema() {
                             {schemas.map((s) => (
                                 <tr key={s.type} className="border-t border-white/5 hover:bg-white/[0.02] cursor-pointer">
                                     <td className="p-4 text-sm text-white font-medium flex items-center gap-2">
-                                        <Code2 className="h-4 w-4 text-[#AADD00]" /> {s.type}
+                                        <Code2 className="h-4 w-4 text-[#7C3AED]" /> {s.type}
                                     </td>
                                     <td className="p-4 text-sm text-gray-400">{s.page}</td>
                                     <td className="p-4 text-sm text-center text-gray-400">{s.fields}</td>

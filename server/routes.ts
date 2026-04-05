@@ -502,7 +502,7 @@ async function generateStructuredJsonWithProvider(
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         "HTTP-Referer": "https://replit.com",
-        "X-Title": "SMBify Rank",
+        "X-Title": "SiteGenie",
       },
       body: JSON.stringify({
         model: "openai/gpt-4o-mini",
@@ -2208,10 +2208,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/admin/settings', isAdmin, async (req, res) => {
     try {
       res.json({
-        platformName: "SMBify",
-        platformUrl: "https://smbify-ranker.vercel.app",
+        platformName: "SiteGenie",
+        platformUrl: "https://sitegenie.app",
         defaultAiProvider: "OpenAI",
-        supportEmail: "support@smbify.com",
+        supportEmail: "support@sitegenie.app",
         smtpHost: "smtp.sendgrid.net",
         requireEmailVerification: false,
         allowSignups: true,
@@ -2864,7 +2864,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Add README
       const readmeContent = `# ${validatedData.businessName} Website
 
-This website was generated using SMBify Rank.
+This website was generated using SiteGenie.
 
 ## Files:
 - index.html - Main website file
@@ -3134,7 +3134,7 @@ ${blogPosts.length > 0 ? `Blog posts generated: ${blogPosts.length}` : ''}
         // Add business-specific README
         zip.file(`${folderName}/README.md`, `# ${businessData.businessName} Website
 
-This website was generated using SMBify Rank.
+This website was generated using SiteGenie.
 
 ## Files:
 - index.html - Main website file
@@ -3158,7 +3158,7 @@ Generated on: ${new Date().toISOString()}
       // Add master README with summary
       zip.file("README.md", `# Bulk Website Generation
 
-Generated ${validatedData.businesses.length} websites using SMBify Rank.
+Generated ${validatedData.businesses.length} websites using SiteGenie.
 
 ## Websites Generated:
 ${validatedData.businesses.map((b, i) => `${i + 1}. ${b.businessName} (${b.heroService})`).join('\n')}
@@ -5441,7 +5441,7 @@ Total Websites: ${validatedData.businesses.length}
       const readmeContent = generateBlog
         ? `# ${validatedData.businessName} Website with Blog
 
-This website was generated using SMBify Rank with AI-powered blog generation.
+This website was generated using SiteGenie with AI-powered blog generation.
 
 ## Files:
 - index.html - Main website file
@@ -5461,7 +5461,7 @@ You can deploy this website to any web hosting service by uploading these files.
 Generated on: ${new Date().toISOString()}`
         : `# ${validatedData.businessName} Website
 
-This website was generated using SMBify Rank.
+This website was generated using SiteGenie.
 
 ## Files:
 - index.html - Main website file
@@ -5748,7 +5748,7 @@ Generated on: ${new Date().toISOString()}`;
           "Authorization": `Bearer ${apiKey}`,
           "Content-Type": "application/json",
           "HTTP-Referer": "https://replit.com",
-          "X-Title": "SMBify Rank"
+          "X-Title": "SiteGenie"
         },
         body: JSON.stringify({
           model: "openai/gpt-4o-mini",

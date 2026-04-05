@@ -13,8 +13,8 @@
   --card-foreground: hsl(20, 14.3%, 4.1%);
   --border: hsl(20, 5.9%, 90%);
   --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(75, 100%, 43%);
-  --primary-foreground: hsl(0, 0%, 5%);
+  --primary: hsl(263, 80%, 55%);
+  --primary-foreground: hsl(0, 0%, 100%);
   --secondary: hsl(60, 4.8%, 95.9%);
   --secondary-foreground: hsl(24, 9.8%, 10%);
   --accent: hsl(60, 4.8%, 95.9%);
@@ -26,25 +26,25 @@
 }
 
 .dark {
-  --background: hsl(222, 47%, 7%);
+  --background: hsl(260, 60%, 4%);
   --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(220, 35%, 13%);
-  --muted-foreground: hsl(215, 20%, 55%);
-  --popover: hsl(222, 44%, 9%);
+  --muted: hsl(260, 30%, 12%);
+  --muted-foreground: hsl(260, 15%, 55%);
+  --popover: hsl(260, 50%, 6%);
   --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(222, 42%, 10%);
+  --card: hsl(260, 45%, 8%);
   --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(220, 28%, 18%);
-  --input: hsl(220, 32%, 15%);
-  --primary: hsl(75, 100%, 43%);
-  --primary-foreground: hsl(0, 0%, 5%);
-  --secondary: hsl(220, 32%, 14%);
+  --border: hsl(260, 25%, 16%);
+  --input: hsl(260, 30%, 12%);
+  --primary: hsl(263, 80%, 55%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(260, 30%, 13%);
   --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(220, 32%, 14%);
-  --accent-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(43, 96%, 56%);
+  --accent-foreground: hsl(0, 0%, 5%);
   --destructive: hsl(0, 62.8%, 30.6%);
   --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(75, 100%, 43%);
+  --ring: hsl(263, 80%, 55%);
   --radius: 0.5rem;
 }
 
@@ -56,6 +56,60 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
   }
+}
+
+/* ═══════ SiteGenie Splash Animations ═══════ */
+@keyframes sparkle-float {
+  0%   { opacity: 0; transform: translateY(0) scale(0); }
+  20%  { opacity: 1; transform: translateY(-10px) scale(1); }
+  80%  { opacity: 0.8; transform: translateY(-40px) scale(0.8); }
+  100% { opacity: 0; transform: translateY(-70px) scale(0); }
+}
+.animate-sparkle-float {
+  animation: sparkle-float 3s ease-in-out infinite;
+}
+
+@keyframes smoke-rise {
+  0%   { opacity: 0; transform: translateY(0) scale(0.5); }
+  30%  { opacity: 0.4; }
+  100% { opacity: 0; transform: translateY(-200px) scale(2.5); }
+}
+.animate-smoke-rise {
+  animation: smoke-rise 4s ease-out infinite;
+}
+
+@keyframes rub-trail {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(2.5); }
+}
+.animate-rub-trail {
+  animation: rub-trail 0.6s ease-out forwards;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.8; }
+}
+.animate-pulse-subtle {
+  animation: pulse-subtle 2.5s ease-in-out infinite;
+}
+
+@keyframes magic-expand {
+  0%   { opacity: 0; transform: scale(0); }
+  50%  { opacity: 1; }
+  100% { opacity: 1; transform: scale(3); }
+}
+
+@keyframes fade-scale-in {
+  0%   { opacity: 0; transform: scale(0.5) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+.animate-fade-scale-in {
+  animation: fade-scale-in 0.8s cubic-bezier(.23,1,.32,1) 0.5s both;
+}
+
+.animate-magic-reveal {
+  animation: magic-expand 1.5s cubic-bezier(.23,1,.32,1) forwards;
 }
 
 /* Suppress ResizeObserver warnings */
@@ -99,7 +153,7 @@ input, textarea {
 
 input:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(170, 221, 0, 0.2);
-  border-color: #AADD00;
+  border-color: #7C3AED;
   transform: translateY(-1px);
 }
 
@@ -127,7 +181,7 @@ input:focus, textarea:focus {
 .builder-form-readable input:focus,
 .builder-form-readable textarea:focus,
 .builder-form-readable button[role="combobox"]:focus {
-  border-color: #AADD00;
+  border-color: #7C3AED;
   box-shadow: 0 0 0 3px rgba(170, 221, 0, 0.2);
 }
 
@@ -153,7 +207,7 @@ input:focus, textarea:focus {
 
 /* Section headers */
 .section-header {
-  background: linear-gradient(135deg, #AADD00 0%, #ffffff 100%);
+  background: linear-gradient(135deg, #7C3AED 0%, #ffffff 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -291,7 +345,7 @@ i.fas, i.fab {
   left: 0;
   right: 0;
   height: 3px;
-  background: linear-gradient(90deg, #AADD00, #7ec800, #0A0A0A, #AADD00);
+  background: linear-gradient(90deg, #7C3AED, #F59E0B, #0A0A0A, #7C3AED);
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -302,7 +356,7 @@ i.fas, i.fab {
 
 /* CTA specific styling */
 .cta-section h3.section-header {
-  background: linear-gradient(135deg, #AADD00 0%, #7ec800 100%);
+  background: linear-gradient(135deg, #7C3AED 0%, #F59E0B 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;

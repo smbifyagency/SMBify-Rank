@@ -49,7 +49,7 @@ export default function SignupPage() {
         onSuccess: () => {
             toast({
                 title: "Registration Successful",
-                description: "Welcome to SMBify!",
+                description: "Welcome to SiteGenie!",
             });
             queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
             setLocation("/dashboard");
@@ -90,10 +90,10 @@ export default function SignupPage() {
                 <div className="text-center mb-8">
                     <Link href="/">
                         <div className="inline-flex items-center gap-3 cursor-pointer group mb-6">
-                            <div className="h-12 w-12 rounded-xl bg-[#AADD00] flex items-center justify-center shadow-lg shadow-[#AADD00]/25">
+                            <div className="h-12 w-12 rounded-xl bg-[#7C3AED] flex items-center justify-center shadow-lg shadow-[#7C3AED]/25">
                                 <Globe className="h-6 w-6 text-black" />
                             </div>
-                            <h1 className="text-2xl font-bold text-white">SMBify</h1>
+                            <h1 className="text-2xl font-bold text-white">SiteGenie</h1>
                         </div>
                     </Link>
                     <h2 className="text-3xl font-bold text-white mb-2">Create your account</h2>
@@ -137,7 +137,7 @@ export default function SignupPage() {
                                     type="text"
                                     placeholder="John"
                                     {...form.register("firstName")}
-                                    className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
+                                    className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]"
                                 />
                                 {form.formState.errors.firstName && (
                                     <p className="text-red-400 text-xs mt-1">{form.formState.errors.firstName.message}</p>
@@ -150,7 +150,7 @@ export default function SignupPage() {
                                     type="text"
                                     placeholder="Doe"
                                     {...form.register("lastName")}
-                                    className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
+                                    className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]"
                                 />
                                 {form.formState.errors.lastName && (
                                     <p className="text-red-400 text-xs mt-1">{form.formState.errors.lastName.message}</p>
@@ -165,7 +165,7 @@ export default function SignupPage() {
                                 type="email"
                                 placeholder="you@company.com"
                                 {...form.register("email")}
-                                className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
+                                className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]"
                             />
                             {form.formState.errors.email && (
                                 <p className="text-red-400 text-xs mt-1">{form.formState.errors.email.message}</p>
@@ -180,7 +180,7 @@ export default function SignupPage() {
                                     type={showPassword ? "text" : "password"}
                                     placeholder="Create a strong password"
                                     {...form.register("password")}
-                                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00] pr-10"
+                                    className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED] pr-10"
                                 />
                                 <button
                                     type="button"
@@ -197,7 +197,7 @@ export default function SignupPage() {
                             <div className="mt-2 space-y-1">
                                 {["At least 6 characters"].map((rule) => (
                                     <div key={rule} className="flex items-center gap-2 text-xs text-gray-400">
-                                        <CheckCircle className="h-3 w-3 text-[#AADD00]" />{rule}
+                                        <CheckCircle className="h-3 w-3 text-[#7C3AED]" />{rule}
                                     </div>
                                 ))}
                             </div>
@@ -210,7 +210,7 @@ export default function SignupPage() {
                                 type="password"
                                 placeholder="Confirm your password"
                                 {...form.register("confirmPassword")}
-                                className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#AADD00]"
+                                className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]"
                             />
                             {form.formState.errors.confirmPassword && (
                                 <p className="text-red-400 text-xs mt-1">{form.formState.errors.confirmPassword.message}</p>
@@ -220,7 +220,7 @@ export default function SignupPage() {
                         <Button
                             type="submit"
                             disabled={registerMutation.isPending}
-                            className="w-full bg-[#AADD00] hover:bg-[#bef000] text-black font-bold py-6 text-base rounded-xl shadow-lg shadow-[#AADD00]/25"
+                            className="w-full bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold py-6 text-base rounded-xl shadow-lg shadow-[#7C3AED]/25"
                         >
                             {registerMutation.isPending ? "Creating account..." : (
                                 <>Create Account <ArrowRight className="ml-2 h-4 w-4" /></>
@@ -230,7 +230,7 @@ export default function SignupPage() {
 
                     <div className="mt-6 text-center text-sm text-gray-400">
                         Already have an account?{" "}
-                        <Link href="/login" className="text-[#AADD00] hover:text-[#bef000] font-medium">
+                        <Link href="/login" className="text-[#7C3AED] hover:text-[#9333EA] font-medium">
                             Sign in
                         </Link>
                     </div>

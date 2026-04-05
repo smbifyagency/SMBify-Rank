@@ -48,7 +48,7 @@ export function WebsiteLimitBanner() {
               Upgrade to Pro for unlimited websites.
             </div>
             <Link href="/pricing">
-              <Button size="sm" className="bg-[#AADD00] hover:bg-[#bef000] text-black font-bold text-white">
+              <Button size="sm" className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold text-white">
                 <Sparkles className="mr-1 h-3 w-3" /> Upgrade to Pro — $29/mo
               </Button>
             </Link>
@@ -79,15 +79,15 @@ export function WebsiteLimitBanner() {
   }
 
   return (
-    <Alert className="border-[#AADD00]/20 bg-indigo-500/5 mb-6">
-      <Globe className="h-4 w-4 text-[#AADD00]" />
-      <AlertDescription className="text-[#bef000]">
+    <Alert className="border-[#7C3AED]/20 bg-indigo-500/5 mb-6">
+      <Globe className="h-4 w-4 text-[#7C3AED]" />
+      <AlertDescription className="text-[#9333EA]">
         <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <strong>Free Plan:</strong> {remaining} of {limit} websites remaining.
           </div>
           <Link href="/pricing">
-            <Button size="sm" variant="outline" className="border-[#AADD00]/25 text-[#bef000] hover:bg-[#AADD00]/10">
+            <Button size="sm" variant="outline" className="border-[#7C3AED]/25 text-[#9333EA] hover:bg-[#7C3AED]/10">
               <Sparkles className="mr-1 h-3 w-3" /> Upgrade for Unlimited
             </Button>
           </Link>
