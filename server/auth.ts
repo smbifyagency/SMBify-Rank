@@ -28,6 +28,7 @@ const TOKEN_EXPIRY_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 const GUEST_API_KEYS_COOKIE_NAME = "smbify_guest_api_keys";
 const GUEST_API_KEYS_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
 const GUEST_API_KEY_PROVIDERS = ["openai", "gemini", "openrouter", "netlify", "unsplash"] as const;
+const USE_SECURE_COOKIES = process.env.NODE_ENV === "production";
 
 type GuestApiKeyProvider = (typeof GUEST_API_KEY_PROVIDERS)[number];
 type GuestApiKeys = Partial<Record<GuestApiKeyProvider, string>>;
@@ -132,7 +133,7 @@ function setAuthCookie(res: Response, userId: string) {
   const token = createAuthToken(userId);
   res.cookie(COOKIE_NAME, token, {
     httpOnly: true,
-    secure: true,
+    secure: USE_SECURE_COOKIES,
     sameSite: "lax",
     maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
     path: "/",
@@ -143,7 +144,7 @@ function setAuthCookie(res: Response, userId: string) {
 function clearAuthCookie(res: Response) {
   res.clearCookie(COOKIE_NAME, {
     httpOnly: true,
-    secure: true,
+    secure: USE_SECURE_COOKIES,
     sameSite: "lax",
     path: "/",
   });
@@ -154,7 +155,7 @@ export function setGuestApiKeysCookie(res: Response, guestApiKeys: GuestApiKeys)
   if (Object.keys(sanitizedGuestApiKeys).length === 0) {
     res.clearCookie(GUEST_API_KEYS_COOKIE_NAME, {
       httpOnly: true,
-      secure: true,
+      secure: USE_SECURE_COOKIES,
       sameSite: "lax",
       path: "/",
     });
@@ -163,7 +164,7 @@ export function setGuestApiKeysCookie(res: Response, guestApiKeys: GuestApiKeys)
 
   res.cookie(GUEST_API_KEYS_COOKIE_NAME, encryptGuestApiKeys(sanitizedGuestApiKeys), {
     httpOnly: true,
-    secure: true,
+    secure: USE_SECURE_COOKIES,
     sameSite: "lax",
     maxAge: GUEST_API_KEYS_EXPIRY_MS,
     path: "/",
@@ -711,6 +712,11 @@ export const isAIUser: RequestHandler = async (req: Request, res: Response, next
 // Custom middleware for website generation that allows guest access
 export const allowGuestWebsiteGeneration: RequestHandler = async (req: Request, res: Response, next: NextFunction) => {
   try {
+    const existingUser = (req as any).user;
+    if (existingUser?.id && existingUser.isActive !== false) {
+      return next();
+    }
+
     const userId = getUserIdFromRequest(req);
 
     if (!userId) {
@@ -739,8 +745,8 @@ export const allowGuestWebsiteGeneration: RequestHandler = async (req: Request, 
     }
 
     const user = await storage.getUser(userId);
-    if (!user || !user.isActive) {
-      // Fall back to guest
+    if (user && !user.isActive) {
+      // Fall back to guest for inactive users
       (req as any).user = {
         id: "guest",
         email: "guest@demo.com",
@@ -752,10 +758,27 @@ export const allowGuestWebsiteGeneration: RequestHandler = async (req: Request, 
       return next();
     }
 
+    if (!user) {
+      (req as any).user = {
+        id: userId,
+        email: null,
+        firstName: null,
+        lastName: null,
+        role: "user",
+        isActive: true,
+      };
+      return next();
+    }
+
     (req as any).user = user;
     next();
   } catch (error) {
     console.error("Website generation authentication error:", error);
+    const existingUser = (req as any).user;
+    if (existingUser?.id && existingUser.isActive !== false) {
+      return next();
+    }
+
     (req as any).user = {
       id: "guest",
       email: "guest@demo.com",

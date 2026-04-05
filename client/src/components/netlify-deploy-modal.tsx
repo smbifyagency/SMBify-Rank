@@ -46,7 +46,10 @@ export function NetlifyDeployModal({
     enabled: isOpen && !!websiteId
   });
 
-  const netlifyToken = (netlifySetting as any)?.apiKey || "";
+  const guestNetlifyToken = typeof window !== "undefined"
+    ? sessionStorage.getItem('guest_netlify_key') || ""
+    : "";
+  const netlifyToken = (netlifySetting as any)?.apiKey || guestNetlifyToken || "";
   const isNetlifyConfigured = netlifyToken && netlifyToken.length > 0;
   const existingSiteName =
     (existingWebsite as any)?.netlifySiteId ||
