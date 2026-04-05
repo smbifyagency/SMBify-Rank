@@ -2798,6 +2798,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const provider = validatedData.contentAiProvider || 'openai';
       const aiGeneratedContent = await generateAIContentForDynamicPages(validatedData, userId, provider);
 
+      // Cache AI content in the website record so deploy doesn't need to regenerate
+      if (website && website.id && (aiGeneratedContent.serviceContent.length > 0 || aiGeneratedContent.locationContent.length > 0)) {
+        try {
+          const updatedBD = { ...(website.businessData as any), _cachedAiContent: aiGeneratedContent };
+          await storage.updateWebsite(website.id, { businessData: updatedBD });
+          console.log("Cached AI content in website record for fast deploy");
+        } catch (cacheErr) {
+          console.log("Failed to cache AI content, deploy will regenerate:", cacheErr);
+        }
+      }
+
       // Fetch site settings for tracking codes
       const siteSettings = await storage.listSiteSettings();
 
@@ -3237,15 +3248,25 @@ Total Websites: ${validatedData.businesses.length}
 
       console.log("Using SEO URL for sitemap and robots.txt:", seoUrl);
 
-      // Try AI content generation with a 8-second timeout to avoid 504 on serverless
+      // Use cached AI content if available, otherwise try generating with timeout
+      const cachedAi = (website.businessData as any)?._cachedAiContent;
       let aiGeneratedContent: { serviceContent: any[], locationContent: any[] } = { serviceContent: [], locationContent: [] };
-      try {
-        const provider = (website.businessData as any).contentAiProvider || 'openai';
-        const aiPromise = generateAIContentForDynamicPages(website.businessData as any, website.userId, provider);
-        const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('AI content timeout')), 8000));
-        aiGeneratedContent = await Promise.race([aiPromise, timeoutPromise]);
-      } catch (aiErr) {
-        console.log("AI content skipped during deploy (timeout or error), using template fallback:", (aiErr as Error).message);
+      if (cachedAi && (cachedAi.serviceContent?.length > 0 || cachedAi.locationContent?.length > 0)) {
+        console.log("Using cached AI content for deploy (fast path)");
+        aiGeneratedContent = cachedAi;
+      } else {
+        try {
+          const provider = (website.businessData as any).contentAiProvider || 'openai';
+          const aiPromise = generateAIContentForDynamicPages(website.businessData as any, website.userId, provider);
+          const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('AI content timeout')), 8000));
+          aiGeneratedContent = await Promise.race([aiPromise, timeoutPromise]);
+          // Cache for future deploys
+          try {
+            await storage.updateWebsite(req.params.id, { businessData: { ...(website.businessData as any), _cachedAiContent: aiGeneratedContent } });
+          } catch {}
+        } catch (aiErr) {
+          console.log("AI content skipped during deploy (timeout or error), using template fallback:", (aiErr as Error).message);
+        }
       }
 
       // Ensure blog posts are included in businessData
@@ -3356,15 +3377,21 @@ Total Websites: ${validatedData.businesses.length}
             name: cleanSiteName
           });
 
-          // Deploy updated content to the renamed site — skip slow AI to avoid 504
+          // Deploy updated content — use cached AI content for fast deploy
+          const cachedAi1 = (latestWebsite.businessData as any)?._cachedAiContent;
           let aiGeneratedContent: { serviceContent: any[], locationContent: any[] } = { serviceContent: [], locationContent: [] };
-          try {
-            const provider = (latestWebsite.businessData as any).contentAiProvider || 'openai';
-            const aiPromise = generateAIContentForDynamicPages(latestWebsite.businessData as any, latestWebsite.userId, provider);
-            const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('AI content timeout')), 8000));
-            aiGeneratedContent = await Promise.race([aiPromise, timeoutPromise]);
-          } catch (aiErr) {
-            console.log("AI content skipped during URL change (timeout or error):", (aiErr as Error).message);
+          if (cachedAi1 && (cachedAi1.serviceContent?.length > 0 || cachedAi1.locationContent?.length > 0)) {
+            console.log("Using cached AI content for URL change deploy");
+            aiGeneratedContent = cachedAi1;
+          } else {
+            try {
+              const provider = (latestWebsite.businessData as any).contentAiProvider || 'openai';
+              const aiPromise = generateAIContentForDynamicPages(latestWebsite.businessData as any, latestWebsite.userId, provider);
+              const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('AI content timeout')), 8000));
+              aiGeneratedContent = await Promise.race([aiPromise, timeoutPromise]);
+            } catch (aiErr) {
+              console.log("AI content skipped during URL change (timeout or error):", (aiErr as Error).message);
+            }
           }
           // Ensure blog posts are included in businessData
           const businessDataWithBlogs = normalizeBusinessDataForGeneration({
@@ -3385,14 +3412,20 @@ Total Websites: ${validatedData.businesses.length}
           // deployToNetlify is imported statically at the top
           // Generate temporary site URL for initial file generation
           const tempSiteUrl = `https://${cleanSiteName}.netlify.app`;
+          const cachedAi2 = (latestWebsite.businessData as any)?._cachedAiContent;
           let aiGeneratedContent2: { serviceContent: any[], locationContent: any[] } = { serviceContent: [], locationContent: [] };
-          try {
-            const provider = (latestWebsite.businessData as any).contentAiProvider || 'openai';
-            const aiPromise = generateAIContentForDynamicPages(latestWebsite.businessData as any, latestWebsite.userId, provider);
-            const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('AI content timeout')), 8000));
-            aiGeneratedContent2 = await Promise.race([aiPromise, timeoutPromise]);
-          } catch (aiErr) {
-            console.log("AI content skipped during new site creation (timeout or error):", (aiErr as Error).message);
+          if (cachedAi2 && (cachedAi2.serviceContent?.length > 0 || cachedAi2.locationContent?.length > 0)) {
+            console.log("Using cached AI content for new site creation");
+            aiGeneratedContent2 = cachedAi2;
+          } else {
+            try {
+              const provider = (latestWebsite.businessData as any).contentAiProvider || 'openai';
+              const aiPromise = generateAIContentForDynamicPages(latestWebsite.businessData as any, latestWebsite.userId, provider);
+              const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('AI content timeout')), 8000));
+              aiGeneratedContent2 = await Promise.race([aiPromise, timeoutPromise]);
+            } catch (aiErr) {
+              console.log("AI content skipped during new site creation (timeout or error):", (aiErr as Error).message);
+            }
           }
           // Ensure blog posts are included in businessData
           const businessDataWithBlogs = normalizeBusinessDataForGeneration({
