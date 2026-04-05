@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import bcrypt from "bcryptjs";
 import { storage } from "./storage.js";
-import { setupAuth, isAuthenticated, isAdmin, isAIUser, allowGuestWebsiteGeneration } from "./auth.js";
+import { setupAuth, isAuthenticated, isAdmin, isAIUser, allowGuestWebsiteGeneration, setGuestApiKeysCookie } from "./auth.js";
 import {
   businessDataSchema,
   bulkImportSchema,
@@ -60,6 +60,26 @@ async function generateFilesForTemplate(
 // Helper function to get API key and service based on provider
 async function getAIProviderConfig(userId: string, provider: 'openai' | 'gemini' | 'openrouter', req?: any) {
   let apiKey = null;
+
+  const requestApiKey = typeof req?.body?.apiKey === 'string'
+    ? req.body.apiKey.trim()
+    : '';
+  if (requestApiKey && !requestApiKey.includes('•')) {
+    return requestApiKey;
+  }
+
+  const providerBodyKey =
+    provider === 'openai'
+      ? 'openaiApiKey'
+      : provider === 'gemini'
+        ? 'geminiApiKey'
+        : 'openrouterApiKey';
+  const providerRequestApiKey = typeof req?.body?.[providerBodyKey] === 'string'
+    ? req.body[providerBodyKey].trim()
+    : '';
+  if (providerRequestApiKey && !providerRequestApiKey.includes('•')) {
+    return providerRequestApiKey;
+  }
 
   // For guest users, check session storage first
   if (userId === 'guest' && req?.session?.guestApiKeys) {
@@ -398,7 +418,7 @@ async function generateStructuredJsonWithProvider(
   userPrompt: string,
   options: { maxTokens?: number; temperature?: number } = {}
 ): Promise<Record<string, any>> {
-  const maxTokens = options.maxTokens ?? 3200;
+  const maxTokens = options.maxTokens ?? 6000;
   const temperature = options.temperature ?? 0.65;
 
   if (provider === "openai") {
@@ -902,7 +922,7 @@ async function generateServicePageContentWithProvider(service: string, businessD
       otherServiceSlugs
     );
     const rawResponse = await generateStructuredJsonWithProvider(provider, apiKey, prompt, {
-      maxTokens: 3400,
+      maxTokens: 5500,
       temperature: 0.65,
     });
     return mapServicePromptResponse(rawResponse, service, businessData);
@@ -941,7 +961,7 @@ async function generateLocationPageContentWithProvider(location: string, busines
       serviceLocationPages
     );
     const rawResponse = await generateStructuredJsonWithProvider(provider, apiKey, prompt, {
-      maxTokens: 3400,
+      maxTokens: 5500,
       temperature: 0.65,
     });
     return mapLocationPromptResponse(rawResponse, location, businessData);
@@ -1029,7 +1049,7 @@ async function generateLocalServiceAIContent(
     console.log(`Generating AI content for local service site: ${biz.name} (${categoryName})`);
 
     const result = await generateStructuredJsonWithProvider(provider, apiKey, prompt, {
-      maxTokens: 4000,
+      maxTokens: 6500,
       temperature: 0.7,
     });
 
@@ -4151,6 +4171,7 @@ Total Websites: ${validatedData.businesses.length}
 
       // Store API key in this user's session only (isolated from other users)
       req.session.guestApiKeys[provider as 'openai' | 'gemini' | 'openrouter' | 'netlify' | 'unsplash'] = apiKey;
+      setGuestApiKeysCookie(res, req.session.guestApiKeys);
 
       // Mark this session as a guest user (without authenticated privileges)
       if (!req.session.userId) {
@@ -4899,7 +4920,7 @@ Total Websites: ${validatedData.businesses.length}
         );
 
         const homePromptData = await generateStructuredJsonWithProvider(provider, apiKey, homePrompt, {
-          maxTokens: 4200,
+          maxTokens: 6500,
           temperature: 0.65,
         });
 
@@ -4914,7 +4935,7 @@ Total Websites: ${validatedData.businesses.length}
           apiKey,
           buildOperationalDetailsPrompt(context),
           {
-            maxTokens: 1400,
+            maxTokens: 2500,
             temperature: 0.55,
           }
         );
@@ -4982,7 +5003,7 @@ Total Websites: ${validatedData.businesses.length}
           apiKey,
           buildTestimonialsPrompt(context),
           {
-            maxTokens: 1000,
+            maxTokens: 1800,
             temperature: 0.75,
           }
         );
@@ -5012,7 +5033,7 @@ Total Websites: ${validatedData.businesses.length}
           apiKey,
           buildDisclaimerPrompt(context),
           {
-            maxTokens: 300,
+            maxTokens: 500,
             temperature: 0.4,
           }
         );
@@ -5054,7 +5075,10 @@ Total Websites: ${validatedData.businesses.length}
 
       } catch (error) {
         console.error("AI content generation error:", error);
-        res.write(`data: ${JSON.stringify({ type: 'error', message: 'Content generation failed' })}\n\n`);
+        res.write(`data: ${JSON.stringify({
+          type: 'error',
+          message: error instanceof Error ? error.message : 'Content generation failed'
+        })}\n\n`);
         res.end();
       }
 
@@ -6402,7 +6426,7 @@ Generated on: ${new Date().toISOString()}`;
         try {
           // Homepage content (always generated)
           const homePrompt = buildHomePagePrompt(bizContext, serviceSlugMap.map(s => s.slug), locationSlugMap.map(l => l.slug));
-          homepageContent = await generateStructuredJsonWithProvider(resolvedProvider, apiKey, homePrompt, { maxTokens: 4000, temperature: 0.7 });
+          homepageContent = await generateStructuredJsonWithProvider(resolvedProvider, apiKey, homePrompt, { maxTokens: 6500, temperature: 0.7 });
         } catch (e) { console.error('Homepage AI error:', e); }
 
         // Service & location pages — only when NOT in preview mode (avoids timeout)
@@ -6412,14 +6436,14 @@ Generated on: ${new Date().toISOString()}`;
               const otherServices = parsedServices.filter(s => s !== service).map(s => `/services/${s.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${city.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`);
               const serviceSlug = `/services/${service.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${city.toLowerCase().replace(/[^a-z0-9]+/g, '-')}.html`;
               const servicePrompt = buildServicePagePrompt(bizContext, service, serviceSlug, locationSlugMap, otherServices);
-              serviceContent[service] = await generateStructuredJsonWithProvider(resolvedProvider, apiKey, servicePrompt, { maxTokens: 4000, temperature: 0.7 });
+              serviceContent[service] = await generateStructuredJsonWithProvider(resolvedProvider, apiKey, servicePrompt, { maxTokens: 6000, temperature: 0.7 });
             } catch (e) { console.error(`Service AI error for ${service}:`, e); }
           }
 
           for (const location of parsedLocations) {
             try {
               const locationPrompt = buildLocationPagePrompt(bizContext, location, serviceSlugMap, []);
-              locationContent[location] = await generateStructuredJsonWithProvider(resolvedProvider, apiKey, locationPrompt, { maxTokens: 4000, temperature: 0.7 });
+              locationContent[location] = await generateStructuredJsonWithProvider(resolvedProvider, apiKey, locationPrompt, { maxTokens: 6000, temperature: 0.7 });
             } catch (e) { console.error(`Location AI error for ${location}:`, e); }
           }
         }

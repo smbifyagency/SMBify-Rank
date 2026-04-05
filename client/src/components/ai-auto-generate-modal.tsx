@@ -177,6 +177,10 @@ export function AIAutoGenerateModal({ open, onOpenChange, onGenerate }: AIAutoGe
     setGenerationSteps(generationStepsData.map(step => ({ ...step, completed: false })));
 
     try {
+      const guestApiKey = !(user as any)?.id
+        ? sessionStorage.getItem(`guest_${contentAiProvider}_key`)
+        : null;
+
       const response = await fetch('/api/ai/generate-all-content', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -186,12 +190,20 @@ export function AIAutoGenerateModal({ open, onOpenChange, onGenerate }: AIAutoGe
           phoneNumber,
           businessCategory,
           businessName: businessName || `${serviceType} in ${location}`,
-          contentAiProvider: contentAiProvider
+          contentAiProvider: contentAiProvider,
+          apiKey: guestApiKey || undefined,
         }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate content');
+        let errorMessage = 'Failed to generate content';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData?.message || errorData?.error || errorMessage;
+        } catch {
+          // Ignore JSON parsing failures and use default error message.
+        }
+        throw new Error(errorMessage);
       }
 
       const reader = response.body?.getReader();
@@ -217,58 +229,66 @@ export function AIAutoGenerateModal({ open, onOpenChange, onGenerate }: AIAutoGe
 
           for (const line of lines) {
             if (line.startsWith('data: ')) {
+              const jsonStr = line.slice(6).trim();
+              if (!jsonStr) {
+                continue;
+              }
+
+              let data: any;
               try {
-                const jsonStr = line.slice(6).trim();
-                if (jsonStr && jsonStr !== '') {
-                  const data = JSON.parse(jsonStr);
-                  console.log('📊 Progress update received:', data);
-
-                  if (data.type === 'progress') {
-                    setProgress(data.progress);
-                    setCurrentStep(data.step);
-                    console.log(`📈 Progress: ${data.progress}% - ${data.step}`);
-
-                    // Update completed steps - mark current and previous steps as completed
-                    setGenerationSteps(prev =>
-                      prev.map((step, index) => ({
-                        ...step,
-                        completed: index <= data.stepIndex
-                      }))
-                    );
-                  } else if (data.type === 'completed') {
-                    console.log('🎉 Generation completed!');
-                    // Show completion state briefly before closing
-                    setProgress(100);
-                    setCurrentStep("Content generation completed!");
-                    setGenerationSteps(prev =>
-                      prev.map(step => ({ ...step, completed: true }))
-                    );
-
-                    // Wait a moment to show completion before updating form
-                    setTimeout(() => {
-                      if (data.generatedData) {
-                        onGenerate(data.generatedData);
-                        toast({
-                          title: "Content Generated Successfully",
-                          description: "All website content has been generated and populated in the form",
-                        });
-                        onOpenChange(false);
-                        resetForm();
-                      } else {
-                        throw new Error('No generated data received');
-                      }
-                    }, 1500);
-                  } else if (data.type === 'error') {
-                    console.error('❌ Generation error:', data.message);
-                    throw new Error(data.message || 'Generation failed');
-                  }
-                }
+                data = JSON.parse(jsonStr);
               } catch (e) {
-                // Only log non-empty parsing errors that aren't just incomplete JSON
-                const jsonStr = line.slice(6).trim();
-                if (jsonStr && jsonStr !== '' && !jsonStr.includes('...')) {
+                if (!jsonStr.includes('...')) {
                   console.error('Error parsing progress data:', jsonStr, e);
                 }
+                continue;
+              }
+
+              console.log('📊 Progress update received:', data);
+
+              if (data.type === 'progress') {
+                setProgress(data.progress);
+                setCurrentStep(data.step);
+                console.log(`📈 Progress: ${data.progress}% - ${data.step}`);
+
+                // Update completed steps - mark current and previous steps as completed
+                setGenerationSteps(prev =>
+                  prev.map((step, index) => ({
+                    ...step,
+                    completed: index <= data.stepIndex
+                  }))
+                );
+              } else if (data.type === 'completed') {
+                console.log('🎉 Generation completed!');
+                // Show completion state briefly before closing
+                setProgress(100);
+                setCurrentStep("Content generation completed!");
+                setGenerationSteps(prev =>
+                  prev.map(step => ({ ...step, completed: true }))
+                );
+
+                // Wait a moment to show completion before updating form
+                setTimeout(() => {
+                  if (data.generatedData) {
+                    onGenerate(data.generatedData);
+                    toast({
+                      title: "Content Generated Successfully",
+                      description: "All website content has been generated and populated in the form",
+                    });
+                    onOpenChange(false);
+                    resetForm();
+                    return;
+                  }
+
+                  toast({
+                    title: "Generation Failed",
+                    description: "No generated data was returned by the server.",
+                    variant: "destructive",
+                  });
+                }, 1500);
+              } else if (data.type === 'error') {
+                console.error('❌ Generation error:', data.message);
+                throw new Error(data.message || 'Generation failed');
               }
             }
           }
@@ -280,6 +300,10 @@ export function AIAutoGenerateModal({ open, onOpenChange, onGenerate }: AIAutoGe
             const jsonStr = buffer.slice(6).trim();
             if (jsonStr) {
               const data = JSON.parse(jsonStr);
+              if (data.type === 'error') {
+                throw new Error(data.message || 'Generation failed');
+              }
+
               if (data.type === 'completed' && data.generatedData) {
                 onGenerate(data.generatedData);
                 toast({
@@ -299,7 +323,9 @@ export function AIAutoGenerateModal({ open, onOpenChange, onGenerate }: AIAutoGe
       console.error('Generation error:', error);
       toast({
         title: "Generation Failed",
-        description: "Failed to generate content. Please check your AI settings and try again.",
+        description: error instanceof Error
+          ? error.message
+          : "Failed to generate content. Please check your AI settings and try again.",
         variant: "destructive",
       });
     } finally {

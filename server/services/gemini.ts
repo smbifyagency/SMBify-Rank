@@ -377,7 +377,7 @@ Return JSON: testimonial1Name, testimonial1Text, testimonial1Rating (5), testimo
       generationConfig: {
         temperature: 0.9,
         topP: 0.95,
-        maxOutputTokens: 4096,
+        maxOutputTokens: 8192,
       },
     });
 

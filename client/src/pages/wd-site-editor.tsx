@@ -2673,15 +2673,15 @@ export default function WDSiteEditor() {
                     const matrixEnabled = (siteData as any).enableMatrixPages;
                     const matrixCount = matrixEnabled ? svcCount * locCount : 0;
                     // Word estimates per section
-                    const introWords = 4 * 180;        // 4 paragraphs × ~180 words
-                    const stepsWords = 7 * 100;        // 7 steps × ~100 words
-                    const faqWords = 10 * 125;         // 10 FAQs × ~125 words
-                    const seoWords = 250;              // SEO body
-                    const whyUsWords = 6 * 100;        // 6 why-us points × ~100 words
-                    const aboutWords = 300;            // About page content
-                    const testimonialsWords = 5 * 80;  // 5 reviews × ~80 words
-                    const svcDescWords = svcCount * 125; // Per-service description
-                    const blogWords = blogCount * 1200;  // 5 posts × ~1200 words
+                    const introWords = 4 * 280;        // 4 paragraphs × ~280 words
+                    const stepsWords = 7 * 150;        // 7 steps × ~150 words
+                    const faqWords = 10 * 175;         // 10 FAQs × ~175 words
+                    const seoWords = 400;              // SEO body
+                    const whyUsWords = 6 * 150;        // 6 why-us points × ~150 words
+                    const aboutWords = 500;            // About page content
+                    const testimonialsWords = 5 * 120; // 5 reviews × ~120 words
+                    const svcDescWords = svcCount * 200; // Per-service description
+                    const blogWords = blogCount * 1500;  // 5 posts × ~1500 words
                     const locWords = locCount * 300;    // Location page template content
                     const matrixWords = matrixCount * 450; // Matrix page content
 
@@ -2690,7 +2690,7 @@ export default function WDSiteEditor() {
                     const totalWords = aiGeneratedWords + templateWords;
 
                     // Token estimates (~1.3 tokens per word for English)
-                    const promptTokens = 800 + (blogCount * 600);  // Main prompt + 5 blog prompts
+                    const promptTokens = 1200 + (blogCount * 800);  // Main prompt + 5 blog prompts
                     const outputTokens = Math.round(aiGeneratedWords * 1.3);
                     const totalTokens = promptTokens + outputTokens;
 

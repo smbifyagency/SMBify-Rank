@@ -25,6 +25,85 @@ declare module "express-session" {
 const AUTH_SECRET = process.env.SESSION_SECRET || "smbifyvibe-very-secure-2026";
 const COOKIE_NAME = "smbify_auth";
 const TOKEN_EXPIRY_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
+const GUEST_API_KEYS_COOKIE_NAME = "smbify_guest_api_keys";
+const GUEST_API_KEYS_EXPIRY_MS = 60 * 60 * 1000; // 1 hour
+const GUEST_API_KEY_PROVIDERS = ["openai", "gemini", "openrouter", "netlify", "unsplash"] as const;
+
+type GuestApiKeyProvider = (typeof GUEST_API_KEY_PROVIDERS)[number];
+type GuestApiKeys = Partial<Record<GuestApiKeyProvider, string>>;
+
+function sanitizeGuestApiKeys(input: unknown): GuestApiKeys {
+  if (!input || typeof input !== "object") {
+    return {};
+  }
+
+  const sanitized: GuestApiKeys = {};
+  for (const provider of GUEST_API_KEY_PROVIDERS) {
+    const value = (input as Record<string, unknown>)[provider];
+    if (typeof value !== "string") {
+      continue;
+    }
+
+    const trimmedValue = value.trim();
+    if (!trimmedValue || trimmedValue.includes("•")) {
+      continue;
+    }
+
+    sanitized[provider] = trimmedValue;
+  }
+
+  return sanitized;
+}
+
+function getGuestApiKeysCipherKey(): Buffer {
+  return crypto.createHash("sha256").update(AUTH_SECRET).digest();
+}
+
+function encryptGuestApiKeys(guestApiKeys: GuestApiKeys): string {
+  const payload = JSON.stringify({
+    guestApiKeys: sanitizeGuestApiKeys(guestApiKeys),
+    exp: Date.now() + GUEST_API_KEYS_EXPIRY_MS,
+  });
+  const iv = crypto.randomBytes(12);
+  const cipher = crypto.createCipheriv("aes-256-gcm", getGuestApiKeysCipherKey(), iv);
+  const encrypted = Buffer.concat([cipher.update(payload, "utf8"), cipher.final()]);
+  const authTag = cipher.getAuthTag();
+  return `${iv.toString("base64url")}.${authTag.toString("base64url")}.${encrypted.toString("base64url")}`;
+}
+
+function decryptGuestApiKeys(token: string | undefined): GuestApiKeys {
+  if (!token) {
+    return {};
+  }
+
+  try {
+    const [ivB64, authTagB64, encryptedB64] = token.split(".");
+    if (!ivB64 || !authTagB64 || !encryptedB64) {
+      return {};
+    }
+
+    const decipher = crypto.createDecipheriv(
+      "aes-256-gcm",
+      getGuestApiKeysCipherKey(),
+      Buffer.from(ivB64, "base64url")
+    );
+    decipher.setAuthTag(Buffer.from(authTagB64, "base64url"));
+
+    const decrypted = Buffer.concat([
+      decipher.update(Buffer.from(encryptedB64, "base64url")),
+      decipher.final(),
+    ]).toString("utf8");
+    const payload = JSON.parse(decrypted) as { guestApiKeys?: GuestApiKeys; exp?: number };
+
+    if (!payload.exp || payload.exp < Date.now()) {
+      return {};
+    }
+
+    return sanitizeGuestApiKeys(payload.guestApiKeys);
+  } catch {
+    return {};
+  }
+}
 
 // Simple signed token (HMAC-SHA256 based) — no external dependencies
 function createAuthToken(userId: string): string {
@@ -70,6 +149,27 @@ function clearAuthCookie(res: Response) {
   });
 }
 
+export function setGuestApiKeysCookie(res: Response, guestApiKeys: GuestApiKeys) {
+  const sanitizedGuestApiKeys = sanitizeGuestApiKeys(guestApiKeys);
+  if (Object.keys(sanitizedGuestApiKeys).length === 0) {
+    res.clearCookie(GUEST_API_KEYS_COOKIE_NAME, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "lax",
+      path: "/",
+    });
+    return;
+  }
+
+  res.cookie(GUEST_API_KEYS_COOKIE_NAME, encryptGuestApiKeys(sanitizedGuestApiKeys), {
+    httpOnly: true,
+    secure: true,
+    sameSite: "lax",
+    maxAge: GUEST_API_KEYS_EXPIRY_MS,
+    path: "/",
+  });
+}
+
 // Helper: parse cookies from request header (zero dependencies)
 function parseCookies(req: Request): Record<string, string> {
   const cookieHeader = req.headers.cookie || "";
@@ -87,6 +187,11 @@ function getUserIdFromRequest(req: Request): string | null {
   const token = cookies[COOKIE_NAME];
   if (!token) return null;
   return verifyAuthToken(token);
+}
+
+function getGuestApiKeysFromRequest(req: Request): GuestApiKeys {
+  const cookies = parseCookies(req);
+  return decryptGuestApiKeys(cookies[GUEST_API_KEYS_COOKIE_NAME]);
 }
 
 // Setup authentication middleware and routes
@@ -125,10 +230,12 @@ export async function setupAuth(app: Express) {
   // This allows routes.ts to keep using req.session.userId etc.
   app.use(async (req: Request, _res: Response, next: NextFunction) => {
     const userId = getUserIdFromRequest(req);
+    const guestApiKeys = getGuestApiKeysFromRequest(req);
+    const guestSessionUserId = Object.keys(guestApiKeys).length > 0 ? "guest" : undefined;
     (req as any).session = {
-      userId: userId || undefined,
+      userId: userId || guestSessionUserId,
       isAuthenticated: !!userId,
-      guestApiKeys: {},
+      guestApiKeys,
     };
     // Also set req.user for GET routes that check (req as any).user?.id
     if (userId) {
