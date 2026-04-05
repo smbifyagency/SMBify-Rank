@@ -73,7 +73,7 @@ export default function GenieSplash() {
   const trailId = useRef(0);
   const lampRef = useRef<HTMLDivElement>(null);
   const pointerDown = useRef(false);
-  const THRESHOLD = 500; // rub distance threshold — requires sustained rubbing
+  const THRESHOLD = 150; // rub distance threshold — a few swipes triggers entry
 
   // Clean up old trails
   useEffect(() => {
@@ -100,7 +100,7 @@ export default function GenieSplash() {
 
       if (dist > 4) {
         setRubProgress(prev => {
-          const next = Math.min(prev + dist * 0.18, THRESHOLD);
+          const next = Math.min(prev + dist * 0.5, THRESHOLD);
           setLampGlow(next / THRESHOLD);
           if (next >= THRESHOLD && !entered) {
             triggerEntry();
@@ -131,11 +131,10 @@ export default function GenieSplash() {
     setEntered(true);
     setShowSmoke(true);
 
-    // Phase 1: smoke intensifies + lamp glows brighter (1.5s)
-    setTimeout(() => setShowWebsite(true), 1500);
-    // Phase 2: "Your wish is granted" lingers for 3s
-    // Phase 3: navigate to landing page
-    setTimeout(() => setLocation("/home"), 5000);
+    // Phase 1: smoke intensifies + lamp glows brighter (1s)
+    setTimeout(() => setShowWebsite(true), 1000);
+    // Phase 2: quick "Your wish is granted" then navigate
+    setTimeout(() => setLocation("/home"), 2500);
   }, [entered, setLocation]);
 
   const progress = rubProgress / THRESHOLD;
