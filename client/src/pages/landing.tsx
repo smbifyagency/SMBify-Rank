@@ -342,10 +342,10 @@ export default function Landing() {
 
           <div className="flex flex-wrap gap-5 justify-center mb-10">
             {[
-              { icon: "🟢", name: "OpenAI GPT-4o", desc: "Latest & most capable" },
-              { icon: "🟢", name: "GPT-4o Mini", desc: "Fast & cost-effective" },
-              { icon: "🔵", name: "Google Gemini", desc: "Google's generative AI" },
-              { icon: "🟣", name: "OpenRouter", desc: "Multi-model routing" },
+              { icon: "🟢", name: "OpenAI GPT-4.1", desc: "Most powerful AI model" },
+              { icon: "🟢", name: "GPT-4.1 Mini", desc: "Fast & cost-effective" },
+              { icon: "🔵", name: "Google Gemini 2.5", desc: "Google's latest AI" },
+              { icon: "🟣", name: "OpenRouter", desc: "100+ models via one key" },
             ].map((m) => (
               <div key={m.name} className="flex items-center gap-4 px-6 py-4 rounded-2xl border border-white/10 bg-gray-900/50 transition-all hover:border-[#7C3AED]/30">
                 <span className="text-2xl">{m.icon}</span>
@@ -433,7 +433,7 @@ export default function Landing() {
                   ["AI Blog Posts (Bulk)", "✅ Bulk generate", "❌ No", "❌ No"],
                   ["One-Click Deploy", "✅ Netlify", "⚠️ Platform-only", "❌ Manual"],
                   ["270+ Categories", "✅ Yes", "❌ No", "❌ No"],
-                  ["Multi-AI Model", "✅ GPT-4o, Gemini", "❌ No", "❌ No"],
+                  ["Multi-AI Model", "✅ GPT-4.1, Gemini 2.5", "❌ No", "❌ No"],
                   ["Static HTML (Fast)", "✅ Pure HTML/CSS", "❌ Dynamic", "❌ PHP"],
                   ["Admin Dashboard", "✅ Full suite", "❌ No", "⚠️ Limited"],
                   ["Bring Your Own API Key", "✅ Yes", "❌ No", "❌ No"],

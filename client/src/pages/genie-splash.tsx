@@ -129,10 +129,11 @@ export default function GenieSplash() {
     setEntered(true);
     setShowSmoke(true);
 
-    // Phase 1: smoke intensifies
-    setTimeout(() => setShowWebsite(true), 800);
-    // Phase 2: navigate to landing page
-    setTimeout(() => setLocation("/home"), 2200);
+    // Phase 1: smoke intensifies + lamp glows brighter (1.5s)
+    setTimeout(() => setShowWebsite(true), 1500);
+    // Phase 2: "Your wish is granted" lingers for 3s
+    // Phase 3: navigate to landing page
+    setTimeout(() => setLocation("/home"), 5000);
   }, [entered, setLocation]);
 
   const progress = rubProgress / THRESHOLD;
@@ -189,7 +190,7 @@ export default function GenieSplash() {
 
         {/* Title — fades up */}
         <div
-          className="text-center mb-8 transition-all duration-1000"
+          className="text-center mb-8 transition-all duration-[2000ms]"
           style={{
             opacity: entered ? 0 : 1,
             transform: entered ? "translateY(-60px) scale(0.8)" : "translateY(0)",
@@ -308,7 +309,7 @@ export default function GenieSplash() {
 
         {/* Rub progress indicator */}
         <div
-          className="mt-8 flex flex-col items-center gap-3 transition-all duration-700"
+          className="mt-8 flex flex-col items-center gap-3 transition-all duration-[2000ms]"
           style={{
             opacity: entered ? 0 : 1,
             transform: entered ? "translateY(40px)" : "translateY(0)",
@@ -339,20 +340,30 @@ export default function GenieSplash() {
         </div>
 
         {/* Magic explosion on entry */}
+        {entered && !showWebsite && (
+          <div className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none">
+            <p className="text-purple-300/70 text-xl sm:text-2xl font-medium animate-pulse-subtle">
+              ✨ The magic is building... ✨
+            </p>
+          </div>
+        )}
+
         {showWebsite && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center animate-magic-reveal">
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
             <div
               className="absolute inset-0"
               style={{
-                background: "radial-gradient(circle at 50% 50%, rgba(124,58,237,0.9) 0%, rgba(139,92,246,0.6) 30%, transparent 70%)",
-                animation: "magic-expand 1.5s cubic-bezier(.23,1,.32,1) forwards",
+                background: "radial-gradient(circle at 50% 50%, rgba(124,58,237,0.95) 0%, rgba(139,92,246,0.7) 30%, rgba(30,27,75,0.95) 70%)",
+                animation: "magic-expand 2.5s cubic-bezier(.23,1,.32,1) forwards",
               }}
             />
             <div className="relative z-10 text-center animate-fade-scale-in">
-              <h2 className="text-4xl sm:text-5xl font-black text-white mb-2">
+              <div className="text-6xl sm:text-7xl mb-6">🧞</div>
+              <h2 className="text-4xl sm:text-5xl font-black text-white mb-4">
                 ✨ Your wish is granted ✨
               </h2>
-              <p className="text-purple-200/80 text-lg">Welcome to SiteGenie</p>
+              <p className="text-purple-200/80 text-lg mb-2">Welcome to SiteGenie</p>
+              <p className="text-purple-300/50 text-sm mt-4 animate-pulse-subtle">Entering the magic portal...</p>
             </div>
           </div>
         )}

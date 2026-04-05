@@ -409,7 +409,7 @@ export function BlogGenerationInterface({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="openai">OpenAI (GPT-4)</SelectItem>
+                      <SelectItem value="openai">OpenAI (GPT-4.1)</SelectItem>
                       <SelectItem value="gemini">Google Gemini</SelectItem>
                       <SelectItem value="openrouter">OpenRouter</SelectItem>
                     </SelectContent>

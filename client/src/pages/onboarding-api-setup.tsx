@@ -7,8 +7,8 @@ import { Key, ArrowRight, ArrowLeft, ExternalLink, Shield, Info } from "lucide-r
 import { useBusinessData } from "@/contexts/business-data-context";
 
 const providers = [
-    { id: "openai", name: "OpenAI", desc: "GPT-4o, GPT-4, GPT-3.5", docsUrl: "https://platform.openai.com/api-keys" },
-    { id: "gemini", name: "Google Gemini", desc: "Gemini Pro (Free tier available)", docsUrl: "https://aistudio.google.com/apikey" },
+    { id: "openai", name: "OpenAI", desc: "GPT-4.1, GPT-4.1 Mini", docsUrl: "https://platform.openai.com/api-keys" },
+    { id: "gemini", name: "Google Gemini", desc: "Gemini 2.5 Flash (Free tier available)", docsUrl: "https://aistudio.google.com/apikey" },
     { id: "openrouter", name: "OpenRouter", desc: "100+ models via single key", docsUrl: "https://openrouter.ai/keys" },
 ];
 
