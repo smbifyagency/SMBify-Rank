@@ -489,11 +489,13 @@ function generateNav(data: WDBusinessData, currentPath: string = ''): string {
     .map(l => `<li><a href="${prefix}locations/${slugify(l)}.html">${l}</a></li>`)
     .join('');
 
+  const genericLogoSvg = `<svg class="generic-logo" viewBox="0 0 44 44" width="44" height="44" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="22" r="20" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/><path d="M22 11l-9 8.5h3.5V31h4.5v-6h2v6h4.5V19.5H31L22 11z" fill="#fff" opacity="0.9"/><circle cx="22" cy="14" r="2" fill="#fff" opacity="0.7"/></svg>`;
+
   const logoHtml = data.logoUrl
     ? `<a href="${prefix}index.html" aria-label="${data.businessName} - Home">
           <img src="${data.logoUrl}" alt="${data.logoAlt || data.businessName + ' logo'}" class="header-logo" width="160" height="48" loading="eager">
         </a>`
-    : `<a href="${prefix}index.html" class="brand-name" aria-label="${data.businessName} - Home">${data.businessName}</a>`;
+    : `<a href="${prefix}index.html" class="brand-logo-link" aria-label="Home">${genericLogoSvg}</a>`;
 
   return `
   <header class="site-header" role="banner">
@@ -566,10 +568,12 @@ function generateFooter(data: WDBusinessData, currentPath: string = ''): string 
     .join('');
   const year = new Date().getFullYear();
 
+  const footerGenericLogo = `<svg class="generic-logo-footer" viewBox="0 0 44 44" width="44" height="44" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="22" r="20" fill="rgba(255,255,255,0.08)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/><path d="M22 11l-9 8.5h3.5V31h4.5v-6h2v6h4.5V19.5H31L22 11z" fill="#fff" opacity="0.7"/><circle cx="22" cy="14" r="2" fill="#fff" opacity="0.5"/></svg>`;
+
   const brandBlock = data.logoUrl
     ? `<img src="${data.logoUrl}" alt="${data.logoAlt || data.businessName + ' logo'}" class="footer-logo" width="140" height="42" loading="lazy">
         <p style="margin-top:0.75rem;">${data.businessName}</p>`
-    : `<p class="footer-biz-name">${data.businessName}</p>`;
+    : `<div class="footer-brand-icon">${footerGenericLogo}</div>`;
 
   // Social media SVG icons
   const socialSVGs: Record<string, string> = {
@@ -594,14 +598,6 @@ function generateFooter(data: WDBusinessData, currentPath: string = ''): string 
   })();
 
   return `
-  <!-- ── Pre-Footer CTA Banner ────────────────────────── -->
-  <div class="prefooter-cta">
-    <div class="prefooter-inner">
-      <h3>Need Professional ${data.primaryKeyword} Help Today?</h3>
-      <a href="tel:${data.countryCode || '+1'}${data.phone.replace(/\D/g, '')}" class="prefooter-btn"><span class="btn-icon">${iconToSVG('phone', accentColor)}</span> Get Your Free Estimate</a>
-    </div>
-  </div>
-
   <footer class="site-footer" role="contentinfo">
     <div class="footer-inner">
       <div class="footer-brand">
@@ -662,16 +658,6 @@ function generateFooter(data: WDBusinessData, currentPath: string = ''): string 
         </div>
         ${data.licenseNumber ? `<p style="font-size:.8rem;color:#64748b;margin-top:.5rem;">License: ${data.licenseNumber}</p>` : ''}
       </div>
-    </div>
-
-    <!-- Footer Map -->
-    <div style="margin:0 auto;max-width:1200px;padding:0 1.5rem 1.5rem;">
-      <iframe
-        src="https://www.google.com/maps?q=${encodeURIComponent(`${data.businessName}, ${data.address}, ${data.city}, ${data.state}`)}&output=embed"
-        width="100%" height="200" style="border:0;border-radius:10px;display:block;" loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade"
-        title="Map showing ${data.businessName}"
-        allowfullscreen></iframe>
     </div>
 
     <div class="footer-bottom">
@@ -883,6 +869,11 @@ body {
   color: #1e293b;
   line-height: 1.7;
   background: #f8fafc;
+  background-image:
+    radial-gradient(ellipse at 15% 20%, ${primaryColor}06 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 25%, ${secondaryColor}06 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 80%, ${primaryColor}04 0%, transparent 50%);
+  background-attachment: fixed;
 }
 
 a { color: ${secondaryColor}; text-decoration: none; transition: color .2s; }
@@ -1028,6 +1019,36 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   text-decoration: none;
   flex-shrink: 0;
 }
+
+.brand-logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.generic-logo {
+  display: block;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+}
+
+.brand-logo-link:hover .generic-logo {
+  transform: scale(1.08);
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.25));
+}
+
+.footer-brand-icon {
+  margin-bottom: 0.75rem;
+}
+
+.generic-logo-footer {
+  display: block;
+  opacity: 0.85;
+  transition: opacity 0.3s;
+}
+
+.generic-logo-footer:hover { opacity: 1; }
 
 .header-logo {
   height: 48px;
@@ -1363,13 +1384,16 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 }
 
 .service-card {
-  background: #fff;
-  border: 1px solid rgba(226,232,240,0.6);
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.45);
   border-radius: 14px;
   padding: 1.75rem;
   transition: all .35s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.7);
 }
 
 .service-card::before {
@@ -1445,13 +1469,16 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   display: flex;
   gap: 1.25rem;
   align-items: flex-start;
-  background: #fff;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
   padding: 1.75rem;
   border-radius: 14px;
-  border: 1px solid rgba(226,232,240,0.6);
+  border: 1px solid rgba(255,255,255,0.4);
   transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.7);
 }
 
 .why-us-item::after {
@@ -1521,14 +1548,17 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 }
 
 .process-step {
-  background: #fff;
-  border: 1px solid rgba(226,232,240,0.6);
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.4);
   border-radius: 14px;
   padding: 2.5rem 1.5rem 1.5rem;
   position: relative;
   counter-increment: step-counter;
   transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 1;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.7);
 }
 
 .process-step:hover {
@@ -1587,8 +1617,10 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 
 .location-link {
   display: block;
-  background: #fff;
-  border: 1px solid rgba(226,232,240,0.6);
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(8px) saturate(130%);
+  -webkit-backdrop-filter: blur(8px) saturate(130%);
+  border: 1px solid rgba(255,255,255,0.4);
   padding: 0.85rem 1rem;
   border-radius: 10px;
   text-align: center;
@@ -1596,6 +1628,7 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
   font-size: 0.9rem;
   color: ${primaryColor};
   transition: all .25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.03);
 }
 
 .location-link:hover {
@@ -1611,13 +1644,16 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 .faq-list { max-width: 800px; margin: 2rem auto 0; }
 
 .faq-item {
-  border: 1px solid rgba(226,232,240,0.6);
+  border: 1px solid rgba(255,255,255,0.4);
   border-radius: 12px;
   padding: 0;
   margin-bottom: 0.75rem;
-  background: #fff;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
   overflow: hidden;
   transition: all .25s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.6);
 }
 
 .faq-item.open { border-color: ${secondaryColor}30; box-shadow: 0 4px 12px rgba(0,0,0,.04); }
@@ -1705,13 +1741,16 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 }
 
 .testimonial-card {
-  background: #fff;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
   border-radius: 16px;
   padding: 2rem;
-  border: 1px solid rgba(226,232,240,0.6);
+  border: 1px solid rgba(255,255,255,0.4);
   position: relative;
   transition: all .35s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.04), inset 0 1px 0 rgba(255,255,255,0.7);
 }
 
 .testimonial-card::before {
@@ -1912,11 +1951,14 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 }
 
 .benefit-item {
-  background: #fff;
+  background: rgba(255,255,255,0.6);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
   border-left: 4px solid ${secondaryColor};
   padding: 1.25rem 1.5rem;
   border-radius: 0 12px 12px 0;
   transition: all .3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.03), inset 0 1px 0 rgba(255,255,255,0.6);
 }
 
 .benefit-item:hover {
@@ -1936,11 +1978,14 @@ section:nth-child(even):not(.cta-section):not(.page-hero):not(.hero-section):not
 }
 
 .warning-item {
-  background: #fff9f9;
-  border: 1px solid #fecaca;
+  background: rgba(255,249,249,0.65);
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+  border: 1px solid rgba(254,202,202,0.5);
   border-radius: 12px;
   padding: 1.25rem;
   transition: all .25s;
+  box-shadow: 0 2px 12px rgba(220,38,38,0.03), inset 0 1px 0 rgba(255,255,255,0.5);
 }
 
 .warning-item:hover { box-shadow: 0 4px 12px rgba(220,38,38,.08); transform: translateY(-2px); }
