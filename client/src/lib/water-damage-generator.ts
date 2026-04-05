@@ -3954,7 +3954,7 @@ export function generateCalculatorPage(data: WDBusinessData, domain: string): st
 
   const cardsHTML = CALCULATORS.map(c => `
     <a href="calculators/${c.slug}.html" class="calc-card">
-      <div class="calc-card-icon">${c.icon}</div>
+      <div class="calc-card-icon">${iconToSVG(c.icon, theme.secondaryColor)}</div>
       <h2 class="calc-card-title">${c.title}</h2>
       <p class="calc-card-desc">${c.desc}</p>
       <span class="calc-card-link">Open Calculator →</span>
@@ -4027,7 +4027,8 @@ export function generateCalculatorPage(data: WDBusinessData, domain: string): st
   box-shadow: 0 8px 24px rgba(0,0,0,.1);
   border-color: ${theme.primaryColor};
 }
-.calc-card-icon { font-size: 2.5rem; margin-bottom: 1rem; }
+.calc-card-icon { margin-bottom: 1rem; display: flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 14px; background: linear-gradient(135deg, ${theme.primaryColor}12, ${theme.secondaryColor}15); }
+.calc-card-icon svg { width: 28px; height: 28px; }
 .calc-card-title { font-size: 1.2rem; font-weight: 700; color: ${theme.primaryColor}; margin: 0 0 .5rem; }
 .calc-card-desc { color: #475569; font-size: .9rem; line-height: 1.6; flex: 1; }
 .calc-card-link {
@@ -4053,7 +4054,7 @@ function generateSingleCalculatorPage(data: WDBusinessData, calcIndex: number, d
   // Navigation links for other calculators
   const otherCalcsHTML = CALCULATORS.filter((_, i) => i !== calcIndex).map(c => `
     <a href="${c.slug}.html" class="other-calc-card">
-      <span class="other-calc-icon">${c.icon}</span>
+      <span class="other-calc-icon">${iconToSVG(c.icon, theme.secondaryColor)}</span>
       <span class="other-calc-name">${c.title}</span>
     </a>`).join('');
 
@@ -4427,7 +4428,8 @@ function generateSingleCalculatorPage(data: WDBusinessData, calcIndex: number, d
   transition: border-color .2s, transform .15s;
 }
 .other-calc-card:hover { border-color: ${theme.primaryColor}; transform: translateY(-2px); }
-.other-calc-icon { font-size: 1.4rem; }
+.other-calc-icon { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; }
+.other-calc-icon svg { width: 22px; height: 22px; }
 .other-calc-name { font-weight: 600; font-size: .875rem; }
 @media (max-width: 768px) {
   .content-section > .container { grid-template-columns: 1fr !important; }
@@ -5359,7 +5361,7 @@ export function generateHTMLSitemap(data: WDBusinessData, domain: string): strin
     <div class="sitemap-section">
       <h2>Calculators</h2>
       <ul>
-        ${CALCULATORS.map(c => `<li><a href="calculators/${c.slug}.html">${c.icon} ${c.title}</a></li>`).join('\n        ')}
+        ${CALCULATORS.map(c => `<li><a href="calculators/${c.slug}.html">${c.title}</a></li>`).join('\n        ')}
       </ul>
     </div>
 
