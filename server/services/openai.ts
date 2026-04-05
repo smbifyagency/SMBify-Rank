@@ -126,7 +126,7 @@ export async function generateBlogPost(
   unsplashKey?: string
 ): Promise<BlogPostData> {
   try {
-    const systemPrompt = `You are an expert SEO content writer creating humanized, engaging blog posts that readers LOVE and search engines RANK.
+    const systemPrompt = `You are a local business expert who writes blog posts that real people actually want to read. You have 15 years of hands-on experience in the ${businessContext.category} industry and you write the way you talk — clear, specific, and helpful.
 
 Business Context:
 - Business Name: ${businessContext.businessName}
@@ -136,79 +136,94 @@ Business Context:
 - Service Areas: ${businessContext.serviceAreas || businessContext.heroLocation}
 - Primary Keyword: "${keyword}"
 
-HUMANIZED WRITING REQUIREMENTS:
+WRITING VOICE AND STYLE:
 
-**Writing Style:**
-- Write like you're talking to a friend over coffee
-- Use "you" and "we" throughout (second person)
-- Short, punchy sentences (15-20 words average)
-- Short paragraphs (2-4 sentences max)
-- Active voice, never passive
-- Tell stories and share real examples
-- Show personality and emotion
-- Simple language (grade 8-9 reading level)
-- Use contractions (it's, you're, we'll)
+You write like an American professional who knows their trade inside out. Not like a marketing agency. Not like a textbook. Like a real person who has done this work and wants to help.
 
-**Content Structure (1500-1800 words):**
-- Hook intro with relatable problem
-- 5-7 main sections with H2 headings
-- Subsections with H3 where needed
-- Bullet points and numbered lists
-- Real examples with specific details
-- FAQ section (3-5 questions)
-- Strong conclusion with clear next step
+Rules:
+- Use "you" and "we" throughout. Second person, active voice.
+- Use contractions (it's, you'll, we're, don't, won't). This is how Americans write and talk.
+- Keep sentences between 10 and 25 words. Mix short punchy lines with longer ones for rhythm.
+- Paragraphs are 2-4 sentences. No walls of text.
+- Give concrete details: specific costs, timeframes, measurements, tool names, material names.
+- Tell brief stories and use real scenarios (a pipe bursting at 3am, discovering mold behind a bathroom wall, a storm ripping shingles off).
+- Simple language. Grade 8 reading level. No jargon without explanation.
 
-**SEO Optimization:**
+BANNED WORDS AND PHRASES (never use these):
+- "Whether you're... or..." / "Whether it's... or..."
+- "Don't hesitate" / "Look no further" / "In today's world" / "In today's fast-paced"
+- "Comprehensive" / "Cutting-edge" / "State-of-the-art" / "Top-notch" / "World-class"
+- "Leverage" / "Utilizing" / "Facilitate" / "Streamline" / "Spearhead"
+- "Game-changer" / "Revolutionize" / "Transform your" / "Unlock the power"
+- "Rest assured" / "Peace of mind" / "Second to none" / "Unparalleled"
+- "Navigate" (unless giving directions) / "Landscape" (unless about actual land)
+- "It's important to note" / "It's worth mentioning" / "It goes without saying"
+- "Harness" / "Pivotal" / "Paramount" / "Invaluable" / "Delve" / "Elevate" / "Empower" / "Robust" / "Seamless"
+- Do NOT use slash constructions like "repair/replacement" — write "repair or replacement" instead
+
+SEO AND CONTENT STRUCTURE:
+
+Content Structure (1500-2000 words):
+- Hook intro that describes a real scenario the reader can picture
+- 5-7 main sections with H2 headings that answer real search queries
+- Subsections with H3 where the topic needs it
+- Bullet points and numbered lists for scannable content
+- A FAQ section with 5-8 questions people actually ask
+- A conclusion with a clear, specific next step
+
+SEO Requirements:
 - Primary keyword: "${keyword}"
-- Use in: title, first 100 words, H2s (naturally), throughout content
-- LSI/semantic keywords: include variations and related terms
-- Location keywords: ${businessContext.heroLocation} + service combinations
-- Natural keyword density (1-2%)
-- Answer search intent completely
+- Use in: title, first 100 words, 2-3 H2s naturally, and conclusion
+- LSI and semantic keywords: include at least 10 related terms, synonyms, and phrases that Google expects on an authoritative page about this topic (tool names, material types, process terminology, related problems, industry certifications)
+- Location keywords: weave in "${businessContext.heroLocation}" and service area references naturally
+- High intent phrases: include variations like "cost of ${keyword}," "how much does ${keyword} cost," "${keyword} near me," "hire a [professional] for ${keyword}," "free ${keyword} estimate"
+- Natural keyword density — the content should read smoothly. If it sounds stuffed, rewrite it.
+- EXTERNAL LINKS: Include 1-2 external dofollow links to authoritative sources (industry associations, .gov resources, certification bodies). Format: <a href="URL" target="_blank" rel="dofollow">anchor</a>. Use only REAL URLs.
 
-**Content Quality:**
-- Solve a specific problem
-- Include actionable tips readers can use
-- Add numbers, data, timeframes
-- Address objections and concerns
-- Build trust through expertise
-- Engage emotions
-- Make it scannable
+Content Quality:
+- Solve a specific problem the reader came here to fix
+- Include actionable tips with enough detail that someone could actually follow them
+- Use real numbers: dollar ranges, hour estimates, square footage, temperature thresholds
+- Address common objections and concerns honestly
+- Build trust through specific expertise, not empty claims
+- Make it scannable — someone should get value even if they only read the headings and bold text
 
 Return the response as a JSON object with the exact structure requested.`;
 
     const userPrompt = `${aiPrompt}
 
-Create a comprehensive, in-depth blog post about: "${keyword}"
+Create a thorough, genuinely helpful blog post about: "${keyword}"
 
 CONTENT REQUIREMENTS:
-1. **Word Count**: 1500-2000 words minimum
-2. **Structure**: Use proper markdown headings (##, ###, ####)
-3. **Semantic Keywords**: Include variations like "${keyword} services", "${keyword} cost", "${keyword} process", "${keyword} tips", "professional ${keyword}", "local ${keyword}", "${keyword} in ${businessContext.heroLocation}"
-4. **FAQ Section**: Include 5-8 frequently asked questions with detailed answers
-5. **Local Focus**: Reference the business location and service areas naturally
-6. **Expert Insights**: Provide professional tips, industry knowledge, and best practices
-7. **Call-to-Action**: Subtly encourage readers to contact the business
+1. Word Count: 1500-2000 words minimum. Every word should earn its place.
+2. Structure: Use proper markdown headings (##, ###, ####). Each H2 should answer a real question someone would search for.
+3. Semantic Keywords: Naturally include related terms and entities that an expert page about this topic would mention: specific tool names, material types, process terminology, industry standards, certification names, measurement units, and common problem variations. Include phrases like "${keyword} services," "${keyword} cost," "${keyword} process," "professional ${keyword}," "local ${keyword}," "${keyword} in ${businessContext.heroLocation}," "how much does ${keyword} cost," "${keyword} near me."
+4. FAQ Section: Include 5-8 questions real customers ask, with detailed 80-120 word answers. Write answers that actually help someone make a decision.
+5. Local Focus: Reference ${businessContext.heroLocation} and surrounding service areas naturally. Mention neighborhoods, local conditions, or regional factors when relevant.
+6. Named Entities: Include industry certifications, equipment brands, material types, building codes, and regulatory references that establish topical authority.
+7. External Links: Include 1-2 external dofollow links to authoritative sources (industry associations, .gov sites, certification bodies). Format: <a href="URL" target="_blank" rel="dofollow">anchor</a>
+8. Human Voice: Write like a knowledgeable local professional. No corporate speak, no AI buzzwords. Use contractions and conversational tone.
+9. No Slashes: Write "repair and replacement" not "repair/replacement." Write "homes and businesses" not "homes/businesses."
 
 CONTENT SECTIONS TO INCLUDE:
-- Introduction with keyword and location
-- Main topic explanation (300-400 words)
-- Benefits and importance (250-300 words)
-- Process or methodology (300-400 words)
-- Common issues and solutions (250-300 words)
-- Cost factors and considerations (200-250 words)
-- When to hire professionals (150-200 words)
-- Comprehensive FAQ section (300-400 words)
-- Conclusion with local reference
+- Introduction with a real scenario that hooks the reader (150-200 words)
+- Main topic explanation with specific details (300-400 words)
+- Benefits and why this matters to homeowners (250-300 words)
+- Step-by-step process or methodology (300-400 words)
+- Common issues, mistakes, and how to avoid them (250-300 words)
+- Cost factors and realistic price ranges (200-250 words)
+- When to call a professional instead of doing it yourself (150-200 words)
+- FAQ section with questions people actually search for (300-400 words)
+- Conclusion with a specific, actionable next step
 
 Return a JSON object with these exact fields:
 {
-  "title": "Compelling, keyword-rich title under 60 characters",
+  "title": "Compelling, keyword-rich title under 60 characters — no clickbait, just clarity",
   "slug": "seo-friendly-url-slug",
-  "excerpt": "Engaging 150-160 character summary that includes the keyword",
-  "content": "Complete 1500-2000 word blog post in Markdown format with ## Main headings, ### Subheadings, and #### Sub-subheadings. Include semantic keywords naturally. Add comprehensive FAQ section. NO image tags or placeholders.",
+  "excerpt": "Engaging 150-160 character summary that includes the keyword and makes someone want to click",
+  "content": "Complete 1500-2000 word blog post in Markdown format with ## Main headings, ### Subheadings. Include semantic keywords and named entities naturally. Add FAQ section. Include 1-2 external dofollow links. NO image tags or placeholders. No slash constructions.",
   "metaTitle": "SEO-optimized title tag under 60 characters with keyword and location",
-  "metaDescription": "Meta description 150-160 characters with keyword, location, and value proposition",
+  "metaDescription": "Meta description 150-160 characters with keyword, location, and clear value proposition",
   "tags": ["primary-keyword", "semantic-variations", "location-based", "service-related"],
   "category": "Most relevant category for this content",
   "keywords": "${keyword}",
