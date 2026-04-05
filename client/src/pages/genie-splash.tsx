@@ -237,62 +237,128 @@ export default function GenieSplash() {
             </div>
           )}
 
-          {/* SVG Lamp */}
+          {/* SVG Lamp — realistic Aladdin-style golden lamp */}
           <div className="absolute inset-0 flex items-center justify-center">
             <svg
-              viewBox="0 0 200 200"
-              className="w-48 h-48 sm:w-56 sm:h-56 drop-shadow-2xl"
+              viewBox="0 0 300 260"
+              className="w-52 h-52 sm:w-64 sm:h-64 drop-shadow-2xl"
               style={{
                 filter: `drop-shadow(0 0 ${12 + lampGlow * 30}px rgba(245,158,11,${0.3 + lampGlow * 0.5})) drop-shadow(0 0 ${6 + lampGlow * 15}px rgba(124,58,237,${0.2 + lampGlow * 0.3}))`,
                 transition: "filter 0.3s ease",
               }}
             >
-              {/* Lamp body */}
-              <ellipse cx="100" cy="150" rx="55" ry="18" fill="url(#lampBase)" />
-              <path d="M55 140 C55 110, 70 90, 100 85 C130 90, 145 110, 145 140 Z" fill="url(#lampBody)" />
-              <ellipse cx="100" cy="140" rx="45" ry="14" fill="url(#lampRim)" />
+              {/* Base plate */}
+              <ellipse cx="148" cy="220" rx="80" ry="20" fill="url(#rBasePlate)" />
+              <ellipse cx="148" cy="218" rx="72" ry="16" fill="url(#rBaseTop)" />
 
-              {/* Lamp lid */}
-              <path d="M80 90 C80 78, 88 70, 100 68 C112 70, 120 78, 120 90" fill="url(#lampLid)" />
-              <ellipse cx="100" cy="90" rx="20" ry="5" fill="#9333EA" opacity="0.6" />
+              {/* Lamp body — fat belly */}
+              <path d="M76 195 C76 145, 100 115, 148 105 C196 115, 220 145, 220 195 Z" fill="url(#rBodyGrad)" />
+              {/* Body highlight — left reflection */}
+              <path d="M90 180 C92 150, 108 125, 135 115 C120 125, 100 150, 95 180 Z" fill="url(#rBodyHighlight)" opacity="0.5" />
+              {/* Body rim */}
+              <ellipse cx="148" cy="195" rx="72" ry="18" fill="url(#rBodyRim)" />
+              <ellipse cx="148" cy="193" rx="68" ry="15" fill="url(#rBodyRimInner)" />
 
-              {/* Lamp tip/flame */}
-              <circle cx="100" cy="65" r="5" fill="#F59E0B" opacity={0.6 + lampGlow * 0.4}>
-                <animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite" />
-                <animate attributeName="opacity" values={`${0.5 + lampGlow * 0.3};${0.9 + lampGlow * 0.1};${0.5 + lampGlow * 0.3}`} dur="1.5s" repeatCount="indefinite" />
+              {/* Neck */}
+              <path d="M120 108 L118 85 C118 78, 125 72, 148 70 C171 72, 178 78, 178 85 L176 108" fill="url(#rNeckGrad)" />
+              {/* Neck ring */}
+              <ellipse cx="148" cy="108" rx="28" ry="6" fill="url(#rNeckRing)" />
+
+              {/* Lid / dome */}
+              <path d="M122 85 C122 65, 132 52, 148 48 C164 52, 174 65, 174 85" fill="url(#rLidGrad)" />
+              <ellipse cx="148" cy="85" rx="26" ry="5" fill="#D4A017" opacity="0.4" />
+
+              {/* Tip / finial */}
+              <ellipse cx="148" cy="48" rx="6" ry="4" fill="url(#rFinial)" />
+              <circle cx="148" cy="42" r="4" fill="#FBBF24" opacity={0.7 + lampGlow * 0.3}>
+                <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite" />
               </circle>
 
-              {/* Spout */}
-              <path d="M145 130 C155 125, 165 128, 170 120" stroke="url(#lampSpout)" strokeWidth="8" fill="none" strokeLinecap="round" />
+              {/* Flame / magic glow from tip */}
+              <ellipse cx="148" cy="34" rx={3 + lampGlow * 4} ry={6 + lampGlow * 8} fill="url(#rFlameGrad)" opacity={0.4 + lampGlow * 0.6}>
+                <animate attributeName="ry" values={`${5 + lampGlow * 6};${8 + lampGlow * 10};${5 + lampGlow * 6}`} dur="1.5s" repeatCount="indefinite" />
+              </ellipse>
 
-              {/* Handle */}
-              <path d="M55 120 C40 118, 35 130, 40 140 C45 148, 55 145, 55 140" stroke="#F59E0B" strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.8" />
+              {/* Spout — long curved pouring spout */}
+              <path d="M220 175 C238 168, 252 165, 262 148 C268 138, 270 130, 265 122" stroke="url(#rSpoutGrad)" strokeWidth="12" fill="none" strokeLinecap="round" />
+              <path d="M220 175 C238 168, 252 165, 262 148 C268 138, 270 130, 265 122" stroke="url(#rSpoutHighlight)" strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.3" />
+              {/* Spout opening */}
+              <ellipse cx="264" cy="122" rx="5" ry="3" fill="#D4A017" />
 
-              {/* Decorative band */}
-              <rect x="70" y="118" width="60" height="4" rx="2" fill="#F59E0B" opacity="0.5" />
+              {/* Handle — big ornate loop */}
+              <path d="M76 155 C52 150, 38 165, 40 185 C42 200, 56 210, 76 200" stroke="url(#rHandleGrad)" strokeWidth="10" fill="none" strokeLinecap="round" />
+              <path d="M76 155 C52 150, 38 165, 40 185 C42 200, 56 210, 76 200" stroke="#FBBF24" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.25" />
 
-              {/* Gradients */}
+              {/* Decorative bands on body */}
+              <ellipse cx="148" cy="145" rx="56" ry="10" fill="none" stroke="#FBBF24" strokeWidth="1.5" opacity="0.3" />
+              <ellipse cx="148" cy="165" rx="64" ry="13" fill="none" stroke="#FBBF24" strokeWidth="1" opacity="0.2" />
+
+              {/* Ornamental pattern on belly center */}
+              <path d="M130 148 C135 140, 148 136, 166 140 C160 148, 148 152, 130 148 Z" fill="#FBBF24" opacity="0.15" />
+
               <defs>
-                <linearGradient id="lampBody" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#7C3AED" />
-                  <stop offset="100%" stopColor="#5B21B6" />
+                <linearGradient id="rBasePlate" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#C8910A" />
+                  <stop offset="100%" stopColor="#8B6508" />
                 </linearGradient>
-                <linearGradient id="lampBase" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#6D28D9" />
-                  <stop offset="100%" stopColor="#4C1D95" />
+                <linearGradient id="rBaseTop" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#E8B818" />
+                  <stop offset="100%" stopColor="#C8910A" />
                 </linearGradient>
-                <linearGradient id="lampRim" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#F59E0B" opacity="0.6" />
-                  <stop offset="50%" stopColor="#FBBF24" opacity="0.8" />
-                  <stop offset="100%" stopColor="#F59E0B" opacity="0.6" />
+                <linearGradient id="rBodyGrad" x1="0.2" y1="0" x2="0.8" y2="1">
+                  <stop offset="0%" stopColor="#F5C842" />
+                  <stop offset="30%" stopColor="#D4A017" />
+                  <stop offset="70%" stopColor="#B8860B" />
+                  <stop offset="100%" stopColor="#8B6508" />
                 </linearGradient>
-                <linearGradient id="lampLid" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#8B5CF6" />
-                  <stop offset="100%" stopColor="#6D28D9" />
+                <linearGradient id="rBodyHighlight" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#FFF4C8" />
+                  <stop offset="100%" stopColor="#F5C842" stopOpacity="0" />
                 </linearGradient>
-                <linearGradient id="lampSpout" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#7C3AED" />
-                  <stop offset="100%" stopColor="#F59E0B" />
+                <linearGradient id="rBodyRim" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#FBBF24" />
+                  <stop offset="100%" stopColor="#B8860B" />
+                </linearGradient>
+                <linearGradient id="rBodyRimInner" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#D4A017" />
+                  <stop offset="100%" stopColor="#C8910A" />
+                </linearGradient>
+                <linearGradient id="rNeckGrad" x1="0.3" y1="0" x2="0.7" y2="1">
+                  <stop offset="0%" stopColor="#F5C842" />
+                  <stop offset="100%" stopColor="#C8910A" />
+                </linearGradient>
+                <linearGradient id="rNeckRing" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#B8860B" />
+                  <stop offset="50%" stopColor="#FBBF24" />
+                  <stop offset="100%" stopColor="#B8860B" />
+                </linearGradient>
+                <linearGradient id="rLidGrad" x1="0.2" y1="0" x2="0.8" y2="1">
+                  <stop offset="0%" stopColor="#F5D862" />
+                  <stop offset="50%" stopColor="#D4A017" />
+                  <stop offset="100%" stopColor="#B8860B" />
+                </linearGradient>
+                <linearGradient id="rFinial" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#FBBF24" />
+                  <stop offset="100%" stopColor="#D4A017" />
+                </linearGradient>
+                <radialGradient id="rFlameGrad" cx="0.5" cy="0.8" r="0.6">
+                  <stop offset="0%" stopColor="#FDE68A" />
+                  <stop offset="40%" stopColor="#F59E0B" />
+                  <stop offset="100%" stopColor="#F59E0B" stopOpacity="0" />
+                </radialGradient>
+                <linearGradient id="rSpoutGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#D4A017" />
+                  <stop offset="50%" stopColor="#F5C842" />
+                  <stop offset="100%" stopColor="#B8860B" />
+                </linearGradient>
+                <linearGradient id="rSpoutHighlight" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0%" stopColor="#FFF4C8" />
+                  <stop offset="100%" stopColor="#FBBF24" />
+                </linearGradient>
+                <linearGradient id="rHandleGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#D4A017" />
+                  <stop offset="50%" stopColor="#F5C842" />
+                  <stop offset="100%" stopColor="#B8860B" />
                 </linearGradient>
               </defs>
             </svg>

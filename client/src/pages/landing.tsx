@@ -15,32 +15,8 @@ export default function Landing() {
 
   return (
     <>
-      {/* ═══════ GENIE LAMP — re-enter splash ═══════ */}
-      <div className="flex justify-center pt-24 pb-2">
-        <button
-          onClick={() => setLocation("/")}
-          className="group relative flex flex-col items-center gap-1 transition-all hover:-translate-y-1"
-          title="Rub the lamp again ✨"
-        >
-          <div className="relative">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-400/20 to-amber-300/20 blur-xl scale-150 opacity-0 group-hover:opacity-100 transition-opacity" />
-            <svg viewBox="0 0 200 200" className="w-20 h-20 sm:w-24 sm:h-24 drop-shadow-lg group-hover:drop-shadow-2xl transition-all" style={{ filter: 'drop-shadow(0 0 8px rgba(124,58,237,0.3))' }}>
-              <ellipse cx="100" cy="150" rx="55" ry="18" fill="#6D28D9" opacity="0.3" />
-              <path d="M55 140 C55 110, 70 90, 100 85 C130 90, 145 110, 145 140 Z" fill="url(#heroLampBody)" />
-              <ellipse cx="100" cy="140" rx="45" ry="14" fill="#F59E0B" opacity="0.5" />
-              <path d="M80 90 C80 78, 88 70, 100 68 C112 70, 120 78, 120 90" fill="#8B5CF6" />
-              <circle cx="100" cy="65" r="5" fill="#F59E0B" opacity="0.8"><animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite" /><animate attributeName="opacity" values="0.6;1;0.6" dur="1.5s" repeatCount="indefinite" /></circle>
-              <path d="M145 130 C155 125, 165 128, 170 120" stroke="#F59E0B" strokeWidth="7" fill="none" strokeLinecap="round" opacity="0.7" />
-              <path d="M55 120 C40 118, 35 130, 40 140 C45 148, 55 145, 55 140" stroke="#F59E0B" strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.6" />
-              <defs><linearGradient id="heroLampBody" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#7C3AED" /><stop offset="100%" stopColor="#5B21B6" /></linearGradient></defs>
-            </svg>
-          </div>
-          <span className="text-xs text-purple-400 font-medium opacity-70 group-hover:opacity-100 transition-opacity">✨ Rub me</span>
-        </button>
-      </div>
-
       {/* ═══════ HERO ═══════ */}
-      <section className="relative pt-12 pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative pt-32 pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#7C3AED]/8 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#7C3AED]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />

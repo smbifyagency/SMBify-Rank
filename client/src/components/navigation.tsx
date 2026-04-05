@@ -237,6 +237,26 @@ export function Navigation() {
 
           {/* Right Side Actions */}
           <div className="hidden lg:flex items-center gap-3">
+            {/* Magic Lamp — re-enter genie splash */}
+            <Link href="/">
+              <button
+                className="group relative h-9 w-9 rounded-lg flex items-center justify-center hover:bg-amber-500/10 transition-all"
+                title="✨ Rub the magic lamp"
+              >
+                <svg viewBox="0 0 300 260" className="h-6 w-6 drop-shadow-sm group-hover:drop-shadow-lg transition-all">
+                  <ellipse cx="148" cy="220" rx="80" ry="20" fill="#B8860B" opacity="0.4" />
+                  <path d="M76 195 C76 145, 100 115, 148 105 C196 115, 220 145, 220 195 Z" fill="#D4A017" />
+                  <ellipse cx="148" cy="195" rx="72" ry="18" fill="#FBBF24" opacity="0.6" />
+                  <path d="M120 108 L118 85 C118 78, 125 72, 148 70 C171 72, 178 78, 178 85 L176 108" fill="#E8B818" />
+                  <path d="M122 85 C122 65, 132 52, 148 48 C164 52, 174 65, 174 85" fill="#F5C842" />
+                  <circle cx="148" cy="42" r="4" fill="#FBBF24"><animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite" /></circle>
+                  <path d="M220 175 C238 168, 252 165, 262 148 C268 138, 270 130, 265 122" stroke="#D4A017" strokeWidth="12" fill="none" strokeLinecap="round" />
+                  <path d="M76 155 C52 150, 38 165, 40 185 C42 200, 56 210, 76 200" stroke="#D4A017" strokeWidth="10" fill="none" strokeLinecap="round" />
+                </svg>
+                <span className="absolute -bottom-0.5 -right-0.5 text-[8px] opacity-0 group-hover:opacity-100 transition-opacity">✨</span>
+              </button>
+            </Link>
+
             {isAuthenticated ? (
               <>
                 {!isOnDashboard && (
