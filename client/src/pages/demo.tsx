@@ -7,32 +7,11 @@ import {
 
 const demoSites = [
     {
-        id: "plumber",
-        name: "Prime Plumbing Co.",
-        category: "Plumbing",
+        id: "water-damage",
+        name: "Water Damage Restoration Austin TX",
+        category: "Water Damage Restoration",
         location: "Austin, TX",
-        url: "https://primeplumbingaustin.netlify.app",
-    },
-    {
-        id: "dentist",
-        name: "Bright Smile Dental",
-        category: "Dentistry",
-        location: "Los Angeles, CA",
-        url: "https://brightsmilela.netlify.app",
-    },
-    {
-        id: "restaurant",
-        name: "Bella Cucina",
-        category: "Italian Restaurant",
-        location: "New York, NY",
-        url: "https://bellacucinanyc.netlify.app",
-    },
-    {
-        id: "law",
-        name: "Morrison & Associates",
-        category: "Law Firm",
-        location: "Chicago, IL",
-        url: "https://morrisonlawchicago.netlify.app",
+        url: "https://water-damage-restoration-austin-tx.netlify.app",
     },
 ];
 

@@ -1,14 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="8" fill="#1E1B4B"/>
-  <g transform="translate(2, 4) scale(0.093)">
-    <ellipse cx="148" cy="220" rx="80" ry="20" fill="#8B6508" opacity="0.5"/>
-    <path d="M76 195 C76 145, 100 115, 148 105 C196 115, 220 145, 220 195 Z" fill="#D4A017"/>
-    <path d="M90 180 C92 150, 108 125, 135 115 C120 125, 100 150, 95 180 Z" fill="#FFF4C8" opacity="0.3"/>
-    <ellipse cx="148" cy="195" rx="72" ry="18" fill="#FBBF24" opacity="0.6"/>
-    <path d="M120 108 L118 85 C118 78, 125 72, 148 70 C171 72, 178 78, 178 85 L176 108" fill="#E8B818"/>
-    <path d="M122 85 C122 65, 132 52, 148 48 C164 52, 174 65, 174 85" fill="#F5C842"/>
-    <circle cx="148" cy="42" r="5" fill="#FBBF24"/>
-    <path d="M220 175 C238 168, 252 165, 262 148 C268 138, 270 130, 265 122" stroke="#D4A017" stroke-width="14" fill="none" stroke-linecap="round"/>
-    <path d="M76 155 C52 150, 38 165, 40 185 C42 200, 56 210, 76 200" stroke="#D4A017" stroke-width="12" fill="none" stroke-linecap="round"/>
+  <rect width="32" height="32" rx="8" fill="#7C3AED"/>
+  <g transform="translate(4, 3) scale(0.047)">
+    <!-- Lamp body from magic-lamp.svg scaled to fit favicon -->
+    <ellipse cx="256" cy="440" rx="120" ry="30" fill="#B8860B" opacity="0.5"/>
+    <ellipse cx="256" cy="430" rx="110" ry="25" fill="#D4A017" opacity="0.7"/>
+    <path d="M146 400 C146 310, 180 260, 256 240 C332 260, 366 310, 366 400 Z" fill="#D4A017"/>
+    <path d="M166 380 C170 320, 196 275, 235 255 C215 275, 190 320, 180 380 Z" fill="#FFF4C8" opacity="0.35"/>
+    <ellipse cx="256" cy="400" rx="110" ry="26" fill="#FBBF24" opacity="0.6"/>
+    <path d="M210 245 L206 205 C206 190, 218 180, 256 176 C294 180, 306 190, 306 205 L302 245" fill="#E8B818"/>
+    <ellipse cx="256" cy="245" rx="46" ry="10" fill="#FBBF24" opacity="0.5"/>
+    <path d="M216 205 C216 175, 232 155, 256 148 C280 155, 296 175, 296 205" fill="#F5C842"/>
+    <circle cx="256" cy="140" r="10" fill="#FBBF24"/>
+    <ellipse cx="256" cy="125" rx="6" ry="14" fill="#FBBF24" opacity="0.6"/>
+    <path d="M366 370 C395 355, 420 345, 435 318 C445 300, 448 285, 440 270" stroke="#D4A017" stroke-width="20" fill="none" stroke-linecap="round"/>
+    <path d="M146 340 C110 330, 88 350, 92 380 C96 400, 118 415, 146 400" stroke="#D4A017" stroke-width="16" fill="none" stroke-linecap="round"/>
   </g>
 </svg>
