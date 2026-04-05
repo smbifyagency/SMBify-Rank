@@ -75,7 +75,7 @@ export function Navigation() {
         }}
         className={`text-sm px-3 py-2 rounded-lg transition-colors ${location === href
           ? "text-purple-700 bg-purple-50"
-          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
+          : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
           }`}
       >
         {label}
@@ -86,6 +86,7 @@ export function Navigation() {
   // ===== PUBLIC NAVIGATION (for non-dashboard pages) =====
   const renderPublicNav = () => (
     <>
+      {navLink("/home", "Home")}
       {navLink("/features", "Features")}
       {navLink("/pricing", "Pricing")}
       {navLink("/demo", "Demo")}
@@ -106,13 +107,13 @@ export function Navigation() {
           onClick={() => toggleDropdown("settings")}
           className={`text-sm px-3 py-2 rounded-lg transition-colors flex items-center gap-1 ${location.startsWith("/dashboard/settings")
             ? "text-purple-700 bg-purple-50"
-            : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
+            : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
             }`}
         >
           Settings <ChevronDown className={`h-3 w-3 transition-transform ${activeDropdown === "settings" ? "rotate-180" : ""}`} />
         </button>
         {activeDropdown === "settings" && (
-          <div className="absolute top-full right-0 mt-2 w-52 bg-white/80 backdrop-blur-xl border border-gray-200/60 rounded-xl shadow-xl shadow-gray-200/50 p-2 z-50">
+          <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-xl shadow-gray-100 p-2 z-50">
             {[
               { href: "/dashboard/settings/profile", label: "Profile", icon: User },
               { href: "/dashboard/settings/api-keys", label: "API Keys", icon: Key },
@@ -123,7 +124,7 @@ export function Navigation() {
                 <Link key={item.href} href={item.href}>
                   <button
                     onClick={() => { setActiveDropdown(null); setMobileMenuOpen(false); }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${location === item.href ? "text-purple-700 bg-purple-50" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${location === item.href ? "text-purple-700 bg-purple-50" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                       }`}
                   >
                     <Icon className="h-4 w-4" /> {item.label}
@@ -142,13 +143,13 @@ export function Navigation() {
             onClick={() => toggleDropdown("admin")}
             className={`text-sm px-3 py-2 rounded-lg transition-colors flex items-center gap-1 ${location.startsWith("/admin")
               ? "text-purple-700 bg-purple-50"
-              : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
+              : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
               }`}
           >
             Admin <ChevronDown className={`h-3 w-3 transition-transform ${activeDropdown === "admin" ? "rotate-180" : ""}`} />
           </button>
           {activeDropdown === "admin" && (
-            <div className="absolute top-full right-0 mt-2 w-52 bg-white/80 backdrop-blur-xl border border-gray-200/60 rounded-xl shadow-xl shadow-gray-200/50 p-2 z-50">
+            <div className="absolute top-full right-0 mt-2 w-52 bg-white border border-gray-200 rounded-xl shadow-xl shadow-gray-100 p-2 z-50">
               {[
                 { href: "/admin", label: "Admin Dashboard", icon: LayoutDashboard },
                 { href: "/admin/users", label: "Users", icon: Users },
@@ -162,7 +163,7 @@ export function Navigation() {
                   <Link key={item.href} href={item.href}>
                     <button
                       onClick={() => { setActiveDropdown(null); setMobileMenuOpen(false); }}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${location === item.href ? "text-purple-700 bg-purple-50" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${location === item.href ? "text-purple-700 bg-purple-50" : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                         }`}
                     >
                       <Icon className="h-4 w-4" /> {item.label}
@@ -213,7 +214,7 @@ export function Navigation() {
     : mobilePublicItems;
 
   return (
-    <nav className="bg-white/70 backdrop-blur-xl border-b border-gray-200/60 shadow-sm sticky top-0 z-50" ref={dropdownRef}>
+    <nav className="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-50" ref={dropdownRef}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -259,14 +260,14 @@ export function Navigation() {
               <>
                 {!isOnDashboard && (
                   <Link href="/dashboard">
-                    <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900 hover:bg-gray-100/60">
+                    <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900 hover:bg-gray-50">
                       <LayoutDashboard className="h-4 w-4 mr-2" /> Dashboard
                     </Button>
                   </Link>
                 )}
                 {isOnDashboard && (
                   <Link href="/home">
-                    <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900 hover:bg-gray-100/60">
+                    <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900 hover:bg-gray-50">
                       <Globe className="h-4 w-4 mr-2" /> Home
                     </Button>
                   </Link>
@@ -285,7 +286,7 @@ export function Navigation() {
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900 hover:bg-gray-100/60">
+                  <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900 hover:bg-gray-50">
                     Login
                   </Button>
                 </Link>
@@ -303,7 +304,7 @@ export function Navigation() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
+              className="text-gray-600 hover:text-gray-900 hover:bg-gray-50"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -314,13 +315,13 @@ export function Navigation() {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="lg:hidden">
-            <div className="px-2 pt-2 pb-6 space-y-1 border-t border-gray-200/60">
+            <div className="px-2 pt-2 pb-6 space-y-1 border-t border-gray-200">
               {mobileItems.map((item) => (
                 <Link key={item.path} href={item.path}>
                   <button
                     className={`w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors ${location === item.path
                       ? "bg-purple-50 text-purple-700"
-                      : "text-gray-600 hover:bg-gray-100/60 hover:text-gray-900"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
                       }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -344,7 +345,7 @@ export function Navigation() {
                   {isOnDashboard && (
                     <Link href="/home">
                       <button onClick={() => setMobileMenuOpen(false)}
-                        className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100/60">
+                        className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
                         <Globe className="h-4 w-4 inline mr-2" /> Home
                       </button>
                     </Link>
@@ -360,7 +361,7 @@ export function Navigation() {
                 <>
                   <Link href="/login">
                     <button onClick={() => setMobileMenuOpen(false)}
-                      className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100/60">
+                      className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50">
                       Login
                     </button>
                   </Link>

@@ -112,6 +112,18 @@
   animation: magic-expand 1.5s cubic-bezier(.23,1,.32,1) forwards;
 }
 
+/* Genie emergence from lamp */
+@keyframes genie-emerge {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(80px) scale(0.2); filter: blur(8px); }
+  30%  { opacity: 0.7; transform: translateX(-50%) translateY(20px) scale(0.7); filter: blur(3px); }
+  60%  { opacity: 1; transform: translateX(-50%) translateY(-10px) scale(1.05); filter: blur(0); }
+  80%  { transform: translateX(-50%) translateY(5px) scale(0.98); }
+  100% { opacity: 1; transform: translateX(-50%) translateY(0) scale(1); filter: blur(0); }
+}
+.animate-genie-emerge {
+  animation: genie-emerge 1.2s cubic-bezier(.23,1,.32,1) forwards;
+}
+
 /* Suppress ResizeObserver warnings */
 .resize-observer-suppress {
   contain: layout style;

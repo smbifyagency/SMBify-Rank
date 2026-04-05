@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    SiteGenie — Animated Splash / Entry Page
-   User rubs the magic lamp to enter the app.
+   User rubs the magic lamp → genie emerges → navigates to homepage.
    ═══════════════════════════════════════════════════════════════════════════ */
 
 // ─── Sparkle particle ──────────────────────────────────────────────────────
@@ -67,13 +67,13 @@ export default function GenieSplash() {
   const [rubTrails, setRubTrails] = useState<{ id: number; x: number; y: number }[]>([]);
   const [lampGlow, setLampGlow] = useState(0);
   const [entered, setEntered] = useState(false);
-  const [showSmoke, setShowSmoke] = useState(false);
-  const [showWebsite, setShowWebsite] = useState(false);
+  const [showGenie, setShowGenie] = useState(false);
+  const [showMessage, setShowMessage] = useState(false);
   const lastPos = useRef<{ x: number; y: number } | null>(null);
   const trailId = useRef(0);
   const lampRef = useRef<HTMLDivElement>(null);
   const pointerDown = useRef(false);
-  const THRESHOLD = 150; // rub distance threshold — a few swipes triggers entry
+  const THRESHOLD = 150;
 
   // Clean up old trails
   useEffect(() => {
@@ -83,14 +83,12 @@ export default function GenieSplash() {
   }, [rubTrails]);
 
   const handleRubMove = useCallback((clientX: number, clientY: number) => {
-    // MUST be pressing/clicking to rub — no accidental hover triggers
     if (!lampRef.current || entered || !pointerDown.current) return;
 
     const rect = lampRef.current.getBoundingClientRect();
     const x = clientX - rect.left;
     const y = clientY - rect.top;
 
-    // Only count rubs inside lamp area
     if (x < -40 || x > rect.width + 40 || y < -40 || y > rect.height + 40) return;
 
     if (lastPos.current) {
@@ -108,7 +106,6 @@ export default function GenieSplash() {
           return next;
         });
 
-        // Add sparkle trail
         trailId.current++;
         setRubTrails(prev => [...prev, { id: trailId.current, x: clientX - rect.left, y: clientY - rect.top }]);
       }
@@ -129,12 +126,13 @@ export default function GenieSplash() {
   const triggerEntry = useCallback(() => {
     if (entered) return;
     setEntered(true);
-    setShowSmoke(true);
 
-    // Phase 1: smoke intensifies + lamp glows brighter (1s)
-    setTimeout(() => setShowWebsite(true), 1000);
-    // Phase 2: quick "Your wish is granted" then navigate
-    setTimeout(() => setLocation("/home"), 2500);
+    // Phase 1: Genie emerges from lamp (0.5s delay)
+    setTimeout(() => setShowGenie(true), 500);
+    // Phase 2: "Your wish is granted" message (1.5s)
+    setTimeout(() => setShowMessage(true), 1500);
+    // Phase 3: Navigate to homepage (3.5s total)
+    setTimeout(() => setLocation("/home"), 3500);
   }, [entered, setLocation]);
 
   const progress = rubProgress / THRESHOLD;
@@ -184,7 +182,7 @@ export default function GenieSplash() {
       {/* Main content container */}
       <div className="flex flex-col items-center justify-center h-full relative">
 
-        {/* Title — fades up */}
+        {/* Title — fades up on entry */}
         <div
           className="text-center mb-8 transition-all duration-[2000ms]"
           style={{
@@ -213,7 +211,7 @@ export default function GenieSplash() {
             width: 280,
             height: 280,
             transition: "transform 0.6s cubic-bezier(.23,1,.32,1)",
-            transform: entered ? "scale(1.3) translateY(20px)" : `scale(${1 + progress * 0.1})`,
+            transform: entered ? "scale(0.8) translateY(60px)" : `scale(${1 + progress * 0.1})`,
           }}
         >
           {/* Lamp glow ring */}
@@ -228,7 +226,7 @@ export default function GenieSplash() {
           />
 
           {/* Smoke from lamp */}
-          {(showSmoke || progress > 0.3) && (
+          {(entered || progress > 0.3) && (
             <div className="absolute inset-0 overflow-visible">
               {smokeParticles.map((p, i) => (
                 <SmokeParticle key={i} {...p} />
@@ -236,131 +234,18 @@ export default function GenieSplash() {
             </div>
           )}
 
-          {/* SVG Lamp — realistic Aladdin-style golden lamp */}
+          {/* Real Lamp SVG Image */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <svg
-              viewBox="0 0 300 260"
-              className="w-52 h-52 sm:w-64 sm:h-64 drop-shadow-2xl"
+            <img
+              src="/magic-lamp.svg"
+              alt="Magic Lamp"
+              className="w-52 h-52 sm:w-64 sm:h-64"
+              draggable={false}
               style={{
                 filter: `drop-shadow(0 0 ${12 + lampGlow * 30}px rgba(245,158,11,${0.3 + lampGlow * 0.5})) drop-shadow(0 0 ${6 + lampGlow * 15}px rgba(124,58,237,${0.2 + lampGlow * 0.3}))`,
                 transition: "filter 0.3s ease",
               }}
-            >
-              {/* Base plate */}
-              <ellipse cx="148" cy="220" rx="80" ry="20" fill="url(#rBasePlate)" />
-              <ellipse cx="148" cy="218" rx="72" ry="16" fill="url(#rBaseTop)" />
-
-              {/* Lamp body — fat belly */}
-              <path d="M76 195 C76 145, 100 115, 148 105 C196 115, 220 145, 220 195 Z" fill="url(#rBodyGrad)" />
-              {/* Body highlight — left reflection */}
-              <path d="M90 180 C92 150, 108 125, 135 115 C120 125, 100 150, 95 180 Z" fill="url(#rBodyHighlight)" opacity="0.5" />
-              {/* Body rim */}
-              <ellipse cx="148" cy="195" rx="72" ry="18" fill="url(#rBodyRim)" />
-              <ellipse cx="148" cy="193" rx="68" ry="15" fill="url(#rBodyRimInner)" />
-
-              {/* Neck */}
-              <path d="M120 108 L118 85 C118 78, 125 72, 148 70 C171 72, 178 78, 178 85 L176 108" fill="url(#rNeckGrad)" />
-              {/* Neck ring */}
-              <ellipse cx="148" cy="108" rx="28" ry="6" fill="url(#rNeckRing)" />
-
-              {/* Lid / dome */}
-              <path d="M122 85 C122 65, 132 52, 148 48 C164 52, 174 65, 174 85" fill="url(#rLidGrad)" />
-              <ellipse cx="148" cy="85" rx="26" ry="5" fill="#D4A017" opacity="0.4" />
-
-              {/* Tip / finial */}
-              <ellipse cx="148" cy="48" rx="6" ry="4" fill="url(#rFinial)" />
-              <circle cx="148" cy="42" r="4" fill="#FBBF24" opacity={0.7 + lampGlow * 0.3}>
-                <animate attributeName="r" values="3;5;3" dur="2s" repeatCount="indefinite" />
-              </circle>
-
-              {/* Flame / magic glow from tip */}
-              <ellipse cx="148" cy="34" rx={3 + lampGlow * 4} ry={6 + lampGlow * 8} fill="url(#rFlameGrad)" opacity={0.4 + lampGlow * 0.6}>
-                <animate attributeName="ry" values={`${5 + lampGlow * 6};${8 + lampGlow * 10};${5 + lampGlow * 6}`} dur="1.5s" repeatCount="indefinite" />
-              </ellipse>
-
-              {/* Spout — long curved pouring spout */}
-              <path d="M220 175 C238 168, 252 165, 262 148 C268 138, 270 130, 265 122" stroke="url(#rSpoutGrad)" strokeWidth="12" fill="none" strokeLinecap="round" />
-              <path d="M220 175 C238 168, 252 165, 262 148 C268 138, 270 130, 265 122" stroke="url(#rSpoutHighlight)" strokeWidth="5" fill="none" strokeLinecap="round" opacity="0.3" />
-              {/* Spout opening */}
-              <ellipse cx="264" cy="122" rx="5" ry="3" fill="#D4A017" />
-
-              {/* Handle — big ornate loop */}
-              <path d="M76 155 C52 150, 38 165, 40 185 C42 200, 56 210, 76 200" stroke="url(#rHandleGrad)" strokeWidth="10" fill="none" strokeLinecap="round" />
-              <path d="M76 155 C52 150, 38 165, 40 185 C42 200, 56 210, 76 200" stroke="#FBBF24" strokeWidth="4" fill="none" strokeLinecap="round" opacity="0.25" />
-
-              {/* Decorative bands on body */}
-              <ellipse cx="148" cy="145" rx="56" ry="10" fill="none" stroke="#FBBF24" strokeWidth="1.5" opacity="0.3" />
-              <ellipse cx="148" cy="165" rx="64" ry="13" fill="none" stroke="#FBBF24" strokeWidth="1" opacity="0.2" />
-
-              {/* Ornamental pattern on belly center */}
-              <path d="M130 148 C135 140, 148 136, 166 140 C160 148, 148 152, 130 148 Z" fill="#FBBF24" opacity="0.15" />
-
-              <defs>
-                <linearGradient id="rBasePlate" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#C8910A" />
-                  <stop offset="100%" stopColor="#8B6508" />
-                </linearGradient>
-                <linearGradient id="rBaseTop" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#E8B818" />
-                  <stop offset="100%" stopColor="#C8910A" />
-                </linearGradient>
-                <linearGradient id="rBodyGrad" x1="0.2" y1="0" x2="0.8" y2="1">
-                  <stop offset="0%" stopColor="#F5C842" />
-                  <stop offset="30%" stopColor="#D4A017" />
-                  <stop offset="70%" stopColor="#B8860B" />
-                  <stop offset="100%" stopColor="#8B6508" />
-                </linearGradient>
-                <linearGradient id="rBodyHighlight" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#FFF4C8" />
-                  <stop offset="100%" stopColor="#F5C842" stopOpacity="0" />
-                </linearGradient>
-                <linearGradient id="rBodyRim" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#FBBF24" />
-                  <stop offset="100%" stopColor="#B8860B" />
-                </linearGradient>
-                <linearGradient id="rBodyRimInner" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#D4A017" />
-                  <stop offset="100%" stopColor="#C8910A" />
-                </linearGradient>
-                <linearGradient id="rNeckGrad" x1="0.3" y1="0" x2="0.7" y2="1">
-                  <stop offset="0%" stopColor="#F5C842" />
-                  <stop offset="100%" stopColor="#C8910A" />
-                </linearGradient>
-                <linearGradient id="rNeckRing" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#B8860B" />
-                  <stop offset="50%" stopColor="#FBBF24" />
-                  <stop offset="100%" stopColor="#B8860B" />
-                </linearGradient>
-                <linearGradient id="rLidGrad" x1="0.2" y1="0" x2="0.8" y2="1">
-                  <stop offset="0%" stopColor="#F5D862" />
-                  <stop offset="50%" stopColor="#D4A017" />
-                  <stop offset="100%" stopColor="#B8860B" />
-                </linearGradient>
-                <linearGradient id="rFinial" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#FBBF24" />
-                  <stop offset="100%" stopColor="#D4A017" />
-                </linearGradient>
-                <radialGradient id="rFlameGrad" cx="0.5" cy="0.8" r="0.6">
-                  <stop offset="0%" stopColor="#FDE68A" />
-                  <stop offset="40%" stopColor="#F59E0B" />
-                  <stop offset="100%" stopColor="#F59E0B" stopOpacity="0" />
-                </radialGradient>
-                <linearGradient id="rSpoutGrad" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#D4A017" />
-                  <stop offset="50%" stopColor="#F5C842" />
-                  <stop offset="100%" stopColor="#B8860B" />
-                </linearGradient>
-                <linearGradient id="rSpoutHighlight" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#FFF4C8" />
-                  <stop offset="100%" stopColor="#FBBF24" />
-                </linearGradient>
-                <linearGradient id="rHandleGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#D4A017" />
-                  <stop offset="50%" stopColor="#F5C842" />
-                  <stop offset="100%" stopColor="#B8860B" />
-                </linearGradient>
-              </defs>
-            </svg>
+            />
           </div>
 
           {/* Rub sparkle trails */}
@@ -368,6 +253,27 @@ export default function GenieSplash() {
             <RubTrail key={t.id} x={t.x} y={t.y} />
           ))}
         </div>
+
+        {/* Genie emerging from lamp */}
+        {showGenie && (
+          <div
+            className="absolute animate-genie-emerge pointer-events-none"
+            style={{
+              top: "15%",
+              left: "50%",
+              transform: "translateX(-50%)",
+            }}
+          >
+            <img
+              src="/genie.svg"
+              alt="Genie"
+              className="w-40 h-40 sm:w-52 sm:h-52"
+              style={{
+                filter: "drop-shadow(0 0 30px rgba(124,58,237,0.6)) drop-shadow(0 0 60px rgba(245,158,11,0.3))",
+              }}
+            />
+          </div>
+        )}
 
         {/* Rub progress indicator */}
         <div
@@ -401,17 +307,9 @@ export default function GenieSplash() {
           </p>
         </div>
 
-        {/* Magic explosion on entry */}
-        {entered && !showWebsite && (
-          <div className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none">
-            <p className="text-purple-300/70 text-xl sm:text-2xl font-medium animate-pulse-subtle">
-              ✨ The magic is building... ✨
-            </p>
-          </div>
-        )}
-
-        {showWebsite && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center">
+        {/* "Your wish is granted" overlay */}
+        {showMessage && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
             <div
               className="absolute inset-0"
               style={{
@@ -420,7 +318,12 @@ export default function GenieSplash() {
               }}
             />
             <div className="relative z-10 text-center animate-fade-scale-in">
-              <div className="text-6xl sm:text-7xl mb-6">🧞</div>
+              <img
+                src="/genie.svg"
+                alt="Genie"
+                className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-6"
+                style={{ filter: "drop-shadow(0 0 20px rgba(192,132,252,0.5))" }}
+              />
               <h2 className="text-4xl sm:text-5xl font-black text-white mb-4">
                 ✨ Your wish is granted ✨
               </h2>
