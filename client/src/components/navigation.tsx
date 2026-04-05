@@ -74,8 +74,8 @@ export function Navigation() {
           onClick?.();
         }}
         className={`text-sm px-3 py-2 rounded-lg transition-colors ${location === href
-          ? "text-white bg-white/10"
-          : "text-gray-400 hover:text-white hover:bg-white/5"
+          ? "text-purple-700 bg-purple-50"
+          : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
           }`}
       >
         {label}
@@ -106,14 +106,14 @@ export function Navigation() {
         <button
           onClick={() => toggleDropdown("settings")}
           className={`text-sm px-3 py-2 rounded-lg transition-colors flex items-center gap-1 ${location.startsWith("/dashboard/settings")
-            ? "text-white bg-white/10"
-            : "text-gray-400 hover:text-white hover:bg-white/5"
+            ? "text-purple-700 bg-purple-50"
+            : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
             }`}
         >
           Settings <ChevronDown className={`h-3 w-3 transition-transform ${activeDropdown === "settings" ? "rotate-180" : ""}`} />
         </button>
         {activeDropdown === "settings" && (
-          <div className="absolute top-full right-0 mt-2 w-52 bg-gray-900 border border-white/10 rounded-xl shadow-xl shadow-black/30 p-2 z-50">
+          <div className="absolute top-full right-0 mt-2 w-52 bg-white/80 backdrop-blur-xl border border-gray-200/60 rounded-xl shadow-xl shadow-gray-200/50 p-2 z-50">
             {[
               { href: "/dashboard/settings/profile", label: "Profile", icon: User },
               { href: "/dashboard/settings/api-keys", label: "API Keys", icon: Key },
@@ -124,7 +124,7 @@ export function Navigation() {
                 <Link key={item.href} href={item.href}>
                   <button
                     onClick={() => { setActiveDropdown(null); setMobileMenuOpen(false); }}
-                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${location === item.href ? "text-white bg-white/10" : "text-gray-400 hover:text-white hover:bg-white/5"
+                    className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${location === item.href ? "text-purple-700 bg-purple-50" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
                       }`}
                   >
                     <Icon className="h-4 w-4" /> {item.label}
@@ -142,14 +142,14 @@ export function Navigation() {
           <button
             onClick={() => toggleDropdown("admin")}
             className={`text-sm px-3 py-2 rounded-lg transition-colors flex items-center gap-1 ${location.startsWith("/admin")
-              ? "text-white bg-white/10"
-              : "text-gray-400 hover:text-white hover:bg-white/5"
+              ? "text-purple-700 bg-purple-50"
+              : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
               }`}
           >
             Admin <ChevronDown className={`h-3 w-3 transition-transform ${activeDropdown === "admin" ? "rotate-180" : ""}`} />
           </button>
           {activeDropdown === "admin" && (
-            <div className="absolute top-full right-0 mt-2 w-52 bg-gray-900 border border-white/10 rounded-xl shadow-xl shadow-black/30 p-2 z-50">
+            <div className="absolute top-full right-0 mt-2 w-52 bg-white/80 backdrop-blur-xl border border-gray-200/60 rounded-xl shadow-xl shadow-gray-200/50 p-2 z-50">
               {[
                 { href: "/admin", label: "Admin Dashboard", icon: LayoutDashboard },
                 { href: "/admin/users", label: "Users", icon: Users },
@@ -163,7 +163,7 @@ export function Navigation() {
                   <Link key={item.href} href={item.href}>
                     <button
                       onClick={() => { setActiveDropdown(null); setMobileMenuOpen(false); }}
-                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${location === item.href ? "text-white bg-white/10" : "text-gray-400 hover:text-white hover:bg-white/5"
+                      className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm transition-colors ${location === item.href ? "text-purple-700 bg-purple-50" : "text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
                         }`}
                     >
                       <Icon className="h-4 w-4" /> {item.label}
@@ -215,7 +215,7 @@ export function Navigation() {
     : mobilePublicItems;
 
   return (
-    <nav className="bg-gray-950/80 backdrop-blur-md border-b border-white/10 sticky top-0 z-50" ref={dropdownRef}>
+    <nav className="bg-white/70 backdrop-blur-xl border-b border-gray-200/60 shadow-sm sticky top-0 z-50" ref={dropdownRef}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -224,7 +224,7 @@ export function Navigation() {
               <div className="flex items-center gap-2 cursor-pointer group">
                 <img src="/favicon.svg" alt="SiteGenie" className="h-9 w-9 rounded-lg shadow-lg group-hover:shadow-purple-500/30 transition-all" />
                 <h1 className="text-lg font-bold tracking-tight">
-                  <span className="bg-gradient-to-r from-purple-400 to-purple-300 bg-clip-text text-transparent">Site</span><span className="bg-gradient-to-r from-amber-300 to-yellow-300 bg-clip-text text-transparent">Genie</span>
+                  <span className="bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">Site</span><span className="bg-gradient-to-r from-amber-500 to-amber-400 bg-clip-text text-transparent">Genie</span>
                 </h1>
               </div>
             </Link>
@@ -261,14 +261,14 @@ export function Navigation() {
               <>
                 {!isOnDashboard && (
                   <Link href="/dashboard">
-                    <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-white/5">
+                    <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900 hover:bg-gray-100/60">
                       <LayoutDashboard className="h-4 w-4 mr-2" /> Dashboard
                     </Button>
                   </Link>
                 )}
                 {isOnDashboard && (
                   <Link href="/home">
-                    <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-white/5">
+                    <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900 hover:bg-gray-100/60">
                       <Globe className="h-4 w-4 mr-2" /> Home
                     </Button>
                   </Link>
@@ -277,7 +277,7 @@ export function Navigation() {
                   variant="ghost"
                   size="sm"
                   onClick={handleLogout}
-                  className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                  className="text-red-500 hover:text-red-600 hover:bg-red-50"
                   data-testid="button-logout-desktop"
                 >
                   <LogOut className="h-4 w-4 mr-2" />
@@ -287,12 +287,12 @@ export function Navigation() {
             ) : (
               <>
                 <Link href="/login">
-                  <Button variant="ghost" size="sm" className="text-gray-300 hover:text-white hover:bg-white/5">
+                  <Button variant="ghost" size="sm" className="text-gray-600 hover:text-gray-900 hover:bg-gray-100/60">
                     Login
                   </Button>
                 </Link>
                 <Link href="/signup">
-                  <Button size="sm" className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-semibold shadow-lg shadow-[#7C3AED]/25">
+                  <Button size="sm" className="bg-[#7C3AED] hover:bg-[#9333EA] text-white font-semibold shadow-lg shadow-[#7C3AED]/25">
                     Get Started Free
                   </Button>
                 </Link>
@@ -305,7 +305,7 @@ export function Navigation() {
             <Button
               variant="ghost"
               size="sm"
-              className="text-gray-300 hover:text-white hover:bg-white/5"
+              className="text-gray-600 hover:text-gray-900 hover:bg-gray-100/60"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
               {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
@@ -316,13 +316,13 @@ export function Navigation() {
         {/* Mobile Navigation */}
         {mobileMenuOpen && (
           <div className="lg:hidden">
-            <div className="px-2 pt-2 pb-6 space-y-1 border-t border-white/10">
+            <div className="px-2 pt-2 pb-6 space-y-1 border-t border-gray-200/60">
               {mobileItems.map((item) => (
                 <Link key={item.path} href={item.path}>
                   <button
                     className={`w-full text-left px-4 py-2.5 rounded-lg text-sm transition-colors ${location === item.path
-                      ? "bg-[#7C3AED]/10 text-[#7C3AED]"
-                      : "text-gray-300 hover:bg-white/5 hover:text-white"
+                      ? "bg-purple-50 text-purple-700"
+                      : "text-gray-600 hover:bg-gray-100/60 hover:text-gray-900"
                       }`}
                     onClick={() => setMobileMenuOpen(false)}
                   >
@@ -331,14 +331,14 @@ export function Navigation() {
                 </Link>
               ))}
 
-              <div className="h-px bg-white/10 my-3" />
+              <div className="h-px bg-gray-200 my-3" />
 
               {isAuthenticated ? (
                 <>
                   {!isOnDashboard && (
                     <Link href="/dashboard">
                       <button onClick={() => setMobileMenuOpen(false)}
-                        className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-[#7C3AED] hover:bg-[#7C3AED]/10">
+                        className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-purple-700 hover:bg-purple-50">
                         <LayoutDashboard className="h-4 w-4 inline mr-2" /> Dashboard
                       </button>
                     </Link>
@@ -346,13 +346,13 @@ export function Navigation() {
                   {isOnDashboard && (
                     <Link href="/home">
                       <button onClick={() => setMobileMenuOpen(false)}
-                        className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-white/5">
+                        className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100/60">
                         <Globe className="h-4 w-4 inline mr-2" /> Home
                       </button>
                     </Link>
                   )}
                   <button
-                    className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-red-400 hover:bg-red-500/10"
+                    className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-red-500 hover:bg-red-50"
                     onClick={handleLogout}
                   >
                     <LogOut className="h-4 w-4 inline mr-2" /> Logout
@@ -362,13 +362,13 @@ export function Navigation() {
                 <>
                   <Link href="/login">
                     <button onClick={() => setMobileMenuOpen(false)}
-                      className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-white/5">
+                      className="w-full text-left px-4 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-100/60">
                       Login
                     </button>
                   </Link>
                   <Link href="/signup">
                     <button onClick={() => setMobileMenuOpen(false)}
-                      className="w-full text-center mt-2 px-4 py-3 rounded-xl text-sm font-semibold bg-[#7C3AED] hover:bg-[#9333EA] text-black">
+                      className="w-full text-center mt-2 px-4 py-3 rounded-xl text-sm font-semibold bg-[#7C3AED] hover:bg-[#9333EA] text-white">
                       Get Started Free
                     </button>
                   </Link>

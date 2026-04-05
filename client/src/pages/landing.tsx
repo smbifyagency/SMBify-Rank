@@ -14,7 +14,7 @@ export default function Landing() {
   const [, setLocation] = useLocation();
 
   return (
-    <>
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-50/50 via-white to-white">
       {/* ═══════ HERO ═══════ */}
       <section className="relative pt-32 pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
         <div className="absolute inset-0">
@@ -73,8 +73,8 @@ export default function Landing() {
 
             {/* Right — browser mockup */}
             <div className="flex-1 w-full max-w-xl">
-              <div className="rounded-2xl border border-[#7C3AED]/15 bg-white/90 overflow-hidden shadow-2xl shadow-gray-300/50">
-                <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
+              <div className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-xl overflow-hidden shadow-2xl shadow-purple-200/30 ring-1 ring-white/50">
+                <div className="flex items-center gap-2 px-4 py-3 bg-white/60 border-b border-gray-100/50">
                   <span className="w-3 h-3 rounded-full bg-red-500" />
                   <span className="w-3 h-3 rounded-full bg-yellow-500" />
                   <span className="w-3 h-3 rounded-full bg-green-500" />
@@ -101,7 +101,7 @@ export default function Landing() {
 
           {/* Stats row */}
           <div className="mt-20 max-w-5xl mx-auto">
-            <div className="rounded-2xl border border-[#7C3AED]/15 bg-[#7C3AED]/5 backdrop-blur-sm p-8 sm:p-10">
+            <div className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-xl shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-8 sm:p-10">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 {[
                   { value: "15+", label: "Pro Templates" },
@@ -134,7 +134,7 @@ export default function Landing() {
               { icon: "⏳", title: "Weeks of Waiting", desc: "Developers take weeks (sometimes months) to deliver. Meanwhile, your competitors are capturing all the local leads." },
               { icon: "📉", title: "Zero SEO Results", desc: "Beautiful websites that never show up on Google. No schema markup, no meta optimization — just a pretty digital brochure." },
             ].map((p) => (
-              <div key={p.title} className="rounded-2xl border border-[#7C3AED]/15 bg-white shadow-sm p-8 transition-all hover:-translate-y-1 hover:border-[#7C3AED]/30">
+              <div key={p.title} className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-8 transition-all hover:-translate-y-1 hover:shadow-xl hover:border-purple-200">
                 <div className="text-4xl mb-4">{p.icon}</div>
                 <h3 className="text-lg font-bold text-gray-900 mb-2">{p.title}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed">{p.desc}</p>
@@ -162,7 +162,7 @@ export default function Landing() {
               <div key={item.step} className="relative">
                 {i < 2 && <div className="hidden md:block absolute top-12 left-[calc(100%_-_1rem)] w-[calc(100%_-_2rem)] h-px bg-gradient-to-r from-[#7C3AED]/30 to-transparent z-10" />}
                 <div className="text-center">
-                  <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-[#7C3AED] text-black text-xl font-bold mb-6 shadow-lg shadow-[#7C3AED]/30">{item.step}</div>
+                  <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-[#7C3AED] text-white text-xl font-bold mb-6 shadow-lg shadow-[#7C3AED]/30">{item.step}</div>
                   <h3 className="text-xl font-semibold text-gray-900 mb-3">{item.title}</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
                 </div>
@@ -183,8 +183,8 @@ export default function Landing() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* AI Content */}
-            <div className="group rounded-2xl border border-[#7C3AED]/15 bg-gradient-to-b from-[#7C3AED]/10 to-[#7C3AED]/3 p-7 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-[#7C3AED]/10 hover:border-[#7C3AED]/30">
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-[#7C3AED]/10"><Bot className="h-6 w-6 text-purple-700" /></div>
+            <div className="group rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200/30 hover:border-purple-200">
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-100"><Bot className="h-6 w-6 text-purple-700" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">AI Content Generation</h3>
               <p className="text-gray-600 text-sm mb-4">2000+ words per page, humanized and SEO-optimized.</p>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -195,8 +195,8 @@ export default function Landing() {
             </div>
 
             {/* Blog System */}
-            <div className="group rounded-2xl border border-[#7C3AED]/15 bg-gradient-to-b from-[#7C3AED]/10 to-[#7C3AED]/3 p-7 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-[#7C3AED]/10 hover:border-[#7C3AED]/30">
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-[#7C3AED]/10"><PenTool className="h-6 w-6 text-purple-700" /></div>
+            <div className="group rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200/30 hover:border-purple-200">
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-100"><PenTool className="h-6 w-6 text-purple-700" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Full Blog System</h3>
               <p className="text-gray-600 text-sm mb-4">AI blog engine with bulk generation and rich editing.</p>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -207,8 +207,8 @@ export default function Landing() {
             </div>
 
             {/* Visual Editor */}
-            <div className="group rounded-2xl border border-[#7C3AED]/15 bg-gradient-to-b from-[#7C3AED]/10 to-[#7C3AED]/3 p-7 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-[#7C3AED]/10 hover:border-[#7C3AED]/30">
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-[#7C3AED]/10"><Palette className="h-6 w-6 text-purple-700" /></div>
+            <div className="group rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200/30 hover:border-purple-200">
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-100"><Palette className="h-6 w-6 text-purple-700" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Visual Customization</h3>
               <p className="text-gray-600 text-sm mb-4">Drag-and-drop editor with full branding control.</p>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -219,8 +219,8 @@ export default function Landing() {
             </div>
 
             {/* Deployment */}
-            <div className="group rounded-2xl border border-[#7C3AED]/15 bg-gradient-to-b from-[#7C3AED]/10 to-[#7C3AED]/3 p-7 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-[#7C3AED]/10 hover:border-[#7C3AED]/30">
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-[#7C3AED]/10"><Rocket className="h-6 w-6 text-purple-700" /></div>
+            <div className="group rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200/30 hover:border-purple-200">
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-100"><Rocket className="h-6 w-6 text-purple-700" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">One-Click Deployment</h3>
               <p className="text-gray-600 text-sm mb-4">Deploy to Netlify instantly with free SSL & CDN.</p>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -231,8 +231,8 @@ export default function Landing() {
             </div>
 
             {/* Admin Dashboard */}
-            <div className="group rounded-2xl border border-[#7C3AED]/15 bg-gradient-to-b from-[#7C3AED]/10 to-[#7C3AED]/3 p-7 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-[#7C3AED]/10 hover:border-[#7C3AED]/30">
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-[#7C3AED]/10"><BarChart3 className="h-6 w-6 text-purple-700" /></div>
+            <div className="group rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200/30 hover:border-purple-200">
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-100"><BarChart3 className="h-6 w-6 text-purple-700" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Admin Dashboard</h3>
               <p className="text-gray-600 text-sm mb-4">Full control panel for agencies and teams.</p>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -243,8 +243,8 @@ export default function Landing() {
             </div>
 
             {/* Security & API Keys */}
-            <div className="group rounded-2xl border border-[#7C3AED]/15 bg-gradient-to-b from-[#7C3AED]/10 to-[#7C3AED]/3 p-7 transition-all hover:-translate-y-1 hover:shadow-lg hover:shadow-[#7C3AED]/10 hover:border-[#7C3AED]/30">
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-[#7C3AED]/10"><Lock className="h-6 w-6 text-purple-700" /></div>
+            <div className="group rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200/30 hover:border-purple-200">
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-100"><Lock className="h-6 w-6 text-purple-700" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Security & API Keys</h3>
               <p className="text-gray-600 text-sm mb-4">Bring your own API keys with encrypted storage.</p>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -285,7 +285,7 @@ export default function Landing() {
               { emoji: "🔧", name: "Water Damage", color: "from-blue-500/15" },
               { emoji: "➕", name: "More Coming", color: "from-gray-500/15" },
             ].map((t) => (
-              <div key={t.name} className={`rounded-2xl border border-gray-200 bg-gradient-to-b ${t.color} to-transparent p-5 text-center transition-all hover:-translate-y-1 hover:border-[#7C3AED]/30`}>
+              <div key={t.name} className={`rounded-2xl border border-white/60 bg-white/50 backdrop-blur-sm shadow-md shadow-purple-100/10 ring-1 ring-white/50 p-5 text-center transition-all hover:-translate-y-1 hover:border-purple-200 hover:shadow-lg`}>
                 <div className="text-3xl mb-3">{t.emoji}</div>
                 <h4 className="text-sm font-bold text-gray-900">{t.name}</h4>
               </div>
@@ -318,7 +318,7 @@ export default function Landing() {
               { title: "Image Alt Text", desc: "SEO-optimized alt text auto-generated for every image" },
               { title: "Canonical URLs", desc: "Prevent duplicate content issues with auto canonical tags" },
             ].map((item) => (
-              <div key={item.title} className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white shadow-sm p-5 transition-all hover:border-[#7C3AED]/20">
+              <div key={item.title} className="flex items-start gap-4 rounded-xl border border-white/60 bg-white/50 backdrop-blur-sm shadow-md shadow-purple-100/10 ring-1 ring-white/50 p-5 transition-all hover:border-purple-200 hover:shadow-lg">
                 <div className="flex items-center justify-center min-w-[32px] h-8 rounded-lg bg-[#7C3AED]/15">
                   <Check className="h-4 w-4 text-purple-700" />
                 </div>
@@ -347,7 +347,7 @@ export default function Landing() {
               { icon: "🔵", name: "Google Gemini 2.5", desc: "Google's latest AI" },
               { icon: "🟣", name: "OpenRouter", desc: "100+ models via one key" },
             ].map((m) => (
-              <div key={m.name} className="flex items-center gap-4 px-6 py-4 rounded-2xl border border-gray-200 bg-white shadow-sm transition-all hover:border-[#7C3AED]/30">
+              <div key={m.name} className="flex items-center gap-4 px-6 py-4 rounded-2xl border border-white/60 bg-white/50 backdrop-blur-sm shadow-md shadow-purple-100/10 ring-1 ring-white/50 transition-all hover:border-purple-200 hover:shadow-lg">
                 <span className="text-2xl">{m.icon}</span>
                 <div className="text-left">
                   <div className="font-bold text-gray-900 text-sm">{m.name}</div>
@@ -374,7 +374,7 @@ export default function Landing() {
             <p className="text-gray-600 max-w-2xl mx-auto">Every website comes with all essential pages, fully written and SEO-optimized. No placeholders — real content.</p>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
-            <div className="rounded-2xl border border-[#7C3AED]/15 bg-white shadow-sm p-7">
+            <div className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7">
               <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-blue-500/10"><FileText className="h-6 w-6 text-blue-400" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-4">Core Pages</h3>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -383,7 +383,7 @@ export default function Landing() {
                 ))}
               </ul>
             </div>
-            <div className="rounded-2xl border border-[#7C3AED]/15 bg-white shadow-sm p-7">
+            <div className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7">
               <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-green-500/10"><MapPin className="h-6 w-6 text-green-400" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-4">Dynamic Pages</h3>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -392,7 +392,7 @@ export default function Landing() {
                 ))}
               </ul>
             </div>
-            <div className="rounded-2xl border border-[#7C3AED]/15 bg-white shadow-sm p-7">
+            <div className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7">
               <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-500/10"><Database className="h-6 w-6 text-purple-400" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-4">Technical Files</h3>
               <ul className="space-y-2 text-sm text-gray-600">
@@ -415,7 +415,7 @@ export default function Landing() {
             <p className="text-gray-600 max-w-xl mx-auto">See how we stack up against Wix, Squarespace, and WordPress.</p>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-gray-200">
+          <div className="overflow-x-auto rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50">
             <table className="w-full min-w-[600px] text-sm">
               <thead>
                 <tr className="bg-gray-50">
@@ -475,7 +475,7 @@ export default function Landing() {
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <div key={item.title} className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6 transition-all hover:-translate-y-1 hover:border-[#7C3AED]/20">
+                <div key={item.title} className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-md shadow-purple-100/10 ring-1 ring-white/50 p-6 transition-all hover:-translate-y-1 hover:border-purple-200 hover:shadow-lg">
                   <Icon className="h-8 w-8 text-purple-700 mb-4" />
                   <h3 className="text-base font-bold text-gray-900 mb-2">{item.title}</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
@@ -516,19 +516,19 @@ export default function Landing() {
             <div className="relative">
               <div className="inline-flex items-center gap-1 mb-6">
                 {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-5 w-5 fill-black/70 text-black/70" />
+                  <Star key={i} className="h-5 w-5 fill-white text-white" />
                 ))}
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold text-black mb-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
                 Ready to Build a Website That<br className="hidden sm:block" />Actually Ranks on Google?
               </h2>
-              <p className="text-black/70 max-w-lg mx-auto mb-8 text-lg">
+              <p className="text-white/80 max-w-lg mx-auto mb-8 text-lg">
                 Stop paying thousands for websites that don't perform. Start building websites that dominate — in minutes.
               </p>
               <Button
                 size="lg"
                 onClick={() => setLocation("/dashboard/websites")}
-                className="bg-black hover:bg-gray-50 text-purple-700 font-bold text-base px-10 py-6 rounded-xl shadow-xl transition-all hover:-translate-y-0.5"
+                className="bg-white hover:bg-white/90 text-purple-700 font-bold text-base px-10 py-6 rounded-xl shadow-xl transition-all hover:-translate-y-0.5"
                 data-testid="button-final-cta"
               >
                 <Sparkles className="mr-2 h-5 w-5" />
@@ -538,6 +538,6 @@ export default function Landing() {
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

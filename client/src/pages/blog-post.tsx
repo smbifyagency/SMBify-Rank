@@ -79,7 +79,7 @@ export default function BlogPost() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-white text-gray-900 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-500"></div>
       </div>
     );
@@ -90,7 +90,7 @@ export default function BlogPost() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white pt-20">
+    <div className="min-h-screen bg-white text-gray-900 pt-20">
       {/* SEO Meta Tags */}
       <title>{post.metaTitle || post.title}</title>
       <meta name="description" content={post.metaDescription || post.excerpt} />
@@ -99,7 +99,7 @@ export default function BlogPost() {
         {/* Back Button */}
         <div className="mb-8">
           <Link href="/blog">
-            <Button variant="ghost" className="gap-2 text-gray-400 hover:text-white hover:bg-white/5">
+            <Button variant="ghost" className="gap-2 text-gray-500 hover:text-gray-900 hover:bg-gray-100">
               <ArrowLeft className="h-4 w-4" />
               Back to Blog
             </Button>
@@ -115,7 +115,7 @@ export default function BlogPost() {
                 alt={post.featuredImageAlt || post.title}
                 className="w-full h-64 md:h-96 object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent" />
               {post.isAiGenerated && (
                 <Badge className="absolute top-4 right-4 bg-[#7C3AED] hover:bg-[#9333EA] text-black text-white border-0">
                   AI Generated
@@ -128,7 +128,7 @@ export default function BlogPost() {
           <div className="mb-8">
             <div className="flex flex-wrap items-center gap-3 mb-4 text-sm text-gray-400">
               {post.category && (
-                <Badge variant="outline" className="text-sm border-white/10 text-gray-300">
+                <Badge variant="outline" className="text-sm border-gray-200 text-gray-600">
                   {post.category}
                 </Badge>
               )}
@@ -159,7 +159,7 @@ export default function BlogPost() {
             </h1>
 
             {post.excerpt && (
-              <p className="text-xl text-gray-400 leading-relaxed mb-6">
+              <p className="text-xl text-gray-500 leading-relaxed mb-6">
                 {post.excerpt}
               </p>
             )}
@@ -168,7 +168,7 @@ export default function BlogPost() {
             {post.tags && post.tags.length > 0 && (
               <div className="flex flex-wrap gap-2 mb-6">
                 {post.tags.map((tag, index) => (
-                  <Badge key={index} variant="secondary" className="bg-white/5 text-gray-300 hover:bg-white/10 border-0">
+                  <Badge key={index} variant="secondary" className="bg-gray-100 text-gray-600 hover:bg-gray-200 border-0">
                     {tag}
                   </Badge>
                 ))}
@@ -177,21 +177,21 @@ export default function BlogPost() {
 
             {/* Social Actions */}
             <div className="flex gap-3">
-              <Button variant="outline" size="sm" className="gap-2 border-white/10 text-gray-300 bg-transparent hover:text-white hover:bg-white/5">
+              <Button variant="outline" size="sm" className="gap-2 border-gray-200 text-gray-600 bg-transparent hover:text-gray-900 hover:bg-gray-100">
                 <Share2 className="h-4 w-4" />
                 Share
               </Button>
-              <Button variant="outline" size="sm" className="gap-2 border-white/10 text-gray-300 bg-transparent hover:text-white hover:bg-white/5">
+              <Button variant="outline" size="sm" className="gap-2 border-gray-200 text-gray-600 bg-transparent hover:text-gray-900 hover:bg-gray-100">
                 <Heart className="h-4 w-4" />
                 Like
               </Button>
             </div>
           </div>
 
-          <Separator className="mb-8 border-white/10" />
+          <Separator className="mb-8 border-gray-200" />
 
           {/* Article Content */}
-          <div className="prose prose-lg prose-invert max-w-none mb-12 text-gray-300 prose-headings:text-white prose-a:text-[#7C3AED] prose-strong:text-white">
+          <div className="prose prose-lg max-w-none mb-12 text-gray-700 prose-headings:text-gray-900 prose-a:text-[#7C3AED] prose-strong:text-gray-900">
             <p className="mb-4">
               <span
                 dangerouslySetInnerHTML={{
@@ -201,17 +201,17 @@ export default function BlogPost() {
             </p>
           </div>
 
-          <Separator className="mb-8 border-white/10" />
+          <Separator className="mb-8 border-gray-200" />
 
           {/* Author Info */}
-          <Card className="mb-12 bg-white/[0.02] border-white/10 backdrop-blur-sm">
+          <Card className="mb-12 bg-white/60 border-gray-200/60 backdrop-blur-md shadow-md">
             <CardHeader>
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] rounded-full flex items-center justify-center text-white font-bold text-xl">
                   {post.authorName.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <CardTitle className="text-lg text-white">{post.authorName}</CardTitle>
+                  <CardTitle className="text-lg text-gray-900">{post.authorName}</CardTitle>
                   <CardDescription className="text-gray-400">Author</CardDescription>
                 </div>
               </div>
@@ -221,10 +221,10 @@ export default function BlogPost() {
           {/* Related Posts */}
           {relatedPosts.length > 0 && (
             <div>
-              <h2 className="text-3xl font-bold mb-8 text-white">Related Articles</h2>
+              <h2 className="text-3xl font-bold mb-8 text-gray-900">Related Articles</h2>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {relatedPosts.map((relatedPost) => (
-                  <Card key={relatedPost.id} className="group hover:shadow-lg transition-all duration-300 bg-white/[0.02] border-white/10 backdrop-blur-sm">
+                  <Card key={relatedPost.id} className="group hover:shadow-lg transition-all duration-300 bg-white/60 border-gray-200/60 backdrop-blur-md">
                     {relatedPost.featuredImage && (
                       <div className="relative overflow-hidden">
                         <img
@@ -242,7 +242,7 @@ export default function BlogPost() {
                     <CardHeader className="pb-3">
                       <div className="flex items-center gap-2 text-sm text-gray-400 mb-2">
                         {relatedPost.category && (
-                          <Badge variant="outline" className="text-xs border-white/10">
+                          <Badge variant="outline" className="text-xs border-gray-200">
                             {relatedPost.category}
                           </Badge>
                         )}
@@ -253,7 +253,7 @@ export default function BlogPost() {
                           </div>
                         )}
                       </div>
-                      <CardTitle className="text-lg group-hover:text-[#7C3AED] text-white transition-colors line-clamp-2">
+                      <CardTitle className="text-lg group-hover:text-[#7C3AED] text-gray-900 transition-colors line-clamp-2">
                         {relatedPost.title}
                       </CardTitle>
                       <CardDescription className="line-clamp-2 text-sm text-gray-400">
@@ -273,7 +273,7 @@ export default function BlogPost() {
                       </div>
 
                       <Link href={`/blog/${relatedPost.slug}`}>
-                        <Button variant="outline" size="sm" className="w-full border-white/10 text-gray-300 bg-transparent hover:text-white hover:bg-white/5 transition-colors">
+                        <Button variant="outline" size="sm" className="w-full border-gray-200 text-gray-600 bg-transparent hover:text-gray-900 hover:bg-gray-100 transition-colors">
                           Read More
                         </Button>
                       </Link>

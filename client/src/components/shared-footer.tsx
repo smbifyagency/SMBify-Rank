@@ -3,22 +3,22 @@ import { Globe, ArrowRight } from "lucide-react";
 
 export function SharedFooter() {
     return (
-        <footer className="relative bg-gray-950 text-white overflow-hidden">
+        <footer className="relative bg-white/70 backdrop-blur-xl border-t border-gray-200/60 text-gray-900 overflow-hidden">
             {/* Subtle gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-600/5 via-transparent to-amber-400/3" />
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-50/30 via-transparent to-amber-50/20" />
 
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Main Footer Content */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-8 py-16 border-b border-white/10">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-8 py-16 border-b border-gray-200/60">
                     {/* Brand */}
                     <div className="col-span-2">
                         <div className="flex items-center gap-3 mb-4">
                             <img src="/favicon.svg" alt="SiteGenie" className="h-10 w-10 rounded-lg shadow-lg" />
                             <span className="text-xl font-bold tracking-tight">
-                                <span className="bg-gradient-to-r from-purple-400 to-purple-300 bg-clip-text text-transparent">Site</span><span className="bg-gradient-to-r from-amber-300 to-yellow-300 bg-clip-text text-transparent">Genie</span>
+                                <span className="bg-gradient-to-r from-purple-700 to-purple-500 bg-clip-text text-transparent">Site</span><span className="bg-gradient-to-r from-amber-500 to-amber-400 bg-clip-text text-transparent">Genie</span>
                             </span>
                         </div>
-                        <p className="text-gray-400 leading-relaxed max-w-sm text-sm mb-6">
+                        <p className="text-gray-500 leading-relaxed max-w-sm text-sm mb-6">
                             The AI-powered website builder designed for local businesses. Create professional,
                             SEO-optimized websites in minutes — no coding required.
                         </p>
@@ -31,7 +31,7 @@ export function SharedFooter() {
 
                     {/* Product */}
                     <div>
-                        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Product</h4>
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Product</h4>
                         <ul className="space-y-3">
                             {[
                                 { href: "/features", label: "Features" },
@@ -42,7 +42,7 @@ export function SharedFooter() {
                                 { href: "/affiliates", label: "Affiliates" },
                             ].map((link) => (
                                 <li key={link.href}>
-                                    <Link href={link.href} className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-1 group">
+                                    <Link href={link.href} className="text-gray-500 hover:text-gray-900 transition-colors text-sm flex items-center gap-1 group">
                                         {link.label}
                                         <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                                     </Link>
@@ -53,7 +53,7 @@ export function SharedFooter() {
 
                     {/* Company */}
                     <div>
-                        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Company</h4>
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Company</h4>
                         <ul className="space-y-3">
                             {[
                                 { href: "/about", label: "About Us" },
@@ -64,7 +64,7 @@ export function SharedFooter() {
                                 { href: "/sitemap", label: "Sitemap" },
                             ].map((link) => (
                                 <li key={link.href}>
-                                    <Link href={link.href} className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-1 group">
+                                    <Link href={link.href} className="text-gray-500 hover:text-gray-900 transition-colors text-sm flex items-center gap-1 group">
                                         {link.label}
                                         <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                                     </Link>
@@ -75,14 +75,14 @@ export function SharedFooter() {
 
                     {/* Legal */}
                     <div>
-                        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-500 mb-4">Legal</h4>
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-4">Legal</h4>
                         <ul className="space-y-3">
                             {[
                                 { href: "/terms", label: "Terms of Service" },
                                 { href: "/privacy", label: "Privacy Policy" },
                             ].map((link) => (
                                 <li key={link.href}>
-                                    <Link href={link.href} className="text-gray-400 hover:text-white transition-colors text-sm flex items-center gap-1 group">
+                                    <Link href={link.href} className="text-gray-500 hover:text-gray-900 transition-colors text-sm flex items-center gap-1 group">
                                         {link.label}
                                         <ArrowRight className="h-3 w-3 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
                                     </Link>
