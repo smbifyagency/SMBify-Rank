@@ -14,9 +14,9 @@ export default function Landing() {
   const [, setLocation] = useLocation();
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-50/50 via-white to-white">
+    <div className="min-h-screen bg-white">
       {/* ═══════ HERO ═══════ */}
-      <section className="relative pt-32 pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <section className="relative pt-32 pb-28 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-b from-purple-50 to-white">
         <div className="absolute inset-0">
           <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#7C3AED]/8 rounded-full blur-3xl animate-pulse" />
           <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#7C3AED]/6 rounded-full blur-3xl animate-pulse" style={{ animationDelay: "1s" }} />
@@ -73,8 +73,8 @@ export default function Landing() {
 
             {/* Right — browser mockup */}
             <div className="flex-1 w-full max-w-xl">
-              <div className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-xl overflow-hidden shadow-2xl shadow-purple-200/30 ring-1 ring-white/50">
-                <div className="flex items-center gap-2 px-4 py-3 bg-white/60 border-b border-gray-100/50">
+              <div className="rounded-2xl border border-gray-200 bg-white overflow-hidden shadow-xl">
+                <div className="flex items-center gap-2 px-4 py-3 bg-gray-50 border-b border-gray-100">
                   <span className="w-3 h-3 rounded-full bg-red-500" />
                   <span className="w-3 h-3 rounded-full bg-yellow-500" />
                   <span className="w-3 h-3 rounded-full bg-green-500" />
@@ -101,7 +101,7 @@ export default function Landing() {
 
           {/* Stats row */}
           <div className="mt-20 max-w-5xl mx-auto">
-            <div className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-xl shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-8 sm:p-10">
+            <div className="rounded-2xl border border-purple-100 bg-purple-50/50 p-8 sm:p-10">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                 {[
                   { value: "15+", label: "Pro Templates" },
@@ -121,7 +121,7 @@ export default function Landing() {
       </section>
 
       {/* ═══════ PAIN POINTS ═══════ */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">The Problem</p>
@@ -134,7 +134,7 @@ export default function Landing() {
               { icon: "⏳", title: "Weeks of Waiting", desc: "Developers take weeks (sometimes months) to deliver. Meanwhile, your competitors are capturing all the local leads." },
               { icon: "📉", title: "Zero SEO Results", desc: "Beautiful websites that never show up on Google. No schema markup, no meta optimization — just a pretty digital brochure." },
             ].map((p) => (
-              <div key={p.title} className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-8 transition-all hover:-translate-y-1 hover:shadow-xl hover:border-purple-200">
+              <div key={p.title} className="rounded-2xl border border-gray-200 bg-white shadow-sm p-8 transition-all hover:-translate-y-1 hover:shadow-lg hover:border-purple-200">
                 <div className="text-4xl mb-4">{p.icon}</div>
                 <h3 className="text-lg font-bold text-gray-900 mb-2">{p.title}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed">{p.desc}</p>
@@ -145,9 +145,8 @@ export default function Landing() {
       </section>
 
       {/* ═══════ HOW IT WORKS ═══════ */}
-      <section id="how-it-works" className="py-24 px-4 sm:px-6 lg:px-8 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#7C3AED]/5 to-transparent" />
-        <div className="relative max-w-5xl mx-auto">
+      <section id="how-it-works" className="py-24 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">How It Works</p>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">3 Steps to a <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Ranking Website</span></h2>
@@ -173,7 +172,7 @@ export default function Landing() {
       </section>
 
       {/* ═══════ FEATURES — 6 CARDS ═══════ */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8" id="features">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white" id="features">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">Features</p>
@@ -183,7 +182,7 @@ export default function Landing() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* AI Content */}
-            <div className="group rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200/30 hover:border-purple-200">
+            <div className="group rounded-2xl border border-gray-200 bg-white shadow-sm p-7 transition-all hover:-translate-y-1 hover:shadow-lg hover:border-purple-200">
               <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-100"><Bot className="h-6 w-6 text-purple-700" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">AI Content Generation</h3>
               <p className="text-gray-600 text-sm mb-4">2000+ words per page, humanized and SEO-optimized.</p>
@@ -195,7 +194,7 @@ export default function Landing() {
             </div>
 
             {/* Blog System */}
-            <div className="group rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200/30 hover:border-purple-200">
+            <div className="group rounded-2xl border border-gray-200 bg-white shadow-sm p-7 transition-all hover:-translate-y-1 hover:shadow-lg hover:border-purple-200">
               <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-100"><PenTool className="h-6 w-6 text-purple-700" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Full Blog System</h3>
               <p className="text-gray-600 text-sm mb-4">AI blog engine with bulk generation and rich editing.</p>
@@ -207,7 +206,7 @@ export default function Landing() {
             </div>
 
             {/* Visual Editor */}
-            <div className="group rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200/30 hover:border-purple-200">
+            <div className="group rounded-2xl border border-gray-200 bg-white shadow-sm p-7 transition-all hover:-translate-y-1 hover:shadow-lg hover:border-purple-200">
               <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-100"><Palette className="h-6 w-6 text-purple-700" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Visual Customization</h3>
               <p className="text-gray-600 text-sm mb-4">Drag-and-drop editor with full branding control.</p>
@@ -219,7 +218,7 @@ export default function Landing() {
             </div>
 
             {/* Deployment */}
-            <div className="group rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200/30 hover:border-purple-200">
+            <div className="group rounded-2xl border border-gray-200 bg-white shadow-sm p-7 transition-all hover:-translate-y-1 hover:shadow-lg hover:border-purple-200">
               <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-100"><Rocket className="h-6 w-6 text-purple-700" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">One-Click Deployment</h3>
               <p className="text-gray-600 text-sm mb-4">Deploy to Netlify instantly with free SSL & CDN.</p>
@@ -231,7 +230,7 @@ export default function Landing() {
             </div>
 
             {/* Admin Dashboard */}
-            <div className="group rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200/30 hover:border-purple-200">
+            <div className="group rounded-2xl border border-gray-200 bg-white shadow-sm p-7 transition-all hover:-translate-y-1 hover:shadow-lg hover:border-purple-200">
               <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-100"><BarChart3 className="h-6 w-6 text-purple-700" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Admin Dashboard</h3>
               <p className="text-gray-600 text-sm mb-4">Full control panel for agencies and teams.</p>
@@ -243,7 +242,7 @@ export default function Landing() {
             </div>
 
             {/* Security & API Keys */}
-            <div className="group rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-purple-200/30 hover:border-purple-200">
+            <div className="group rounded-2xl border border-gray-200 bg-white shadow-sm p-7 transition-all hover:-translate-y-1 hover:shadow-lg hover:border-purple-200">
               <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-100"><Lock className="h-6 w-6 text-purple-700" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-2">Security & API Keys</h3>
               <p className="text-gray-600 text-sm mb-4">Bring your own API keys with encrypted storage.</p>
@@ -258,9 +257,8 @@ export default function Landing() {
       </section>
 
       {/* ═══════ TEMPLATES GRID ═══════ */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 relative" id="templates">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#7C3AED]/5 to-transparent" />
-        <div className="relative max-w-7xl mx-auto">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gray-50" id="templates">
+        <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">Templates</p>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">15+ Professional <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Industry Templates</span></h2>
@@ -285,7 +283,7 @@ export default function Landing() {
               { emoji: "🔧", name: "Water Damage", color: "from-blue-500/15" },
               { emoji: "➕", name: "More Coming", color: "from-gray-500/15" },
             ].map((t) => (
-              <div key={t.name} className={`rounded-2xl border border-white/60 bg-white/50 backdrop-blur-sm shadow-md shadow-purple-100/10 ring-1 ring-white/50 p-5 text-center transition-all hover:-translate-y-1 hover:border-purple-200 hover:shadow-lg`}>
+              <div key={t.name} className={`rounded-2xl border border-gray-200 bg-white shadow-sm p-5 text-center transition-all hover:-translate-y-1 hover:border-purple-200 hover:shadow-lg`}>
                 <div className="text-3xl mb-3">{t.emoji}</div>
                 <h4 className="text-sm font-bold text-gray-900">{t.name}</h4>
               </div>
@@ -295,7 +293,7 @@ export default function Landing() {
       </section>
 
       {/* ═══════ SEO ENGINE ═══════ */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8" id="seo">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white" id="seo">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">SEO Engine</p>
@@ -318,7 +316,7 @@ export default function Landing() {
               { title: "Image Alt Text", desc: "SEO-optimized alt text auto-generated for every image" },
               { title: "Canonical URLs", desc: "Prevent duplicate content issues with auto canonical tags" },
             ].map((item) => (
-              <div key={item.title} className="flex items-start gap-4 rounded-xl border border-white/60 bg-white/50 backdrop-blur-sm shadow-md shadow-purple-100/10 ring-1 ring-white/50 p-5 transition-all hover:border-purple-200 hover:shadow-lg">
+              <div key={item.title} className="flex items-start gap-4 rounded-xl border border-gray-200 bg-white shadow-sm p-5 transition-all hover:border-purple-200 hover:shadow-md">
                 <div className="flex items-center justify-center min-w-[32px] h-8 rounded-lg bg-[#7C3AED]/15">
                   <Check className="h-4 w-4 text-purple-700" />
                 </div>
@@ -333,9 +331,8 @@ export default function Landing() {
       </section>
 
       {/* ═══════ AI MODELS ═══════ */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 relative" id="ai-models">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#7C3AED]/5 to-transparent" />
-        <div className="relative max-w-5xl mx-auto text-center">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gray-50" id="ai-models">
+        <div className="max-w-5xl mx-auto text-center">
           <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">AI Engine</p>
           <h2 className="text-3xl sm:text-4xl font-bold mb-4">Powered by the World's <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Best AI Models</span></h2>
           <p className="text-gray-600 max-w-xl mx-auto mb-12">Choose your preferred model or let the system auto-select. Bring your own API keys or use ours.</p>
@@ -347,7 +344,7 @@ export default function Landing() {
               { icon: "🔵", name: "Google Gemini 2.5", desc: "Google's latest AI" },
               { icon: "🟣", name: "OpenRouter", desc: "100+ models via one key" },
             ].map((m) => (
-              <div key={m.name} className="flex items-center gap-4 px-6 py-4 rounded-2xl border border-white/60 bg-white/50 backdrop-blur-sm shadow-md shadow-purple-100/10 ring-1 ring-white/50 transition-all hover:border-purple-200 hover:shadow-lg">
+              <div key={m.name} className="flex items-center gap-4 px-6 py-4 rounded-2xl border border-gray-200 bg-white shadow-sm transition-all hover:border-purple-200 hover:shadow-md">
                 <span className="text-2xl">{m.icon}</span>
                 <div className="text-left">
                   <div className="font-bold text-gray-900 text-sm">{m.name}</div>
@@ -366,7 +363,7 @@ export default function Landing() {
       </section>
 
       {/* ═══════ PAGES GENERATED ═══════ */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">What Gets Generated</p>
@@ -374,8 +371,8 @@ export default function Landing() {
             <p className="text-gray-600 max-w-2xl mx-auto">Every website comes with all essential pages, fully written and SEO-optimized. No placeholders — real content.</p>
           </div>
           <div className="grid sm:grid-cols-3 gap-6">
-            <div className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7">
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-blue-500/10"><FileText className="h-6 w-6 text-blue-400" /></div>
+            <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-7">
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-blue-50"><FileText className="h-6 w-6 text-blue-400" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-4">Core Pages</h3>
               <ul className="space-y-2 text-sm text-gray-600">
                 {["Homepage (2000+ words)","About Us page","Contact page with Google Maps","FAQ page (30+ questions)","Privacy Policy","Terms of Service"].map(t=>(
@@ -383,8 +380,8 @@ export default function Landing() {
                 ))}
               </ul>
             </div>
-            <div className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7">
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-green-500/10"><MapPin className="h-6 w-6 text-green-400" /></div>
+            <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-7">
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-green-50"><MapPin className="h-6 w-6 text-green-400" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-4">Dynamic Pages</h3>
               <ul className="space-y-2 text-sm text-gray-600">
                 {["Service pages (one per service)","Location pages (one per city)","Service × Location combos","Gallery / Portfolio pages","Blog archive page","Individual blog posts"].map(t=>(
@@ -392,8 +389,8 @@ export default function Landing() {
                 ))}
               </ul>
             </div>
-            <div className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-7">
-              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-500/10"><Database className="h-6 w-6 text-purple-400" /></div>
+            <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-7">
+              <div className="h-12 w-12 rounded-xl flex items-center justify-center mb-5 bg-purple-50"><Database className="h-6 w-6 text-purple-400" /></div>
               <h3 className="text-lg font-bold text-gray-900 mb-4">Technical Files</h3>
               <ul className="space-y-2 text-sm text-gray-600">
                 {["sitemap.xml (auto-generated)","robots.txt (auto-generated)","Schema markup (JSON-LD)","Open Graph meta tags","Twitter Card meta tags","Canonical URLs"].map(t=>(
@@ -406,16 +403,15 @@ export default function Landing() {
       </section>
 
       {/* ═══════ COMPARISON TABLE ═══════ */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 relative" id="compare">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#7C3AED]/5 to-transparent" />
-        <div className="relative max-w-5xl mx-auto">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gray-50" id="compare">
+        <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">Comparison</p>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Why SiteGenie <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Wins</span></h2>
             <p className="text-gray-600 max-w-xl mx-auto">See how we stack up against Wix, Squarespace, and WordPress.</p>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50">
+          <div className="overflow-x-auto rounded-2xl border border-gray-200 bg-white shadow-sm">
             <table className="w-full min-w-[600px] text-sm">
               <thead>
                 <tr className="bg-gray-50">
@@ -454,7 +450,7 @@ export default function Landing() {
       </section>
 
       {/* ═══════ WHO IT'S FOR ═══════ */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8" id="audience">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white" id="audience">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">Who It's For</p>
@@ -475,7 +471,7 @@ export default function Landing() {
             ].map((item) => {
               const Icon = item.icon;
               return (
-                <div key={item.title} className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-md shadow-purple-100/10 ring-1 ring-white/50 p-6 transition-all hover:-translate-y-1 hover:border-purple-200 hover:shadow-lg">
+                <div key={item.title} className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6 transition-all hover:-translate-y-1 hover:border-purple-200 hover:shadow-lg">
                   <Icon className="h-8 w-8 text-purple-700 mb-4" />
                   <h3 className="text-base font-bold text-gray-900 mb-2">{item.title}</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
@@ -487,9 +483,8 @@ export default function Landing() {
       </section>
 
       {/* ═══════ EVERYTHING INCLUDED ═══════ */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#7C3AED]/5 to-transparent" />
-        <div className="relative max-w-4xl mx-auto text-center">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-gray-50">
+        <div className="max-w-4xl mx-auto text-center">
           <p className="text-purple-700 font-semibold text-sm uppercase tracking-wider mb-3">Summary</p>
           <h2 className="text-3xl sm:text-4xl font-bold mb-10">Everything Included <span className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] bg-clip-text text-transparent">Out of the Box</span></h2>
 
@@ -509,7 +504,7 @@ export default function Landing() {
       </section>
 
       {/* ═══════ FINAL CTA ═══════ */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-white">
         <div className="max-w-4xl mx-auto">
           <div className="rounded-3xl bg-gradient-to-br from-[#7C3AED] to-[#F59E0B] p-12 sm:p-16 text-center relative overflow-hidden">
             <div className="absolute top-0 right-0 w-80 h-80 bg-white/10 rounded-full -translate-y-1/2 translate-x-1/3 blur-2xl pointer-events-none" />

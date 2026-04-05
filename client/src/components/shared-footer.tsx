@@ -3,13 +3,13 @@ import { Globe, ArrowRight } from "lucide-react";
 
 export function SharedFooter() {
     return (
-        <footer className="relative bg-white/70 backdrop-blur-xl border-t border-gray-200/60 text-gray-900 overflow-hidden">
+        <footer className="relative bg-white border-t border-gray-200 text-gray-900 overflow-hidden">
             {/* Subtle gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-purple-50/30 via-transparent to-amber-50/20" />
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-50/20 via-transparent to-amber-50/10" />
 
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Main Footer Content */}
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-8 py-16 border-b border-gray-200/60">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-8 py-16 border-b border-gray-200">
                     {/* Brand */}
                     <div className="col-span-2">
                         <div className="flex items-center gap-3 mb-4">

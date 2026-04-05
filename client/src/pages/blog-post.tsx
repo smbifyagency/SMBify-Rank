@@ -204,7 +204,7 @@ export default function BlogPost() {
           <Separator className="mb-8 border-gray-200" />
 
           {/* Author Info */}
-          <Card className="mb-12 bg-white/60 border-gray-200/60 backdrop-blur-md shadow-md">
+          <Card className="mb-12 bg-white border-gray-200 shadow-sm">
             <CardHeader>
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] rounded-full flex items-center justify-center text-white font-bold text-xl">
@@ -224,7 +224,7 @@ export default function BlogPost() {
               <h2 className="text-3xl font-bold mb-8 text-gray-900">Related Articles</h2>
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {relatedPosts.map((relatedPost) => (
-                  <Card key={relatedPost.id} className="group hover:shadow-lg transition-all duration-300 bg-white/60 border-gray-200/60 backdrop-blur-md">
+                  <Card key={relatedPost.id} className="group hover:shadow-lg transition-all duration-300 bg-white border-gray-200">
                     {relatedPost.featuredImage && (
                       <div className="relative overflow-hidden">
                         <img

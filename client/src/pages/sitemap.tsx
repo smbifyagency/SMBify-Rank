@@ -8,7 +8,7 @@ export default function SitemapPage() {
   return (
     <div className="min-h-screen bg-white text-gray-900">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-        <div className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-6">
+        <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full border border-[#7C3AED]/25 bg-[#7C3AED]/10 px-3 py-1 text-xs font-semibold text-[#9333EA]">
@@ -38,7 +38,7 @@ export default function SitemapPage() {
 
         <div className="space-y-6">
           {saasSections.map((section) => (
-            <section key={section.id} className="rounded-2xl border border-white/60 bg-white/50 backdrop-blur-md shadow-lg shadow-purple-100/20 ring-1 ring-white/50 p-6">
+            <section key={section.id} className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6">
               <h2 className="text-lg font-semibold text-gray-900">{section.label}</h2>
               <div className="mt-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
                 {section.pages.map((page) => (
