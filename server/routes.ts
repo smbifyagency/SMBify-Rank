@@ -3237,9 +3237,16 @@ Total Websites: ${validatedData.businesses.length}
 
       console.log("Using SEO URL for sitemap and robots.txt:", seoUrl);
 
-      // Generate AI content for dynamic pages using helper function
-      const provider = (website.businessData as any).contentAiProvider || 'openai';
-      const aiGeneratedContent = await generateAIContentForDynamicPages(website.businessData as any, website.userId, provider);
+      // Try AI content generation with a 8-second timeout to avoid 504 on serverless
+      let aiGeneratedContent: { serviceContent: any[], locationContent: any[] } = { serviceContent: [], locationContent: [] };
+      try {
+        const provider = (website.businessData as any).contentAiProvider || 'openai';
+        const aiPromise = generateAIContentForDynamicPages(website.businessData as any, website.userId, provider);
+        const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('AI content timeout')), 8000));
+        aiGeneratedContent = await Promise.race([aiPromise, timeoutPromise]);
+      } catch (aiErr) {
+        console.log("AI content skipped during deploy (timeout or error), using template fallback:", (aiErr as Error).message);
+      }
 
       // Ensure blog posts are included in businessData
       const businessDataWithBlogs = normalizeBusinessDataForGeneration({
@@ -3349,9 +3356,16 @@ Total Websites: ${validatedData.businesses.length}
             name: cleanSiteName
           });
 
-          // Deploy updated content to the renamed site with AI content
-          const provider = (latestWebsite.businessData as any).contentAiProvider || 'openai';
-          const aiGeneratedContent = await generateAIContentForDynamicPages(latestWebsite.businessData as any, latestWebsite.userId, provider);
+          // Deploy updated content to the renamed site — skip slow AI to avoid 504
+          let aiGeneratedContent: { serviceContent: any[], locationContent: any[] } = { serviceContent: [], locationContent: [] };
+          try {
+            const provider = (latestWebsite.businessData as any).contentAiProvider || 'openai';
+            const aiPromise = generateAIContentForDynamicPages(latestWebsite.businessData as any, latestWebsite.userId, provider);
+            const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('AI content timeout')), 8000));
+            aiGeneratedContent = await Promise.race([aiPromise, timeoutPromise]);
+          } catch (aiErr) {
+            console.log("AI content skipped during URL change (timeout or error):", (aiErr as Error).message);
+          }
           // Ensure blog posts are included in businessData
           const businessDataWithBlogs = normalizeBusinessDataForGeneration({
             ...(latestWebsite.businessData as any),
@@ -3371,14 +3385,21 @@ Total Websites: ${validatedData.businesses.length}
           // deployToNetlify is imported statically at the top
           // Generate temporary site URL for initial file generation
           const tempSiteUrl = `https://${cleanSiteName}.netlify.app`;
-          const provider = (latestWebsite.businessData as any).contentAiProvider || 'openai';
-          const aiGeneratedContent = await generateAIContentForDynamicPages(latestWebsite.businessData as any, latestWebsite.userId, provider);
+          let aiGeneratedContent2: { serviceContent: any[], locationContent: any[] } = { serviceContent: [], locationContent: [] };
+          try {
+            const provider = (latestWebsite.businessData as any).contentAiProvider || 'openai';
+            const aiPromise = generateAIContentForDynamicPages(latestWebsite.businessData as any, latestWebsite.userId, provider);
+            const timeoutPromise = new Promise<never>((_, reject) => setTimeout(() => reject(new Error('AI content timeout')), 8000));
+            aiGeneratedContent2 = await Promise.race([aiPromise, timeoutPromise]);
+          } catch (aiErr) {
+            console.log("AI content skipped during new site creation (timeout or error):", (aiErr as Error).message);
+          }
           // Ensure blog posts are included in businessData
           const businessDataWithBlogs = normalizeBusinessDataForGeneration({
             ...(latestWebsite.businessData as any),
             blogPosts: (latestWebsite.businessData as any).blogPosts || []
           });
-          let websiteFiles = generateAllWebsiteFiles(businessDataWithBlogs, latestWebsite.selectedTemplate || latestWebsite.template, tempSiteUrl, undefined, aiGeneratedContent);
+          let websiteFiles = generateAllWebsiteFiles(businessDataWithBlogs, latestWebsite.selectedTemplate || latestWebsite.template, tempSiteUrl, undefined, aiGeneratedContent2);
           websiteFiles = mergeWebsiteFilesWithCustomFiles(websiteFiles, latestWebsite.customFiles).mergedFiles;
 
           const result = await deployToNetlify(websiteFiles, decryptedNetlifyKey, cleanSiteName);

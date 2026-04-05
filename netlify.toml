@@ -13,6 +13,10 @@
 
 [functions]
   node_bundler = "esbuild"
+  external_node_modules = ["sharp"]
+
+[functions."api"]
+  timeout = 26
 
 [[redirects]]
   from = "/api/*"
