@@ -16,7 +16,7 @@ export default function VerifyEmailPage() {
     }, []);
 
     return (
-        <div className="min-h-[80vh] flex items-center justify-center px-4 py-20 bg-gradient-to-b from-purple-50/50 to-white">
+        <div className="flex-1 flex items-center justify-center px-4 py-20 bg-gradient-to-b from-purple-50/50 to-white">
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
                     <Link href="/">
