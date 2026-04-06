@@ -15,7 +15,7 @@ export default function ForgotPasswordPage() {
     };
 
     return (
-        <div className="flex-1 flex items-center justify-center px-4 py-20 bg-gradient-to-b from-purple-50/50 to-white">
+        <div className="flex-1 flex items-center justify-center px-4 py-20 bg-white">
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
                     <Link href="/">
