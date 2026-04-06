@@ -8,6 +8,16 @@ import {
   getResponsiveBreakpoint
 } from "./website-layout-config.js";
 
+/** Truncate a string to maxLen at word boundary. */
+function truncateText(text: string, maxLen: number): string {
+  if (!text || text.length <= maxLen) return text;
+  const truncated = text.slice(0, maxLen - 1);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return (lastSpace > maxLen * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd() + '…';
+}
+function seoTitle(t: string): string { return truncateText(t, 60); }
+function seoDescription(d: string): string { return truncateText(d, 160); }
+
 // Site settings interface for tracking codes
 interface SiteSetting {
   id: string;
@@ -1034,17 +1044,16 @@ function generateReviewSchema(data: BusinessData, consistentRating?: number): st
 
 // Generate optimized meta tags for local SEO with enhanced indexing support
 function generateSEOMetaTags(data: BusinessData, pageTitle?: string, pageDescription?: string, pageType: string = 'home', domain?: string, pagePath?: string): string {
-  const title = pageTitle || `${data.businessName} - ${data.heroService} in ${data.heroLocation}`;
-  const description = pageDescription || data.heroDescription;
+  const title = seoTitle(pageTitle || `${data.businessName} - ${data.heroService} in ${data.heroLocation}`);
+  const description = seoDescription(pageDescription || data.heroDescription);
   const keywords = `${data.heroService}, ${data.heroLocation}, ${data.targetedKeywords}, ${data.businessName}, ${data.category.toLowerCase()}`;
 
-  // Build proper canonical URL that matches actual file paths
+  // Build proper canonical URL — strip .html extension for Netlify Pretty URLs
   let canonicalUrl = '';
   if (domain) {
     const cleanDomain = domain.replace(/\/+$/, ''); // Remove trailing slashes
     if (pagePath && pagePath !== '/' && pagePath !== 'index.html') {
-      // Keep .html extension to match actual file paths (critical for Google indexing)
-      const cleanPath = pagePath.replace(/^\/+/, '');
+      const cleanPath = pagePath.replace(/^\/+/, '').replace(/\.html$/, '');
       canonicalUrl = `${cleanDomain}/${cleanPath}`;
     } else {
       canonicalUrl = cleanDomain;
@@ -2469,7 +2478,7 @@ function generateSitemapXml(businessData: BusinessData, domain?: string, additio
       priority: '1.0'
     },
     {
-      loc: `${baseUrl}/blog.html`,
+      loc: `${baseUrl}/blog`,
       lastmod: currentDate,
       changefreq: 'weekly',
       priority: '0.8'
@@ -2481,7 +2490,7 @@ function generateSitemapXml(businessData: BusinessData, domain?: string, additio
     businessData.blogPosts.forEach((post: any) => {
       const slug = post.slug || post.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
       urls.push({
-        loc: `${baseUrl}/blog-${slug}.html`,
+        loc: `${baseUrl}/blog-${slug}`,
         lastmod: currentDate,
         changefreq: 'monthly',
         priority: '0.6'
@@ -2492,7 +2501,7 @@ function generateSitemapXml(businessData: BusinessData, domain?: string, additio
   // Add location pages
   if (additionalLocations && additionalLocations.length > 0) {
     additionalLocations.forEach(location => {
-      const filename = generateLocationUrl(location, businessData.category);
+      const filename = generateLocationUrl(location, businessData.category).replace(/\.html$/, '');
       urls.push({
         loc: `${baseUrl}/${filename}`,
         lastmod: currentDate,
@@ -2505,7 +2514,7 @@ function generateSitemapXml(businessData: BusinessData, domain?: string, additio
   // Add service pages
   if (additionalServices && additionalServices.length > 0) {
     additionalServices.forEach(service => {
-      const filename = generateServiceUrl(service, businessData.heroLocation);
+      const filename = generateServiceUrl(service, businessData.heroLocation).replace(/\.html$/, '');
       urls.push({
         loc: `${baseUrl}/${filename}`,
         lastmod: currentDate,
@@ -2848,7 +2857,7 @@ function generateCustomBlogPost(businessData: BusinessData, template: Template, 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${title} - ${businessData.businessName}</title>
+  <title>${seoTitle(`${title} - ${businessData.businessName}`)}</title>
   <meta name="description" content="${excerpt}">
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3082,8 +3091,8 @@ function generateBlogArchivePage(businessData: BusinessData, template: Template,
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=1.0, maximum-scale=5.0">
-  <title>${optimizedTitle}</title>
-  <meta name="description" content="${optimizedDescription}">
+  <title>${seoTitle(optimizedTitle)}</title>
+  <meta name="description" content="${seoDescription(optimizedDescription)}">
   ${businessData.logo ? `<link rel="icon" type="image/png" href="${businessData.logo}">` : ''}
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3307,8 +3316,8 @@ function generateBlogPostPageFromData(businessData: BusinessData, template: Temp
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=1.0, maximum-scale=5.0">
-  <title>${optimizedTitle}</title>
-  <meta name="description" content="${optimizedDescription}">
+  <title>${seoTitle(optimizedTitle)}</title>
+  <meta name="description" content="${seoDescription(optimizedDescription)}">
   <meta name="keywords" content="${Array.isArray(post.keywords) ? post.keywords.join(', ') : post.keywords || post.title}">
   ${businessData.logo ? `<link rel="icon" type="image/png" href="${businessData.logo}">` : ''}
   <link rel="stylesheet" href="styles.css">
@@ -3637,8 +3646,8 @@ function generateBlogPostPage(businessData: BusinessData, template: Template, po
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=1.0, maximum-scale=5.0">
-  <title>${optimizedTitle}</title>
-  <meta name="description" content="${optimizedDescription}">
+  <title>${seoTitle(optimizedTitle)}</title>
+  <meta name="description" content="${seoDescription(optimizedDescription)}">
   ${businessData.logo ? `<link rel="icon" type="image/png" href="${businessData.logo}">` : ''}
   <link rel="stylesheet" href="styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -3921,8 +3930,8 @@ function generateMainHTML(data: BusinessData, template: Template, domain?: strin
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=1.0, maximum-scale=5.0">
-    <title>${optimizedTitle}</title>
-    <meta name="description" content="${optimizedDescription}">
+    <title>${seoTitle(optimizedTitle)}</title>
+    <meta name="description" content="${seoDescription(optimizedDescription)}">
     ${data.logo ? `<link rel="icon" type="image/png" href="${data.logo}">` : ''}
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -4706,8 +4715,8 @@ function generateLocationHTML(data: BusinessData, template: Template, locationNa
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=1.0, maximum-scale=5.0">
-    <title>${locationTitle}</title>
-    <meta name="description" content="${locationDescription}">
+    <title>${seoTitle(locationTitle)}</title>
+    <meta name="description" content="${seoDescription(locationDescription)}">
     ${data.logo ? `<link rel="icon" type="image/png" href="${data.logo}">` : ''}
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -5140,8 +5149,8 @@ function generateServiceHTML(data: BusinessData, template: Template, serviceName
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, minimum-scale=1.0, maximum-scale=5.0">
-    <title>${serviceTitle}</title>
-    <meta name="description" content="${serviceDescription}">
+    <title>${seoTitle(serviceTitle)}</title>
+    <meta name="description" content="${seoDescription(serviceDescription)}">
     ${data.logo ? `<link rel="icon" type="image/png" href="${data.logo}">` : ''}
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">

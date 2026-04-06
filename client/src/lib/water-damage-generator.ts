@@ -359,6 +359,21 @@ function slugify(text: string): string {
     .trim();
 }
 
+/** Truncate a string to maxLen characters, breaking at the last word boundary and appending ellipsis if needed. */
+function truncateText(text: string, maxLen: number): string {
+  if (!text || text.length <= maxLen) return text;
+  const truncated = text.slice(0, maxLen - 1);
+  const lastSpace = truncated.lastIndexOf(' ');
+  return (lastSpace > maxLen * 0.6 ? truncated.slice(0, lastSpace) : truncated).trimEnd() + '…';
+}
+
+/** Ensure SEO title is ≤ 60 characters. */
+function seoTitle(title: string): string { return truncateText(title, 60); }
+/** Ensure SEO meta description is ≤ 160 characters. */
+function seoDescription(desc: string): string { return truncateText(desc, 160); }
+/** Ensure image alt text is ≤ 100 characters. */
+function seoAlt(alt: string): string { return truncateText(alt, 100); }
+
 function buildServiceSlug(service: string, city: string): string {
   return `services/${slugify(service)}-${slugify(city)}.html`;
 }
@@ -851,7 +866,7 @@ function generateBlogPostingSchema(data: WDBusinessData, post: { title: string; 
     },
     "mainEntityOfPage": {
       "@type": "WebPage",
-      "@id": `https://${domain}/blog/${post.slug}.html`
+      "@id": `https://${domain}/blog/${post.slug}`
     },
     "articleSection": post.category || data.primaryKeyword || "Blog",
     "keywords": post.keywords || data.primaryKeyword || ""
@@ -2347,11 +2362,15 @@ function htmlShell(params: {
   extraJs?: string;
   extraCSS?: string;
   ogImage?: string;
+  businessName?: string;
   googleVerification?: string;
   googleAnalyticsId?: string;
   faviconUrl?: string;
   customHeadCode?: string;
 }): string {
+  const title = seoTitle(params.metaTitle);
+  const description = seoDescription(params.metaDescription);
+
   const schemas = params.schemaBlocks
     .map(s => `<script type="application/ld+json">\n${s}\n</script>`)
     .join('\n  ');
@@ -2363,13 +2382,16 @@ function htmlShell(params: {
   <link href="${fontUrl}" rel="stylesheet">`
     : '';
 
+  // OG image: prefer explicit, fall back to favicon/logo, then omit
+  const ogImg = params.ogImage || params.faviconUrl || '';
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${params.metaTitle}</title>
-  <meta name="description" content="${params.metaDescription}">
+  <title>${title}</title>
+  <meta name="description" content="${description}">
   <link rel="canonical" href="${params.canonicalUrl}">
   ${params.faviconUrl ? `<link rel="icon" type="image/png" href="${params.faviconUrl}">
   <link rel="shortcut icon" href="${params.faviconUrl}">` : ''}${fontLink}
@@ -2377,17 +2399,19 @@ function htmlShell(params: {
   <!-- SEO -->
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   ${params.googleVerification ? `<meta name="google-site-verification" content="${params.googleVerification}">` : ''}
-  <meta property="og:title" content="${params.metaTitle}">
-  <meta property="og:description" content="${params.metaDescription}">
+  <meta property="og:title" content="${title}">
+  <meta property="og:description" content="${description}">
   <meta property="og:type" content="website">
   <meta property="og:url" content="${params.canonicalUrl}">
-  ${params.ogImage ? `<meta property="og:image" content="${params.ogImage}">
+  <meta property="og:locale" content="en_US">
+  ${params.businessName ? `<meta property="og:site_name" content="${params.businessName}">` : ''}
+  ${ogImg ? `<meta property="og:image" content="${ogImg}">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">` : ''}
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="${params.metaTitle}">
-  <meta name="twitter:description" content="${params.metaDescription}">
-  ${params.ogImage ? `<meta name="twitter:image" content="${params.ogImage}">` : ''}
+  <meta name="twitter:card" content="${ogImg ? 'summary_large_image' : 'summary'}">
+  <meta name="twitter:title" content="${title}">
+  <meta name="twitter:description" content="${description}">
+  ${ogImg ? `<meta name="twitter:image" content="${ogImg}">` : ''}
 
   <!-- Schema.org -->
   ${schemas}
@@ -2659,7 +2683,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
     <div class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
       <img
         src="${data.customImages?.['main-image'] || (data as any)._categoryImages?.['main-image'] || WD_PLACEHOLDER_IMAGES.team}"
-        alt="PLACEHOLDER: Replace with a photo of your team or equipment — add descriptive alt text for SEO"
+        alt="PLACEHOLDER: Replace with your team or equipment photo"
         class="placeholder-img"
         data-placeholder="main-image"
         style="max-height: 420px; object-fit: cover; border-radius: 16px;"
@@ -2768,6 +2792,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
       generateFAQSchema(faqs),
     ],
     bodyContent: body,
+    businessName: data.businessName,
     ogImage: data.logoUrl || undefined,
     googleVerification: data.googleVerificationCode || undefined,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
@@ -2913,7 +2938,7 @@ export function generateServicePage(
 
   const trustBadgesHTML = trustBadges.map(b => `<span class="trust-badge">${b}</span>`).join('');
 
-  const canonicalUrl = `https://${domain}.netlify.app/services/${slug}-${citySlug}.html`;
+  const canonicalUrl = `https://${domain}.netlify.app/services/${slug}-${citySlug}`;
 
   const body = `
   ${generateNav(data, `services/`)}
@@ -2951,7 +2976,7 @@ export function generateServicePage(
   <div class="container reveal-scale" style="padding-bottom:2rem;">
     <img
       src="${data.customImages?.['service-image-' + slug] || data.customImages?.['service-image'] || (data as any)._categoryImages?.['service-image'] || WD_PLACEHOLDER_IMAGES.equipment}"
-      alt="PLACEHOLDER: Replace with a photo showing your ${service.toLowerCase()} work or equipment — use descriptive alt text"
+      alt="PLACEHOLDER: Replace with your ${service.toLowerCase()} work photo"
       class="placeholder-img"
       data-placeholder="service-image-${slug}"
       style="max-height:380px; object-fit:cover; border-radius:16px;"
@@ -3044,6 +3069,8 @@ export function generateServicePage(
     metaDescription: content?.metaDescription || `${data.businessName} provides professional ${service.toLowerCase()} in ${data.city}, ${data.state}. ${(data._trustBadges || ['Licensed & Insured'])[0]}. Free estimates — call ${data.phone} today.`,
     canonicalUrl,
     theme: resolveTheme(data),
+    businessName: data.businessName,
+    ogImage: data.logoUrl || undefined,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
     faviconUrl: data.faviconUrl || undefined,
     customHeadCode: data.customHeadCode || undefined,
@@ -3153,7 +3180,7 @@ export function generateLocationPage(
     .map(l => `<a href="${prefix}locations/${slugify(l)}.html" class="location-link">${l}</a>`)
     .join('');
 
-  const canonicalUrl = `https://${domain}.netlify.app/locations/${citySlug}.html`;
+  const canonicalUrl = `https://${domain}.netlify.app/locations/${citySlug}`;
 
   const body = `
   ${generateNav(data, `locations/`)}
@@ -3191,7 +3218,7 @@ export function generateLocationPage(
   <div class="container reveal-scale" style="padding-bottom:2rem;">
     <img
       src="${data.customImages?.['location-image-' + citySlug] || data.customImages?.['location-image'] || (data as any)._categoryImages?.['location-image'] || WD_PLACEHOLDER_IMAGES.drying}"
-      alt="PLACEHOLDER: Replace with a photo of your ${city} team or a recent project — add specific alt text"
+      alt="PLACEHOLDER: Replace with your ${city} team or project photo"
       class="placeholder-img"
       data-placeholder="location-image-${citySlug}"
       style="max-height:360px; object-fit:cover; border-radius:16px;"
@@ -3269,6 +3296,7 @@ export function generateLocationPage(
     metaDescription: content?.metaDescription || `Professional ${data.primaryKeyword.toLowerCase()} in ${city}, ${data.state}. ${data.businessName} — licensed & insured, free estimates. Call ${data.phone}.`,
     canonicalUrl,
     theme: resolveTheme(data),
+    businessName: data.businessName,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
     faviconUrl: data.faviconUrl || undefined,
     customHeadCode: data.customHeadCode || undefined,
@@ -3297,7 +3325,7 @@ export function generateServiceLocationMatrixPage(
   const citySlug = slugify(city);
   const { secondaryColor, accentColor } = resolveTheme(data);
   const prefix = '../../';
-  const canonicalUrl = `https://${domain}.netlify.app/matrix/${svcSlug}-in-${citySlug}.html`;
+  const canonicalUrl = `https://${domain}.netlify.app/matrix/${svcSlug}-in-${citySlug}`;
 
   // Use AI service description if available
   const aiDesc = (data as any)._aiServiceDescs?.[service];
@@ -3431,6 +3459,7 @@ export function generateServiceLocationMatrixPage(
     metaDescription: `Professional ${service.toLowerCase()} in ${city}, ${data.state}. ${data.businessName} — licensed, insured, free estimates. Call ${data.phone}.`,
     canonicalUrl,
     theme: resolveTheme(data),
+    businessName: data.businessName,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
     faviconUrl: data.faviconUrl || undefined,
     customHeadCode: data.customHeadCode || undefined,
@@ -3439,7 +3468,7 @@ export function generateServiceLocationMatrixPage(
       generateServiceSchema(data, `${domain}.netlify.app`),
       generateBreadcrumbSchema([
         { name: 'Home', url: `https://${domain}.netlify.app/` },
-        { name: service, url: `https://${domain}.netlify.app/services/${svcSlug}-${slugify(data.city)}.html` },
+        { name: service, url: `https://${domain}.netlify.app/services/${svcSlug}-${slugify(data.city)}` },
         { name: `${service} in ${city}`, url: canonicalUrl },
       ]),
     ],
@@ -3452,7 +3481,7 @@ export function generateServiceLocationMatrixPage(
 export function generateAboutPage(data: WDBusinessData, domain: string): string {
   const theme = resolveTheme(data);
   const { secondaryColor, accentColor } = theme;
-  const canonicalUrl = `https://${domain}.netlify.app/about.html`;
+  const canonicalUrl = `https://${domain}.netlify.app/about`;
   const yearsText = data.yearsInBusiness ? `With ${data.yearsInBusiness} years of experience` : 'With years of experience';
 
   const aboutText = (data as any)._aiAboutContent || data.aboutContent ||
@@ -3490,7 +3519,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
       <div>
         <img
           src="${data.customImages?.['about-team-photo'] || data.customImages?.['about-image'] || (data as any)._categoryImages?.['about-team-photo'] || WD_PLACEHOLDER_IMAGES.team}"
-          alt="PLACEHOLDER: Replace with a real photo of your team or office"
+          alt="PLACEHOLDER: Replace with a real photo of your team"
           class="placeholder-img"
           data-placeholder="about-team-photo"
           style="border-radius:10px;"
@@ -3593,6 +3622,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
     metaDescription: `Learn about ${data.businessName} — licensed ${data.primaryKeyword.toLowerCase()} in ${data.city}, ${data.state}. ${yearsText} serving homeowners and businesses.`,
     canonicalUrl,
     theme,
+    businessName: data.businessName,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
     faviconUrl: data.faviconUrl || undefined,
     customHeadCode: data.customHeadCode || undefined,
@@ -3606,7 +3636,7 @@ ${data.businessName} serves all of ${data.city} and surrounding communities. We 
 export function generateContactPage(data: WDBusinessData, domain: string): string {
   const theme = resolveTheme(data);
   const { secondaryColor, accentColor } = theme;
-  const canonicalUrl = `https://${domain}.netlify.app/contact.html`;
+  const canonicalUrl = `https://${domain}.netlify.app/contact`;
 
   const formSection = data.contactFormEmbed
     ? data.contactFormEmbed
@@ -3746,6 +3776,7 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
     metaDescription: `Contact ${data.businessName} for ${data.primaryKeyword.toLowerCase()} in ${data.city}, ${data.state}. Available 24/7 for emergencies. Call ${data.phone} or use our contact form.`,
     canonicalUrl,
     theme,
+    businessName: data.businessName,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
     faviconUrl: data.faviconUrl || undefined,
     customHeadCode: data.customHeadCode || undefined,
@@ -3758,7 +3789,7 @@ export function generateContactPage(data: WDBusinessData, domain: string): strin
 
 export function generateFAQPage(data: WDBusinessData, domain: string): string {
   const theme = resolveTheme(data);
-  const canonicalUrl = `https://${domain}.netlify.app/faq.html`;
+  const canonicalUrl = `https://${domain}.netlify.app/faq`;
   const content = data.faqContent;
 
   const defaultCategories = [
@@ -3878,6 +3909,7 @@ export function generateFAQPage(data: WDBusinessData, domain: string): string {
     metaDescription: content?.metaDescription || `Common questions about ${data.primaryKeyword.toLowerCase()} answered by ${data.businessName} in ${data.city}, ${data.state}. Get expert answers and call for help.`,
     canonicalUrl,
     theme,
+    businessName: data.businessName,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
     faviconUrl: data.faviconUrl || undefined,
     customHeadCode: data.customHeadCode || undefined,
@@ -3899,7 +3931,7 @@ const CALCULATORS = [
 
 export function generateCalculatorPage(data: WDBusinessData, domain: string): string {
   const theme = resolveTheme(data);
-  const canonicalUrl = `https://${domain}.netlify.app/calculator.html`;
+  const canonicalUrl = `https://${domain}.netlify.app/calculator`;
 
   const cardsHTML = CALCULATORS.map(c => `
     <a href="calculators/${c.slug}.html" class="calc-card">
@@ -3997,7 +4029,7 @@ export function generateCalculatorPage(data: WDBusinessData, domain: string): st
 function generateSingleCalculatorPage(data: WDBusinessData, calcIndex: number, domain: string): string {
   const theme = resolveTheme(data);
   const calc = CALCULATORS[calcIndex];
-  const canonicalUrl = `https://${domain}.netlify.app/calculators/${calc.slug}.html`;
+  const canonicalUrl = `https://${domain}.netlify.app/calculators/${calc.slug}`;
   const prefix = '../';
 
   // Navigation links for other calculators
@@ -4401,15 +4433,24 @@ function generateSingleCalculatorPage(data: WDBusinessData, calcIndex: number, d
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${calc.title} Calculator | ${data.businessName} — ${data.city}</title>
-  <meta name="description" content="Free ${calc.title.toLowerCase()} calculator for ${data.city} homeowners. ${calc.desc}">
+  <title>${seoTitle(`${calc.title} Calculator | ${data.businessName} — ${data.city}`)}</title>
+  <meta name="description" content="${seoDescription(`Free ${calc.title.toLowerCase()} calculator for ${data.city} homeowners. ${calc.desc}`)}">
   <link rel="canonical" href="${canonicalUrl}">
   ${data.faviconUrl ? `<link rel="icon" type="image/png" href="${data.faviconUrl}">
   <link rel="shortcut icon" href="${data.faviconUrl}">` : ''}
   ${fontLink}
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-  <meta property="og:title" content="${calc.title} Calculator | ${data.businessName}">
+  <meta property="og:title" content="${seoTitle(`${calc.title} Calculator | ${data.businessName}`)}">
+  <meta property="og:description" content="${seoDescription(`Free ${calc.title.toLowerCase()} calculator for ${data.city} homeowners. ${calc.desc}`)}">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="${canonicalUrl}">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="${data.businessName}">
+  ${data.logoUrl || data.faviconUrl ? `<meta property="og:image" content="${data.logoUrl || data.faviconUrl}">` : ''}
+  <meta name="twitter:card" content="${data.logoUrl || data.faviconUrl ? 'summary_large_image' : 'summary'}">
+  <meta name="twitter:title" content="${seoTitle(`${calc.title} Calculator | ${data.businessName}`)}">
+  <meta name="twitter:description" content="${seoDescription(`Free ${calc.title.toLowerCase()} calculator for ${data.city} homeowners. ${calc.desc}`)}">
+  ${data.logoUrl || data.faviconUrl ? `<meta name="twitter:image" content="${data.logoUrl || data.faviconUrl}">` : ''}
   ${schemas}
   ${data.googleAnalyticsId ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${data.googleAnalyticsId}"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${data.googleAnalyticsId}');</script>` : ''}
@@ -4432,7 +4473,7 @@ function generateSingleCalculatorPage(data: WDBusinessData, calcIndex: number, d
 // ─── GALLERY PAGE ──────────────────────────────────────────────────────────
 
 export function generateGalleryPage(data: WDBusinessData, domain: string): string {
-  const canonicalUrl = `https://${domain}.netlify.app/gallery.html`;
+  const canonicalUrl = `https://${domain}.netlify.app/gallery`;
 
   const images = data.galleryImages || [];
   const beforeAfterPairs: Array<{ before: WDGalleryImage; after: WDGalleryImage }> = [];
@@ -4641,13 +4682,22 @@ document.addEventListener('DOMContentLoaded', () => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${data.primaryKeyword} Gallery | ${data.businessName} — ${data.city}</title>
-  <meta name="description" content="Before and after ${data.primaryKeyword.toLowerCase()} photos from ${data.businessName} in ${data.city}, ${data.state}. See our work and results.">
+  <title>${seoTitle(`${data.primaryKeyword} Gallery | ${data.businessName} — ${data.city}`)}</title>
+  <meta name="description" content="${seoDescription(`Before and after ${data.primaryKeyword.toLowerCase()} photos from ${data.businessName} in ${data.city}, ${data.state}. See our work and results.`)}">
   <link rel="canonical" href="${canonicalUrl}">
   ${fontLink}
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
-  <meta property="og:title" content="Restoration Gallery | ${data.businessName}">
+  <meta property="og:title" content="${seoTitle(`${data.primaryKeyword} Gallery | ${data.businessName} — ${data.city}`)}">
+  <meta property="og:description" content="${seoDescription(`Before and after ${data.primaryKeyword.toLowerCase()} photos from ${data.businessName} in ${data.city}, ${data.state}. See our work and results.`)}">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="${canonicalUrl}">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="${data.businessName}">
+  ${data.logoUrl || data.faviconUrl ? `<meta property="og:image" content="${data.logoUrl || data.faviconUrl}">` : ''}
+  <meta name="twitter:card" content="${data.logoUrl || data.faviconUrl ? 'summary_large_image' : 'summary'}">
+  <meta name="twitter:title" content="${seoTitle(`${data.primaryKeyword} Gallery | ${data.businessName} — ${data.city}`)}">
+  <meta name="twitter:description" content="${seoDescription(`Before and after ${data.primaryKeyword.toLowerCase()} photos from ${data.businessName} in ${data.city}, ${data.state}. See our work and results.`)}">
+  ${data.logoUrl || data.faviconUrl ? `<meta name="twitter:image" content="${data.logoUrl || data.faviconUrl}">` : ''}
   ${schemas}
   <style>
     ${generateCSS(fullTheme)}
@@ -4682,7 +4732,7 @@ function getDefaultBlogPosts(): WDBlogPost[] {
 
 export function generateBlogArchivePage(data: WDBusinessData, domain: string): string {
   const theme = resolveTheme(data);
-  const canonicalUrl = `https://${domain}.netlify.app/blog.html`;
+  const canonicalUrl = `https://${domain}.netlify.app/blog`;
 
   const posts = data.blogPosts || [];
 
@@ -4775,12 +4825,22 @@ export function generateBlogArchivePage(data: WDBusinessData, domain: string): s
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Water Damage Restoration Blog | ${data.businessName} — ${data.city}</title>
-  <meta name="description" content="Water damage restoration tips, guides, and expert advice from ${data.businessName} in ${data.city}, ${data.state}. Learn about mold prevention, insurance claims, and restoration.">
+  <title>${seoTitle(`${data.primaryKeyword} Blog | ${data.businessName} — ${data.city}`)}</title>
+  <meta name="description" content="${seoDescription(`${data.primaryKeyword} tips, guides, and expert advice from ${data.businessName} in ${data.city}, ${data.state}. Learn about mold prevention, insurance claims, and restoration.`)}">
   <link rel="canonical" href="${canonicalUrl}">
   ${fontLink}
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <meta property="og:title" content="${seoTitle(`${data.primaryKeyword} Blog | ${data.businessName} — ${data.city}`)}">
+  <meta property="og:description" content="${seoDescription(`${data.primaryKeyword} tips, guides, and expert advice from ${data.businessName} in ${data.city}, ${data.state}.`)}">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="${canonicalUrl}">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="${data.businessName}">
+  ${data.logoUrl || data.faviconUrl ? `<meta property="og:image" content="${data.logoUrl || data.faviconUrl}">` : ''}
+  <meta name="twitter:card" content="${data.logoUrl || data.faviconUrl ? 'summary_large_image' : 'summary'}">
+  <meta name="twitter:title" content="${seoTitle(`${data.primaryKeyword} Blog | ${data.businessName} — ${data.city}`)}">
+  <meta name="twitter:description" content="${seoDescription(`${data.primaryKeyword} tips, guides, and expert advice from ${data.businessName} in ${data.city}, ${data.state}.`)}">
+  ${data.logoUrl || data.faviconUrl ? `<meta name="twitter:image" content="${data.logoUrl || data.faviconUrl}">` : ''}
   ${schemas}
   <style>
     ${generateCSS(fullTheme)}
@@ -4798,7 +4858,7 @@ export function generateBlogArchivePage(data: WDBusinessData, domain: string): s
 
 export function generateBlogPostPage(data: WDBusinessData, post: WDBlogPost, domain: string): string {
   const theme = resolveTheme(data);
-  const canonicalUrl = `https://${domain}.netlify.app/blog/${post.slug}.html`;
+  const canonicalUrl = `https://${domain}.netlify.app/blog/${post.slug}`;
   const featuredImage = data.customImages?.[`blog-img-${post.slug}`] || post.featuredImage;
   const fullTheme = resolveTheme(data);
   const fontUrl = FONT_URLS[fullTheme.fontFamily];
@@ -4873,16 +4933,23 @@ export function generateBlogPostPage(data: WDBusinessData, post: WDBlogPost, dom
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${post.title} | ${data.businessName} Blog</title>
-  <meta name="description" content="${post.excerpt}">
+  <title>${seoTitle(`${post.title} | ${data.businessName} Blog`)}</title>
+  <meta name="description" content="${seoDescription(post.excerpt)}">
   <link rel="canonical" href="${canonicalUrl}">
   ${fontLink}
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
   <meta property="og:type" content="article">
-  <meta property="og:title" content="${post.title}">
-  <meta property="og:description" content="${post.excerpt}">
-  ${featuredImage ? `<meta property="og:image" content="${featuredImage}">` : ''}
+  <meta property="og:title" content="${seoTitle(post.title)}">
+  <meta property="og:description" content="${seoDescription(post.excerpt)}">
+  <meta property="og:url" content="${canonicalUrl}">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:site_name" content="${data.businessName}">
+  ${featuredImage ? `<meta property="og:image" content="${featuredImage}">` : (data.logoUrl || data.faviconUrl ? `<meta property="og:image" content="${data.logoUrl || data.faviconUrl}">` : '')}
+  <meta name="twitter:card" content="${featuredImage || data.logoUrl || data.faviconUrl ? 'summary_large_image' : 'summary'}">
+  <meta name="twitter:title" content="${seoTitle(post.title)}">
+  <meta name="twitter:description" content="${seoDescription(post.excerpt)}">
+  ${featuredImage ? `<meta name="twitter:image" content="${featuredImage}">` : (data.logoUrl || data.faviconUrl ? `<meta name="twitter:image" content="${data.logoUrl || data.faviconUrl}">` : '')}
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -4917,7 +4984,7 @@ export function generateBlogPostPage(data: WDBusinessData, post: WDBlogPost, dom
 
 export function generatePrivacyPage(data: WDBusinessData, domain: string): string {
   const theme = resolveTheme(data);
-  const canonicalUrl = `https://${domain}.netlify.app/privacy.html`;
+  const canonicalUrl = `https://${domain}.netlify.app/privacy`;
   const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const year = new Date().getFullYear();
 
@@ -4998,6 +5065,7 @@ export function generatePrivacyPage(data: WDBusinessData, domain: string): strin
     metaDescription: `Privacy Policy for ${data.businessName} — ${data.primaryKeyword.toLowerCase()} in ${data.city}, ${data.state}.`,
     canonicalUrl,
     theme,
+    businessName: data.businessName,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
     faviconUrl: data.faviconUrl || undefined,
     customHeadCode: data.customHeadCode || undefined,
@@ -5010,7 +5078,7 @@ export function generatePrivacyPage(data: WDBusinessData, domain: string): strin
 
 export function generateTermsPage(data: WDBusinessData, domain: string): string {
   const theme = resolveTheme(data);
-  const canonicalUrl = `https://${domain}.netlify.app/terms.html`;
+  const canonicalUrl = `https://${domain}.netlify.app/terms`;
   const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   const year = new Date().getFullYear();
 
@@ -5078,6 +5146,7 @@ export function generateTermsPage(data: WDBusinessData, domain: string): string 
     metaDescription: `Terms of Service for ${data.businessName} — ${data.primaryKeyword.toLowerCase()} in ${data.city}, ${data.state}.`,
     canonicalUrl,
     theme,
+    businessName: data.businessName,
     googleAnalyticsId: data.googleAnalyticsId || undefined,
     faviconUrl: data.faviconUrl || undefined,
     customHeadCode: data.customHeadCode || undefined,
@@ -5098,7 +5167,7 @@ export function generateSitemap(data: WDBusinessData, domain: string): string {
 
   const staticPages = staticPagesList
     .map(page => `  <url>
-    <loc>${base}/${page}.html</loc>
+    <loc>${base}/${page}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5107,7 +5176,7 @@ export function generateSitemap(data: WDBusinessData, domain: string): string {
 
   const calculatorUrls = CALCULATORS
     .map(c => `  <url>
-    <loc>${base}/calculators/${c.slug}.html</loc>
+    <loc>${base}/calculators/${c.slug}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -5116,7 +5185,7 @@ export function generateSitemap(data: WDBusinessData, domain: string): string {
 
   const serviceUrls = data.services
     .map(s => `  <url>
-    <loc>${base}/services/${slugify(s)}-${slugify(data.city)}.html</loc>
+    <loc>${base}/services/${slugify(s)}-${slugify(data.city)}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -5125,7 +5194,7 @@ export function generateSitemap(data: WDBusinessData, domain: string): string {
 
   const locationUrls = data.serviceAreas
     .map(l => `  <url>
-    <loc>${base}/locations/${slugify(l)}.html</loc>
+    <loc>${base}/locations/${slugify(l)}</loc>
     <lastmod>${today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -5134,7 +5203,7 @@ export function generateSitemap(data: WDBusinessData, domain: string): string {
 
   const blogPostUrls = (data.blogPosts || [])
     .map(post => `  <url>
-    <loc>${base}/blog/${slugify(post.slug || post.title)}.html</loc>
+    <loc>${base}/blog/${slugify(post.slug || post.title)}</loc>
     <lastmod>${post.date || today}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -5195,10 +5264,10 @@ export function generateLLMsTxt(data: WDBusinessData, domain: string): string {
   const base = `https://${domain}.netlify.app`;
   const hasBlog = data.blogPosts && data.blogPosts.length > 0;
 
-  const servicesList = data.services.map(s => `- [${s}](${base}/services/${slugify(s)}-${slugify(data.city)}.html)`).join('\n');
-  const areasList = data.serviceAreas.map(a => `- [${a}](${base}/locations/${slugify(a)}.html)`).join('\n');
+  const servicesList = data.services.map(s => `- [${s}](${base}/services/${slugify(s)}-${slugify(data.city)})`).join('\n');
+  const areasList = data.serviceAreas.map(a => `- [${a}](${base}/locations/${slugify(a)})`).join('\n');
   const blogList = hasBlog
-    ? data.blogPosts!.map(p => `- [${p.title}](${base}/blog/${slugify(p.slug || p.title)}.html)`).join('\n')
+    ? data.blogPosts!.map(p => `- [${p.title}](${base}/blog/${slugify(p.slug || p.title)})`).join('\n')
     : '';
 
   return `# ${data.businessName}
@@ -5212,13 +5281,13 @@ ${data.email ? `- Email: ${data.email}` : ''}
 
 ## Pages
 - [Home](${base}/)
-- [About](${base}/about.html)
-- [Contact](${base}/contact.html)
-- [FAQ](${base}/faq.html)
-- [Gallery](${base}/gallery.html)
-- [Calculators](${base}/calculator.html)
-${CALCULATORS.map(c => `- [${c.title} Calculator](${base}/calculators/${c.slug}.html)`).join('\n')}
-${hasBlog ? `- [Blog](${base}/blog.html)` : ''}
+- [About](${base}/about)
+- [Contact](${base}/contact)
+- [FAQ](${base}/faq)
+- [Gallery](${base}/gallery)
+- [Calculators](${base}/calculator)
+${CALCULATORS.map(c => `- [${c.title} Calculator](${base}/calculators/${c.slug})`).join('\n')}
+${hasBlog ? `- [Blog](${base}/blog)` : ''}
 
 ## Services
 ${servicesList}
@@ -5269,7 +5338,7 @@ export function generateHTMLSitemap(data: WDBusinessData, domain: string): strin
   <title>Sitemap — ${data.businessName}</title>
   <meta name="description" content="Complete sitemap for ${data.businessName}. Browse all pages, services, locations${hasBlog ? ', and blog posts' : ''}.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="${base}/sitemap.html">
+  <link rel="canonical" href="${base}/sitemap">
   ${fontLink}
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
