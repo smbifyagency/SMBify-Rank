@@ -46,12 +46,12 @@ export default function SignupPage() {
 
             return response.json();
         },
-        onSuccess: () => {
+        onSuccess: async () => {
             toast({
                 title: "Registration Successful",
                 description: "Welcome to SiteGenie!",
             });
-            queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+            await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
             setLocation("/dashboard");
         },
         onError: (error: any) => {

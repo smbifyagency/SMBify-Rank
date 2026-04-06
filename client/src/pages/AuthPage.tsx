@@ -43,12 +43,12 @@ export default function AuthPage() {
 
       return response.json();
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast({
         title: "Login Successful",
         description: "Welcome back!",
       });
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
+      await queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] });
       setLocation("/dashboard");
     },
     onError: (error: any) => {
