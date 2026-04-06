@@ -89,30 +89,30 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-20">
+    <div className="min-h-[80vh] flex items-center justify-center px-4 py-20 bg-gradient-to-b from-purple-50/50 to-white">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
           <Link href="/">
             <div className="inline-flex items-center gap-3 cursor-pointer group mb-6">
               <div className="h-12 w-12 rounded-xl bg-[#7C3AED] flex items-center justify-center shadow-lg shadow-[#7C3AED]/25">
-                <Globe className="h-6 w-6 text-black" />
+                <Globe className="h-6 w-6 text-white" />
               </div>
-              <h1 className="text-2xl font-bold text-white">SiteGenie</h1>
+              <h1 className="text-2xl font-bold text-gray-900">SiteGenie</h1>
             </div>
           </Link>
-          <h2 className="text-3xl font-bold text-white mb-2">Welcome back</h2>
-          <p className="text-gray-400">Sign in to your account to continue</p>
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome back</h2>
+          <p className="text-gray-500">Sign in to your account to continue</p>
         </div>
 
         {/* Form */}
-        <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-sm">
+        <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
           <div className="flex justify-center w-full mb-6 relative z-10">
             <Button
               type="button"
               variant="outline"
               onClick={handleGoogleLogin}
-              className="w-full bg-[#0b0f19] border-white/10 hover:bg-white/5 text-white h-12 rounded-xl flex items-center justify-center gap-3 text-sm font-medium transition-all duration-200"
+              className="w-full bg-white border-gray-200 hover:bg-gray-50 text-gray-700 h-12 rounded-xl flex items-center justify-center gap-3 text-sm font-medium transition-all duration-200 shadow-sm"
             >
               <svg viewBox="0 0 24 24" className="h-5 w-5">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -126,31 +126,31 @@ export default function AuthPage() {
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-white/10"></div>
+              <div className="w-full border-t border-gray-200"></div>
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-[#0b0f19] px-2 text-gray-500">Or continue with email</span>
+              <span className="bg-white px-2 text-gray-400">Or continue with email</span>
             </div>
           </div>
 
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5 relative z-0">
             <div>
-              <Label htmlFor="email" className="text-gray-300 text-sm">Email address</Label>
+              <Label htmlFor="email" className="text-gray-700 text-sm">Email address</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="you@company.com"
                 {...form.register("email")}
-                className="mt-1.5 bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED]"
+                className="mt-1.5 bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-[#7C3AED]"
                 data-testid="input-email"
               />
               {form.formState.errors.email && (
-                <p className="text-red-400 text-xs mt-1">{form.formState.errors.email.message}</p>
+                <p className="text-red-500 text-xs mt-1">{form.formState.errors.email.message}</p>
               )}
             </div>
             <div>
               <div className="flex items-center justify-between">
-                <Label htmlFor="password" className="text-gray-300 text-sm">Password</Label>
+                <Label htmlFor="password" className="text-gray-700 text-sm">Password</Label>
                 <Link href="/forgot-password" className="text-xs text-[#7C3AED] hover:text-[#9333EA]">
                   Forgot password?
                 </Link>
@@ -161,25 +161,25 @@ export default function AuthPage() {
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   {...form.register("password")}
-                  className="bg-white/5 border-white/10 text-white placeholder:text-gray-500 focus:border-[#7C3AED] pr-10"
+                  className="bg-gray-50 border-gray-200 text-gray-900 placeholder:text-gray-400 focus:border-[#7C3AED] pr-10"
                   data-testid="input-password"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
               </div>
               {form.formState.errors.password && (
-                <p className="text-red-400 text-xs mt-1">{form.formState.errors.password.message}</p>
+                <p className="text-red-500 text-xs mt-1">{form.formState.errors.password.message}</p>
               )}
             </div>
             <Button
               type="submit"
               disabled={loginMutation.isPending}
-              className="w-full bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold py-6 text-base rounded-xl shadow-lg shadow-[#7C3AED]/25"
+              className="w-full bg-[#7C3AED] hover:bg-[#9333EA] text-white font-bold py-6 text-base rounded-xl shadow-lg shadow-[#7C3AED]/25"
               data-testid="button-login"
             >
               {loginMutation.isPending ? "Signing in..." : (
@@ -188,7 +188,7 @@ export default function AuthPage() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center text-sm text-gray-400">
+          <div className="mt-6 text-center text-sm text-gray-500">
             Don't have an account?{" "}
             <Link href="/signup" className="text-[#7C3AED] hover:text-[#9333EA] font-medium">
               Sign up

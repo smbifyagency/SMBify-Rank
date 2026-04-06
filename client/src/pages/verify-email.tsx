@@ -16,7 +16,7 @@ export default function VerifyEmailPage() {
     }, []);
 
     return (
-        <div className="min-h-[80vh] flex items-center justify-center px-4 py-20">
+        <div className="min-h-[80vh] flex items-center justify-center px-4 py-20 bg-gradient-to-b from-purple-50/50 to-white">
             <div className="w-full max-w-md">
                 <div className="text-center mb-8">
                     <Link href="/">
@@ -24,30 +24,30 @@ export default function VerifyEmailPage() {
                             <div className="h-12 w-12 rounded-xl bg-[#7C3AED] flex items-center justify-center shadow-lg shadow-[#7C3AED]/25">
                                 <Globe className="h-6 w-6 text-white" />
                             </div>
-                            <h1 className="text-2xl font-bold text-white">SiteGenie</h1>
+                            <h1 className="text-2xl font-bold text-gray-900">SiteGenie</h1>
                         </div>
                     </Link>
                     {status === "verifying" && (
                         <>
-                            <h2 className="text-3xl font-bold text-white mb-2">Verifying your email...</h2>
-                            <p className="text-gray-400">Please wait while we confirm your email address.</p>
+                            <h2 className="text-3xl font-bold text-gray-900 mb-2">Verifying your email...</h2>
+                            <p className="text-gray-500">Please wait while we confirm your email address.</p>
                         </>
                     )}
                     {status === "success" && (
                         <>
-                            <h2 className="text-3xl font-bold text-white mb-2">Email verified!</h2>
-                            <p className="text-gray-400">Your email has been successfully verified. You can now access all features.</p>
+                            <h2 className="text-3xl font-bold text-gray-900 mb-2">Email verified!</h2>
+                            <p className="text-gray-500">Your email has been successfully verified. You can now access all features.</p>
                         </>
                     )}
                     {status === "error" && (
                         <>
-                            <h2 className="text-3xl font-bold text-white mb-2">Verification failed</h2>
-                            <p className="text-gray-400">This verification link may have expired or already been used.</p>
+                            <h2 className="text-3xl font-bold text-gray-900 mb-2">Verification failed</h2>
+                            <p className="text-gray-500">This verification link may have expired or already been used.</p>
                         </>
                     )}
                 </div>
 
-                <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 backdrop-blur-sm text-center">
+                <div className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm text-center">
                     {status === "verifying" && (
                         <div className="py-4">
                             <div className="w-16 h-16 rounded-full bg-[#7C3AED]/10 flex items-center justify-center mx-auto">
@@ -58,12 +58,12 @@ export default function VerifyEmailPage() {
 
                     {status === "success" && (
                         <div className="py-4">
-                            <div className="w-16 h-16 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto mb-6">
-                                <CheckCircle className="h-8 w-8 text-emerald-400" />
+                            <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center mx-auto mb-6">
+                                <CheckCircle className="h-8 w-8 text-emerald-500" />
                             </div>
                             <Button
                                 onClick={() => setLocation("/dashboard")}
-                                className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold py-5 px-8 text-base font-semibold rounded-xl"
+                                className="bg-[#7C3AED] hover:bg-[#9333EA] text-white font-bold py-5 px-8 text-base font-semibold rounded-xl"
                             >
                                 Go to Dashboard
                             </Button>
@@ -72,13 +72,13 @@ export default function VerifyEmailPage() {
 
                     {status === "error" && (
                         <div className="py-4">
-                            <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-6">
-                                <XCircle className="h-8 w-8 text-red-400" />
+                            <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-6">
+                                <XCircle className="h-8 w-8 text-red-500" />
                             </div>
                             <Button
                                 variant="outline"
                                 onClick={() => setStatus("verifying")}
-                                className="border-white/20 text-white hover:bg-white/5 bg-transparent py-5 px-8 text-base rounded-xl"
+                                className="border-gray-200 text-gray-700 hover:bg-gray-50 bg-white py-5 px-8 text-base rounded-xl"
                             >
                                 <MailCheck className="mr-2 h-4 w-4" />
                                 Resend Verification Email

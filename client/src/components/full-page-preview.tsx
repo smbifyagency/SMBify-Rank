@@ -3,8 +3,8 @@ import { BusinessData } from "@shared/schema";
 import { generateWebsiteFiles } from "@/lib/website-generator";
 import { generateAllWebsiteFiles } from "@/lib/dynamic-website-generator";
 import { Button } from "@/components/ui/button";
-import { X, ExternalLink, Smartphone, Monitor, Upload, Edit3 } from "lucide-react";
-import { NetlifyDeployModal } from "@/components/netlify-deploy-modal";
+import { X, ExternalLink, Smartphone, Monitor, Edit3, Rocket } from "lucide-react";
+import { PublishWebsiteModal } from "@/components/publish-website-modal";
 import { VisualEditor } from "@/components/visual-editor";
 
 const VISUAL_EDITOR_CSS_KEY = "__visual_editor_css__";
@@ -584,8 +584,8 @@ export function FullPagePreview({
               onClick={() => setShowNetlifyModal(true)}
               data-testid="button-deploy-netlify"
             >
-              <Upload size={16} className="mr-2" />
-              Deploy to Netlify
+              <Rocket size={16} className="mr-2" />
+              Publish
             </Button>
             <Button
               variant="outline"
@@ -638,20 +638,17 @@ export function FullPagePreview({
         </div>
       </div>
 
-      {/* Netlify Deploy Modal */}
-      <NetlifyDeployModal
-        isOpen={showNetlifyModal}
-        onClose={() => setShowNetlifyModal(false)}
-        businessData={businessData as BusinessData}
-        template={template}
-        websiteId={websiteId}
-        customFiles={Object.keys(activeEditedFiles).length > 0 ? activeEditedFiles : undefined}
-        onDeploymentSuccess={(result) => {
-          if (result?.websiteId && onWebsiteIdAssigned) {
-            onWebsiteIdAssigned(result.websiteId);
-          }
-        }}
-      />
+      {/* Publish Website Modal */}
+      {websiteId && (
+        <PublishWebsiteModal
+          isOpen={showNetlifyModal}
+          onClose={() => setShowNetlifyModal(false)}
+          websiteId={websiteId}
+          onDeploySuccess={(url, siteName) => {
+            // handled by the modal
+          }}
+        />
+      )}
 
       {/* Visual Editor Modal */}
       <VisualEditor

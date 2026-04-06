@@ -33,6 +33,7 @@ import {
   generateRobots,
 } from "../lib/water-damage-generator";
 import { VisualEditor } from "@/components/visual-editor";
+import { PublishWebsiteModal } from "@/components/publish-website-modal";
 
 type AIProvider = "openai" | "gemini" | "openrouter";
 
@@ -897,6 +898,7 @@ export default function WDSiteEditor() {
   const [autoSaveStatus, setAutoSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
   const [previewBlobUrl, setPreviewBlobUrl] = useState<string | null>(null);
   const [showVisualEditor, setShowVisualEditor] = useState(false);
+  const [showPublishModal, setShowPublishModal] = useState(false);
   const [visualEditorOverrides, setVisualEditorOverrides] = useState<Record<string, string>>({});
   const [aiProvider, setAiProvider] = useState<AIProvider>("gemini");
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -1882,7 +1884,7 @@ export default function WDSiteEditor() {
               </Button>
             </a>
           )}
-          <Button size="sm" onClick={deployToNetlify} disabled={isDeploying} className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold shadow-md">
+          <Button size="sm" onClick={() => setShowPublishModal(true)} disabled={isDeploying} className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold shadow-md">
             {isDeploying ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Rocket className="w-4 h-4 mr-1" />}
             {isDeploying ? "Deploying..." : deployedUrl ? "Update to Netlify" : "Publish to Netlify"}
           </Button>
@@ -3184,10 +3186,10 @@ export default function WDSiteEditor() {
               <Button
                 onClick={() => {
                   if (desiredSlug) updateField("urlSlug", desiredSlug);
-                  deployToNetlify();
+                  setShowPublishModal(true);
                 }}
-                disabled={isDeploying || !netlifyToken || !tokenValid || slugAvailable !== true}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                disabled={isDeploying || !netlifyToken || !tokenValid}
+                className="w-full bg-[#7C3AED] hover:bg-[#9333EA] disabled:opacity-50"
               >
                 {isDeploying ? (
                   <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Deploying...</>
@@ -3381,6 +3383,23 @@ export default function WDSiteEditor() {
         isOpen={showVisualEditor}
         onClose={() => setShowVisualEditor(false)}
         onSave={handleVisualEditorSave}
+      />
+
+      {/* Publish Website Modal */}
+      <PublishWebsiteModal
+        isOpen={showPublishModal}
+        onClose={() => setShowPublishModal(false)}
+        websiteId={websiteId || ""}
+        defaultSlug={desiredSlug || siteData.urlSlug || ""}
+        deployedUrl={deployedUrl}
+        currentSiteName={desiredSlug || siteData.urlSlug || ""}
+        netlifyToken={netlifyToken}
+        tokenVerified={tokenValid === true}
+        onDeploySuccess={(url, siteName) => {
+          setDeployedUrl(url);
+          setDesiredSlug(siteName);
+          updateField("urlSlug", siteName);
+        }}
       />
     </div>
   );
