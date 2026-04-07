@@ -1047,6 +1047,7 @@ function generateSEOMetaTags(data: BusinessData, pageTitle?: string, pageDescrip
   const title = seoTitle(pageTitle || `${data.businessName} - ${data.heroService} in ${data.heroLocation}`);
   const description = seoDescription(pageDescription || data.heroDescription);
   const keywords = `${data.heroService}, ${data.heroLocation}, ${data.targetedKeywords}, ${data.businessName}, ${data.category.toLowerCase()}`;
+  const themeColor = templates[0]?.colors?.primary || '#667eea';
 
   // Build proper canonical URL — strip .html extension for Netlify Pretty URLs
   let canonicalUrl = '';
@@ -1111,8 +1112,8 @@ function generateSEOMetaTags(data: BusinessData, pageTitle?: string, pageDescrip
     <meta name="geo.placename" content="${data.heroLocation}">
     
     <!-- Theme & Branding -->
-    <meta name="theme-color" content="${template.colors.primary}">
-    <meta name="msapplication-TileColor" content="${template.colors.primary}">
+    <meta name="theme-color" content="${themeColor}">
+    <meta name="msapplication-TileColor" content="${themeColor}">
     <meta name="application-name" content="${data.businessName}">
   `;
 }
@@ -2595,7 +2596,7 @@ ${businessData.aboutDescription || ''}
 function generateHtmlSitemapPage(businessData: BusinessData, template: Template, domain?: string, additionalLocations?: string[], additionalServices?: string[], siteSettings?: SiteSetting[]): string {
   const baseUrl = domain || '';
   const biz = businessData.businessName || 'Business';
-  const primaryColor = template.primaryColor || '#667eea';
+  const primaryColor = template.colors.primary || '#667eea';
 
   let sections = `
     <div class="sitemap-section">

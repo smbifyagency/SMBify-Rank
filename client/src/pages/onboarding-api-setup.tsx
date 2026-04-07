@@ -18,7 +18,7 @@ export default function OnboardingApiSetup() {
     const [selectedProvider, setSelectedProvider] = useState((businessData as any).aiProvider || "gemini");
     const [apiKey, setApiKey] = useState("");
 
-    const handleSaveAndGenerate = () => {
+    const handleSaveAndContinue = () => {
         updateBusinessData({ aiProvider: selectedProvider, aiApiKey: apiKey } as any);
         setLocation("/onboarding/generating");
     };
@@ -114,11 +114,11 @@ export default function OnboardingApiSetup() {
                         <div className="flex gap-2">
                             <Button variant="outline" onClick={() => setLocation("/onboarding/generating")}
                                 className="border-white/20 text-gray-400 hover:bg-white/5 bg-transparent">
-                                Skip
+                                Skip for Now
                             </Button>
-                            <Button onClick={handleSaveAndGenerate}
+                            <Button onClick={handleSaveAndContinue}
                                 className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold px-8">
-                                Save & Generate <ArrowRight className="ml-2 h-4 w-4" />
+                                Save & Continue <ArrowRight className="ml-2 h-4 w-4" />
                             </Button>
                         </div>
                     </div>

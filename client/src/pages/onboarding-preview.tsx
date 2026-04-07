@@ -1,12 +1,62 @@
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
+import { useBusinessData } from "@/contexts/business-data-context";
+import WaterDamageTemplatePreview from "@/components/water-damage-template-preview";
 import {
-    Eye, Rocket, Download, Edit, CheckCircle, Globe,
-    Phone, MapPin, Star, ArrowRight, Sparkles
+    Eye, Rocket, CheckCircle, ArrowRight, ArrowLeft, LayoutTemplate, Palette, MapPin
 } from "lucide-react";
+
+const colorSchemes: Record<string, { primary: string; secondary: string; label: string }> = {
+    indigo: { primary: "#4f46e5", secondary: "#7c3aed", label: "Indigo" },
+    emerald: { primary: "#059669", secondary: "#10b981", label: "Emerald" },
+    rose: { primary: "#e11d48", secondary: "#f43f5e", label: "Rose" },
+    amber: { primary: "#d97706", secondary: "#f59e0b", label: "Amber" },
+    violet: { primary: "#7c3aed", secondary: "#8b5cf6", label: "Violet" },
+    cyan: { primary: "#0891b2", secondary: "#06b6d4", label: "Cyan" },
+};
+
+function buildPreviewData(businessData: any) {
+    const palette = colorSchemes[businessData?.colorScheme || "indigo"] || colorSchemes.indigo;
+    const services = Array.isArray(businessData?.services) ? businessData.services : [];
+    const locations = Array.isArray(businessData?.locations)
+        ? businessData.locations
+            .map((location: any) => {
+                if (typeof location === "string") return location;
+                return [location?.city, location?.state].filter(Boolean).join(", ");
+            })
+            .filter(Boolean)
+        : [];
+
+    const businessName = businessData?.businessName || "Your Business";
+    const category = businessData?.category || "Local Service";
+    const city = businessData?.city || locations[0]?.split(",")[0] || "your city";
+
+    return {
+        businessName,
+        phone: [businessData?.countryCode, businessData?.phone].filter(Boolean).join(" ") || "(555) 123-4567",
+        email: businessData?.email || "",
+        address: [businessData?.address, businessData?.city, businessData?.state, businessData?.zip].filter(Boolean).join(", "),
+        templateVariant: businessData?.selectedTemplate || "modern",
+        primaryColor: palette.primary,
+        secondaryColor: palette.secondary,
+        heroHeadline: `Trusted ${category} in ${city}`,
+        heroSubheadline: `This is the raw template preview for ${businessName}. AI-written page content will only be created after you click Generate Website.`,
+        aboutText: `${businessName} can use this layout as a launch-ready base. Once you generate the website, SMBify Rank will build AI copy, service pages, and location pages using the details you already entered in the wizard.`,
+        youtubeUrl: businessData?.youtubeUrl || "",
+        services,
+        locations,
+    };
+}
 
 export default function OnboardingPreview() {
     const [, setLocation] = useLocation();
+    const { businessData } = useBusinessData();
+
+    const previewData = buildPreviewData(businessData as any);
+    const locationCount = Array.isArray((businessData as any).locations) ? (businessData as any).locations.length : 0;
+    const serviceCount = Array.isArray((businessData as any).services) ? (businessData as any).services.length : 0;
+    const selectedTemplate = (businessData as any).selectedTemplate || "modern";
+    const selectedColor = colorSchemes[(businessData as any).colorScheme || "indigo"] || colorSchemes.indigo;
 
     return (
         <div className="min-h-[80vh] py-20 px-4 sm:px-6 lg:px-8">
@@ -21,106 +71,76 @@ export default function OnboardingPreview() {
                 </div>
 
                 <div className="text-center mb-10">
-                    <div className="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full px-4 py-2 mb-4">
-                        <CheckCircle className="h-4 w-4 text-emerald-400" />
-                        <span className="text-sm text-emerald-300">Website Generated Successfully!</span>
+                    <div className="inline-flex items-center gap-2 bg-sky-500/10 border border-sky-500/20 rounded-full px-4 py-2 mb-4">
+                        <Eye className="h-4 w-4 text-sky-400" />
+                        <span className="text-sm text-sky-300">Template Preview Only</span>
                     </div>
-                    <h1 className="text-3xl font-bold text-white mb-2">Your Website Preview</h1>
-                    <p className="text-gray-400">Review your AI-generated website and take it live.</p>
+                    <h1 className="text-3xl font-bold text-white mb-2">Preview Your Template</h1>
+                    <p className="text-gray-400">This shows the raw layout only. AI content and full page generation start after you click Generate Website.</p>
                 </div>
 
-                {/* Action Cards */}
-                <div className="grid sm:grid-cols-3 gap-4 mb-8">
-                    <button onClick={() => setLocation("/dashboard/websites")} className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-center hover:-translate-y-1 transition-all group">
-                        <Edit className="h-8 w-8 text-[#7C3AED] mx-auto mb-3 group-hover:scale-110 transition-transform" />
-                        <h3 className="font-semibold text-white mb-1">Edit Content</h3>
-                        <p className="text-sm text-gray-400">Customize text, images, and layout</p>
-                    </button>
-                    <button onClick={() => setLocation("/dashboard/websites")} className="rounded-2xl border border-[#7C3AED]/25 bg-indigo-500/5 p-6 text-center hover:-translate-y-1 transition-all group">
-                        <Rocket className="h-8 w-8 text-[#7C3AED] mx-auto mb-3 group-hover:scale-110 transition-transform" />
-                        <h3 className="font-semibold text-white mb-1">Deploy Now</h3>
-                        <p className="text-sm text-gray-400">Go live on Netlify in seconds</p>
-                    </button>
-                    <button className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-center hover:-translate-y-1 transition-all group">
-                        <Download className="h-8 w-8 text-[#7C3AED] mx-auto mb-3 group-hover:scale-110 transition-transform" />
-                        <h3 className="font-semibold text-white mb-1">Download ZIP</h3>
-                        <p className="text-sm text-gray-400">Get the full source code</p>
-                    </button>
-                </div>
-
-                {/* Preview */}
-                <div className="rounded-2xl border border-white/10 overflow-hidden shadow-2xl shadow-black/30">
-                    <div className="bg-gray-800 px-4 py-3 flex items-center gap-3">
-                        <div className="flex gap-2">
-                            <div className="w-3 h-3 rounded-full bg-red-500" />
-                            <div className="w-3 h-3 rounded-full bg-yellow-500" />
-                            <div className="w-3 h-3 rounded-full bg-green-500" />
+                <div className="grid gap-4 sm:grid-cols-4 mb-8">
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                        <p className="text-xs uppercase tracking-[0.2em] text-gray-500">Template</p>
+                        <div className="mt-3 flex items-center gap-2 text-white">
+                            <LayoutTemplate className="h-4 w-4 text-[#A855F7]" />
+                            <span className="text-sm font-semibold capitalize">{selectedTemplate}</span>
                         </div>
-                        <div className="flex-1 bg-gray-700 rounded-lg px-4 py-1.5 text-xs text-gray-400 font-mono flex items-center gap-2">
-                            <Globe className="h-3 w-3" /> your-business.SiteGenie.site
-                        </div>
-                        <button className="text-gray-400 hover:text-white">
-                            <Eye className="h-4 w-4" />
-                        </button>
                     </div>
-
-                    <div className="bg-white text-gray-900">
-                        {/* Mock Nav */}
-                        <div className="bg-gradient-to-r from-[#7C3AED] to-[#F59E0B] text-white px-6 py-4 flex items-center justify-between">
-                            <span className="font-bold text-lg">Your Business Name</span>
-                            <div className="hidden sm:flex gap-6 text-sm opacity-80">
-                                <span>Home</span><span>Services</span><span>About</span><span>Blog</span><span>Contact</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm">
-                                <Phone className="h-4 w-4" /> (555) 123-4567
-                            </div>
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                        <p className="text-xs uppercase tracking-[0.2em] text-gray-500">Color</p>
+                        <div className="mt-3 flex items-center gap-2 text-white">
+                            <Palette className="h-4 w-4 text-[#A855F7]" />
+                            <span className="text-sm font-semibold">{selectedColor.label}</span>
                         </div>
-
-                        {/* Hero */}
-                        <div className="bg-gradient-to-br from-[#7C3AED] to-[#F59E0B] text-white text-center px-8 py-16">
-                            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                                Professional Services You Can Trust
-                            </h2>
-                            <div className="flex items-center justify-center gap-2 mb-6 text-sm opacity-80">
-                                <MapPin className="h-4 w-4" /> Serving Your City & Surrounding Areas
-                            </div>
-                            <div className="flex gap-3 justify-center mb-6">
-                                <button className="bg-white text-gray-900 px-6 py-2.5 rounded-lg font-semibold text-sm">Get Free Quote</button>
-                                <button className="border border-white/30 px-6 py-2.5 rounded-lg text-sm">Learn More</button>
-                            </div>
-                            <div className="flex items-center justify-center gap-1">
-                                {[...Array(5)].map((_, i) => <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
-                                <span className="text-sm ml-2 opacity-80">5.0 rating</span>
-                            </div>
-                        </div>
-
-                        {/* Services */}
-                        <div className="px-8 py-12">
-                            <h3 className="text-2xl font-bold text-center mb-6">Our Services</h3>
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                {["Service 1", "Service 2", "Service 3", "Service 4"].map((s) => (
-                                    <div key={s} className="text-center p-4 rounded-xl bg-gray-50 border">
-                                        <p className="text-sm font-medium text-gray-700">{s}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        <div className="bg-gray-50 px-8 py-6 text-center text-sm text-gray-500 border-t">
-                            <Sparkles className="h-4 w-4 inline mr-1" /> Generated by SiteGenie AI
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                        <p className="text-xs uppercase tracking-[0.2em] text-gray-500">Services</p>
+                        <p className="mt-3 text-2xl font-semibold text-white">{serviceCount}</p>
+                    </div>
+                    <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+                        <p className="text-xs uppercase tracking-[0.2em] text-gray-500">Locations</p>
+                        <div className="mt-3 flex items-center gap-2 text-white">
+                            <MapPin className="h-4 w-4 text-[#A855F7]" />
+                            <span className="text-sm font-semibold">{locationCount}</span>
                         </div>
                     </div>
                 </div>
 
-                {/* Bottom CTA */}
-                <div className="text-center mt-10">
+                <div className="flex flex-wrap items-center justify-center gap-3 mb-8">
                     <Button
-                        size="lg"
-                        onClick={() => setLocation("/dashboard/websites")}
-                        className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold text-base px-10 py-6 rounded-xl shadow-lg shadow-[#7C3AED]/25"
+                        variant="outline"
+                        onClick={() => setLocation("/onboarding/generating")}
+                        className="border-white/15 bg-transparent text-gray-300 hover:bg-white/5"
                     >
-                        Go to My Websites <ArrowRight className="ml-2 h-4 w-4" />
+                        <ArrowLeft className="mr-2 h-4 w-4" /> Back
                     </Button>
+                    <Button
+                        onClick={() => setLocation("/onboarding/generating?mode=generate")}
+                        className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold px-8"
+                    >
+                        Generate Website <Rocket className="ml-2 h-4 w-4" />
+                    </Button>
+                </div>
+
+                <div className="rounded-2xl border border-white/10 bg-black/20 p-3 shadow-2xl shadow-black/30">
+                    <WaterDamageTemplatePreview data={previewData} />
+                </div>
+
+                <div className="text-center mt-10">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-4 py-2 text-sm text-emerald-300">
+                        <CheckCircle className="h-4 w-4" />
+                        This preview does not create a website yet.
+                    </div>
+                    <div className="mt-4">
+                        <Button
+                            size="lg"
+                            onClick={() => setLocation("/onboarding/generating?mode=generate")}
+                            className="bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold text-base px-10 py-6 rounded-xl shadow-lg shadow-[#7C3AED]/25"
+                        >
+                            Generate Full Website <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

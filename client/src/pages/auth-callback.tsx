@@ -49,7 +49,7 @@ export default function AuthCallback() {
             return;
         }
 
-        supabase.auth.getSession().then(({ data: { session }, error }) => {
+        supabase.auth.getSession().then(({ data: { session }, error }: any) => {
             if (error) {
                 setErrorMsg(error.message);
                 toast({ title: "Authentication Failed", description: error.message, variant: "destructive" });
@@ -65,7 +65,7 @@ export default function AuthCallback() {
         });
 
         // Supabase specifically fires this event when an OAuth login finishes parsing
-        const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+        const { data: authListener } = supabase.auth.onAuthStateChange((event: any, session: any) => {
             if (event === "SIGNED_IN" && session?.access_token) {
                 syncSession(session.access_token);
             }

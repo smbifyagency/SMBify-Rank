@@ -1160,12 +1160,24 @@ async function generateLocationPageContentWithProvider(location: string, busines
  * If no API key is configured (or user role doesn't allow it), returns null
  * and the template falls back to its built-in copy.
  */
+type LocalServiceAIContent = {
+  providerUsed: AIProvider;
+  introParas?: string[];
+  faqs?: any[];
+  seoBody?: string;
+  processSteps?: any[];
+  whyChooseUs?: any[];
+  aboutContent?: string;
+  testimonials?: any[];
+  serviceDescriptions?: Record<string, any>;
+};
+
 async function generateLocalServiceAIContent(
   bd: any,
   userId: string,
   categoryName: string,
   primaryKeyword: string
-): Promise<{ providerUsed: AIProvider; introParas?: string[]; faqs?: any[]; seoBody?: string; processSteps?: any[] } | null> {
+): Promise<LocalServiceAIContent | null> {
   try {
     const user = await storage.getUser(userId);
     if (!user || (user.role !== 'user' && user.role !== 'paid' && user.role !== 'admin')) {
@@ -1227,7 +1239,7 @@ async function generateLocalServiceAIContent(
       temperature: 0.7,
     });
 
-    const out: Record<string, any> = { providerUsed: provider };
+    const out: LocalServiceAIContent = { providerUsed: provider };
     if (Array.isArray(result.introParas) && result.introParas.length > 0) out.introParas = result.introParas;
     if (Array.isArray(result.faqs) && result.faqs.length > 0) out.faqs = result.faqs;
     if (typeof result.seoBody === 'string' && result.seoBody.trim()) out.seoBody = result.seoBody;

@@ -7,6 +7,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -86,6 +87,7 @@ interface WDSiteData {
   contentAiProvider?: AIProvider;
   // Custom images: placeholder key → data URL or hosted URL
   customImages?: Record<string, string>;
+  publishChecklist?: Record<string, boolean>;
   // Social media
   facebookUrl?: string;
   instagramUrl?: string;
@@ -98,11 +100,130 @@ interface WDSiteData {
   // Gallery images: before/after pairs + normal gallery photos
   galleryImages?: Array<{src: string; alt: string; type: 'before' | 'after' | 'normal'; pairId?: string; caption?: string}>;
   // Blog posts
-  blogPosts?: Array<{id: string; title: string; slug: string; excerpt: string; content: string; featuredImage?: string; featuredImageAlt?: string; metaTitle?: string; metaDescription?: string; category?: string; tags?: string[]; keywords?: string; isAiGenerated?: boolean}>;
+  blogPosts?: Array<{id: string; title: string; slug: string; excerpt: string; content: string; featuredImage?: string; featuredImageAlt?: string; metaTitle?: string; metaDescription?: string; category?: string; tags?: string[]; keywords?: string; date?: string; isAiGenerated?: boolean}>;
   // Deployment
   netlifyUrl?: string;
   netlifyApiKey?: string;
   deploymentStatus?: string;
+  googleAnalyticsId?: string;
+  customHeadCode?: string;
+  logoUrl?: string;
+  faviconUrl?: string;
+}
+
+interface PublishChecklistItem {
+  id: string;
+  title: string;
+  description: string;
+  targetTab: string;
+  autoReady: (data: WDSiteData) => boolean;
+}
+
+const PUBLISH_CHECKLIST_ITEMS: PublishChecklistItem[] = [
+  {
+    id: "business-details",
+    title: "Business details are correct",
+    description: "Confirm your business name, phone, address, and main contact details.",
+    targetTab: "business",
+    autoReady: (data) => Boolean(data.businessName?.trim() && data.phone?.trim() && (data.address?.trim() || data.city?.trim())),
+  },
+  {
+    id: "logo-uploaded",
+    title: "Logo uploaded",
+    description: "Replace the default branding with your real logo before launch.",
+    targetTab: "images",
+    autoReady: (data) => Boolean(data.logoUrl),
+  },
+  {
+    id: "services-locations",
+    title: "Services and locations reviewed",
+    description: "Make sure your service list and city/location pages are final.",
+    targetTab: "business",
+    autoReady: (data) => data.services.length > 0 && data.serviceAreas.length > 0,
+  },
+  {
+    id: "ai-content",
+    title: "AI content reviewed",
+    description: "Generate or refine the homepage, service, and location content before publishing.",
+    targetTab: "content",
+    autoReady: (data) => Boolean(
+      data.homepageContent ||
+      (data as any)._aiAboutContent ||
+      (Array.isArray((data as any)._aiIntroParas) && (data as any)._aiIntroParas.length > 0) ||
+      (Array.isArray((data as any)._aiTestimonials) && (data as any)._aiTestimonials.length > 0) ||
+      (data.serviceContent && Object.keys(data.serviceContent).length > 0) ||
+      (data.locationContent && Object.keys(data.locationContent).length > 0)
+    ),
+  },
+  {
+    id: "main-images",
+    title: "Main site images replaced",
+    description: "Swap placeholder hero and section images with real business photos.",
+    targetTab: "images",
+    autoReady: (data) => Object.keys(data.customImages || {}).some((key) => ["hero-bg", "main-image", "about-image", "service-image", "location-image"].includes(key)),
+  },
+  {
+    id: "gallery-reviewed",
+    title: "Gallery reviewed",
+    description: "Add or confirm before/after and gallery images so the site looks complete.",
+    targetTab: "images",
+    autoReady: (data) => Array.isArray(data.galleryImages) && data.galleryImages.some((image) => Boolean(image?.src)),
+  },
+  {
+    id: "blog-reviewed",
+    title: "Blog posts reviewed or intentionally skipped",
+    description: "Check blog titles and images, or mark this done if you are launching without blog content.",
+    targetTab: "blog",
+    autoReady: (data) => Array.isArray(data.blogPosts) && data.blogPosts.length > 0,
+  },
+  {
+    id: "gsc-code",
+    title: "Google Search Console code added",
+    description: "Paste your verification meta tag into Custom Head Code.",
+    targetTab: "deploy",
+    autoReady: (data) => /google-site-verification/i.test(data.customHeadCode || ""),
+  },
+  {
+    id: "analytics",
+    title: "Analytics or tracking code added",
+    description: "Add your GA4 Measurement ID and any head scripts you need.",
+    targetTab: "deploy",
+    autoReady: (data) => Boolean(data.googleAnalyticsId?.trim()) || /googletagmanager|gtag\(|google-analytics/i.test(data.customHeadCode || ""),
+  },
+  {
+    id: "final-preview",
+    title: "Final preview checked",
+    description: "Open the key pages in preview and make sure the final output looks ready to ship.",
+    targetTab: "deploy",
+    autoReady: () => false,
+  },
+];
+
+function getChecklistItemStates(data?: WDSiteData | null) {
+  return PUBLISH_CHECKLIST_ITEMS.map((item) => {
+    const manualValue = data?.publishChecklist?.[item.id];
+    const autoReady = data ? item.autoReady(data) : false;
+    return {
+      ...item,
+      autoReady,
+      checked: typeof manualValue === "boolean" ? manualValue : autoReady,
+      isManual: typeof manualValue === "boolean",
+    };
+  });
+}
+
+function getChecklistMetrics(data?: WDSiteData | null) {
+  const items = getChecklistItemStates(data);
+  const completedCount = items.filter((item) => item.checked).length;
+  const totalCount = items.length;
+  const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+  return {
+    completedCount,
+    totalCount,
+    percent,
+    incompleteItems: items.filter((item) => !item.checked).map((item) => item.title),
+  };
 }
 
 // All placeholder image slots in the WD template
@@ -907,6 +1028,8 @@ export default function WDSiteEditor() {
   const hiddenFileInputRef = useRef<HTMLInputElement>(null);
   const pendingUploadKeyRef = useRef<string | null>(null);
   const siteDataRef = useRef<WDSiteData | null>(null);
+  const checklistItems = getChecklistItemStates(siteData);
+  const checklistMetrics = getChecklistMetrics(siteData);
 
   async function persistCurrentWebsiteState(
     data: WDSiteData,
@@ -945,6 +1068,20 @@ export default function WDSiteEditor() {
 
     setAutoSaveStatus("saved");
     setTimeout(() => setAutoSaveStatus("idle"), 2000);
+  }
+
+  function toggleChecklistItem(itemId: string, checked: boolean) {
+    setSiteData((prev) => {
+      if (!prev) return prev;
+
+      return {
+        ...prev,
+        publishChecklist: {
+          ...(prev.publishChecklist || {}),
+          [itemId]: checked,
+        },
+      };
+    });
   }
 
   // ── Auto-save when siteData changes ──────────────────────────────────
@@ -1029,6 +1166,7 @@ export default function WDSiteEditor() {
         serviceContent: bd.serviceContent,
         locationContent: bd.locationContent,
         customImages: bd.customImages || {},
+        publishChecklist: bd.publishChecklist || {},
         facebookUrl: bd.facebookUrl || "",
         instagramUrl: bd.instagramUrl || "",
         googleUrl: bd.googleUrl || "",
@@ -1040,6 +1178,7 @@ export default function WDSiteEditor() {
         blogPosts: Array.isArray(bd.blogPosts) ? bd.blogPosts : [],
         logoUrl: bd.logoUrl,
         faviconUrl: bd.faviconUrl,
+        googleAnalyticsId: bd.googleAnalyticsId || "",
         customHeadCode: bd.customHeadCode || "",
         _aiIntroParas: bd._aiIntroParas,
         _aiFaqs: bd._aiFaqs,
@@ -1939,6 +2078,9 @@ export default function WDSiteEditor() {
               </TabsTrigger>
               <TabsTrigger value="blog" className="flex-1 rounded-none text-xs py-3 data-[state=active]:bg-gray-800">
                 <Edit3 className="w-3 h-3 mr-1" />Blog
+              </TabsTrigger>
+              <TabsTrigger value="checklist" className="flex-1 rounded-none text-xs py-3 data-[state=active]:bg-gray-800">
+                <CheckCircle2 className="w-3 h-3 mr-1" />Checklist
               </TabsTrigger>
               <TabsTrigger value="deploy" className="flex-1 rounded-none text-xs py-3 data-[state=active]:bg-gray-800">
                 <Rocket className="w-3 h-3 mr-1" />Deploy
@@ -3121,6 +3263,79 @@ export default function WDSiteEditor() {
               />
             </TabsContent>
 
+            <TabsContent value="checklist" className="p-4 space-y-4 mt-0">
+              <div className="rounded-xl border border-[#7C3AED]/20 bg-[#7C3AED]/5 p-4 space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-semibold text-white">Pre-Publish Checklist</p>
+                    <p className="text-xs text-gray-400">Track the launch tasks that are easiest to miss before pushing the site live.</p>
+                  </div>
+                  <div className="rounded-full border border-[#7C3AED]/30 bg-black/20 px-3 py-1 text-xs font-semibold text-[#C084FC]">
+                    {checklistMetrics.percent}% complete
+                  </div>
+                </div>
+
+                <div>
+                  <div className="mb-2 flex items-center justify-between text-[11px] text-gray-400">
+                    <span>Checklist progress</span>
+                    <span>{checklistMetrics.completedCount}/{checklistMetrics.totalCount}</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-gray-800 overflow-hidden">
+                    <div className="h-full rounded-full bg-gradient-to-r from-[#7C3AED] to-[#A855F7] transition-all duration-300" style={{ width: `${checklistMetrics.percent}%` }} />
+                  </div>
+                </div>
+
+                <p className="text-xs text-gray-400">
+                  You can still publish before this reaches 100%, but the publish popup will remind you about the remaining items.
+                </p>
+              </div>
+
+              <div className="space-y-3">
+                {checklistItems.map((item) => (
+                  <div key={item.id} className="rounded-xl border border-gray-700 bg-gray-800/40 p-4">
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        checked={item.checked}
+                        onCheckedChange={(checked) => toggleChecklistItem(item.id, checked === true)}
+                        className="mt-1 border-gray-600 data-[state=checked]:border-[#7C3AED] data-[state=checked]:bg-[#7C3AED] data-[state=checked]:text-white"
+                      />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <p className="text-sm font-medium text-white">{item.title}</p>
+                            <p className="mt-1 text-xs text-gray-400">{item.description}</p>
+                          </div>
+                          <button
+                            onClick={() => setActiveTab(item.targetTab)}
+                            className="shrink-0 rounded-md border border-gray-600 px-2.5 py-1 text-[11px] text-gray-300 transition-colors hover:border-gray-500 hover:bg-gray-700/60 hover:text-white"
+                          >
+                            Open
+                          </button>
+                        </div>
+
+                        <div className="mt-3 flex items-center gap-2 text-[11px]">
+                          {item.checked ? (
+                            <span className="rounded-full border border-green-700/40 bg-green-900/30 px-2 py-0.5 text-green-300">
+                              Complete
+                            </span>
+                          ) : (
+                            <span className="rounded-full border border-gray-700 px-2 py-0.5 text-gray-400">
+                              Pending
+                            </span>
+                          )}
+                          {item.autoReady && !item.isManual && (
+                            <span className="rounded-full border border-sky-700/40 bg-sky-900/30 px-2 py-0.5 text-sky-300">
+                              Auto-ready
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TabsContent>
+
             {/* ── Deploy Tab ──────────────────────────────────────────── */}
             <TabsContent value="deploy" className="p-4 space-y-4 mt-0">
               <h3 className="font-semibold text-sm text-gray-300">{deployedUrl ? "Update on Netlify" : "Publish to Netlify"}</h3>
@@ -3176,7 +3391,7 @@ export default function WDSiteEditor() {
                     placeholder="nfp_xxxxxxxxxxxxxxxxxx"
                   />
                   <Button size="sm" variant="outline" onClick={verifyNetlifyToken} disabled={isVerifyingToken || !netlifyToken}
-                    className={`border-gray-700 text-xs whitespace-nowrap ${tokenValid === true ? 'border-green-600 text-green-400' : tokenValid === false ? 'border-red-600 text-red-400' : 'text-gray-300'}`}>
+                    className={`border-gray-700 bg-gray-900 text-xs whitespace-nowrap hover:bg-gray-800 ${tokenValid === true ? 'border-green-600 text-green-400' : tokenValid === false ? 'border-red-600 text-red-400' : 'text-gray-300'}`}>
                     {isVerifyingToken ? <Loader2 className="w-3 h-3 animate-spin" /> : tokenValid === true ? <><CheckCircle2 className="w-3 h-3 mr-1" /> Connected</> : tokenValid === false ? "✗ Invalid" : "Connect"}
                   </Button>
                 </div>
@@ -3200,7 +3415,7 @@ export default function WDSiteEditor() {
                     />
                     <span className="text-xs text-gray-400 bg-gray-800 border border-gray-700 px-2 py-2 h-9 flex items-center">.netlify.app</span>
                     <Button size="sm" variant="outline" onClick={checkSlugAvailability} disabled={isCheckingSlug || !netlifyToken}
-                      className={`rounded-l-none border-l-0 text-xs h-9 whitespace-nowrap ${slugAvailable === true ? 'border-green-600 text-green-400' : slugAvailable === false ? 'border-red-600 text-red-400' : 'border-gray-700 text-gray-300'}`}>
+                      className={`rounded-l-none border-l-0 bg-gray-900 text-xs h-9 whitespace-nowrap hover:bg-gray-800 ${slugAvailable === true ? 'border-green-600 text-green-400' : slugAvailable === false ? 'border-red-600 text-red-400' : 'border-gray-700 text-gray-300'}`}>
                       {isCheckingSlug ? <Loader2 className="w-3 h-3 animate-spin" /> : slugAvailable === true ? "✓ Free" : slugAvailable === false ? "✗ Taken" : "Check"}
                     </Button>
                   </div>
@@ -3258,24 +3473,36 @@ export default function WDSiteEditor() {
                 <p className="text-xs text-gray-600">Yahan Google Search Console meta tag, Google Analytics snippet, Bing/Pinterest verification, Meta Pixel, ya koi bhi third-party &lt;meta&gt;, &lt;script&gt;, ya &lt;link&gt; code paste kar sakte hain. Yeh har page ke &lt;head&gt; me inject hoga.</p>
               </div>
 
-              <div className="rounded-lg bg-gray-800/50 border border-gray-700/50 p-3">
-                <p className="text-xs font-medium text-gray-400 mb-2">✅ Pre-Publish Checklist</p>
-                <ul className="space-y-1">
-                  {[
-                    "Business name and phone are correct",
-                    "Services list is accurate",
-                    "Service areas listed correctly",
-                    "AI content generated (click Regenerate)",
-                    "Placeholder images replaced with real photos",
-                    "Netlify site name checked and available",
-                    "Search Console / verification tags pasted in Custom Head Code",
-                    "GA4 ID entered and any analytics script pasted in Custom Head Code",
-                  ].map((item, i) => (
-                    <li key={i} className="flex items-start gap-2 text-xs text-gray-500">
-                      <span className="mt-0.5">□</span> {item}
-                    </li>
-                  ))}
-                </ul>
+              <div className="rounded-lg bg-gray-800/50 border border-gray-700/50 p-3 space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-medium text-gray-300">Checklist Progress</p>
+                    <p className="text-[11px] text-gray-500">{checklistMetrics.completedCount} of {checklistMetrics.totalCount} items completed</p>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab("checklist")}
+                    className="rounded-md border border-gray-600 px-2.5 py-1 text-[11px] text-gray-300 transition-colors hover:border-gray-500 hover:bg-gray-700/60 hover:text-white"
+                  >
+                    Open checklist
+                  </button>
+                </div>
+
+                <div className="h-2 rounded-full bg-gray-900 overflow-hidden">
+                  <div className="h-full rounded-full bg-gradient-to-r from-[#7C3AED] to-[#A855F7] transition-all duration-300" style={{ width: `${checklistMetrics.percent}%` }} />
+                </div>
+
+                {checklistMetrics.incompleteItems.length > 0 ? (
+                  <div className="space-y-1">
+                    {checklistMetrics.incompleteItems.slice(0, 3).map((item) => (
+                      <p key={item} className="text-xs text-gray-500">• {item}</p>
+                    ))}
+                    {checklistMetrics.incompleteItems.length > 3 && (
+                      <p className="text-xs text-gray-600">+{checklistMetrics.incompleteItems.length - 3} more checklist items pending</p>
+                    )}
+                  </div>
+                ) : (
+                  <p className="text-xs text-green-400">Checklist is complete. You're ready to publish.</p>
+                )}
               </div>
             </TabsContent>
           </Tabs>
@@ -3419,12 +3646,15 @@ export default function WDSiteEditor() {
       <PublishWebsiteModal
         isOpen={showPublishModal}
         onClose={() => setShowPublishModal(false)}
+        onOpenDeployTab={() => setActiveTab("deploy")}
         websiteId={websiteId || ""}
         defaultSlug={desiredSlug || siteData.urlSlug || ""}
         deployedUrl={deployedUrl}
         currentSiteName={desiredSlug || siteData.urlSlug || ""}
         netlifyToken={netlifyToken}
         tokenVerified={tokenValid === true}
+        checklistCompletion={checklistMetrics}
+        onReviewChecklist={() => setActiveTab("checklist")}
         onBeforeDeploy={async () => {
           const currentSiteData = siteDataRef.current;
           if (!currentSiteData) {

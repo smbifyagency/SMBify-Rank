@@ -86,7 +86,9 @@ export interface WDBusinessData {
   // Social media
   facebookUrl?: string;
   instagramUrl?: string;
+  linkedinUrl?: string;
   googleUrl?: string;
+  googleMapsUrl?: string;
   yelpUrl?: string;
   twitterUrl?: string;
   // Floating CTA: 'call' (default) | 'whatsapp' | 'none'
@@ -128,6 +130,8 @@ export interface WDBusinessData {
   _faqH2?: string;
   _faqs?: Array<{ question: string; answer: string }>;
   _seoBody?: string;
+  _calcPageH1?: string;
+  _metaDescription?: string;
   _servicePageBenefitsH2?: string;
   _servicePageBenefits?: Array<{ heading: string; body: string }>;
 }
@@ -147,8 +151,9 @@ export interface WDBlogPost {
   content?: string;
   featuredImage?: string;
   featuredImageAlt?: string;
-  date: string;
+  date?: string;
   category?: string;
+  keywords?: string;
 }
 
 export interface WDFAQPageContent {
@@ -180,6 +185,7 @@ export interface WDHomepageContent {
     intro: string;
     cards: Array<{
       service: string;
+      icon?: string;
       h3: string;
       description: string;
       internalLink: { anchor: string; slug: string };
@@ -286,6 +292,7 @@ export interface WDLocationContent {
     intro: string;
     serviceCards: Array<{
       service: string;
+      icon?: string;
       h3: string;
       description: string;
       internalLink: { anchor: string; slug: string };
@@ -849,15 +856,16 @@ function generateAggregateRatingSchema(data: WDBusinessData): string {
   return JSON.stringify(schema, null, 2);
 }
 
-function generateBlogPostingSchema(data: WDBusinessData, post: { title: string; slug: string; excerpt: string; content?: string; date: string; featuredImage?: string; category?: string; keywords?: string }, domain: string): string {
+function generateBlogPostingSchema(data: WDBusinessData, post: { title: string; slug: string; excerpt: string; content?: string; date?: string; featuredImage?: string; category?: string; keywords?: string }, domain: string): string {
+  const publishDate = getSafeBlogDate(post.date);
   const featuredImage = data.customImages?.[`blog-img-${post.slug}`] || post.featuredImage;
   const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": post.title,
     "description": post.excerpt,
-    "datePublished": post.date,
-    "dateModified": post.date,
+    "datePublished": publishDate,
+    "dateModified": publishDate,
     "author": { "@type": "Organization", "name": data.businessName },
     "publisher": {
       "@type": "Organization",
@@ -874,6 +882,20 @@ function generateBlogPostingSchema(data: WDBusinessData, post: { title: string; 
   if (featuredImage) schema["image"] = featuredImage;
   if (post.content) schema["wordCount"] = post.content.replace(/<[^>]*>/g, '').split(/\s+/).length;
   return JSON.stringify(schema, null, 2);
+}
+
+function getSafeBlogDate(date?: string): string {
+  if (!date) return new Date().toISOString();
+  const parsed = new Date(date);
+  return Number.isNaN(parsed.getTime()) ? new Date().toISOString() : date;
+}
+
+function formatBlogDate(date?: string): string {
+  return new Date(getSafeBlogDate(date)).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
 }
 
 // ─── SHARED: CSS ───────────────────────────────────────────────────────────
@@ -2461,6 +2483,7 @@ export function generateHomepage(data: WDBusinessData, domain: string): string {
     ? content.servicesSection.cards
     : data.services.map(s => ({
         service: s,
+        icon: 'tool',
         h3: s,
         description: `Professional ${kwBase(s).toLowerCase()} services for ${data.city} properties. Contact us for a free assessment.`,
         internalLink: { anchor: `Learn about ${s}`, slug: `services/${slugify(s)}-${slugify(data.city)}.html` },
@@ -3116,6 +3139,7 @@ export function generateLocationPage(
     ? content.servicesInCitySection.serviceCards
     : data.services.map(s => ({
         service: s,
+        icon: 'tool',
         h3: `${s} in ${city}`,
         description: `Professional ${s.toLowerCase()} for ${city} homeowners and businesses. Fast response, certified technicians.`,
         internalLink: { anchor: `${s} in ${city}`, slug: data.enableMatrixPages
@@ -3343,7 +3367,7 @@ export function generateServiceLocationMatrixPage(
     `${data.businessName} works with all major insurance carriers when applicable and provides complete documentation to support your claim. Call ${data.phone} for a free estimate.`,
   ];
 
-  const processSteps = (data as any)._aiProcessSteps || [
+  const processSteps: Array<{ step: number; heading: string; body: string }> = (data as any)._aiProcessSteps || [
     { step: 1, heading: 'Contact Us', body: `Call ${data.phone} or submit a request online. Our ${city} dispatcher will confirm your appointment.` },
     { step: 2, heading: 'Free Assessment', body: `A licensed technician inspects your ${city} property, documents the situation, and explains what needs to be done.` },
     { step: 3, heading: 'Written Estimate', body: 'You receive a clear, itemized estimate with no hidden fees — we never start work without your approval.' },
@@ -3484,7 +3508,7 @@ export function generateAboutPage(data: WDBusinessData, domain: string): string 
   const canonicalUrl = `https://${domain}.netlify.app/about`;
   const yearsText = data.yearsInBusiness ? `With ${data.yearsInBusiness} years of experience` : 'With years of experience';
 
-  const aboutText = (data as any)._aiAboutContent || data.aboutContent ||
+  const aboutText: string = (data as any)._aiAboutContent || data.aboutContent ||
     `${data.businessName} was founded to give homeowners and businesses in ${data.city} a ${data.primaryKeyword.toLowerCase()} company they could genuinely trust. Too many property owners have been let down by contractors who cut corners, gave vague estimates, or disappeared after collecting payment.
 
 We built this company differently. Every technician we hire is properly licensed and trained before they set foot on a customer's property. Every project is documented thoroughly so you always know exactly what was done and why.
@@ -4740,6 +4764,7 @@ export function generateBlogArchivePage(data: WDBusinessData, domain: string): s
 
   const postsHTML = displayPosts.map(post => {
     const featuredImage = data.customImages?.[`blog-img-${post.slug}`] || post.featuredImage;
+    const publishDate = getSafeBlogDate(post.date);
 
     return `
     <article class="blog-card">
@@ -4751,7 +4776,7 @@ export function generateBlogArchivePage(data: WDBusinessData, domain: string): s
         <h2 class="blog-card-title"><a href="blog/${post.slug}.html">${post.title}</a></h2>
         <p class="blog-card-excerpt">${post.excerpt}</p>
         <div class="blog-card-meta">
-          <time datetime="${post.date}">${new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+          <time datetime="${publishDate}">${formatBlogDate(post.date)}</time>
           <a href="blog/${post.slug}.html" class="service-card-link">Read More →</a>
         </div>
       </div>
@@ -4860,6 +4885,7 @@ export function generateBlogPostPage(data: WDBusinessData, post: WDBlogPost, dom
   const theme = resolveTheme(data);
   const canonicalUrl = `https://${domain}.netlify.app/blog/${post.slug}`;
   const featuredImage = data.customImages?.[`blog-img-${post.slug}`] || post.featuredImage;
+  const publishDate = getSafeBlogDate(post.date);
   const fullTheme = resolveTheme(data);
   const fontUrl = FONT_URLS[fullTheme.fontFamily];
   const fontLink = fontUrl
@@ -4902,7 +4928,7 @@ export function generateBlogPostPage(data: WDBusinessData, post: WDBlogPost, dom
       ${post.category ? `<span style="display:inline-block;background:${theme.secondaryColor}22;color:${theme.secondaryColor};font-size:.75rem;font-weight:700;padding:.25rem .6rem;border-radius:4px;margin-bottom:1rem;text-transform:uppercase;letter-spacing:.04em;">${post.category}</span>` : ''}
       <h1 style="font-size:2rem;color:${theme.primaryColor};margin-bottom:1rem;line-height:1.3;">${post.title}</h1>
       <div style="display:flex;gap:1.5rem;color:#64748b;font-size:.875rem;margin-bottom:2rem;flex-wrap:wrap;">
-        <span><i class="fas fa-calendar" style="margin-right:.4rem;"></i>${new Date(post.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+        <span><i class="fas fa-calendar" style="margin-right:.4rem;"></i>${formatBlogDate(post.date)}</span>
         <span><i class="fas fa-user" style="margin-right:.4rem;"></i>${data.businessName}</span>
       </div>
       <div class="blog-post-content" style="font-size:1.05rem;line-height:1.8;color:#334155;">
@@ -4957,7 +4983,7 @@ export function generateBlogPostPage(data: WDBusinessData, post: WDBlogPost, dom
     "headline": "${post.title.replace(/"/g, '\\"')}",
     "description": "${post.excerpt.replace(/"/g, '\\"')}",
     ${featuredImage ? `"image": "${featuredImage}",` : ''}
-    "datePublished": "${post.date}",
+    "datePublished": "${publishDate}",
     "author": {"@type": "Organization", "name": "${data.businessName}"},
     "publisher": {"@type": "Organization", "name": "${data.businessName}"}
   }

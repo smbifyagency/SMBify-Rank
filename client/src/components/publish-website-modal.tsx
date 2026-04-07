@@ -36,11 +36,26 @@ import {
 } from "lucide-react";
 import { Link } from "wouter";
 
-type PublishStep = "api-check" | "url-search" | "deploying" | "success";
+type PublishStep = "checklist" | "api-check" | "url-search" | "deploying" | "success";
+
+interface ChecklistCompletionState {
+  completedCount: number;
+  totalCount: number;
+  percent: number;
+  incompleteItems: string[];
+}
+
+const modalStepLabels: Record<Exclude<PublishStep, "success">, string> = {
+  checklist: "Checklist",
+  "api-check": "API",
+  "url-search": "URL",
+  deploying: "Deploy",
+};
 
 interface PublishWebsiteModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenDeployTab?: () => void;
   websiteId: string;
   /** Pre-filled slug (e.g. from urlSlug field) */
   defaultSlug?: string;
@@ -52,6 +67,10 @@ interface PublishWebsiteModalProps {
   netlifyToken?: string;
   /** Whether token was already verified */
   tokenVerified?: boolean;
+  /** Checklist completion state shown before publish */
+  checklistCompletion?: ChecklistCompletionState;
+  /** Opens the checklist tab in the editor */
+  onReviewChecklist?: () => void;
   /** Flush latest editor state to the backend before deploy starts */
   onBeforeDeploy?: () => Promise<void> | void;
   /** Callback when deployment succeeds */
@@ -61,12 +80,15 @@ interface PublishWebsiteModalProps {
 export function PublishWebsiteModal({
   isOpen,
   onClose,
+  onOpenDeployTab,
   websiteId,
   defaultSlug = "",
   deployedUrl = "",
   currentSiteName = "",
   netlifyToken = "",
   tokenVerified = false,
+  checklistCompletion,
+  onReviewChecklist,
   onBeforeDeploy,
   onDeploySuccess,
 }: PublishWebsiteModalProps) {
@@ -92,13 +114,22 @@ export function PublishWebsiteModal({
   const [deployPhase, setDeployPhase] = useState("");
   const [resultUrl, setResultUrl] = useState("");
   const [resultSiteName, setResultSiteName] = useState("");
+  const checklistNeedsAttention = (checklistCompletion?.percent ?? 100) < 100;
+  const modalSteps = (checklistNeedsAttention
+    ? ["checklist", "api-check", "url-search", "deploying"]
+    : ["api-check", "url-search", "deploying"]) as PublishStep[];
+  const currentStepIndex = step === "success"
+    ? modalSteps.length - 1
+    : Math.max(modalSteps.indexOf(step), 0);
 
   // ── Initialize on open ─────────────────────────────────────────────
   useEffect(() => {
     if (!isOpen) return;
 
     // Reset state
-    setStep("api-check");
+    setStep(checklistNeedsAttention ? "checklist" : "api-check");
+    setApiConnected(null);
+    setIsCheckingApi(false);
     setSlugAvailable(null);
     setSlugMessage("");
     setIsEditingUrl(false);
@@ -117,9 +148,12 @@ export function PublishWebsiteModal({
       setSlug("");
     }
 
-    // Check API status
-    checkApiStatus();
-  }, [isOpen]);
+    if (checkTimeoutRef.current) clearTimeout(checkTimeoutRef.current);
+
+    if (!checklistNeedsAttention) {
+      void checkApiStatus();
+    }
+  }, [checklistNeedsAttention, currentSiteName, defaultSlug, isOpen, isRedeploy]);
 
   // ── API Status Check ──────────────────────────────────────────────
   async function checkApiStatus() {
@@ -158,6 +192,11 @@ export function PublishWebsiteModal({
     } finally {
       setIsCheckingApi(false);
     }
+  }
+
+  function continueFromChecklist() {
+    setStep("api-check");
+    void checkApiStatus();
   }
 
   // ── Debounced slug availability check ──────────────────────────────
@@ -291,8 +330,13 @@ export function PublishWebsiteModal({
     onClose();
   }
 
+  function handleOpenDeployTab() {
+    onOpenDeployTab?.();
+    handleClose();
+  }
+
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+    <Dialog open={isOpen} onOpenChange={(open: boolean) => !open && handleClose()}>
       <DialogContent className="sm:max-w-lg p-0 gap-0 overflow-hidden bg-gray-950 border-gray-800 text-white">
         {/* Header */}
         <DialogHeader className="p-5 pb-3 border-b border-gray-800">
@@ -301,25 +345,20 @@ export function PublishWebsiteModal({
             {isRedeploy ? "Update Website" : "Publish Website"}
           </DialogTitle>
           {/* Step indicator */}
-          <div className="flex items-center gap-2 mt-3">
-            {(["api-check", "url-search", "deploying"] as PublishStep[]).map((s, i) => {
-              const labels = ["API", "URL", "Deploy"];
-              const isActive = step === s || (step === "success" && s === "deploying");
-              const isPast = (
-                (s === "api-check" && step !== "api-check") ||
-                (s === "url-search" && (step === "deploying" || step === "success")) ||
-                (s === "deploying" && step === "success")
-              );
+          <div className="flex flex-wrap items-center gap-2 mt-3">
+            {modalSteps.map((modalStep, index) => {
+              const isActive = currentStepIndex === index;
+              const isPast = currentStepIndex > index;
               return (
-                <div key={s} className="flex items-center gap-2">
-                  {i > 0 && <div className={`w-8 h-px ${isPast || isActive ? 'bg-[#7C3AED]' : 'bg-gray-700'}`} />}
+                <div key={modalStep} className="flex items-center gap-2">
+                  {index > 0 && <div className={`w-8 h-px ${isPast || isActive ? 'bg-[#7C3AED]' : 'bg-gray-700'}`} />}
                   <div className={`flex items-center gap-1.5 text-xs font-medium px-2 py-1 rounded-full transition-colors ${
                     isActive ? 'bg-[#7C3AED]/20 text-[#7C3AED]' :
                     isPast ? 'bg-green-900/30 text-green-400' :
                     'bg-gray-800 text-gray-500'
                   }`}>
-                    {isPast ? <CheckCircle2 className="w-3 h-3" /> : <span className="w-3 h-3 flex items-center justify-center text-[10px]">{i + 1}</span>}
-                    {labels[i]}
+                    {isPast ? <CheckCircle2 className="w-3 h-3" /> : <span className="w-3 h-3 flex items-center justify-center text-[10px]">{index + 1}</span>}
+                    {modalStepLabels[modalStep as Exclude<PublishStep, "success">]}
                   </div>
                 </div>
               );
@@ -329,6 +368,64 @@ export function PublishWebsiteModal({
 
         {/* Content */}
         <div className="p-5 min-h-[280px]">
+          {step === "checklist" && (
+            <div className="space-y-5">
+              <div className="rounded-xl border border-amber-700/40 bg-amber-950/30 p-4">
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-amber-200">Checklist is not fully complete yet</p>
+                    <p className="text-xs text-amber-100/80 mt-1">
+                      You can still publish now, but finishing the remaining items reduces the chance of launch mistakes.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-xs text-gray-400">
+                  <span>Checklist completion</span>
+                  <span>{checklistCompletion?.completedCount ?? 0}/{checklistCompletion?.totalCount ?? 0}</span>
+                </div>
+                <Progress value={checklistCompletion?.percent ?? 0} className="h-2 bg-gray-800" />
+                <p className="text-sm font-medium text-white">{checklistCompletion?.percent ?? 0}% completed</p>
+              </div>
+
+              {!!checklistCompletion?.incompleteItems?.length && (
+                <div className="rounded-lg border border-gray-800 bg-gray-900 p-4">
+                  <p className="text-xs font-medium text-gray-300 mb-2">Still pending</p>
+                  <div className="space-y-1.5">
+                    {checklistCompletion.incompleteItems.slice(0, 5).map((item) => (
+                      <p key={item} className="text-xs text-gray-400">• {item}</p>
+                    ))}
+                    {checklistCompletion.incompleteItems.length > 5 && (
+                      <p className="text-xs text-gray-500">+{checklistCompletion.incompleteItems.length - 5} more items in the checklist</p>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    onReviewChecklist?.();
+                    handleClose();
+                  }}
+                  className="flex-1 border-gray-700 bg-gray-900 text-gray-200 hover:bg-gray-800"
+                >
+                  Review Checklist
+                </Button>
+                <Button
+                  onClick={continueFromChecklist}
+                  className="flex-1 bg-[#7C3AED] hover:bg-[#9333EA] text-white font-medium"
+                >
+                  Continue Anyway
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* ── Step 1: API Check ───────────────────────────────── */}
           {step === "api-check" && (
             <div className="space-y-4">
@@ -355,8 +452,8 @@ export function PublishWebsiteModal({
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={handleClose}
-                        className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                        onClick={handleOpenDeployTab}
+                        className="border-gray-700 bg-gray-900 text-gray-300 hover:bg-gray-800"
                       >
                         <Settings className="w-4 h-4 mr-1" />
                         Setup in Deploy Tab
@@ -366,7 +463,7 @@ export function PublishWebsiteModal({
                           variant="outline"
                           size="sm"
                           onClick={handleClose}
-                          className="border-[#7C3AED]/40 text-[#7C3AED] hover:bg-[#7C3AED]/10"
+                          className="border-[#7C3AED]/40 bg-gray-900 text-[#7C3AED] hover:bg-[#7C3AED]/10"
                         >
                           Go to API Settings
                         </Button>
@@ -480,7 +577,7 @@ export function PublishWebsiteModal({
                     variant="outline"
                     size="sm"
                     onClick={() => checkSlugAvailability(slug)}
-                    className="border-gray-700 text-gray-300 hover:bg-gray-800"
+                    className="border-gray-700 bg-gray-900 text-gray-300 hover:bg-gray-800"
                   >
                     <Search className="w-4 h-4 mr-1" /> Check Again
                   </Button>
@@ -582,7 +679,7 @@ export function PublishWebsiteModal({
                 <Button
                   variant="outline"
                   onClick={handleClose}
-                  className="flex-1 border-gray-700 text-gray-300 hover:bg-gray-800"
+                  className="flex-1 border-gray-700 bg-gray-900 text-gray-300 hover:bg-gray-800"
                 >
                   Close
                 </Button>

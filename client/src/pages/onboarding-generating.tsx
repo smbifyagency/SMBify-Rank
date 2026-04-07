@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
-import { useState, useEffect } from "react";
-import { Loader2, CheckCircle, Sparkles, FileText, Search, Code2, Image, AlertCircle } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Loader2, CheckCircle, Sparkles, FileText, Search, Code2, Image, AlertCircle, Eye, ArrowLeft, Rocket } from "lucide-react";
 import { useBusinessData } from "@/contexts/business-data-context";
 import { useToast } from "@/hooks/use-toast";
 
@@ -13,21 +13,98 @@ const steps = [
     { icon: Image, label: "Finalizing website structure...", duration: 800 },
 ];
 
+const GENERATE_QUERY_KEY = "mode";
+const GENERATE_QUERY_VALUE = "generate";
+
+function buildCreateWebsitePayload(businessData: any) {
+    const bd = businessData as any;
+    const businessName = bd.businessName || "My Business";
+    const category = bd.category || "Business";
+
+    const locationsArr = Array.isArray(bd.locations) ? bd.locations : [];
+    const locationString = locationsArr
+        .map((location: any) => (
+            typeof location === "string"
+                ? location
+                : `${location.city || ""}${location.state ? `, ${location.state}` : ""}`
+        ).trim())
+        .filter(Boolean)
+        .join("\n");
+
+    const servicesArr = Array.isArray(bd.services) ? bd.services : [];
+    const servicesString = servicesArr.join("\n");
+
+    return {
+        title: businessName,
+        description: `${category} website for ${businessName}`,
+        template: bd.selectedTemplate || "template1",
+        theme: "light",
+        businessData: {
+            businessName,
+            category,
+            countryCode: bd.countryCode || "+1",
+            phone: bd.phone || "",
+            email: bd.email || "",
+            address: [bd.address, bd.city, bd.state, bd.zip].filter(Boolean).join(", "),
+            city: bd.city || "",
+            state: bd.state || "",
+            zip: bd.zip || "",
+            website: bd.website || "",
+            services: servicesString,
+            additionalServices: servicesString,
+            serviceAreas: locationString,
+            additionalLocations: locationString,
+            locations: locationsArr,
+            selectedTemplate: bd.selectedTemplate || "modern",
+            colorScheme: bd.colorScheme || "indigo",
+            aiProvider: bd.aiProvider || "gemini",
+        },
+    };
+}
+
 export default function OnboardingGenerating() {
     const [, setLocation] = useLocation();
     const { businessData, clearBusinessData } = useBusinessData();
     const { toast } = useToast();
     const [currentStep, setCurrentStep] = useState(0);
     const [progress, setProgress] = useState(0);
-    const [isComplete, setIsComplete] = useState(false);
-    const [hasError, setHasError] = useState(false);
+    const [mode, setMode] = useState<"choice" | "generating" | "complete" | "error">("choice");
     const [errorMessage, setErrorMessage] = useState("");
     const [createdWebsiteId, setCreatedWebsiteId] = useState<string | null>(null);
-    const [retryKey, setRetryKey] = useState(0);
+    const [generationAttempt, setGenerationAttempt] = useState(0);
+    const autoStartRef = useRef(false);
+
+    const isGenerating = mode === "generating";
+    const isComplete = mode === "complete";
+    const hasError = mode === "error";
+
+    const locations = Array.isArray((businessData as any).locations) ? (businessData as any).locations : [];
+    const services = Array.isArray((businessData as any).services) ? (businessData as any).services : [];
+
+    const startGeneration = () => {
+        if (isGenerating) return;
+        setCurrentStep(0);
+        setProgress(0);
+        setErrorMessage("");
+        setCreatedWebsiteId(null);
+        setMode("generating");
+        setGenerationAttempt((attempt) => attempt + 1);
+    };
+
+    useEffect(() => {
+        if (autoStartRef.current || mode !== "choice") return;
+
+        const params = typeof window !== "undefined" ? new URLSearchParams(window.location.search) : null;
+        if (params?.get(GENERATE_QUERY_KEY) === GENERATE_QUERY_VALUE) {
+            autoStartRef.current = true;
+            startGeneration();
+        }
+    }, [mode]);
 
     // Animate progress bar
     useEffect(() => {
-        if (isComplete || hasError) return;
+        if (!isGenerating) return;
+
         const timer = setInterval(() => {
             setProgress((prev) => {
                 if (prev >= 95) {
@@ -38,61 +115,27 @@ export default function OnboardingGenerating() {
             });
         }, 60);
         return () => clearInterval(timer);
-    }, [isComplete, hasError]);
+    }, [isGenerating]);
 
     // Advance step labels
     useEffect(() => {
-        if (isComplete || hasError) return;
+        if (!isGenerating) return;
+
         if (currentStep < steps.length - 1) {
             const timer = setTimeout(() => setCurrentStep((prev) => prev + 1), steps[currentStep].duration);
             return () => clearTimeout(timer);
         }
-    }, [currentStep, isComplete, hasError]);
+    }, [currentStep, isGenerating]);
 
-    // Create the website via the API
+    // Create the website only after the user explicitly clicks Generate Website
     useEffect(() => {
+        if (!isGenerating || generationAttempt === 0) return;
+
         let cancelled = false;
 
         const createWebsite = async () => {
             try {
-                const bd = businessData as any;
-                const businessName = bd.businessName || "My Business";
-                const category = bd.category || "Business";
-
-                // Build locations string from the locations array
-                const locationsArr = Array.isArray(bd.locations) ? bd.locations : [];
-                const locationString = locationsArr
-                    .map((l: any) => (typeof l === "string" ? l : `${l.city || ""}${l.state ? ", " + l.state : ""}`).trim())
-                    .filter(Boolean)
-                    .join("\n");
-
-                // Build services string
-                const servicesArr = Array.isArray(bd.services) ? bd.services : [];
-                const servicesString = servicesArr.join(", ");
-
-                const payload = {
-                    title: businessName,
-                    description: `${category} website for ${businessName}`,
-                    template: bd.selectedTemplate || "template1",
-                    theme: "light",
-                    businessData: {
-                        businessName,
-                        category,
-                        phone: bd.phone || "",
-                        email: bd.email || "",
-                        address: [bd.address, bd.city, bd.state, bd.zip].filter(Boolean).join(", "),
-                        website: bd.website || "",
-                        services: servicesString,
-                        additionalServices: servicesString,
-                        serviceAreas: locationString,
-                        additionalLocations: locationString,
-                        locations: locationsArr,
-                        selectedTemplate: bd.selectedTemplate || "modern",
-                        colorScheme: bd.colorScheme || "indigo",
-                        aiProvider: bd.aiProvider || "gemini",
-                    }
-                };
-
+                const payload = buildCreateWebsitePayload(businessData);
                 const res = await fetch("/api/websites", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -105,12 +148,13 @@ export default function OnboardingGenerating() {
                 if (!res.ok) throw new Error(data.message || "Failed to create website");
 
                 setCreatedWebsiteId(data.id);
+                setCurrentStep(steps.length - 1);
                 setProgress(100);
-                setIsComplete(true);
+                setMode("complete");
                 clearBusinessData();
             } catch (error: any) {
                 if (cancelled) return;
-                setHasError(true);
+                setMode("error");
                 setErrorMessage(error.message || "An unexpected error occurred.");
                 toast({ title: "Creation Failed", description: error.message, variant: "destructive" });
             }
@@ -118,7 +162,7 @@ export default function OnboardingGenerating() {
 
         createWebsite();
         return () => { cancelled = true; };
-    }, [retryKey]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [businessData, clearBusinessData, generationAttempt, isGenerating, toast]);
 
     return (
         <div className="min-h-[80vh] py-20 px-4 sm:px-6 lg:px-8">
@@ -144,20 +188,87 @@ export default function OnboardingGenerating() {
                         )}
                     </div>
                     <h1 className="text-3xl font-bold text-white mb-2">
-                        {hasError ? "Creation Failed" : isComplete ? "Website Created!" : "Creating Your Website"}
+                        {hasError ? "Creation Failed" : isComplete ? "Website Created!" : isGenerating ? "Creating Your Website" : "Choose Your Next Step"}
                     </h1>
                     <p className="text-gray-400">
                         {hasError
                             ? errorMessage
                             : isComplete
                             ? "Your website has been created and is ready to edit."
-                            : "Setting up your website with your business information."}
+                            : isGenerating
+                            ? "Setting up your website with your business information."
+                            : "Preview the raw template first, or generate the full AI website when you're ready."}
                     </p>
                 </div>
 
                 <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 space-y-6">
+                    {mode === "choice" && (
+                        <>
+                            <div className="rounded-2xl border border-white/10 bg-black/20 p-5">
+                                <div className="grid gap-3 sm:grid-cols-3">
+                                    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                                        <p className="text-xs uppercase tracking-[0.2em] text-gray-500">Business</p>
+                                        <p className="mt-2 text-sm font-semibold text-white">{(businessData as any).businessName || "Your business"}</p>
+                                        <p className="mt-1 text-xs text-gray-500">{(businessData as any).category || "Category not selected yet"}</p>
+                                    </div>
+                                    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                                        <p className="text-xs uppercase tracking-[0.2em] text-gray-500">Services</p>
+                                        <p className="mt-2 text-2xl font-semibold text-white">{services.length}</p>
+                                        <p className="mt-1 text-xs text-gray-500">Ready to turn into individual pages</p>
+                                    </div>
+                                    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                                        <p className="text-xs uppercase tracking-[0.2em] text-gray-500">Locations</p>
+                                        <p className="mt-2 text-2xl font-semibold text-white">{locations.filter((location: any) => (location?.city || "").trim()).length}</p>
+                                        <p className="mt-1 text-xs text-gray-500">Local SEO pages queued</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <button
+                                    onClick={() => setLocation("/onboarding/preview")}
+                                    className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 text-left transition-all hover:-translate-y-1 hover:border-white/20"
+                                >
+                                    <div className="mb-4 inline-flex rounded-xl bg-white/5 p-3 text-gray-300">
+                                        <Eye className="h-5 w-5" />
+                                    </div>
+                                    <h2 className="text-lg font-semibold text-white">Preview Template</h2>
+                                    <p className="mt-2 text-sm text-gray-400">
+                                        Open the base template instantly. This keeps the experience lightweight and does not generate the AI website yet.
+                                    </p>
+                                </button>
+
+                                <button
+                                    onClick={startGeneration}
+                                    className="rounded-2xl border border-[#7C3AED]/30 bg-[#7C3AED]/10 p-5 text-left transition-all hover:-translate-y-1 hover:bg-[#7C3AED]/15"
+                                >
+                                    <div className="mb-4 inline-flex rounded-xl bg-[#7C3AED]/15 p-3 text-[#A855F7]">
+                                        <Rocket className="h-5 w-5" />
+                                    </div>
+                                    <h2 className="text-lg font-semibold text-white">Generate Website</h2>
+                                    <p className="mt-2 text-sm text-gray-300">
+                                        Create the full AI-powered website with content, page structure, and an editor-ready build.
+                                    </p>
+                                </button>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-3 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4">
+                                <p className="text-sm text-amber-200/80">
+                                    Preview shows the raw layout only. Generation starts only when you click <span className="font-semibold text-amber-100">Generate Website</span>.
+                                </p>
+                                <Button
+                                    variant="outline"
+                                    onClick={() => setLocation("/onboarding/api-setup")}
+                                    className="border-white/15 bg-transparent text-gray-300 hover:bg-white/5"
+                                >
+                                    <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                                </Button>
+                            </div>
+                        </>
+                    )}
+
                     {/* Progress Bar */}
-                    {!hasError && (
+                    {(isGenerating || isComplete) && (
                         <div>
                             <div className="flex justify-between text-sm mb-2">
                                 <span className="text-gray-400">Progress</span>
@@ -173,7 +284,7 @@ export default function OnboardingGenerating() {
                     )}
 
                     {/* Steps */}
-                    {!hasError && (
+                    {(isGenerating || isComplete) && (
                         <div className="space-y-3">
                             {steps.map((step, i) => {
                                 const Icon = step.icon;
@@ -205,7 +316,7 @@ export default function OnboardingGenerating() {
 
                     {isComplete && createdWebsiteId && (
                         <Button
-                            onClick={() => setLocation(`/dashboard/websites/${createdWebsiteId}`)}
+                            onClick={() => setLocation(`/dashboard/wd-editor/${createdWebsiteId}`)}
                             className="w-full bg-[#7C3AED] hover:bg-[#9333EA] text-black font-bold py-6 text-base font-semibold rounded-xl shadow-lg shadow-[#7C3AED]/25"
                         >
                             <Sparkles className="mr-2 h-5 w-5" />
@@ -224,12 +335,8 @@ export default function OnboardingGenerating() {
                             </Button>
                             <Button
                                 onClick={() => {
-                                    setHasError(false);
                                     setErrorMessage("");
-                                    setProgress(0);
-                                    setCurrentStep(0);
-                                    setIsComplete(false);
-                                    setRetryKey((k) => k + 1);
+                                    startGeneration();
                                 }}
                                 className="flex-1 bg-[#7C3AED] hover:bg-[#9333EA] text-black"
                             >

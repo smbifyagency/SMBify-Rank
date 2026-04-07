@@ -28,6 +28,7 @@ export function LiveWebsitePreview({ businessData, template, useDynamicGenerator
         primaryZipCode: businessData.primaryZipCode || "",
         secondaryZipCode: businessData.secondaryZipCode || "",
         specificServices: businessData.specificServices || "",
+        countryCode: businessData.countryCode || "+1",
         metaTitle: businessData.metaTitle || "",
         metaDescription: businessData.metaDescription || "",
         heroService: businessData.heroService || "Professional Services",

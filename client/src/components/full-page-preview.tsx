@@ -55,6 +55,7 @@ export function FullPagePreview({
         primaryZipCode: businessData.primaryZipCode || "12345",
         secondaryZipCode: businessData.secondaryZipCode || "67890",
         specificServices: businessData.specificServices || "Professional services",
+        countryCode: businessData.countryCode || "+1",
         heroService: businessData.heroService || "Professional Services",
         heroLocation: businessData.heroLocation || "Your City",
         heroDescription: businessData.heroDescription || "Quality services you can trust",
