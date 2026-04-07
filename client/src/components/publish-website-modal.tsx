@@ -52,6 +52,8 @@ interface PublishWebsiteModalProps {
   netlifyToken?: string;
   /** Whether token was already verified */
   tokenVerified?: boolean;
+  /** Flush latest editor state to the backend before deploy starts */
+  onBeforeDeploy?: () => Promise<void> | void;
   /** Callback when deployment succeeds */
   onDeploySuccess?: (url: string, siteName: string) => void;
 }
@@ -65,6 +67,7 @@ export function PublishWebsiteModal({
   currentSiteName = "",
   netlifyToken = "",
   tokenVerified = false,
+  onBeforeDeploy,
   onDeploySuccess,
 }: PublishWebsiteModalProps) {
   const { toast } = useToast();
@@ -226,6 +229,8 @@ export function PublishWebsiteModal({
 
     try {
       // Phase 1: Save latest content
+      await onBeforeDeploy?.();
+
       setDeployProgress(15);
       setDeployPhase("Generating website files...");
 

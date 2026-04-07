@@ -258,6 +258,123 @@ const splitValues = (value: unknown): string[] => {
 
 const toCsv = (items: string[]): string => uniqueValues(items).join("\n");
 
+const normalizeLocationLabel = (value: unknown, preferredState?: string): string => {
+  const text = stringValue(value).replace(/\s+/g, " ").trim();
+  if (!text) return "";
+
+  const commaSeparatedParts = text.split(",").map((part) => part.trim()).filter(Boolean);
+  if (commaSeparatedParts.length > 1) {
+    return commaSeparatedParts[0];
+  }
+
+  const parts = text.split(/\s+/).filter(Boolean);
+  if (parts.length > 1) {
+    const last = parts[parts.length - 1]?.replace(/[^A-Za-z]/g, "") || "";
+    if (
+      (preferredState && last.toLowerCase() === preferredState.toLowerCase()) ||
+      /^[A-Z]{2}$/.test(last)
+    ) {
+      const withoutTrailingState = parts.slice(0, -1).join(" ").trim();
+      if (withoutTrailingState) return withoutTrailingState;
+    }
+
+    const first = parts[0]?.replace(/[^A-Za-z]/g, "") || "";
+    if (/^[A-Z]{2}$/.test(first)) {
+      const withoutLeadingState = parts.slice(1).join(" ").trim();
+      if (withoutLeadingState) return withoutLeadingState;
+    }
+  }
+
+  return text;
+};
+
+const splitTopLevelCommaValues = (value: string): string[] => {
+  const results: string[] = [];
+  let current = "";
+  let nestingDepth = 0;
+
+  for (const char of value) {
+    if (char === "," && nestingDepth === 0) {
+      if (current.trim()) results.push(current.trim());
+      current = "";
+      continue;
+    }
+
+    if (char === "(" || char === "[" || char === "{") nestingDepth += 1;
+    if ((char === ")" || char === "]" || char === "}") && nestingDepth > 0) nestingDepth -= 1;
+    current += char;
+  }
+
+  if (current.trim()) results.push(current.trim());
+  return results;
+};
+
+const parseDeployList = (
+  value: unknown,
+  options?: { locationMode?: boolean; preferredState?: string }
+): string[] => {
+  const parsed = splitValues(value);
+  if (
+    parsed.length !== 1 ||
+    typeof value !== "string" ||
+    !value.includes(",") ||
+    /[;|\n]/.test(value)
+  ) {
+    return parsed;
+  }
+
+  const commaValues = splitTopLevelCommaValues(value);
+  if (!options?.locationMode) {
+    return uniqueValues(commaValues);
+  }
+
+  const preferredState = (options.preferredState || "").trim().toLowerCase();
+  const looksLikeStateToken = (token: string): boolean => {
+    const normalized = token.replace(/[^A-Za-z]/g, "").trim();
+    if (!normalized) return false;
+    return (
+      /^[A-Z]{2}$/.test(token.trim()) ||
+      normalized.length === 2 ||
+      (preferredState.length > 0 && normalized.toLowerCase() === preferredState)
+    );
+  };
+
+  if (commaValues.length >= 2 && commaValues.length % 2 === 0) {
+    const pairedLocations: string[] = [];
+    let canPairAll = true;
+
+    for (let index = 0; index < commaValues.length; index += 2) {
+      const city = commaValues[index];
+      const state = commaValues[index + 1];
+      if (!city || !state || !looksLikeStateToken(state)) {
+        canPairAll = false;
+        break;
+      }
+      pairedLocations.push(`${city.trim()}, ${state.trim()}`);
+    }
+
+    if (canPairAll) {
+      return uniqueValues(pairedLocations);
+    }
+  }
+
+  return uniqueValues(commaValues);
+};
+
+const normalizeLocationContentMap = (value: unknown, preferredState?: string): unknown => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return value;
+
+  const normalizedEntries: Record<string, unknown> = {};
+  for (const [key, entry] of Object.entries(value as Record<string, unknown>)) {
+    const normalizedKey = normalizeLocationLabel(key, preferredState) || key;
+    if (!normalizedEntries[normalizedKey]) {
+      normalizedEntries[normalizedKey] = entry;
+    }
+  }
+
+  return normalizedEntries;
+};
+
 const createContentFingerprint = (businessData: any): string => {
   const seed = [
     stringValue(businessData?.businessName),
@@ -6861,16 +6978,18 @@ Generated on: ${new Date().toISOString()}`;
         return res.status(400).json({ error: "Netlify API token required. Verify it in the Deploy tab." });
       }
 
-      const bd = (website.businessData || {}) as any;
+      const bd = { ...((website.businessData || {}) as any) };
 
-      // Normalize array fields — DB may store them as comma-separated strings
-      const toArray = (v: any): string[] => {
-        if (Array.isArray(v)) return v.filter(Boolean);
-        if (typeof v === 'string' && v.trim()) return v.split(',').map((s: string) => s.trim()).filter(Boolean);
-        return [];
-      };
-      bd.services     = toArray(bd.services);
-      bd.serviceAreas = toArray(bd.serviceAreas);
+      // Match the same newline/semicolon-aware parsing used when businessData is saved.
+      // Keep raw location values for AI generation, then strip state from labels only for deploy output.
+      bd.services = uniqueValues([
+        ...parseDeployList(bd.services),
+        ...parseDeployList(bd.additionalServices),
+      ]);
+      bd.serviceAreas = uniqueValues([
+        ...parseDeployList(bd.serviceAreas, { locationMode: true, preferredState: stringValue(bd.state) }),
+        ...parseDeployList(bd.additionalLocations, { locationMode: true, preferredState: stringValue(bd.state) }),
+      ]);
 
       const rawDomain = siteName || bd.urlSlug || (bd.businessName || website.title || 'my-site');
       const domain = rawDomain.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '').substring(0, 63);
@@ -6920,7 +7039,28 @@ Generated on: ${new Date().toISOString()}`;
         }
       }
 
-      const files = genLS(categoryId, bd, domain);
+      const deployedServiceAreas = uniqueValues(
+        (bd.serviceAreas as string[])
+          .map((location: string) => normalizeLocationLabel(location, stringValue(bd.state)))
+          .filter(Boolean)
+      );
+      const deployedCity =
+        normalizeLocationLabel(
+          stringValue(bd.city) || stringValue(bd.heroLocation) || deployedServiceAreas[0],
+          stringValue(bd.state)
+        ) ||
+        stringValue(bd.city) ||
+        deployedServiceAreas[0] ||
+        "";
+
+      const generatorData = {
+        ...bd,
+        city: deployedCity,
+        serviceAreas: deployedServiceAreas,
+        locationContent: normalizeLocationContentMap(bd.locationContent, stringValue(bd.state)),
+      };
+
+      const files = genLS(categoryId, generatorData, domain);
 
       // Apply any visual editor overrides saved in customFiles
       // Skip SEO pages (sitemap.html) — always use freshly generated versions

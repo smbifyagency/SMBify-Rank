@@ -908,6 +908,45 @@ export default function WDSiteEditor() {
   const pendingUploadKeyRef = useRef<string | null>(null);
   const siteDataRef = useRef<WDSiteData | null>(null);
 
+  async function persistCurrentWebsiteState(
+    data: WDSiteData,
+    options?: { includeCustomFiles?: boolean }
+  ) {
+    if (!websiteId) return;
+
+    if (autoSaveTimerRef.current) {
+      clearTimeout(autoSaveTimerRef.current);
+      autoSaveTimerRef.current = null;
+    }
+
+    const payload: Record<string, unknown> = {
+      businessData: stripDeploymentFields(data),
+    };
+
+    if (options?.includeCustomFiles) {
+      const domain = data.urlSlug || ((data.businessName || 'my-site').toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+      const latestFiles = generateLocalServiceWebsite(categoryId, siteDataToWDData(data), domain);
+      payload.customFiles = Object.keys(visualEditorOverrides).length > 0
+        ? { ...latestFiles, ...visualEditorOverrides }
+        : latestFiles;
+    }
+
+    const res = await fetch(`/api/websites/${websiteId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      throw new Error(errData.message || errData.error || "Failed to save website");
+    }
+
+    setAutoSaveStatus("saved");
+    setTimeout(() => setAutoSaveStatus("idle"), 2000);
+  }
+
   // ── Auto-save when siteData changes ──────────────────────────────────
 
   useEffect(() => {
@@ -923,16 +962,7 @@ export default function WDSiteEditor() {
     setAutoSaveStatus("saving");
     autoSaveTimerRef.current = setTimeout(async () => {
       try {
-        const res = await fetch(`/api/websites/${websiteId}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({ businessData: stripDeploymentFields(siteData) }),
-        });
-        if (res.ok) {
-          setAutoSaveStatus("saved");
-          setTimeout(() => setAutoSaveStatus("idle"), 2000);
-        }
+        await persistCurrentWebsiteState(siteData);
       } catch {
         setAutoSaveStatus("idle");
       }
@@ -3395,6 +3425,15 @@ export default function WDSiteEditor() {
         currentSiteName={desiredSlug || siteData.urlSlug || ""}
         netlifyToken={netlifyToken}
         tokenVerified={tokenValid === true}
+        onBeforeDeploy={async () => {
+          const currentSiteData = siteDataRef.current;
+          if (!currentSiteData) {
+            throw new Error("Website data is not ready yet.");
+          }
+
+          setAutoSaveStatus("saving");
+          await persistCurrentWebsiteState(currentSiteData, { includeCustomFiles: true });
+        }}
         onDeploySuccess={(url, siteName) => {
           setDeployedUrl(url);
           setDesiredSlug(siteName);
