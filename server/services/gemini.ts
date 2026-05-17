@@ -1,4 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import type { SEOContentData, FAQData, TestimonialsData, ServicePageContentData, LocationPageContentData } from "./openai.js";
 
 interface BlogPostData {
   id?: string;
@@ -395,5 +396,141 @@ Return JSON: testimonial1Name, testimonial1Text, testimonial1Rating (5), testimo
     console.error("Gemini testimonials generation error:", error);
     console.error("Error details:", error?.message);
     throw new Error(`Failed to generate testimonials with Gemini: ${error?.message || 'Unknown error'}`);
+  }
+}
+
+/**
+ * Generate comprehensive service page content using Gemini
+ */
+export async function generateServicePageContentWithGemini(
+  serviceName: string,
+  businessContext: any,
+  apiKey: string
+): Promise<ServicePageContentData> {
+  const ai = getGeminiClient(apiKey);
+
+  const prompt = `You are a professional copywriter specializing in service pages for local businesses. Create comprehensive, engaging content for a specific service page that will help customers understand the service and convert them into customers.
+
+Business Context:
+- Business Name: ${businessContext.businessName}
+- Category: ${businessContext.category}
+- Location: ${businessContext.heroLocation}
+- Years in Business: ${businessContext.yearsInBusiness}
+- Phone: ${businessContext.phone}
+- Service Focus: ${serviceName}
+
+Guidelines:
+- Create compelling, informative content that builds trust and expertise
+- Include specific details about the service process and benefits
+- Address common customer concerns and questions
+- Use local SEO keywords naturally
+- Maintain professional yet approachable tone
+- Focus on customer value and problem-solving
+- Include actionable information customers can use
+
+Return the response as a JSON object with these exact fields:
+{
+  "serviceDescription": "Comprehensive description of the specific service (200-250 words)",
+  "processSteps": ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6", "Step 7"],
+  "whyChooseForService": "Why customers should choose this business for this specific service (150-200 words)",
+  "commonIssues": ["Issue 1", "Issue 2", "Issue 3", "Issue 4", "Issue 5", "Issue 6"],
+  "serviceFeatures": ["Feature 1", "Feature 2", "Feature 3", "Feature 4", "Feature 5", "Feature 6"],
+  "qualityAssurance": "Quality guarantee and assurance information (150-200 words)",
+  "metaTitle": "SEO-optimized title (60 characters max)",
+  "metaDescription": "SEO meta description (150-160 characters)",
+  "heroDescription": "Compelling hero section description (100-150 words)"
+}`;
+
+  try {
+    const model = ai.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      generationConfig: {
+        temperature: 0.7,
+        topP: 0.95,
+        maxOutputTokens: 8192,
+        responseMimeType: "application/json",
+      },
+    });
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    if (!text) {
+      throw new Error("Gemini returned empty response for service page content");
+    }
+
+    return JSON.parse(text) as ServicePageContentData;
+  } catch (error: any) {
+    console.error("Gemini service page content generation error:", error);
+    throw new Error(`Failed to generate service page content with Gemini: ${error?.message || 'Unknown error'}`);
+  }
+}
+
+/**
+ * Generate comprehensive location page content using Gemini
+ */
+export async function generateLocationPageContentWithGemini(
+  locationName: string,
+  businessContext: any,
+  apiKey: string
+): Promise<LocationPageContentData> {
+  const ai = getGeminiClient(apiKey);
+
+  const prompt = `You are a professional copywriter specializing in location pages for local businesses. Create compelling, localized content for a specific location page that demonstrates local expertise and builds trust with customers in that area.
+
+Business Context:
+- Business Name: ${businessContext.businessName}
+- Category: ${businessContext.category}
+- Main Location: ${businessContext.heroLocation}
+- Years in Business: ${businessContext.yearsInBusiness}
+- Phone: ${businessContext.phone}
+- Service Type: ${businessContext.heroService}
+- Target Location: ${locationName}
+
+Guidelines:
+- Emphasize local knowledge and community connection
+- Include location-specific details and benefits
+- Address unique challenges or opportunities in this location
+- Use local SEO keywords naturally
+- Build trust through local expertise claims
+- Create urgency for customers in this specific area
+- Maintain professional, community-focused tone
+
+Return the response as a JSON object with these exact fields:
+{
+  "heroDescription": "Compelling hero description for this location (150-200 words)",
+  "aboutContent": "About section focused on local expertise (200-250 words)",
+  "whyChooseContent": "Why choose this business in this specific location (150-200 words)",
+  "serviceAreasContent": "Service area coverage details for this location (100-150 words)",
+  "emergencyContent": "Urgent service or priority availability in this location (100-150 words)",
+  "localBenefits": ["Benefit 1", "Benefit 2", "Benefit 3", "Benefit 4", "Benefit 5", "Benefit 6"],
+  "metaTitle": "SEO-optimized title for this location (60 characters max)",
+  "metaDescription": "SEO meta description for this location (150-160 characters)"
+}`;
+
+  try {
+    const model = ai.getGenerativeModel({
+      model: "gemini-2.5-flash",
+      generationConfig: {
+        temperature: 0.7,
+        topP: 0.95,
+        maxOutputTokens: 8192,
+        responseMimeType: "application/json",
+      },
+    });
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text();
+
+    if (!text) {
+      throw new Error("Gemini returned empty response for location page content");
+    }
+
+    return JSON.parse(text) as LocationPageContentData;
+  } catch (error: any) {
+    console.error("Gemini location page content generation error:", error);
+    throw new Error(`Failed to generate location page content with Gemini: ${error?.message || 'Unknown error'}`);
   }
 }

@@ -2224,6 +2224,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
           testUrl = "https://openrouter.ai/api/v1/models";
           headers = { Authorization: `Bearer ${apiKey}` };
           break;
+        case "deepseek":
+          testUrl = "https://api.deepseek.com/models";
+          headers = { Authorization: `Bearer ${apiKey}` };
+          break;
         case "netlify":
           testUrl = "https://api.netlify.com/api/v1/sites";
           headers = { Authorization: `Bearer ${apiKey}` };
@@ -4722,6 +4726,62 @@ Total Websites: ${validatedData.businesses.length}
     } catch (error) {
       console.error("Failed to update OpenRouter setting:", error);
       res.status(500).json({ message: "Failed to update OpenRouter setting" });
+    }
+  });
+
+  app.get("/api/settings/deepseek", async (req, res) => {
+    try {
+      // Check if user is authenticated via session
+      if (req.session?.isAuthenticated && req.session?.userId && req.session.userId !== 'guest') {
+        const userId = req.session.userId;
+        const setting = await storage.getApiSetting(userId, 'deepseek');
+        if (!setting) {
+          return res.json({ name: "deepseek", displayName: "DeepSeek API", apiKey: "", isActive: false });
+        }
+        return res.json({ ...setting, apiKey: setting.apiKey ? "•••••••••••" : null });
+      }
+
+      // For guest users, check session storage
+      if (req.session?.guestApiKeys?.deepseek) {
+        return res.json({
+          name: "deepseek",
+          displayName: "DeepSeek API",
+          apiKey: req.session.guestApiKeys.deepseek,
+          isActive: true
+        });
+      }
+
+      // No API key found
+      return res.json({ name: "deepseek", displayName: "DeepSeek API", apiKey: "", isActive: false });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get DeepSeek setting" });
+    }
+  });
+
+  app.put("/api/settings/deepseek", isAuthenticated, async (req, res) => {
+    try {
+      const userId = (req as any).user.id;
+      let { apiKey, isActive } = req.body;
+
+      const { encrypt } = await import('./crypto.js').catch(() => ({ encrypt: (k: string) => k }));
+
+      if (apiKey && apiKey.includes('••••••••')) {
+        apiKey = undefined;
+      } else if (apiKey) {
+        apiKey = encrypt(apiKey);
+      }
+
+      const setting = await storage.upsertApiSetting(userId, {
+        name: 'deepseek',
+        displayName: 'DeepSeek API',
+        apiKey,
+        isActive: isActive ?? true
+      });
+
+      res.json({ ...setting, apiKey: setting.apiKey ? "•••••••••••" : null });
+    } catch (error) {
+      console.error("Failed to update DeepSeek setting:", error);
+      res.status(500).json({ message: "Failed to update DeepSeek setting" });
     }
   });
 

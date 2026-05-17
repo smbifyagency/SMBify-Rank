@@ -1,4 +1,4 @@
-import type { BlogPostData } from "./openai.js";
+import type { BlogPostData, SEOContentData, FAQData, TestimonialsData, ServicePageContentData, LocationPageContentData } from "./openai.js";
 
 // DeepSeek API configuration
 const DEEPSEEK_API_BASE = "https://api.deepseek.com/v1";
@@ -259,3 +259,263 @@ export async function generateMultipleBlogPostsWithDeepSeek(
 
     return blogPosts;
 }
+
+/**
+ * Generate SEO content sections using DeepSeek
+ */
+export async function generateSEOContentWithDeepSeek(
+    businessData: any,
+    apiKey: string
+): Promise<SEOContentData> {
+    const systemPrompt = `You are an expert SEO content writer specializing in humanized, conversion-focused content for local businesses.
+
+Business Context:
+- Business Name: ${businessData.businessName}
+- Category: ${businessData.category}
+- Location: ${businessData.heroLocation}
+- Services: ${businessData.heroService || businessData.services}
+- Service Areas: ${businessData.serviceAreas || businessData.heroLocation}
+
+HUMANIZED CONTENT REQUIREMENTS:
+
+**Writing Style:**
+- Write like a real person talking to another person (use "you" and "we")
+- Short, punchy sentences (15-20 words max)
+- Simple everyday language - avoid jargon
+- Conversational and friendly tone
+- Show empathy for customer problems
+- Tell stories and use real examples
+- Grade 8-9 reading level
+
+**Readability:**
+- Short paragraphs (2-3 sentences each)
+- Active voice, not passive
+- Specific details and numbers
+- Vary sentence length for rhythm
+- Include emotional appeal
+
+**SEO Optimization:**
+- Use semantic keywords naturally (LSI keywords, related terms)
+- Include location + service variations
+- Primary keywords in first 100 words
+- Natural keyword density (1-2%)
+- "Near me" intent keywords
+
+**Content Strategy (150-180 words each):**
+1. Answer specific customer questions
+2. Highlight unique benefits with proof
+3. Build trust through local references
+4. Include soft CTAs
+5. Address pain points directly
+6. Show personality and expertise
+
+Return JSON with: seoHeading1, seoContent1, seoHeading2, seoContent2, seoHeading3, seoContent3, seoHeading4, seoContent4, seoHeading5, seoContent5, seoHeading6, seoContent6`;
+
+    const userPrompt = `Generate 6 SEO content sections for ${businessData.businessName}, a ${businessData.category} business in ${businessData.heroLocation}. Focus on local SEO optimization and customer trust factors.`;
+
+    const content = await generateStructuredJsonWithDeepSeek(systemPrompt, userPrompt, apiKey);
+    return content as unknown as SEOContentData;
+}
+
+/**
+ * Generate FAQ questions and answers using DeepSeek
+ */
+export async function generateFAQContentWithDeepSeek(
+    businessData: any,
+    apiKey: string
+): Promise<FAQData> {
+    const systemPrompt = `You are a customer service expert creating helpful, humanized FAQ content that sounds like real conversations.
+
+Business Context:
+- Business Name: ${businessData.businessName}
+- Category: ${businessData.category}
+- Location: ${businessData.heroLocation}
+- Services: ${businessData.heroService || businessData.services}
+- Phone: ${businessData.phone}
+
+HUMANIZED FAQ REQUIREMENTS:
+
+**Questions:**
+- Sound like real customer questions (natural language)
+- Include location references: ${businessData.heroLocation}
+- Cover real pain points and concerns
+- Use conversational tone
+- Include semantic keywords naturally
+
+**Answers (60-100 words each):**
+- Write like talking to a friend (warm, friendly)
+- Short sentences (15-20 words max)
+- Use "you" and "we" pronouns
+- Include specific details and numbers
+- Address concerns directly
+- Build trust and credibility
+- End with reassurance or next step
+- Avoid corporate jargon
+
+**Topics to Cover:**
+1. Main services in this location
+2. Pricing transparency
+3. Service area/coverage
+4. Experience/qualifications
+5. Urgent or priority requests
+6. Process/timeline
+7. Quality guarantee
+8. Scheduling/availability
+9. Payment/financing
+10. Why choose this business
+
+Return JSON with: faqQuestion1, faqAnswer1, faqQuestion2, faqAnswer2, ... through faqQuestion10, faqAnswer10`;
+
+    const userPrompt = `Generate 10 FAQ questions and answers for ${businessData.businessName}, a ${businessData.category} business in ${businessData.heroLocation}. Focus on common customer concerns and local service details.`;
+
+    const content = await generateStructuredJsonWithDeepSeek(systemPrompt, userPrompt, apiKey);
+    return content as unknown as FAQData;
+}
+
+/**
+ * Generate authentic customer testimonials using DeepSeek
+ */
+export async function generateTestimonialsWithDeepSeek(
+    businessData: any,
+    apiKey: string
+): Promise<TestimonialsData> {
+    const systemPrompt = `Create 3 authentic, humanized customer testimonials that sound like real people sharing genuine experiences (not marketing copy).
+
+Business Context:
+- Business Name: ${businessData.businessName}
+- Category: ${businessData.category}
+- Location: ${businessData.heroLocation}
+- Services: ${businessData.heroService || businessData.services}
+
+HUMANIZED TESTIMONIAL REQUIREMENTS:
+
+**Make Them Sound Real:**
+- Write like real people talk (casual, natural, conversational)
+- Use everyday language - NOT marketing speak
+- Include specific details about their actual experience
+- Mention real problems they had before
+- Add emotional elements (relief, happiness, gratitude, surprise)
+- Include minor "imperfections" to sound authentic (casual phrases, contractions)
+- Use first-person perspective ("I", "we", "my", "our")
+- Vary sentence structure and length naturally
+
+**Content (75-125 words each):**
+- Start with the problem/situation they had
+- Describe the service/solution they received
+- Include a specific standout moment or detail
+- Express genuine emotion about the outcome
+- Occasionally reference location: ${businessData.heroLocation}
+- Use semantic keywords naturally
+- All 5-star ratings
+
+**3 Different Angles:**
+1. Quality/Results - specific outcome they achieved
+2. Experience/Service - how they were treated, the process
+3. Value/Recommendation - why others should choose this business
+
+Create realistic, diverse customer names.
+
+Return JSON: testimonial1Name, testimonial1Text, testimonial1Rating (5), testimonial2Name, testimonial2Text, testimonial2Rating (5), testimonial3Name, testimonial3Text, testimonial3Rating (5)`;
+
+    const userPrompt = `Generate 3 realistic customer testimonials for ${businessData.businessName}, a ${businessData.category} business in ${businessData.heroLocation}. Make them sound authentic and specific to the service type.`;
+
+    const content = await generateStructuredJsonWithDeepSeek(systemPrompt, userPrompt, apiKey);
+    const parsed = content as unknown as TestimonialsData;
+    parsed.testimonial1Rating = 5;
+    parsed.testimonial2Rating = 5;
+    parsed.testimonial3Rating = 5;
+    return parsed;
+}
+
+/**
+ * Generate service page content using DeepSeek
+ */
+export async function generateServicePageContentWithDeepSeek(
+    serviceName: string,
+    businessContext: any,
+    apiKey: string
+): Promise<ServicePageContentData> {
+    const systemPrompt = `You are a professional copywriter specializing in service pages for local businesses. Create comprehensive, engaging content for a specific service page that will help customers understand the service and convert them into customers.
+
+Business Context:
+- Business Name: ${businessContext.businessName}
+- Category: ${businessContext.category}
+- Location: ${businessContext.heroLocation}
+- Years in Business: ${businessContext.yearsInBusiness}
+- Phone: ${businessContext.phone}
+- Service Focus: ${serviceName}
+
+Guidelines:
+- Create compelling, informative content that builds trust and expertise
+- Include specific details about the service process and benefits
+- Address common customer concerns and questions
+- Use local SEO keywords naturally
+- Maintain professional yet approachable tone
+- Focus on customer value and problem-solving
+- Include actionable information customers can use
+
+Return the response as a JSON object with these exact fields:
+{
+  "serviceDescription": "Comprehensive description of the specific service (200-250 words)",
+  "processSteps": ["Step 1", "Step 2", "Step 3", "Step 4", "Step 5", "Step 6", "Step 7"],
+  "whyChooseForService": "Why customers should choose this business for this specific service (150-200 words)",
+  "commonIssues": ["Issue 1", "Issue 2", "Issue 3", "Issue 4", "Issue 5", "Issue 6"],
+  "serviceFeatures": ["Feature 1", "Feature 2", "Feature 3", "Feature 4", "Feature 5", "Feature 6"],
+  "qualityAssurance": "Quality guarantee and assurance information (150-200 words)",
+  "metaTitle": "SEO-optimized title (60 characters max)",
+  "metaDescription": "SEO meta description (150-160 characters)",
+  "heroDescription": "Compelling hero section description (100-150 words)"
+}`;
+
+    const userPrompt = `Generate comprehensive content for a ${serviceName} service page for ${businessContext.businessName}, a ${businessContext.category} business in ${businessContext.heroLocation}. Focus on local expertise and customer benefits.`;
+
+    const content = await generateStructuredJsonWithDeepSeek(systemPrompt, userPrompt, apiKey);
+    return content as unknown as ServicePageContentData;
+}
+
+/**
+ * Generate location page content using DeepSeek
+ */
+export async function generateLocationPageContentWithDeepSeek(
+    locationName: string,
+    businessContext: any,
+    apiKey: string
+): Promise<LocationPageContentData> {
+    const systemPrompt = `You are a professional copywriter specializing in location pages for local businesses. Create compelling, localized content for a specific location page that demonstrates local expertise and builds trust with customers in that area.
+
+Business Context:
+- Business Name: ${businessContext.businessName}
+- Category: ${businessContext.category}
+- Main Location: ${businessContext.heroLocation}
+- Years in Business: ${businessContext.yearsInBusiness}
+- Phone: ${businessContext.phone}
+- Service Type: ${businessContext.heroService}
+- Target Location: ${locationName}
+
+Guidelines:
+- Emphasize local knowledge and community connection
+- Include location-specific details and benefits
+- Address unique challenges or opportunities in this location
+- Use local SEO keywords naturally
+- Build trust through local expertise claims
+- Create urgency for customers in this specific area
+- Maintain professional, community-focused tone
+
+Return the response as a JSON object with these exact fields:
+{
+  "heroDescription": "Compelling hero description for this location (150-200 words)",
+  "aboutContent": "About section focused on local expertise (200-250 words)",
+  "whyChooseContent": "Why choose this business in this specific location (150-200 words)",
+  "serviceAreasContent": "Service area coverage details for this location (100-150 words)",
+  "emergencyContent": "Urgent service or priority availability in this location (100-150 words)",
+  "localBenefits": ["Benefit 1", "Benefit 2", "Benefit 3", "Benefit 4", "Benefit 5", "Benefit 6"],
+  "metaTitle": "SEO-optimized title for this location (60 characters max)",
+  "metaDescription": "SEO meta description for this location (150-160 characters)"
+}`;
+
+    const userPrompt = `Generate comprehensive location-specific content for ${locationName} for ${businessContext.businessName}, a ${businessContext.category} business serving ${locationName} from ${businessContext.heroLocation}. Focus on local expertise and community connection.`;
+
+    const content = await generateStructuredJsonWithDeepSeek(systemPrompt, userPrompt, apiKey);
+    return content as unknown as LocationPageContentData;
+}
+
