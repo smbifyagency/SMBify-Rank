@@ -25,6 +25,7 @@ import { generateAllWebsiteFiles } from "../client/src/lib/dynamic-website-gener
 import { generateMultipleBlogPosts, generateBlogPost, fetchUnsplashImage, generateSEOContent, generateFAQContent, generateTestimonials, generateServicePageContent, generateLocationPageContent } from "./services/openai.js";
 import { generateMultipleBlogPostsWithOpenRouter, generateBlogPostWithOpenRouter } from "./services/openrouter.js";
 import { generateSEOContentWithGemini, generateFAQContentWithGemini, generateTestimonialsWithGemini, generateBlogPostWithGemini } from "./services/gemini.js";
+import { generateWithDeepSeek, generateStructuredJsonWithDeepSeek, generateMultipleBlogPostsWithDeepSeek, generateBlogPostWithDeepSeek } from "./services/deepseek.js";
 import { encrypt, decrypt } from './crypto.js';
 import { netlifyService } from "./services/netlify.js";
 import { deployToNetlify, validateNetlifyToken } from "./services/netlify-deployment.js";
@@ -1408,10 +1409,10 @@ function generateNavigation(businessData: any, currentPage?: string, isInBlogFol
   // Adjust paths based on whether we're in a blog subfolder
   const pathPrefix = isInBlogFolder ? '../' : '';
   const blogPath = isInBlogFolder ? 'index.html' : 'blog.html';
-  
+
   const phoneDetails = getPhoneDetails(businessData.phone, businessData.countryCode);
-  
-  const brandHtml = businessData.logo 
+
+  const brandHtml = businessData.logo
     ? `<img src="${businessData.logo}" alt="${businessData.businessName} Logo" style="height: 48px; width: auto; max-width: 200px; object-fit: contain;">
        <span class="sr-only" style="display: none;">${businessData.businessName}</span>`
     : businessData.businessName;
@@ -1489,7 +1490,7 @@ function generateNavigation(businessData: any, currentPage?: string, isInBlogFol
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle">Services <i class="fas fa-chevron-down"></i></a>
                         <ul class="dropdown-menu">`;
-    
+
     // Display up to 5 services in the dropdown
     const displayServices = additionalServices.slice(0, 5);
     displayServices.forEach((service: string) => {
@@ -1497,13 +1498,13 @@ function generateNavigation(businessData: any, currentPage?: string, isInBlogFol
       nav += `
                             <li><a href="${filename}">${service}</a></li>`;
     });
-    
+
     // If there are more than 5 services, add a View All link
     if (additionalServices.length > 5) {
       nav += `
                             <li style="border-top: 1px solid #eee; margin-top: 5px; padding-top: 5px;"><a href="${pathPrefix}index.html#services" style="font-weight: 600; color: var(--primary-color, #667eea);">View All Services</a></li>`;
     }
-    
+
     nav += `
                         </ul>
                     </li>`;
@@ -3392,7 +3393,7 @@ Total Websites: ${validatedData.businesses.length}
           // Cache for future deploys
           try {
             await storage.updateWebsite(req.params.id, { businessData: { ...(website.businessData as any), _cachedAiContent: aiGeneratedContent } });
-          } catch {}
+          } catch { }
         } catch (aiErr) {
           console.log("AI content skipped during deploy (timeout or error), using template fallback:", (aiErr as Error).message);
         }
@@ -6945,14 +6946,14 @@ Generated on: ${new Date().toISOString()}`;
       const updatedBd = {
         ...bd,
         contentAiProvider: aiContent.providerUsed ?? bd.contentAiProvider,
-        _aiIntroParas:       aiContent.introParas       ?? bd._aiIntroParas,
-        _aiFaqs:             aiContent.faqs             ?? bd._aiFaqs,
-        _aiSeoBody:          aiContent.seoBody           ?? bd._aiSeoBody,
-        _aiProcessSteps:     aiContent.processSteps      ?? bd._aiProcessSteps,
-        _aiWhyChooseUs:      aiContent.whyChooseUs       ?? bd._aiWhyChooseUs,
-        _aiAboutContent:     aiContent.aboutContent      ?? bd._aiAboutContent,
-        _aiTestimonials:     aiContent.testimonials      ?? bd._aiTestimonials,
-        _aiServiceDescs:     aiContent.serviceDescriptions ?? bd._aiServiceDescs,
+        _aiIntroParas: aiContent.introParas ?? bd._aiIntroParas,
+        _aiFaqs: aiContent.faqs ?? bd._aiFaqs,
+        _aiSeoBody: aiContent.seoBody ?? bd._aiSeoBody,
+        _aiProcessSteps: aiContent.processSteps ?? bd._aiProcessSteps,
+        _aiWhyChooseUs: aiContent.whyChooseUs ?? bd._aiWhyChooseUs,
+        _aiAboutContent: aiContent.aboutContent ?? bd._aiAboutContent,
+        _aiTestimonials: aiContent.testimonials ?? bd._aiTestimonials,
+        _aiServiceDescs: aiContent.serviceDescriptions ?? bd._aiServiceDescs,
       };
 
       await storage.updateWebsite(id, { businessData: updatedBd });
@@ -7024,9 +7025,9 @@ Generated on: ${new Date().toISOString()}`;
             bd, userId, catConfig.name, catConfig.defaultPrimaryKeyword
           );
           if (aiContent) {
-            if (aiContent.introParas)   bd._aiIntroParas   = aiContent.introParas;
-            if (aiContent.faqs)         bd._aiFaqs         = aiContent.faqs;
-            if (aiContent.seoBody)      bd._aiSeoBody      = aiContent.seoBody;
+            if (aiContent.introParas) bd._aiIntroParas = aiContent.introParas;
+            if (aiContent.faqs) bd._aiFaqs = aiContent.faqs;
+            if (aiContent.seoBody) bd._aiSeoBody = aiContent.seoBody;
             if (aiContent.processSteps) bd._aiProcessSteps = aiContent.processSteps;
           }
         } catch (aiErr) {
@@ -7043,8 +7044,8 @@ Generated on: ${new Date().toISOString()}`;
         if (fmatch) {
           const rawType = fmatch[1];
           const ext = /x-icon|vnd\.microsoft\.icon/.test(rawType) ? 'ico'
-                    : rawType === 'image/svg+xml' ? 'svg'
-                    : rawType === 'image/jpeg' ? 'jpg' : 'png';
+            : rawType === 'image/svg+xml' ? 'svg'
+              : rawType === 'image/jpeg' ? 'jpg' : 'png';
           faviconFilename = `favicon.${ext}`;
           faviconBinary = Buffer.from(fmatch[2].replace(/\n/g, ''), 'base64');
           bd.faviconUrl = `/${faviconFilename}`; // replace data URL with actual path in HTML
@@ -7196,9 +7197,9 @@ Generated on: ${new Date().toISOString()}`;
       // Ping Google and Bing to discover the new sitemap (fire-and-forget)
       const sitemapUrl = encodeURIComponent(`${siteUrl}/sitemap.xml`);
       Promise.all([
-        fetch(`https://www.google.com/ping?sitemap=${sitemapUrl}`).catch(() => {}),
-        fetch(`https://www.bing.com/ping?sitemap=${sitemapUrl}`).catch(() => {}),
-      ]).catch(() => {});
+        fetch(`https://www.google.com/ping?sitemap=${sitemapUrl}`).catch(() => { }),
+        fetch(`https://www.bing.com/ping?sitemap=${sitemapUrl}`).catch(() => { }),
+      ]).catch(() => { });
 
       res.json({ url: siteUrl, siteName: domain });
     } catch (err: any) {

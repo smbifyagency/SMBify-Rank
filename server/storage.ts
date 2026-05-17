@@ -1589,10 +1589,19 @@ export class DatabaseStorage implements IStorage {
 
 import { supabaseStorage } from "./supabase-storage.js";
 
-const hasSupabase = !!(
-  (process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL) &&
-  (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY)
-);
+const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+const supabaseServerKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+const hasSupabase = !!(supabaseUrl && supabaseServerKey);
+
+if (supabaseUrl && !supabaseServerKey) {
+  const message = "[storage] Supabase URL is set but no server-side secret key was provided. Set SUPABASE_SECRET_KEY (preferred) or SUPABASE_SERVICE_ROLE_KEY.";
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(message);
+  }
+
+  console.warn(`${message} Falling back to in-memory storage for local development.`);
+}
 
 if (hasSupabase) {
   console.log("[storage] Using Supabase storage");
