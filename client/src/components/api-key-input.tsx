@@ -12,7 +12,7 @@ interface ApiKeyInputProps {
   onKeySaved?: () => void;
 }
 
-type Provider = "openai" | "openrouter" | "gemini" | "netlify" | "unsplash";
+type Provider = "openai" | "openrouter" | "gemini" | "deepseek" | "netlify" | "unsplash";
 
 interface ProviderConfig {
   name: string;
@@ -67,6 +67,7 @@ export function ApiKeyInput({ onKeySaved }: ApiKeyInputProps) {
   const [apiKeys, setApiKeys] = useState<Record<Provider, string>>({
     openai: "",
     openrouter: "",
+    deepseek: "",
     gemini: "",
     netlify: "",
     unsplash: ""
@@ -75,6 +76,7 @@ export function ApiKeyInput({ onKeySaved }: ApiKeyInputProps) {
   const [savedStates, setSavedStates] = useState<Record<Provider, boolean>>({
     openai: false,
     openrouter: false,
+    deepseek: false,
     gemini: false,
     netlify: false,
     unsplash: false

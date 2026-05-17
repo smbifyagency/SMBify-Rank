@@ -12,10 +12,10 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import WaterDamageTemplatePreview from "@/components/water-damage-template-preview";
 
-type AIProvider = "openai" | "gemini" | "openrouter";
+type AIProvider = "openai" | "gemini" | "openrouter" | "deepseek";
 
 const isAIProvider = (value: unknown): value is AIProvider =>
-    value === "openai" || value === "gemini" || value === "openrouter";
+    value === "openai" || value === "gemini" || value === "openrouter" || value === "deepseek";
 
 export default function DashboardWebsiteEditor() {
     const [, setLocation] = useLocation();
@@ -490,6 +490,7 @@ export default function DashboardWebsiteEditor() {
                                                     <option value="gemini">Google Gemini</option>
                                                     <option value="openai">OpenAI</option>
                                                     <option value="openrouter">OpenRouter</option>
+                                                    <option value="deepseek">DeepSeek</option>
                                                 </select>
                                                 <p className="mt-2 text-xs text-gray-400">
                                                     Uses the saved API key for the selected provider from API Setup.

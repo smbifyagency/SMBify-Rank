@@ -412,6 +412,7 @@ export function BlogGenerationInterface({
                       <SelectItem value="openai">OpenAI (GPT-4.1)</SelectItem>
                       <SelectItem value="gemini">Google Gemini</SelectItem>
                       <SelectItem value="openrouter">OpenRouter</SelectItem>
+                      <SelectItem value="deepseek">DeepSeek</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

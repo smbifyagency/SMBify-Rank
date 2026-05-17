@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CheckCircle, XCircle, Loader2, Key, TestTube2, ExternalLink, AlertTriangle } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-type Provider = "openai" | "gemini" | "openrouter" | "netlify" | "unsplash";
+type Provider = "openai" | "gemini" | "openrouter" | "deepseek" | "netlify" | "unsplash";
 
 interface ApiSetting {
   name: string;
@@ -75,6 +75,7 @@ const emptyProviderState = {
   openai: "",
   gemini: "",
   openrouter: "",
+  deepseek: "",
   netlify: "",
   unsplash: ""
 } as const;
@@ -88,6 +89,7 @@ export default function ApiSetup() {
     openai: null,
     gemini: null,
     openrouter: null,
+    deepseek: null,
     netlify: null,
     unsplash: null
   });
@@ -95,6 +97,7 @@ export default function ApiSetup() {
     openai: false,
     gemini: false,
     openrouter: false,
+    deepseek: false,
     netlify: false,
     unsplash: false
   });
@@ -103,6 +106,7 @@ export default function ApiSetup() {
   const { data: openaiSetting } = useQuery({ queryKey: ["/api/settings/openai"], enabled: true });
   const { data: geminiSetting } = useQuery({ queryKey: ["/api/settings/gemini"], enabled: true });
   const { data: openrouterSetting } = useQuery({ queryKey: ["/api/settings/openrouter"], enabled: true });
+  const { data: deepseekSetting } = useQuery({ queryKey: ["/api/settings/deepseek"], enabled: true });
   const { data: netlifySetting } = useQuery({ queryKey: ["/api/settings/netlify"], enabled: true });
   const { data: unsplashSetting } = useQuery({ queryKey: ["/api/settings/unsplash"], enabled: true });
 
@@ -110,6 +114,7 @@ export default function ApiSetup() {
     openai: openaiSetting as ApiSetting | undefined,
     gemini: geminiSetting as ApiSetting | undefined,
     openrouter: openrouterSetting as ApiSetting | undefined,
+      deepseek: deepseekSetting as ApiSetting | undefined,
     netlify: netlifySetting as ApiSetting | undefined,
     unsplash: unsplashSetting as ApiSetting | undefined,
   };
@@ -212,6 +217,9 @@ export default function ApiSetup() {
           break;
         case "openrouter":
           testResult = await testViaEndpoint("/api/test-openrouter", { apiKey }, "OpenRouter API connection successful");
+          break;
+        case "deepseek":
+          testResult = await testViaEndpoint("/api/test-deepseek", { apiKey }, "DeepSeek API connection successful");
           break;
         case "netlify":
           testResult = await testViaEndpoint("/api/test-netlify", { apiKey }, "Netlify API connection successful");

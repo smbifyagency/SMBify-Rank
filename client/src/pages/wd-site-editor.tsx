@@ -36,10 +36,10 @@ import {
 import { VisualEditor } from "@/components/visual-editor";
 import { PublishWebsiteModal } from "@/components/publish-website-modal";
 
-type AIProvider = "openai" | "gemini" | "openrouter";
+type AIProvider = "openai" | "gemini" | "openrouter" | "deepseek";
 
 const isAIProvider = (value: unknown): value is AIProvider =>
-  value === "openai" || value === "gemini" || value === "openrouter";
+  value === "openai" || value === "gemini" || value === "openrouter" || value === "deepseek";
 
 // ── Premade color palettes for non-tech users ─────────────────────────────
 const COLOR_PALETTES = [
@@ -707,6 +707,7 @@ body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
             <option value="openai">OpenAI</option>
             <option value="gemini">Gemini</option>
             <option value="openrouter">OpenRouter</option>
+            <option value="deepseek">DeepSeek</option>
           </select>
         </div>
       </div>
@@ -1216,8 +1217,9 @@ export default function WDSiteEditor() {
         fetch("/api/settings/openai", { credentials: "include" }).then(r => r.ok ? r.json() : null).catch(() => null),
         fetch("/api/settings/gemini", { credentials: "include" }).then(r => r.ok ? r.json() : null).catch(() => null),
         fetch("/api/settings/openrouter", { credentials: "include" }).then(r => r.ok ? r.json() : null).catch(() => null),
-      ]).then(([openai, gemini, openrouter]) => {
-        const hasKey = (openai?.apiKey) || (gemini?.apiKey) || (openrouter?.apiKey) || bd.openaiApiKey || bd.geminiApiKey;
+        fetch("/api/settings/deepseek", { credentials: "include" }).then(r => r.ok ? r.json() : null).catch(() => null),
+      ]).then(([openai, gemini, openrouter, deepseek]) => {
+        const hasKey = (openai?.apiKey) || (gemini?.apiKey) || (openrouter?.apiKey) || (deepseek?.apiKey) || bd.openaiApiKey || bd.geminiApiKey || bd.deepseekApiKey;
         setApiStatus(hasKey ? "ready" : "none");
       });
 

@@ -39,13 +39,15 @@ export function BlogGeneratorSection({ businessData, onChange }: BlogGeneratorSe
   const openaiSetting = apiSettings?.find(s => s.name === 'openai' && s.isActive && s.apiKey);
   const geminiSetting = apiSettings?.find(s => s.name === 'gemini' && s.isActive && s.apiKey);
   const openrouterSetting = apiSettings?.find(s => s.name === 'openrouter' && s.isActive && s.apiKey);
-  const hasValidAI = openaiSetting || geminiSetting || openrouterSetting;
+  const deepseekSetting = apiSettings?.find(s => s.name === 'deepseek' && s.isActive && s.apiKey);
+  const hasValidAI = openaiSetting || geminiSetting || openrouterSetting || deepseekSetting;
 
   // Auto-select best available AI provider and set defaults
   const getOptimalAIProvider = () => {
     if (openaiSetting) return 'openai';
     if (geminiSetting) return 'gemini';
     if (openrouterSetting) return 'openrouter';
+    if (deepseekSetting) return 'deepseek';
     return 'openai';
   };
 
@@ -118,6 +120,7 @@ export function BlogGeneratorSection({ businessData, onChange }: BlogGeneratorSe
               {openaiSetting && <span className="block text-sm">• OpenAI available</span>}
               {geminiSetting && <span className="block text-sm">• Gemini available</span>}
               {openrouterSetting && <span className="block text-sm">• OpenRouter available</span>}
+              {deepseekSetting && <span className="block text-sm">• DeepSeek available</span>}
             </AlertDescription>
           </Alert>
         )}

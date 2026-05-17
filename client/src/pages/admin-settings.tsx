@@ -63,7 +63,7 @@ export default function AdminSettings() {
                                 value={formData.defaultAiProvider || ""}
                                 onChange={(e) => setFormData({ ...formData, defaultAiProvider: e.target.value })}
                                 className="w-full mt-1.5 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-white bg-gray-900">
-                                <option value="Google Gemini">Google Gemini</option><option value="OpenAI">OpenAI</option><option value="OpenRouter">OpenRouter</option>
+                                <option value="Google Gemini">Google Gemini</option><option value="OpenAI">OpenAI</option><option value="OpenRouter">OpenRouter</option><option value="DeepSeek">DeepSeek</option>
                             </select></div>
                     </div>
 

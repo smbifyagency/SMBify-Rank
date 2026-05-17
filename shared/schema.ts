@@ -726,10 +726,10 @@ export const businessDataSchema = z.object({
   blogTitles: z.string().optional().default(""),
   blogWordCount: z.number().optional().default(1500),
   blogUseImages: z.boolean().optional().default(true),
-  blogAiProvider: z.enum(["openai", "gemini", "openrouter"]).optional().default("openai"),
+  blogAiProvider: z.enum(["openai", "gemini", "openrouter", "deepseek"]).optional().default("openai"),
 
   // Content AI Provider (for general website content generation)
-  contentAiProvider: z.enum(["openai", "gemini", "openrouter"]).optional().default("openai"),
+  contentAiProvider: z.enum(["openai", "gemini", "openrouter", "deepseek"]).optional().default("openai"),
   blogOutputOption: z.enum(["direct_download", "blog_integrated"]).optional().default("blog_integrated"),
 
   // Manual Blog Data (session-based, cleared on new generation)
@@ -920,7 +920,7 @@ export const blogGenerationSchema = z.object({
   keywords: z.string().optional(),
   useImages: z.boolean().default(true),
   postsCount: z.number().min(1).max(20).default(5),
-  aiProvider: z.enum(["openai", "gemini", "openrouter"]).default("gemini"),
+  aiProvider: z.enum(["openai", "gemini", "openrouter", "deepseek"]).default("gemini"),
   // Manual blog data (session-based)
   manualPosts: z.array(z.object({
     id: z.string(),

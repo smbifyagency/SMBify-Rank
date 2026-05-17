@@ -59,7 +59,7 @@ async function generateFilesForTemplate(
 }
 
 // Helper function to get API key and service based on provider
-async function getAIProviderConfig(userId: string, provider: 'openai' | 'gemini' | 'openrouter', req?: any) {
+async function getAIProviderConfig(userId: string, provider: 'openai' | 'gemini' | 'openrouter' | 'deepseek', req?: any) {
   let apiKey = null;
 
   const requestApiKey = typeof req?.body?.apiKey === 'string'
@@ -74,7 +74,9 @@ async function getAIProviderConfig(userId: string, provider: 'openai' | 'gemini'
       ? 'openaiApiKey'
       : provider === 'gemini'
         ? 'geminiApiKey'
-        : 'openrouterApiKey';
+        : provider === 'openrouter'
+          ? 'openrouterApiKey'
+          : 'deepseekApiKey';
   const providerRequestApiKey = typeof req?.body?.[providerBodyKey] === 'string'
     ? req.body[providerBodyKey].trim()
     : '';
@@ -109,19 +111,22 @@ async function getAIProviderConfig(userId: string, provider: 'openai' | 'gemini'
       case 'openrouter':
         apiKey = process.env.OPENROUTER_API_KEY;
         break;
+      case 'deepseek':
+        apiKey = process.env.DEEPSEEK_API_KEY;
+        break;
     }
   }
 
   return apiKey;
 }
 
-type AIProvider = 'openai' | 'gemini' | 'openrouter';
+type AIProvider = 'openai' | 'gemini' | 'openrouter' | 'deepseek';
 
 const isAIProvider = (value: unknown): value is AIProvider =>
-  value === 'openai' || value === 'gemini' || value === 'openrouter';
+  value === 'openai' || value === 'gemini' || value === 'openrouter' || value === 'deepseek';
 
 const getAIProviderOrder = (...preferredProviders: unknown[]): AIProvider[] => {
-  const fallbackOrder: AIProvider[] = ['gemini', 'openai', 'openrouter'];
+  const fallbackOrder: AIProvider[] = ['gemini', 'openai', 'openrouter', 'deepseek'];
   const ordered = [...preferredProviders, ...fallbackOrder].filter(isAIProvider);
   return [...new Set(ordered)];
 };
@@ -640,6 +645,11 @@ async function generateStructuredJsonWithProvider(
 
     const data = await response.json();
     return parseModelJson(data?.choices?.[0]?.message?.content || "");
+  }
+
+  if (provider === "deepseek") {
+    const { generateStructuredJsonWithDeepSeek } = await import("./services/deepseek.js");
+    return generateStructuredJsonWithDeepSeek(MASTER_SYSTEM_PROMPT, userPrompt, apiKey, options);
   }
 
   const { generateWithGemini } = await import("./services/gemini");
@@ -1200,7 +1210,9 @@ async function generateLocalServiceAIContent(
           ? stringValue(bd.openaiApiKey)
           : candidateProvider === 'gemini'
             ? stringValue(bd.geminiApiKey)
-            : stringValue(bd.openrouterApiKey);
+            : candidateProvider === 'openrouter'
+              ? stringValue(bd.openrouterApiKey)
+              : stringValue(bd.deepseekApiKey);
 
       if (websiteApiKey) {
         provider = candidateProvider;
@@ -1262,7 +1274,7 @@ async function generateLocalServiceAIContent(
 }
 
 // Helper function to generate AI content for dynamic pages
-async function generateAIContentForDynamicPages(businessData: any, userId: string, provider: 'openai' | 'gemini' | 'openrouter' = 'openai'): Promise<{ serviceContent: any[], locationContent: any[] }> {
+async function generateAIContentForDynamicPages(businessData: any, userId: string, provider: 'openai' | 'gemini' | 'openrouter' | 'deepseek' = 'openai'): Promise<{ serviceContent: any[], locationContent: any[] }> {
   const aiGeneratedContent: { serviceContent: any[], locationContent: any[] } = { serviceContent: [], locationContent: [] };
 
   try {
@@ -2124,6 +2136,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/test-deepseek", async (req, res) => {
+    try {
+      const { apiKey } = req.body;
+      if (!apiKey) return res.status(400).json({ error: "API key required" });
+      const response = await fetch("https://api.deepseek.com/models", {
+        headers: { Authorization: `Bearer ${apiKey}` },
+      });
+      if (response.ok) {
+        res.json({ success: true, message: "DeepSeek API key is valid!", details: "Successfully connected to DeepSeek API." });
+      } else {
+        res.status(400).json({ error: "Invalid API key", details: `Status: ${response.status}` });
+      }
+    } catch (error: any) {
+      res.status(500).json({ error: "Connection failed", details: error.message });
+    }
+  });
+
   app.post("/api/test-netlify", async (req, res) => {
     try {
       const { apiKey } = req.body;
@@ -2893,6 +2922,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
                     apiSetting.apiKey,
                     validatedData.blogWordCount || 1500
                   );
+                } else if (validatedData.blogAiProvider === 'deepseek') {
+                  const { generateMultipleBlogPostsWithDeepSeek } = await import("./services/deepseek.js");
+                  aiGeneratedPosts = await generateMultipleBlogPostsWithDeepSeek(
+                    topicsArray,
+                    blogPrompt.prompt,
+                    validatedData,
+                    apiSetting.apiKey,
+                    validatedData.blogWordCount || 1500
+                  );
                 } else {
                   aiGeneratedPosts = await generateMultipleBlogPosts(
                     topicsArray,
@@ -3079,7 +3117,7 @@ ${blogPosts.length > 0 ? `Blog posts generated: ${blogPosts.length}` : ''}
       const userId = (req as any).user?.id || req.session.userId || "guest";
 
       // Get API key based on provider
-      const apiKey = await getAIProviderConfig(userId, aiProvider as 'openai' | 'gemini' | 'openrouter', req);
+      const apiKey = await getAIProviderConfig(userId, aiProvider as 'openai' | 'gemini' | 'openrouter' | 'deepseek', req);
       if (!apiKey) {
         return res.status(400).json({
           success: false,
@@ -3147,6 +3185,14 @@ ${blogPosts.length > 0 ? `Blog posts generated: ${blogPosts.length}` : ''}
       } else if (aiProvider === 'openrouter') {
         // Use OpenRouter generation
         blogPost = await generateBlogPostWithOpenRouter(
+          keyword,
+          prompt,
+          businessContext,
+          apiKey
+        );
+      } else if (aiProvider === 'deepseek') {
+        const { generateBlogPostWithDeepSeek } = await import("./services/deepseek.js");
+        blogPost = await generateBlogPostWithDeepSeek(
           keyword,
           prompt,
           businessContext,
@@ -3940,6 +3986,15 @@ Total Websites: ${validatedData.businesses.length}
             apiSetting.apiKey,
             blogWordCount || 1500
           );
+        } else if (blogAiProvider === 'deepseek') {
+          const { generateMultipleBlogPostsWithDeepSeek } = await import("./services/deepseek.js");
+          blogPosts = await generateMultipleBlogPostsWithDeepSeek(
+            topicsArray,
+            blogPrompt.prompt,
+            businessData,
+            apiSetting.apiKey,
+            blogWordCount || 1500
+          );
         } else {
           blogPosts = await generateMultipleBlogPosts(
             topicsArray,
@@ -4019,6 +4074,15 @@ Total Websites: ${validatedData.businesses.length}
       try {
         if (provider === 'openrouter') {
           blogPosts = await generateMultipleBlogPostsWithOpenRouter(
+            topicsArray,
+            blogPrompt.prompt,
+            businessData,
+            apiSetting.apiKey,
+            businessData.blogWordCount || 1500
+          );
+        } else if (provider === 'deepseek') {
+          const { generateMultipleBlogPostsWithDeepSeek } = await import("./services/deepseek.js");
+          blogPosts = await generateMultipleBlogPostsWithDeepSeek(
             topicsArray,
             blogPrompt.prompt,
             businessData,
@@ -4399,7 +4463,7 @@ Total Websites: ${validatedData.businesses.length}
         });
       }
 
-      if (!['openai', 'gemini', 'openrouter', 'netlify', 'unsplash'].includes(provider)) {
+      if (!['openai', 'gemini', 'openrouter', 'deepseek', 'netlify', 'unsplash'].includes(provider)) {
         return res.status(400).json({
           message: "Invalid provider. Must be openai, gemini, openrouter, netlify, or unsplash"
         });
@@ -4411,7 +4475,7 @@ Total Websites: ${validatedData.businesses.length}
       }
 
       // Store API key in this user's session only (isolated from other users)
-      req.session.guestApiKeys[provider as 'openai' | 'gemini' | 'openrouter' | 'netlify' | 'unsplash'] = apiKey;
+      req.session.guestApiKeys[provider as 'openai' | 'gemini' | 'openrouter' | 'deepseek' | 'netlify' | 'unsplash'] = apiKey;
       setGuestApiKeysCookie(res, req.session.guestApiKeys);
 
       // Mark this session as a guest user (without authenticated privileges)
@@ -5101,7 +5165,7 @@ Total Websites: ${validatedData.businesses.length}
       }
 
       const userId = (req as any).user?.id || req.session.userId || "guest";
-      const provider: AIProvider = ["openai", "gemini", "openrouter"].includes(contentAiProvider)
+      const provider: AIProvider = ["openai", "gemini", "openrouter", "deepseek"].includes(contentAiProvider)
         ? (contentAiProvider as AIProvider)
         : "openai";
       const apiKey = await getAIProviderConfig(userId, provider, req);
@@ -5423,6 +5487,14 @@ Total Websites: ${validatedData.businesses.length}
               throw new Error("OpenRouter API key not configured. Please set up your API key in the dashboard.");
             }
             blogPosts = await generateMultipleBlogPostsWithOpenRouter(keywords, blogAiPrompt, validatedData, openrouterApiKey);
+          } else if (blogAiProvider === 'deepseek') {
+            const deepseekSetting = await storage.getApiSetting((req as any).user.id, 'deepseek');
+            const deepseekApiKey = (deepseekSetting?.isActive && deepseekSetting.apiKey) 
+              ? deepseekSetting.apiKey 
+              : process.env.DEEPSEEK_API_KEY;
+            if (!deepseekApiKey) throw new Error("DeepSeek API key not configured.");
+            const { generateMultipleBlogPostsWithDeepSeek } = await import("./services/deepseek.js");
+            blogPosts = await generateMultipleBlogPostsWithDeepSeek(keywords, blogAiPrompt, validatedData, deepseekApiKey);
           } else {
             if (!openaiApiKey) {
               throw new Error("OpenAI API key not configured. Please set up your API key in the dashboard.");
@@ -5915,6 +5987,57 @@ Generated on: ${new Date().toISOString()}`;
       console.error("OpenRouter test failed:", error);
       res.status(400).json({
         error: "Unable to connect to OpenRouter API"
+      });
+    }
+  });
+
+  // Test DeepSeek connection endpoint
+  app.post("/api/test-deepseek", async (req, res) => {
+    try {
+      const { apiKey } = req.body;
+
+      if (!apiKey) {
+        return res.status(400).json({ error: "DeepSeek API key is required" });
+      }
+
+      // Test the DeepSeek API with a minimal request
+      const response = await fetch("https://api.deepseek.com/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: [{ role: "user", content: "Test connection" }],
+          max_tokens: 5
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.choices && data.choices.length > 0) {
+          res.json({
+            success: true,
+            message: "DeepSeek API connection successful"
+          });
+        } else {
+          res.status(400).json({ error: "Invalid response from DeepSeek" });
+        }
+      } else {
+        let errorMessage = "Connection test failed";
+        if (response.status === 401) {
+          errorMessage = "Invalid API key";
+        } else if (response.status === 402) {
+          errorMessage = "Insufficient credits";
+        }
+
+        res.status(400).json({ error: errorMessage });
+      }
+    } catch (error) {
+      console.error("DeepSeek test failed:", error);
+      res.status(400).json({
+        error: "Unable to connect to DeepSeek API"
       });
     }
   });
@@ -6580,6 +6703,15 @@ Generated on: ${new Date().toISOString()}`;
           apiSetting.apiKey,
           blogWordCount || 1500
         );
+      } else if (blogAiProvider === 'deepseek') {
+        const { generateMultipleBlogPostsWithDeepSeek } = await import("./services/deepseek.js");
+        newBlogPosts = await generateMultipleBlogPostsWithDeepSeek(
+          newTitles,
+          blogPrompt.prompt,
+          website,
+          apiSetting.apiKey,
+          blogWordCount || 1500
+        );
       } else {
         const { generateMultipleBlogPosts } = await import('./services/openai');
         newBlogPosts = await generateMultipleBlogPosts(
@@ -6698,7 +6830,7 @@ Generated on: ${new Date().toISOString()}`;
         yearsInBusiness, aiModel,
         // API keys — any one of these works
         openrouterApiKey, openaiApiKey, geminiApiKey,
-        // Provider preference: 'openai' | 'gemini' | 'openrouter' (default: auto-detect)
+        // Provider preference: 'openai' | 'gemini' | 'openrouter' | 'deepseek' (default: auto-detect)
         aiProvider,
         // When true, return JSON {files, websiteId} instead of ZIP
         returnFiles,
@@ -6729,6 +6861,7 @@ Generated on: ${new Date().toISOString()}`;
       if (openaiApiKey) { resolvedProvider = 'openai'; apiKey = openaiApiKey; }
       else if (geminiApiKey) { resolvedProvider = 'gemini'; apiKey = geminiApiKey; }
       else if (openrouterApiKey) { resolvedProvider = 'openrouter'; apiKey = openrouterApiKey; }
+      else if (process.env.DEEPSEEK_API_KEY) { resolvedProvider = 'deepseek'; apiKey = process.env.DEEPSEEK_API_KEY; }
 
       // 2. Check user DB settings if no key in request
       if (!apiKey && userId && userId !== 'guest') {
@@ -6736,7 +6869,7 @@ Generated on: ${new Date().toISOString()}`;
         // Try in preference order: user-specified provider first, then openai, gemini, openrouter
         const providerOrder: AIProvider[] = aiProvider
           ? [aiProvider, 'openai', 'gemini', 'openrouter']
-          : ['openai', 'gemini', 'openrouter'];
+          : ['openai', 'gemini', 'openrouter', 'deepseek'];
         for (const p of providerOrder) {
           const setting = settings?.find((s: any) => s.name === p && s.isActive && s.apiKey);
           if (setting?.apiKey) {
@@ -6752,6 +6885,7 @@ Generated on: ${new Date().toISOString()}`;
         if (process.env.OPENAI_API_KEY) { apiKey = process.env.OPENAI_API_KEY; resolvedProvider = 'openai'; }
         else if (process.env.GEMINI_API_KEY) { apiKey = process.env.GEMINI_API_KEY; resolvedProvider = 'gemini'; }
         else if (process.env.OPENROUTER_API_KEY) { apiKey = process.env.OPENROUTER_API_KEY; resolvedProvider = 'openrouter'; }
+        else if (process.env.DEEPSEEK_API_KEY) { apiKey = process.env.DEEPSEEK_API_KEY; resolvedProvider = 'deepseek'; }
       }
 
       const bizContext = {

@@ -38,7 +38,7 @@ interface GenerationProgress {
   completed: boolean;
 }
 
-type AIProvider = "openai" | "gemini" | "openrouter";
+type AIProvider = "openai" | "gemini" | "openrouter" | "deepseek";
 
 export function AIAutoGenerateModal({ open, onOpenChange, onGenerate }: AIAutoGenerateModalProps) {
   const { user } = useAuth();
@@ -66,8 +66,9 @@ export function AIAutoGenerateModal({ open, onOpenChange, onGenerate }: AIAutoGe
     queryKey: ["/api/settings/gemini"],
     enabled: open
   });
-  const { data: openrouterSetting } = useQuery({
-    queryKey: ["/api/settings/openrouter"],
+  const { data: openrouterSetting } = useQuery({ queryKey: ["/api/settings/openrouter"] });
+  const { data: deepseekSetting } = useQuery({
+    queryKey: ["/api/settings/deepseek"],
     enabled: open
   });
 
@@ -76,13 +77,14 @@ export function AIAutoGenerateModal({ open, onOpenChange, onGenerate }: AIAutoGe
     !!sessionStorage.getItem('guest_openai_key');
   const hasGemini = ((geminiSetting as any)?.apiKey && (geminiSetting as any)?.isActive) ||
     !!sessionStorage.getItem('guest_gemini_key');
-  const hasOpenRouter = ((openrouterSetting as any)?.apiKey && (openrouterSetting as any)?.isActive) ||
-    !!sessionStorage.getItem('guest_openrouter_key');
-  const hasAnyAI = hasOpenAI || hasGemini || hasOpenRouter;
+  const hasOpenRouter = ((openrouterSetting as any)?.apiKey && (openrouterSetting as any)?.isActive) || !!sessionStorage.getItem('guest_openrouter_key');
+  const hasDeepSeek = ((deepseekSetting as any)?.apiKey && (deepseekSetting as any)?.isActive) || !!sessionStorage.getItem('guest_deepseek_key');
+  const hasAnyAI = hasOpenAI || hasGemini || hasOpenRouter || hasDeepSeek;
   const availableProviders: AIProvider[] = [
     ...(hasGemini ? ["gemini" as const] : []),
     ...(hasOpenAI ? ["openai" as const] : []),
     ...(hasOpenRouter ? ["openrouter" as const] : []),
+    ...(hasDeepSeek ? ["deepseek" as const] : []),
   ];
 
   // Check if user has AI access

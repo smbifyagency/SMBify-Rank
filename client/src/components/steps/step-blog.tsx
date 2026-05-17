@@ -158,6 +158,7 @@ export function StepBlog({ form }: StepBlogProps) {
                             <SelectContent>
                               <SelectItem value="openai">OpenAI</SelectItem>
                               <SelectItem value="openrouter">OpenRouter</SelectItem>
+                              <SelectItem value="deepseek">DeepSeek</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
