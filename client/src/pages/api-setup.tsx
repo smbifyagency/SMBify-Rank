@@ -49,6 +49,13 @@ const providerConfigs: ProviderConfig[] = [
     placeholder: "sk-..."
   },
   {
+    service: "deepseek",
+    title: "DeepSeek API",
+    description: "Affordable and highly efficient AI provider for content generation",
+    docsUrl: "https://platform.deepseek.com/",
+    placeholder: "sk-..."
+  },
+  {
     service: "openrouter",
     title: "OpenRouter API",
     description: "Route AI generation across multiple model providers",

@@ -47,6 +47,13 @@ const providers: Record<Provider, ProviderConfig> = {
     docsUrl: "https://aistudio.google.com/app/apikey",
     icon: Sparkles
   },
+  deepseek: {
+    name: "DeepSeek",
+    description: "For highly affordable AI content generation",
+    placeholder: "sk-...",
+    docsUrl: "https://platform.deepseek.com/",
+    icon: Sparkles
+  },
   netlify: {
     name: "Netlify",
     description: "For website deployment",
@@ -282,7 +289,7 @@ export function ApiKeyInput({ onKeySaved }: ApiKeyInputProps) {
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="gemini" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-6">
             <TabsTrigger value="gemini" className="text-xs">
               <Sparkles className="h-3 w-3 mr-1" />
               Gemini (Free!)
@@ -290,6 +297,10 @@ export function ApiKeyInput({ onKeySaved }: ApiKeyInputProps) {
             <TabsTrigger value="openai" className="text-xs">
               <Sparkles className="h-3 w-3 mr-1" />
               OpenAI
+            </TabsTrigger>
+            <TabsTrigger value="deepseek" className="text-xs">
+              <Sparkles className="h-3 w-3 mr-1" />
+              DeepSeek
             </TabsTrigger>
             <TabsTrigger value="openrouter" className="text-xs">
               <Sparkles className="h-3 w-3 mr-1" />

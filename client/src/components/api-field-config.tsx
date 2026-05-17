@@ -62,6 +62,16 @@ export function getApiFieldsConfig(serviceName: string) {
         }
       ];
     
+    case "deepseek":
+      return [
+        {
+          key: "apiKey",
+          label: "API Key",
+          placeholder: "Enter DeepSeek API key (sk-...)",
+          required: true
+        }
+      ];
+    
     case "openrouter":
       return [
         {
