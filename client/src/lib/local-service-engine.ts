@@ -23,6 +23,66 @@ function interpolateArr(arr: string[], data: Record<string, any>): string[] {
   return arr.map(s => interpolate(s, data));
 }
 
+function createLoremParagraphs(count = 2): string[] {
+  const paragraphs = [
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam.',
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis lorem ut libero malesuada feugiat.',
+  ];
+
+  return paragraphs.slice(0, count);
+}
+
+function createLoremProcessSteps(): Array<{ step: number; heading: string; body: string }> {
+  return [
+    {
+      step: 1,
+      heading: 'Lorem ipsum dolor sit amet',
+      body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+    },
+    {
+      step: 2,
+      heading: 'Consectetur adipiscing elit',
+      body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus suscipit tortor eget felis porttitor volutpat.',
+    },
+    {
+      step: 3,
+      heading: 'Sed do eiusmod tempor',
+      body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur aliquet quam id dui posuere blandit.',
+    },
+  ];
+}
+
+function createLoremFaqs(): Array<{ question: string; answer: string }> {
+  return [
+    {
+      question: 'Lorem ipsum dolor sit amet?',
+      answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sollicitudin molestie malesuada.',
+    },
+    {
+      question: 'Consectetur adipiscing elit?',
+      answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras ultricies ligula sed magna dictum porta.',
+    },
+    {
+      question: 'Sed do eiusmod tempor incididunt?',
+      answer: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum ac diam sit amet quam vehicula elementum sed sit amet dui.',
+    },
+  ];
+}
+
+function createLoremWhyUsPoints(): Array<{ icon: string; heading: string; body: string }> {
+  return [
+    { icon: '✨', heading: 'Lorem ipsum dolor', body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { icon: '⚡', heading: 'Sed do eiusmod', body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { icon: '✅', heading: 'Praesent libero', body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+    { icon: '🚀', heading: 'Curabitur aliquet', body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+  ];
+}
+
+function createLoremSeoBody(): string {
+  return 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.';
+}
+
 /**
  * Generate a full local-service website for any supported category.
  *
@@ -38,14 +98,7 @@ export function generateLocalServiceWebsite(
   const config = getCategoryConfig(categoryId);
 
   // Build why-us points from config
-  const whyUsPoints = config.copy.whyUsPoints.map((point, i) => {
-    const icons = ['🚨', '🎓', '✅', '⚡', '🔍', '📋'];
-    return {
-      icon: icons[i] ?? '✅',
-      heading: point,
-      body: point,
-    };
-  });
+  const whyUsPoints = createLoremWhyUsPoints();
 
   // Merge category defaults into business data
   const enriched: WDBusinessData = {
@@ -83,10 +136,10 @@ export function generateLocalServiceWebsite(
 
   // Use AI-generated content when available (set by server deploy route),
   // otherwise fall back to the template copy from the category config.
-  d._introParas   = d._aiIntroParas   ?? (c.introParas   ? interpolateArr(c.introParas, enriched)    : undefined);
-  d._processSteps = d._aiProcessSteps ?? (c.processSteps ? c.processSteps                            : undefined);
-  d._faqs         = d._aiFaqs         ?? (c.faqs         ? c.faqs                                    : undefined);
-  d._seoBody      = d._aiSeoBody      ?? (c.seoBody      ? interpolate(c.seoBody, enriched)          : undefined);
+  d._introParas   = d._aiIntroParas   ?? createLoremParagraphs(2);
+  d._processSteps = d._aiProcessSteps ?? createLoremProcessSteps();
+  d._faqs         = d._aiFaqs         ?? createLoremFaqs();
+  d._seoBody      = d._aiSeoBody      ?? createLoremSeoBody();
 
   if (c.processH2) d._processH2 = c.processH2;
   if (c.faqH2)     d._faqH2     = c.faqH2;
@@ -110,10 +163,7 @@ export function enrichBusinessDataForCategory(
 ): Record<string, any> {
   const config = getCategoryConfig(categoryId);
 
-  const whyUsPoints = config.copy.whyUsPoints.map((point, i) => {
-    const icons = ['🚨', '🎓', '✅', '⚡', '🔍', '📋'];
-    return { icon: icons[i] ?? '✅', heading: point, body: point };
-  });
+  const whyUsPoints = createLoremWhyUsPoints();
 
   const enriched: any = {
     primaryKeyword: config.defaultPrimaryKeyword,
@@ -140,10 +190,10 @@ export function enrichBusinessDataForCategory(
   if (c.whatsappMessage)        enriched._whatsappMessage        = c.whatsappMessage;
   if (c.servicePageBenefits)    enriched._servicePageBenefits    = c.servicePageBenefits;
 
-  enriched._introParas   = enriched._aiIntroParas   ?? (c.introParas   ? interpolateArr(c.introParas, enriched)    : undefined);
-  enriched._processSteps = enriched._aiProcessSteps ?? (c.processSteps ? c.processSteps                            : undefined);
-  enriched._faqs         = enriched._aiFaqs         ?? (c.faqs         ? c.faqs                                    : undefined);
-  enriched._seoBody      = enriched._aiSeoBody      ?? (c.seoBody      ? interpolate(c.seoBody, enriched)          : undefined);
+  enriched._introParas   = enriched._aiIntroParas   ?? createLoremParagraphs(2);
+  enriched._processSteps = enriched._aiProcessSteps ?? createLoremProcessSteps();
+  enriched._faqs         = enriched._aiFaqs         ?? createLoremFaqs();
+  enriched._seoBody      = enriched._aiSeoBody      ?? createLoremSeoBody();
 
   if (c.processH2) enriched._processH2 = c.processH2;
   if (c.faqH2)     enriched._faqH2     = c.faqH2;

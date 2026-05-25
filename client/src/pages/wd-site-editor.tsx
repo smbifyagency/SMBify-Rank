@@ -1024,6 +1024,7 @@ export default function WDSiteEditor() {
   const [visualEditorOverrides, setVisualEditorOverrides] = useState<Record<string, string>>({});
   const [aiProvider, setAiProvider] = useState<AIProvider>("gemini");
   const [availableAIProviders, setAvailableAIProviders] = useState<AIProvider[]>([]);
+  const [lastAIGenerationAt, setLastAIGenerationAt] = useState<string | null>(null);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const autoSaveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isFirstLoadRef = useRef(true);
@@ -1032,6 +1033,19 @@ export default function WDSiteEditor() {
   const siteDataRef = useRef<WDSiteData | null>(null);
   const checklistItems = getChecklistItemStates(siteData);
   const checklistMetrics = getChecklistMetrics(siteData);
+  const hasGeneratedAIContent = Boolean(
+    siteData && (
+      siteData.homepageContent ||
+      (siteData as any)._aiAboutContent ||
+      (Array.isArray((siteData as any)._aiIntroParas) && (siteData as any)._aiIntroParas.length > 0) ||
+      (Array.isArray((siteData as any)._aiTestimonials) && (siteData as any)._aiTestimonials.length > 0) ||
+      (Array.isArray((siteData as any)._aiFaqs) && (siteData as any)._aiFaqs.length > 0) ||
+      (Array.isArray((siteData as any)._aiProcessSteps) && (siteData as any)._aiProcessSteps.length > 0) ||
+      (Array.isArray((siteData as any)._aiWhyChooseUs) && (siteData as any)._aiWhyChooseUs.length > 0) ||
+      Boolean((siteData as any)._aiSeoBody) ||
+      Boolean((siteData as any)._aiServiceDescs)
+    )
+  );
 
   async function persistCurrentWebsiteState(
     data: WDSiteData,
@@ -1345,6 +1359,7 @@ export default function WDSiteEditor() {
       } as any;
       setSiteData(next);
       rebuildPreview(next);
+      setLastAIGenerationAt(new Date().toLocaleString());
       toast({ title: "AI content generated!", description: "Preview updated with unique content." });
 
       // Auto-generate 5 blog posts if none exist yet
@@ -2457,6 +2472,11 @@ export default function WDSiteEditor() {
                     <Sparkles className="w-4 h-4 text-[#7C3AED]" />
                     AI Content Generator
                   </h3>
+                  {lastAIGenerationAt && (
+                    <Badge variant="outline" className="border-green-700/60 bg-green-950/40 text-green-300 text-[11px]">
+                      Updated {lastAIGenerationAt}
+                    </Badge>
+                  )}
                   <Button variant="outline" size="sm" onClick={regenerateFiles} disabled={isRegenerating} className="border-amber-600 bg-amber-600/10 text-amber-400 hover:bg-amber-600/20 text-xs font-medium">
                     {isRegenerating ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <RefreshCw className="w-3 h-3 mr-1" />}
                     Re-generate
@@ -2464,6 +2484,9 @@ export default function WDSiteEditor() {
                 </div>
                 <p className="text-xs text-gray-500">
                   One click writes unique content for your <strong className="text-gray-400">entire website</strong> — all pages listed below.
+                </p>
+                <p className="text-[11px] text-gray-500">
+                  Template copy is shown as lorem ipsum placeholders until AI content is generated.
                 </p>
 
                 {/* AI Provider selector + Generate button */}
@@ -2890,23 +2913,23 @@ export default function WDSiteEditor() {
                 </div>
               )}
 
-              {!siteData.homepageContent && !(siteData as any)._aiIntroParas && (
+              {!hasGeneratedAIContent ? (
                 <div className="rounded-lg border border-dashed border-gray-700 p-4 space-y-3">
                   <div className="text-center">
                     <Sparkles className="w-7 h-7 text-gray-600 mx-auto mb-1" />
-                    <p className="text-sm text-gray-400 font-medium">No AI content generated yet</p>
-                    <p className="text-xs text-gray-600 mt-0.5">Click <strong className="text-[#7C3AED]">Generate</strong> to write unique content for all these pages:</p>
+                    <p className="text-sm text-gray-400 font-medium">Template preview is using placeholder lorem ipsum content</p>
+                    <p className="text-xs text-gray-600 mt-0.5">Click <strong className="text-[#7C3AED]">Generate</strong> to replace placeholders with semantic AI content:</p>
                   </div>
                   <div className="grid grid-cols-2 gap-1.5 text-[11px]">
                     {[
-                      { page: 'Homepage', items: 'Intro paragraphs, Why Choose Us, Process Steps, SEO text, Testimonials' },
-                      { page: 'About Page', items: 'Company story, mission, values (250-350 words)' },
-                      { page: 'FAQ Page', items: '10 detailed Q&A pairs (100-150 words each)' },
-                      { page: 'Service Pages', items: `Unique description for each service (${siteData.services?.length || 0} pages)` },
-                      { page: 'Location Pages', items: `Local SEO content for each area (${siteData.serviceAreas?.length || 0} pages)` },
-                      ...((siteData as any).enableMatrixPages ? [{ page: 'Matrix Pages', items: `${(siteData.services?.length || 0)} services × ${(siteData.serviceAreas?.length || 0)} cities = ${(siteData.services?.length || 0) * (siteData.serviceAreas?.length || 0)} unique pages` }] : []),
-                      { page: 'Blog', items: '5 auto-generated SEO blog posts (1000+ words each)' },
-                      { page: 'Contact Page', items: 'Contact form, map embed, business hours' },
+                      { page: 'Homepage', items: 'Lorem ipsum intro, why-us, process, SEO body, testimonials' },
+                      { page: 'About Page', items: 'Lorem ipsum company story, mission, and values' },
+                      { page: 'FAQ Page', items: 'Lorem ipsum Q&A placeholders for common questions' },
+                      { page: 'Service Pages', items: `Lorem ipsum service-page descriptions (${siteData.services?.length || 0} pages)` },
+                      { page: 'Location Pages', items: `Lorem ipsum local SEO copy (${siteData.serviceAreas?.length || 0} pages)` },
+                      ...((siteData as any).enableMatrixPages ? [{ page: 'Matrix Pages', items: `${(siteData.services?.length || 0)} services × ${(siteData.serviceAreas?.length || 0)} cities = ${(siteData.services?.length || 0) * (siteData.serviceAreas?.length || 0)} lorem ipsum pages` }] : []),
+                      { page: 'Blog', items: 'Lorem ipsum SEO blog drafts generated with AI' },
+                      { page: 'Contact Page', items: 'Lorem ipsum contact form, map embed, business hours' },
                       { page: 'All Pages', items: 'Schema markup, meta tags, sitemap, robots.txt, llms.txt' },
                     ].map(({ page, items }) => (
                       <div key={page} className="bg-gray-800/50 rounded-md px-2.5 py-2 border border-gray-700/50">
@@ -2923,78 +2946,23 @@ export default function WDSiteEditor() {
                     const blogCount = 5;
                     const matrixEnabled = (siteData as any).enableMatrixPages;
                     const matrixCount = matrixEnabled ? svcCount * locCount : 0;
-                    // Word estimates per section
-                    const introWords = 4 * 280;        // 4 paragraphs × ~280 words
-                    const stepsWords = 7 * 150;        // 7 steps × ~150 words
-                    const faqWords = 10 * 175;         // 10 FAQs × ~175 words
-                    const seoWords = 400;              // SEO body
-                    const whyUsWords = 6 * 150;        // 6 why-us points × ~150 words
-                    const aboutWords = 500;            // About page content
-                    const testimonialsWords = 5 * 120; // 5 reviews × ~120 words
-                    const svcDescWords = svcCount * 200; // Per-service description
-                    const blogWords = blogCount * 1500;  // 5 posts × ~1500 words
-                    const locWords = locCount * 300;    // Location page template content
-                    const matrixWords = matrixCount * 450; // Matrix page content
-
-                    const aiGeneratedWords = introWords + stepsWords + faqWords + seoWords + whyUsWords + aboutWords + testimonialsWords + svcDescWords + blogWords;
-                    const templateWords = locWords + (svcCount * 500) + 800 + 600 + 400 + matrixWords; // svc pages template, contact, privacy, terms, matrix
-                    const totalWords = aiGeneratedWords + templateWords;
-
-                    // Token estimates (~1.3 tokens per word for English)
-                    const promptTokens = 1200 + (blogCount * 800);  // Main prompt + 5 blog prompts
-                    const outputTokens = Math.round(aiGeneratedWords * 1.3);
-                    const totalTokens = promptTokens + outputTokens;
-
-                    // Total pages
-                    const totalPages = 1 + 1 + 1 + 1 + 1 + 1 + svcCount + locCount + blogCount + 6 + matrixCount; // home, about, contact, faq, gallery, blog index + services + locations + blog posts + calculators + matrix
-
-                    const rows = [
-                      { label: 'Homepage (AI)', words: introWords + stepsWords + faqWords + seoWords + whyUsWords + testimonialsWords },
-                      { label: 'About Page (AI)', words: aboutWords },
-                      { label: `FAQ Page (AI)`, words: faqWords },
-                      { label: `Service Pages ×${svcCount} (AI + template)`, words: svcDescWords + (svcCount * 500) },
-                      { label: `Location Pages ×${locCount} (template)`, words: locWords },
-                      ...(matrixEnabled ? [{ label: `Matrix Pages ×${matrixCount} (template)`, words: matrixWords }] : []),
-                      { label: `Blog Posts ×${blogCount} (AI)`, words: blogWords },
-                    ];
-
+                    const approxWords = 1200 + (svcCount * 180) + (locCount * 140) + (blogCount * 900) + (matrixCount * 140) + 400;
+                    const approxTokens = Math.round(approxWords * 1.35);
                     return (
-                      <div className="rounded-lg bg-gray-800/40 border border-gray-700/50 p-3 space-y-2">
-                        <p className="text-xs font-semibold text-gray-300 flex items-center gap-1.5">
-                          📊 Estimated Content Volume
-                        </p>
-                        <div className="space-y-1">
-                          {rows.map(r => (
-                            <div key={r.label} className="flex justify-between text-[11px]">
-                              <span className="text-gray-400">{r.label}</span>
-                              <span className="text-gray-300 font-mono">{r.words.toLocaleString()} words</span>
-                            </div>
-                          ))}
-                          <div className="border-t border-gray-700/50 pt-1 mt-1 flex justify-between text-[11px] font-semibold">
-                            <span className="text-white">Total Website Content</span>
-                            <span className="text-[#7C3AED] font-mono">{totalWords.toLocaleString()} words</span>
-                          </div>
-                        </div>
-                        <div className="grid grid-cols-3 gap-2 pt-1">
-                          <div className="text-center bg-gray-900/50 rounded px-2 py-1.5 border border-gray-700/30">
-                            <p className="text-[10px] text-gray-500">Total Pages</p>
-                            <p className="text-sm font-bold text-white">{totalPages}</p>
-                          </div>
-                          <div className="text-center bg-gray-900/50 rounded px-2 py-1.5 border border-gray-700/30">
-                            <p className="text-[10px] text-gray-500">AI Tokens (est.)</p>
-                            <p className="text-sm font-bold text-white">{(totalTokens / 1000).toFixed(1)}K</p>
-                          </div>
-                          <div className="text-center bg-gray-900/50 rounded px-2 py-1.5 border border-gray-700/30">
-                            <p className="text-[10px] text-gray-500">API Calls</p>
-                            <p className="text-sm font-bold text-white">{1 + blogCount}</p>
-                          </div>
-                        </div>
-                        <p className="text-[10px] text-gray-600 leading-relaxed">
-                          1 AI call for page content + {blogCount} calls for blog posts. Tokens vary by provider. Template pages (locations, contact, privacy) use no AI tokens.
-                        </p>
+                      <div className="rounded-md border border-purple-900/40 bg-purple-950/20 p-3 text-[11px] text-purple-100/90">
+                        <p className="font-medium mb-1">Estimated AI output</p>
+                        <p className="text-purple-200/80">~{approxWords.toLocaleString()} words • ~{approxTokens.toLocaleString()} tokens across the whole website</p>
                       </div>
                     );
                   })()}
+                </div>
+              ) : (
+                <div className="rounded-lg border border-green-900/50 bg-green-950/20 p-4 space-y-3">
+                  <div className="text-center">
+                    <CheckCircle2 className="w-7 h-7 text-green-400 mx-auto mb-1" />
+                    <p className="text-sm text-green-300 font-medium">AI content generated and applied</p>
+                    <p className="text-xs text-green-200/70 mt-0.5">The preview is now using AI-generated semantic SEO content{lastAIGenerationAt ? ` • Updated ${lastAIGenerationAt}` : ''}.</p>
+                  </div>
                 </div>
               )}
             </TabsContent>
